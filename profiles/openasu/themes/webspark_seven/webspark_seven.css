@@ -1,10 +1,13 @@
 /**
  * Custom styles for the admin subtheme Webspark Seven
  */
-/* Prevent full html format textarea from floating over right sidebar in Burr flipped */
-#edit-body .form-textarea-wrapper textarea {
-  clear: both;
+ 
+/* Prevent full html format textarea from floating over right sidebar,
+   also, moves label flush left */
+.form-item-body-und-0-value label {
+	 clear: both;
 }
+
 /* Make add content link a more prominent button */
 .page-admin-content ul.action-links {
  padding-left: 0;
