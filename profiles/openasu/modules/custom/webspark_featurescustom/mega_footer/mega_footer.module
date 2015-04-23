@@ -106,7 +106,7 @@ function mega_footer_block_view($delta = '') {
 
   if(variable_get('unit_linkedin_connect', NULL)!=NULL) {
     $footer_mark .=  "<li><a href='".variable_get('unit_linkedin_connect', NULL)."' title='LinkedIn'><span class='sr-only'>LinkedIn</span>
-    <i class='fa fa-linkedin-square' aria-hidden='true'></i></a>
+    <i class='fa fa-wordpress' aria-hidden='true'></i></a>
                       </li>";
   }
 
