@@ -4,7 +4,7 @@ core = 7.x
 ; Drupal Core
 
 projects[drupal][type] = core
-projects[drupal][version] = 7.32
+projects[drupal][version] = 7.38
 
 ; Drupal Core Patches
 projects[drupal][patch][1334818] = https://drupal.org/files/issues/D7-install-profile-ajax-1334818-8.patch
@@ -50,24 +50,17 @@ projects[panopoly_demo][subdir] = panopoly
 
 ; ASU Modules
 
-projects[asu_brand][version] = 1.8
+projects[asu_brand][version] = 1.10
 projects[asu_brand][subdir] = custom
 projects[asu_brand][type] = module
-projects[asu_brand][download][revision] = fa4421bf
+projects[asu_brand][download][revision] = ade07e6f
 projects[asu_brand][download][branch] = 7.x-1.x
 projects[asu_brand][download][url] = https://github.com/ASU/asu-drupal-brand.git
-
-projects[asu_cas][version] = 7.x-1.7
-projects[asu_cas][subdir] = custom
-projects[asu_cas][type] = module
-projects[asu_cas][download][revision] = ce9e5ca8
-projects[asu_cas][download][branch] = 7.x-1.x
-projects[asu_cas][download][url] = https://github.com/ASU/asu-drupal-cas-client-config.git
 
 projects[asu_userpicker][version] = 1.0
 projects[asu_userpicker][subdir] = custom
 projects[asu_userpicker][type] = module
-projects[asu_userpicker][download][revision] = 95a01aadb043e9c2e6241a301e253d7c56e26b71
+projects[asu_userpicker][download][revision] = 95a01aad
 projects[asu_userpicker][download][tag] = 7.x-1.0
 projects[asu_userpicker][download][url] = https://github.com/ASU/asu-drupal-userpicker.git
 
@@ -83,37 +76,18 @@ projects[ixr][type] = module
 projects[ixr][download][revision] = 990012dd
 projects[ixr][download][url] = https://github.com/ASU/asu-drupal-ixr.git
 
-projects[asu_events][version] = 1.0-dev
-projects[asu_events][subdir] = custom
-projects[asu_events][type] = module
-projects[asu_events][download][revision] = 3ff78bb9
-projects[asu_events][download][url] = https://github.com/ASU/asu-drupal-events-feed.git
-
-projects[asu_news][version] = 1.0-dev
-projects[asu_news][subdir] = custom
-projects[asu_news][type] = module
-projects[asu_news][download][revision] = 7e925b539
-projects[asu_news][download][url] = https://github.com/ASU/asu-drupal-news.git
-
-; eAdvisor Feed Feature (depracated in lieu of ASU Degrees)
-projects[asu_eadvisor_degree_feed_feature][version] = 1.0-beta1
-projects[asu_eadvisor_degree_feed_feature][subdir] = custom
-projects[asu_eadvisor_degree_feed_feature][type] = module
-projects[asu_eadvisor_degree_feed_feature][download][revision] = 91278fd1
-projects[asu_eadvisor_degree_feed_feature][download][url] = https://github.com/ASU/asu-drupal-eadvisor-degree-feed.git
-
-; ASU Degrees (replacement for asu_eadvisor_degree_feed_feature)
-projects[asu_degrees][version] = 1.5
+projects[asu_degrees][version] = 1.6
 projects[asu_degrees][type] = module
 projects[asu_degrees][subdir] = custom
-projects[asu_degrees][download][revision] = 1c438469
+projects[asu_degrees][download][revision] = ba8a1fdd
 projects[asu_degrees][download][branch] = master
 projects[asu_degrees][download][url] = https://github.com/ASU/asu-drupal-degrees.git
 
+projects[asu_rfi][version] = 1.1
 projects[asu_rfi][type] = module
 projects[asu_rfi][subdir] = custom
 projects[asu_rfi][download][type] = git
-projects[asu_rfi][download][revision] = c27a6428
+projects[asu_rfi][download][revision] = a4ac6e04
 projects[asu_rfi][download][branch] = master
 projects[asu_rfi][download][url] = https://github.com/ASU/asu-drupal-rfi
 
@@ -158,18 +132,14 @@ projects[job_scheduler][version] = 2.0-alpha3
 projects[job_scheduler][type] = module
 projects[job_scheduler][subdir] = contrib
 
-; Webspark Megamenu
-projects[special_menu_items][version] = 2.0
-projects[special_menu_items][subdir] = contrib
-projects[special_menu_items][type] = module
+; WEBSPARK-679 - WYSIWYG + Media module issues
+projects[media][patch][] = patches/webspark-679_media-repair_encoded_macro-2028253-10.patch
+; -- remove when alpha4 comes out
+projects[media][patch][] = patches/webspark-679_wysiwyg-multiple-editors-media-images-breaks.patch
 
 projects[viewfield][version] = 2.0
 projects[viewfield][type] = module
 projects[viewfield][subdir] = contrib
-
-projects[views_bootstrap][version] = 3.1
-projects[views_bootstrap][type] = module
-projects[views_bootstrap][subdir] = contrib
 
 projects[views_php][version] = 1.x-dev
 projects[views_php][type] = module
@@ -199,9 +169,6 @@ projects[entity_view_mode][version] = 1.0-rc1
 projects[entity_view_mode][type] = module
 projects[entity_view_mode][subdir] = contrib
 
-; WEBSPARK-481 - patch from drupal.org for features_override (disabled temporarily)
-;projects[features_override][patch][] = patches/recursion_check_is_slow-features_override-2232999-19.patch
-
 projects[flexslider][version] = 2.0-alpha3
 projects[flexslider][type] = module
 projects[flexslider][subdir] = contrib
@@ -222,13 +189,18 @@ projects[panels_tabs][version] = 2.x-dev
 projects[panels_tabs][type] = module
 projects[panels_tabs][subdir] = contrib
 
-; Going to Git repo for set commit
+; Going to Git repo for dev commit
 projects[quicktabs][type] = module
 projects[quicktabs][subdir] = contrib
 projects[quicktabs][download][type] = "git"
 projects[quicktabs][download][branch] = "7.x-3.x"
 projects[quicktabs][download][url] = "http://git.drupal.org/project/quicktabs.git"
 projects[quicktabs][download][revision] = "758de4cc4995149a2de1d566b4209ec343581d27"
+
+; Webspark Megamenu
+projects[special_menu_items][version] = 2.0
+projects[special_menu_items][subdir] = contrib
+projects[special_menu_items][type] = module
 
 projects[tb_megamenu][version] = 1.0-beta5
 projects[tb_megamenu][type] = module
@@ -253,8 +225,7 @@ projects[wysiwyg_template][version] = 2.11
 projects[wysiwyg_template][type] = module
 projects[wysiwyg_template][subdir] = contrib
 
-; Bootstrap and Theme Frameworks
-; Removed -- Stays in webspark-drops-drupal7 repo (see WEBSPARK-366)
+; Bootstrap and Theme Frameworks - Moved to Webspark repo (see WEBSPARK-366)
 
 ; Base Theme - Kalatheme
 
@@ -285,3 +256,29 @@ libraries[fontawesome][download][url] = http://fontawesome.io/assets/font-awesom
 
 libraries[modernizr][download][type] = get
 libraries[modernizr][download][url] = https://github.com/Modernizr/Modernizr/archive/v2.6.2.zip
+
+libraries[jqtree][download][type] = get
+libraries[jqtree][download][url] = https://github.com/mbraak/jqTree/archive/0.22.0.zip
+libraries[jqtree][directory_name] = jqtree
+libraries[jqtree][destination] = libraries
+
+
+; DEPRACATED PROJECTS - DO NOT USE AND LOOK FOR ALTERNATE SOLUTIONS ASAP
+
+; Will be replaced by alternate system that will work with the Hub's new asunews site
+projects[asu_events][version] = 1.0-dev
+projects[asu_events][subdir] = custom
+projects[asu_events][type] = module
+projects[asu_events][download][revision] = 3ff78bb9
+projects[asu_events][download][url] = https://github.com/ASU/asu-drupal-events-feed.git
+projects[asu_news][version] = 1.0-dev
+projects[asu_news][subdir] = custom
+projects[asu_news][type] = module
+projects[asu_news][download][revision] = 7e925b539
+projects[asu_news][download][url] = https://github.com/ASU/asu-drupal-news.git
+; (DEPRACATED in lieu of ASU Degrees - asu_degrees module)
+projects[asu_eadvisor_degree_feed_feature][version] = 1.0-beta1
+projects[asu_eadvisor_degree_feed_feature][subdir] = custom
+projects[asu_eadvisor_degree_feed_feature][type] = module
+projects[asu_eadvisor_degree_feed_feature][download][revision] = fbc26834
+projects[asu_eadvisor_degree_feed_feature][download][url] = https://github.com/ASU/asu-drupal-eadvisor-degree-feed.git
