@@ -1,0 +1,105 @@
+/* DIPLOMA & TRANSCRIPT FORMS -- CSS */
+
+  /* Hides bottom border for DOB and DOA title fields (diplomas & transcripts) */
+.field-type-datetime legend, 
+.field-type-datestamp legend {
+    border-bottom: none;
+}
+
+  /* Sets font styles for DOB and DOA title fields (diplomas & transcripts) */
+.field-type-datetime .fieldset-legend, 
+.field-type-datestamp .fieldset-legend {
+    font-weight: 700;
+    font-size: .55em;
+}
+
+  /* Sets correct spacing between DOB title field and DOB field (diplomas & transcripts) */
+div#edit-commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dob-und-0-value,
+div#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dob-und-0-value {
+     margin-top: -1.5em;
+}
+
+  /* Places asterisk after DOB & DOA title fields and Graduation Date title field (diplomas & transcripts) */
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-graduation-date-add-more-wrapper .fel-field-label:after,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-grad-date-paper-add-more-wrapper .fel-field-label:after,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-att-paper-add-more-wrapper .fel-field-label:after,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-attendanc-add-more-wrapper .fel-field-label:after,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dob-add-more-wrapper .fieldset-legend:after, 
+.field-label .fel-field-label:after,
+#commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dob-add-more-wrapper .fieldset-legend:after,
+#commerce-fieldgroup-pane-group-diploma-diploma-info-field-diploma-dates-attendance-add-more-wrapper .fieldset-legend:after {
+    color: #F00;
+    content: ' *';
+    display: inline;
+}
+  /* Sets correct spacing between DOA title field and DOA fields (diplomas & transcripts) */
+#commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dates-attendance-add-more-wrapper legend,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-attendanc-add-more-wrapper legend,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-att-paper-add-more-wrapper legend,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-graduation-date-add-more-wrapper legend,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-grad-date-paper-add-more-wrapper legend {
+    margin-bottom: .1em;
+}
+
+  /* Sets font size for DOA help text (transcripts) */
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-attendanc-add-more-wrapper .fel-field-help-text,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-att-paper-add-more-wrapper .fel-field-help-text,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-graduation-date-add-more-wrapper .fel-field-help-text,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-grad-date-paper-add-more-wrapper .fel-field-help-text {
+    font-size: .85em;
+}
+
+  /* Moves DOA 'to' label to a more readable position */
+#commerce-fieldgroup-pane-group-diploma-diploma-info-field-diploma-dates-attendance-add-more-wrapper label,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-att-paper-add-more-wrapper label,
+#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-attendanc-add-more-wrapper label {
+    display: block;
+}
+
+  /* Hides 'Date' title next to DOB field (diplomas & transcripts)
+     Hides the field drag element on recipient table (transcripts)
+     Hides 'Show row weights' link for recipients 
+     Hides the duplicated "Help" field from showing under Graduation Date (electronic transcripts)
+     Hides the duplicated "Help" field from showing under Graduation Date (paper transcripts)
+     Hides paper recipient title fields (transcripts)
+     Hides 'N/A' option from eSCRIP-SAFE notification (electronic transcripts)      
+     Hides 'Order total' field that is not updating dynamically (diplomas & transcripts)
+     Hides 'or' label as well as 'Cancel' and 'Go Back' buttons due to error (diplomas & transcripts)
+     Hides 'After paying: View your orders' and 'View your orders' due to anonymous issue (diplomas & transcripts)
+     Hides QuikPAY RTPN content due to anonymous issue with viewing orders
+     Hides QuikPAY instructions from Payment page (/checkout/##/payment) 
+     Hides I Am Me Check field on admin order page due to hiding issues */
+.form-item.form-type-textfield.form-item-commerce-fieldgroup-pane--group-transcript-personal-info-field-transcript-dob-und-0-value-date label,
+#edit-commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dob-und-0-value label,
+td.field-multiple-drag,
+.tabledrag-toggle-weight, 
+.form-item-commerce-fieldgroup-pane--group-transcript-personal-info-field-transcript-graduation-date-und-0-value .description,
+.form-item-commerce-fieldgroup-pane--group-transcript-personal-info-field-transcript-grad-date-paper-und-0-value .description,
+#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-info-p-coll-und-0-field-transcript-recipient-mail-und-0 legend,
+#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-info-e-coll-und-0-field-transcript-noto-escripsafe-und .form-item-commerce-fieldgroup-pane--group-transcript-personal-info-field-transcript-info-e-coll-und-0-field-transcript-noto-escripsafe-und:nth-child(1),
+.commerce-price-formatted-components, .button-operator, #edit-cancel, #edit-back, .quikpay-return, body.page-quikpay-rtpn #block-system-main .content, div.quikpay-instructions.alert.alert-status, div.field.field-name-field-diploma-i-am-me-check.field-type-list-boolean.field-label-above > div.field-label {
+    display: none;
+}
+
+  /* Adds necessary after-transaction content to QuikPAY RTPN receipt page due to full removal of all content stemming from anonymous order issues */
+body.page-quikpay-rtpn div#content-head.row-fluid.content-head:after {
+    content: 'Payment Notification:  Thank you for your payment. You will receive a confirmation email with order details.' !important;
+    display: block;
+    margin-top: 2em;
+}
+
+  /* Reforms commerce checkout "I would like..." number select box dimensions in order to fit the numeral better (transcripts) */
+input#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-info-e-coll-und-0-field-transcript-copies-p-und-0-value, input#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-info-p-coll-und-0-field-transcript-copies-p-und-0-value {
+    height: 30px;
+    width: 45px;
+}
+
+  /* Adds space between Shopping Cart Contents and "Continue" button (diplomas & transcripts) */
+#edit-buttons .fieldset-wrapper {
+    margin-top: 1em;
+}
+
+  /* Adds space between checkout review and 'Billing Information' sections (diplomas & transcripts) */
+#edit-customer-profile-billing {
+    margin-top: 4em;
+}

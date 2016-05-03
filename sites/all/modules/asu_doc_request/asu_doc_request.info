@@ -1,0 +1,8 @@
+name = ASU Doc Request
+description = A commerce add-on module for students.asu.edu that organizes checkout fieldgroups.
+core = 7.x
+package = ASU
+
+dependencies[] = commerce
+dependencies[] = commerce_fieldgroup_panes
+stylesheets[all][] = asu_doc_request.css
