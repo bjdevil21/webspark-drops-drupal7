@@ -1,16 +1,16 @@
 /* DIPLOMA & TRANSCRIPT FORMS -- CSS */
 
   /* Hides bottom border for DOB and DOA title fields (diplomas & transcripts) */
-.field-type-datetime legend, 
+/*.field-type-datetime legend,
 .field-type-datestamp legend {
     border-bottom: none;
-}
+}*/
 
   /* Sets font styles for DOB and DOA title fields (diplomas & transcripts) */
-.field-type-datetime .fieldset-legend, 
+.field-type-datetime .fieldset-legend,
 .field-type-datestamp .fieldset-legend {
     font-weight: 700;
-    font-size: .55em;
+    font-size: .85em;
 }
 
   /* Sets correct spacing between DOB title field and DOB field (diplomas & transcripts) */
@@ -24,9 +24,9 @@ div#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcrip
 #commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-grad-date-paper-add-more-wrapper .fel-field-label:after,
 #commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-att-paper-add-more-wrapper .fel-field-label:after,
 #commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dates-attendanc-add-more-wrapper .fel-field-label:after,
-#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dob-add-more-wrapper .fieldset-legend:after, 
+/*#commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dob-add-more-wrapper .fieldset-legend:after,*/
 .field-label .fel-field-label:after,
-#commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dob-add-more-wrapper .fieldset-legend:after,
+/*#commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dob-add-more-wrapper .fieldset-legend:after,*/
 #commerce-fieldgroup-pane-group-diploma-diploma-info-field-diploma-dates-attendance-add-more-wrapper .fieldset-legend:after {
     color: #F00;
     content: ' *';
@@ -58,21 +58,21 @@ div#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcrip
 
   /* Hides 'Date' title next to DOB field (diplomas & transcripts)
      Hides the field drag element on recipient table (transcripts)
-     Hides 'Show row weights' link for recipients 
+     Hides 'Show row weights' link for recipients
      Hides the duplicated "Help" field from showing under Graduation Date (electronic transcripts)
      Hides the duplicated "Help" field from showing under Graduation Date (paper transcripts)
      Hides paper recipient title fields (transcripts)
-     Hides 'N/A' option from eSCRIP-SAFE notification (electronic transcripts)      
+     Hides 'N/A' option from eSCRIP-SAFE notification (electronic transcripts)
      Hides 'Order total' field that is not updating dynamically (diplomas & transcripts)
      Hides 'or' label as well as 'Cancel' and 'Go Back' buttons due to error (diplomas & transcripts)
      Hides 'After paying: View your orders' and 'View your orders' due to anonymous issue (diplomas & transcripts)
      Hides QuikPAY RTPN content due to anonymous issue with viewing orders
-     Hides QuikPAY instructions from Payment page (/checkout/##/payment) 
+     Hides QuikPAY instructions from Payment page (/checkout/##/payment)
      Hides I Am Me Check field on admin order page due to hiding issues */
 .form-item.form-type-textfield.form-item-commerce-fieldgroup-pane--group-transcript-personal-info-field-transcript-dob-und-0-value-date label,
 #edit-commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dob-und-0-value label,
 td.field-multiple-drag,
-.tabledrag-toggle-weight, 
+.tabledrag-toggle-weight,
 .form-item-commerce-fieldgroup-pane--group-transcript-personal-info-field-transcript-graduation-date-und-0-value .description,
 .form-item-commerce-fieldgroup-pane--group-transcript-personal-info-field-transcript-grad-date-paper-und-0-value .description,
 #edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-info-p-coll-und-0-field-transcript-recipient-mail-und-0 legend,
