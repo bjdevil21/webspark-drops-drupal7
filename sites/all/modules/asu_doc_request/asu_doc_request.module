@@ -297,6 +297,7 @@ function asu_doc_request_form_alter(&$form, &$form_state, $form_id) {
             $form['commerce_shipping']['shipping_service']['international_ups']['#access'] = FALSE;
             $form['commerce_shipping']['shipping_service']['electronic_delivery']['#access'] = FALSE;
 
+            $shipping_service = 'NULL';
             if (isset($form_state['values']['commerce_shipping']['shipping_service'])) {
               $shipping_service = $form_state['values']['commerce_shipping']['shipping_service'];
             }
