@@ -746,8 +746,12 @@ function asu_doc_request_commerce_checkout_form_shipping_validate(&$form, &$form
 
   // Excluding electronic transcript orders from validation since fields are already being hidden
   // Excluding paper transcripts with pickup shipping service selected from validation since fields aren't used
-  //if (isset($form_state['order']->field_transcript_delivery_method['und'][0]['value'])) {
-    if ($form_state['order']->field_transcript_delivery_method['und'][0]['value'] != 'Electronic') {
+    $delivery_method = 'NULL';
+    if (isset($form_state['order']->field_transcript_delivery_method['und'][0]['value'])) {
+      $delivery_method = $form_state['order']->field_transcript_delivery_method['und'][0]['value'];
+    }
+
+    if ($delivery_method != 'Electronic') {
       if ($form_state['values']['commerce_shipping']['shipping_service'] != 'commerce_pickup__node__4') {
         if ($form_state['values']['commerce_shipping']['shipping_service'] != 'commerce_pickup__node__5') {
 
@@ -784,7 +788,7 @@ function asu_doc_request_commerce_checkout_form_shipping_validate(&$form, &$form
         // Do nothing
       }
     }
-  //}
+
 }
 
 
