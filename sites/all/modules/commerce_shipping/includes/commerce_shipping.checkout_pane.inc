@@ -187,7 +187,7 @@ function commerce_shipping_recalculate_services_validate($form, &$form_state) {
     // Clear all errors.
     form_clear_error();
     watchdog('access denied', check_plain($_GET['q']), NULL, WATCHDOG_WARNING);
-    drupal_set_message(t('You are not authorized to access this command.'), 'error');
+    //drupal_set_message(t('You are not authorized to access this command.'), 'error');
     $form_state['rebuild'] = TRUE;
     return FALSE;
   }
