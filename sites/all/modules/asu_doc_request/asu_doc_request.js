@@ -6,11 +6,11 @@
       // Handle show/hide on electronic recipients.
 
       $('#field-transcript-recipient-coll-values tbody tr:not(:first)').hide();
-    
-      $( "#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-info-e-coll-und-0-field-transcript-copies-p-und-0-value" ).change(function() {
-        $('#field-transcript-recipient-coll-values tbody tr').hide();     
 
-        var count = $(this).val();	
+      $( "#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-info-e-coll-und-0-field-transcript-copies-p-und-0-value" ).change(function() {
+        $('#field-transcript-recipient-coll-values tbody tr').hide();
+
+        var count = $(this).val();
 	      var i = 0;
 
 	      while (i < count) {

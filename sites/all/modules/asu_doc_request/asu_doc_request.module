@@ -798,14 +798,19 @@ function asu_doc_request_quikpay_hash_param_alter(&$variable, &$param, $order) {
   //dpm($param);
 
   $commerce_sku = $param['userChoice3'];
+  $commerce_product_type = 'NULL';
   //dpm($commerce_sku);
 
   if (strpos($commerce_sku,'TRANSCRIPT') !== false) {
     $commerce_product_type = "transcript";
+  } else {
+    $commerce_product_type = "diploma";
   }
 
   if ($commerce_product_type == "transcript") {
     $param['orderType'] = "ThunderbirdTranscripts";
+  } else {
+    $param['orderType'] = "ThunderbirdDiplomas";
   }
   //dpm($param);
 }
