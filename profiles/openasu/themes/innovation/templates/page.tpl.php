@@ -142,6 +142,29 @@
 		</div><!-- /#content -->
 
   </div></div> <!-- /#main, /#main-wrapper -->
+  
+  <!-- BoldChat Visitor Monitor HTML v5.00 (Website=My Website,Ruleset=My Invite Ruleset,Floating Chat=- None - -->
+<script type="text/javascript">
+  window._bcvma = window._bcvma || [];
+  _bcvma.push(["setAccountID", "421005731063414730"]);
+  _bcvma.push(["setParameter", "WebsiteID", "418316400453162226"]);
+  _bcvma.push(["setParameter", "InvitationID", "418316400725203878"]);
+  _bcvma.push(["pageViewed", document.location.href, document.referrer]);
+  var bcLoad = function(){
+    if(window.bcLoaded) return; window.bcLoaded = true;
+    var vms = document.createElement("script"); vms.type = "text/javascript"; vms.async = true;
+    vms.src = ('https:'==document.location.protocol?'https://':'http://') + "vmss.boldchat.com/aid/421005731063414730/bc.vms4/vms.js";
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(vms, s);
+  };
+  if(window.pageViewer && pageViewer.load) pageViewer.load();
+  else if(document.readyState=="complete") bcLoad();
+  else if(window.addEventListener) window.addEventListener('load', bcLoad, false);
+  else window.attachEvent('onload', bcLoad);
+</script>
+<noscript>
+<a href="http://www.boldchat.com" title="Live Chat" target="_blank"><img alt="Live Chat" src="https://vms.boldchat.com/aid/421005731063414730/bc.vmi?&amp;wdid=418316400453162226" border="0" width="1" height="1" /></a>
+</noscript>
+<!-- /BoldChat Visitor Monitor HTML v5.00 -->
 
   <!-- Page Footer -->
   <footer id="page-footer">
