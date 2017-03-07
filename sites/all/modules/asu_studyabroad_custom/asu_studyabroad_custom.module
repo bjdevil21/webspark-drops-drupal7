@@ -1,12 +1,10 @@
 <?php
 /**
  * Implements hook_form_FORM_ID_alter()
- * 
+ * Adding Check All option - CheckAll module
  */ 
 function asu_studyabroad_custom_form_scholarship_node_form_alter(&$form, &$form_state) {
-  
-  dpm($form, "form");
-  
+    
   $form['und']['field_ss_destination_country'] = array(
     '#checkall' => TRUE,  
   );  
