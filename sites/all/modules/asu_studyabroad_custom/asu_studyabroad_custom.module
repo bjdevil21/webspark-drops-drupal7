@@ -7,12 +7,12 @@ function asu_studyabroad_custom_form_scholarship_node_form_alter(&$form, &$form_
   
   dpm($form, "form");
   
-//  $form['foobar'] = array(
-//    '#type' => 'checkboxes',
-//    '#options' => $options,
-//    '#default_value' => $default_value,
-//    '#checkall' => 'unique-class-for-each-checkboxes-column',  // <--- this is it ;-)
-//  );  
+  $form['und']['field_ss_destination_country'] = array(
+    '#type' => 'checkboxes',
+    '#options' => $options,
+    '#default_value' => $default_value,
+    '#checkall' => TRUE,  // <--- this is it ;-)
+  );  
   
 }
 
