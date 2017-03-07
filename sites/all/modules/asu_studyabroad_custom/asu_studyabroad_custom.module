@@ -8,8 +8,12 @@ function asu_studyabroad_custom_form_scholarship_node_form_alter(&$form, &$form_
   dpm($form, "form");
   
   $form['und']['field_ss_destination_country'] = array(
-    '#checkall' => TRUE,  // <--- this is it ;-)
+    '#checkall' => TRUE,  
+  );  
+  $form['und']['field_ss_country_display'] = array(
+    '#checkall' => TRUE,  
   );  
   
 }
+
 
