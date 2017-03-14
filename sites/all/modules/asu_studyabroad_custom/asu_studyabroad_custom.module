@@ -14,4 +14,8 @@ function asu_studyabroad_custom_form_scholarship_node_form_alter(&$form, &$form_
   
 }
 
+function asu_studyabroad_custom_form_views_exposed_form_alter(&$form, &$form_state) {
+  dpm($form, "form");
+  
+}
 
