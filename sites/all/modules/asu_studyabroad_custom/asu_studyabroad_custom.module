@@ -16,7 +16,7 @@ function asu_studyabroad_custom_form_scholarship_node_form_alter(&$form, &$form_
 
 function asu_studyabroad_custom_form_views_exposed_form_alter(&$form, &$form_state) {
   $form['field_ss_college_tid']['#description'] .= $form['#info']['filter-field_ss_college_tid']['description'];
-  $form['field_ss_diverse_characteristics']['#description'] .= $form['#info']['filter-field_ss_diverse_characteristics_tid']['description'];
+  $form['field_ss_diverse_characteristics_tid']['#description'] .= $form['#info']['filter-field_ss_diverse_characteristics_tid']['description'];
   dpm($form, "form");
   
 }
