@@ -26,4 +26,6 @@ function asu_studyabroad_custom_form_views_exposed_form_alter(&$form, &$form_sta
 function asu_studyabroad_custom_form_views_ui_edit_display_form_alter(&$form, &$form_state) {
   dpm($form, "form");
   
+  $form['options']['views_ef_fieldset']['options']['sort']['container-1']['description']['#size'] = 25;
+  
 }
