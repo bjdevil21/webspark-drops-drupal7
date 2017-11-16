@@ -161,7 +161,7 @@
   else window.attachEvent('onload', bcLoad);
 </script>
 <noscript>
-<a href="http://www.boldchat.com" title="Live Chat" target="_blank"><img alt="Live Chat" src="https://vms.boldchat.com/aid/421005731063414730/bc.vmi?&amp;wdid=418316400453162226" border="0" width="1" height="1" /></a>
+<a href="https://www.boldchat.com" title="Live Chat" target="_blank"><img alt="Live Chat" src="https://vms.boldchat.com/aid/421005731063414730/bc.vmi?&amp;wdid=418316400453162226" border="0" width="1" height="1" /></a>
 </noscript>
 <!-- /BoldChat Visitor Monitor HTML v5.00 -->
 
