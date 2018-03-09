@@ -3,11 +3,16 @@
   /* Sets font styles for DOB and DOA title fields (diplomas & transcripts) */
 .field-type-datetime .fieldset-legend,
 .field-type-datestamp .fieldset-legend {
-    font-weight: 700;
-    font-size: .85em;
+    font-weight: 700 !important;
+    font-size: .85em !important;
 }
 
-/* Sets proper sizing for DOB month field */
+  /* Sets proper sizing section headings (diplomas & transcripts) */
+#commerce-checkout-form-checkout > div .fieldset-legend {
+    font-size: 1.25em;
+}
+
+  /* Sets proper sizing for DOB month field */
 select#edit-commerce-fieldgroup-pane-group-diploma-personal-info-field-diploma-dob-und-0-value-month,
 select#edit-commerce-fieldgroup-pane-group-transcript-personal-info-field-transcript-dob-und-0-value-month {
     height: 2em;
@@ -103,4 +108,10 @@ form#quikpay-redirect-form fieldset {
   /* Forces shopping cart table width to not be 100% */
 fieldset#edit-cart-contents table {
     width: auto;
+}
+
+  /* Hides 'ASU Diploma' dropdown option on diploma checkout because option cannot be removed in Drupal UI since
+   * previous orders utilize the field */
+#edit-commerce-fieldgroup-pane-group-diploma-diploma-info-field-diploma-degree-awarded-und option:nth-child(2) {
+    display: none !important;
 }

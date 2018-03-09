@@ -88,13 +88,6 @@ function asu_doc_request_form_alter(&$form, &$form_state, $form_id) {
 	        $form['commerce_fieldgroup_pane__group_diploma_personal_info']['enabled'] = FALSE;
 
 	  // Markup at top of checkout
-          $form['commerce_fieldgroup_pane__group_transcript_processing_info']['field_transcript_elec_request']['#states'] = array(
-              'visible' => array(
-                'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array(
-                  'value' => 'Electronic'
-                  ),
-                ),
-              );
           $form['commerce_fieldgroup_pane__group_transcript_processing_info']['field_transcript_paper_request']['#states'] = array(
               'visible' => array(
                 'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array(
@@ -116,18 +109,6 @@ function asu_doc_request_form_alter(&$form, &$form_state, $form_id) {
               ),
             );
 
-          // Alumni - Electronic
-          $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_graduation_date']['#states'] = array(
-              'visible' => array(
-                'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_tbird_alumni][und]"]' => array('value' => 'Yes'),
-                'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array('value' => 'Electronic'),
-              ),
-              'required' => array(
-                'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_tbird_alumni][und]"]' => array('value' => 'Yes'),
-                'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array('value' => 'Electronic'),
-              ),
-            );
-
           // Non-alumni - Paper
           $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']['#states'] = array(
               'visible' => array(
@@ -140,34 +121,9 @@ function asu_doc_request_form_alter(&$form, &$form_state, $form_id) {
               )
             );
 
-          // Non-alumni - Electronic
-          $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']['#states'] = array(
-            'visible' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_tbird_alumni][und]"]' => array('value' => 'No'),
-              'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array('value' => 'Electronic'),
-            ),
-            'required' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_tbird_alumni][und]"]' => array('value' => 'No'),
-              'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array('value' => 'Electronic'),
-            )
-          );
-
           // Field collection on bottom of checkout
           // Remove/reset the validation that was creeping in for the collection, related to address fields.
-          $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['#element_validate'] = NULL;
           $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['und'][0]['#element_validate'] = NULL;
-          $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['#states'] = array(
-            'visible' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array(
-                'value' => 'Electronic'
-              ),
-            ),
-            'required' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array(
-                'value' => 1
-              ),
-            ),
-          );
           $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['#states'] = array(
             'visible' => array(
               'input[name="commerce_fieldgroup_pane__group_transcript_processing_info[field_transcript_delivery_method][und]"]' => array(
@@ -180,34 +136,6 @@ function asu_doc_request_form_alter(&$form, &$form_state, $form_id) {
               ),
             ),
           );
-
-          // eScrip Notification
-          $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_email']['#states'] = array(
-            'visible' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_info_e_coll][und][0][field_transcript_noto_escripsafe][und]"]' => array(
-                'value' => '1'
-              ),
-            ),
-            'required' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_info_e_coll][und][0][field_transcript_noto_escripsafe][und]"]' => array(
-                'value' => 1
-              ),
-            ),
-          );
-          $form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_email_c']['#states'] = array(
-            'visible' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_info_e_coll][und][0][field_transcript_noto_escripsafe][und]"]' => array(
-                'value' => '1'
-              ),
-            ),
-            'required' => array(
-              'input[name="commerce_fieldgroup_pane__group_transcript_personal_info[field_transcript_info_e_coll][und][0][field_transcript_noto_escripsafe][und]"]' => array(
-                'value' => 1
-              ),
-            ),
-          );
-
-	        unset($form['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_escripsafe']['und']['#options'][0]);
 
           // Put our custom validation handler first so we can alter those to come.
           // hook_commerce_checkout_pane_info_alter() didn't work... but applying this to
@@ -272,44 +200,22 @@ function asu_doc_request_form_alter(&$form, &$form_state, $form_id) {
           break; // end diploma
         case 'transcript':
 
-          if ($commerce_order->field_transcript_delivery_method['und'][0]['value'] == 'Electronic') {
+          $form['commerce_shipping']['shipping_service']['domestic_ups']['#access'] = FALSE;
+          $form['commerce_shipping']['shipping_service']['international_ups']['#access'] = FALSE;
+          $form['commerce_shipping']['shipping_service']['electronic_delivery']['#access'] = FALSE;
 
-            $form['commerce_shipping']['shipping_service']['#default_value'] = 'electronic_delivery';
+          $shipping_service = 'NULL';
+          if (isset($form_state['values']['commerce_shipping']['shipping_service'])) {
+            $shipping_service = $form_state['values']['commerce_shipping']['shipping_service'];
+          }
+
+          if ($shipping_service == 'commerce_pickup__node__4') {
             $form['customer_profile_shipping']['#access'] = FALSE;
-            $form['no_shipping_required'] = array(
-                '#type' => 'item',
-                '#weight' => 1,
-                '#markup' => '<strong>No shipping values are required for electronic copies; please proceed to the Review page.</strong>',
-                );
-
-            $form['commerce_shipping']['shipping_service']['us_mail']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['domestic_ups']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['international_ups']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['fedex_express']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['international_express_mail']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['international_fedex_express']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['us_postal_express_mail']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['commerce_pickup__node__4']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['commerce_pickup__node__5']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['electronic_delivery']['#access'] = FALSE;
-          } else { // Paper
-            $form['commerce_shipping']['shipping_service']['domestic_ups']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['international_ups']['#access'] = FALSE;
-            $form['commerce_shipping']['shipping_service']['electronic_delivery']['#access'] = FALSE;
-
-            $shipping_service = 'NULL';
-            if (isset($form_state['values']['commerce_shipping']['shipping_service'])) {
-              $shipping_service = $form_state['values']['commerce_shipping']['shipping_service'];
-            }
-
-            if ($shipping_service == 'commerce_pickup__node__4') {
-              $form['customer_profile_shipping']['#access'] = FALSE;
-            } elseif ($shipping_service == 'commerce_pickup__node__5') {
-              $form['customer_profile_shipping']['#access'] = FALSE;
-            } else {
-              $form['customer_profile_shipping']['#access'] = TRUE;
-            }
-         }
+          } elseif ($shipping_service == 'commerce_pickup__node__5') {
+            $form['customer_profile_shipping']['#access'] = FALSE;
+          } else {
+            $form['customer_profile_shipping']['#access'] = TRUE;
+          }
 
           break; // end transcript
       }
@@ -375,15 +281,6 @@ function asu_doc_request_form_alter(&$form, &$form_state, $form_id) {
           }
         }
 
-        $commerce_method_value = $commerce_order->field_transcript_delivery_method['und'][0]['value'];
-        //dpm($commerce_method_value);
-
-        if ($commerce_method_value == "Electronic") {
-	        //unset($commerce_order->field_transcript_info_p_coll);
-	      } elseif  ($commerce_method_value == "Paper") {
-          unset($commerce_order->field_transcript_info_e_coll);
-        }
-
       }
 
 
@@ -426,147 +323,56 @@ function asu_doc_request_commerce_checkout_form_checkout_custom_form_validate(&$
       unset($form_state['values']['commerce_fieldgroup_pane__group_diploma_personal_info']);
       unset($form_state['values']['commerce_fieldgroup_pane__group_diploma_diploma_info']);
 
-      // Detect if we're paper or electronic, branch logic on that.
-      if ($form_state['values']['commerce_fieldgroup_pane__group_transcript_processing_info']['field_transcript_delivery_method']['und'][0]['value'] == 'Paper') {
-
-        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']);
-
-        // Paper
-        $paper_copies = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['und'][0]['field_transcript_copies_p']['und'][0]['value'];
-        $paper_recipients = array();
-        if (isset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['und'][0]['field_transcript_recipient_mail']['und'])) {
-          $paper_recipients = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['und'][0]['field_transcript_recipient_mail']['und'];
-        }
-
-        // Remove any recipients beyond use selected # of copies.
-        $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'] = array_slice($paper_recipients, 0, $paper_copies);
-
-        // Float.
-        $copies = number_format($paper_copies, 2);
-
-
-        // Grab selected Thunderbird alumni choice
-        $sel_tbird_alum = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_tbird_alumni']['und'][0]['value'];
-
-        if ($sel_tbird_alum == "Yes") {
-
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_graduation_date']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']);
-
-          // Grab selected Graduation Date from form
-          $sel_grad_date = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_grad_date_paper']['und'][0]['value'];
-
-          // If either field is NULL, throw error
-          if ($sel_grad_date == NULL) {
-            form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_grad_date_paper', t('Graduate Date field is required.'));
-          }
-        } elseif ($sel_tbird_alum == "No") {
-
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_graduation_date']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_grad_date_paper']);
-
-          // Grab selected Dates of Attendance (from and to) dates from form
-          $sel_doa_from = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']['und'][0]['value'];
-          $sel_doa_to = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']['und'][0]['value2'];
-
-          // If either field is NULL, throw error
-          if (($sel_doa_from == NULL) || ($sel_doa_to == NULL)) {
-            form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_dates_att_paper', t('Dates of Attendance field is required.'));
-          }
-        }
-
-        //dpm($form,$name='Form');
-        //dpm($form_state['values'],$name='Form State');
-        //dpm($commerce_order,$name='Order');
-        //dpm($commerce_product_type,$name='Product Type');
-
-      } else { // Electronic
-
-        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']);
-
-        // Electronic
-        $electronic_copies = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_copies_p']['und'][0]['value'];
-        $electronic_recipients = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'];
-
-        // Remove any recipients beyond use selected # of copies.
-        $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'] =
-          array_slice($electronic_recipients, 0, $electronic_copies);
-
-        // Float.
-        $copies = number_format($electronic_copies, 2);
-
-        // Grab selected Thunderbird alumni choice
-        $sel_tbird_alum = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_tbird_alumni']['und'][0]['value'];
-
-        if ($sel_tbird_alum == "Yes") {
-
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_grad_date_paper']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']);
-
-          // Grab selected Graduation Date from form
-          $sel_grad_date = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_graduation_date']['und'][0]['value'];
-
-          // If either field is NULL, throw error
-          if ($sel_grad_date == NULL) {
-            form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_graduation_date', t('Graduate Date field is required.'));
-          }
-        } elseif ($sel_tbird_alum == "No") {
-
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_grad_date_paper']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_graduation_date']);
-          unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']);
-
-          // Grab selected Dates of Attendance (from and to) dates from form
-          $sel_doa_from = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']['und'][0]['value'];
-          $sel_doa_to = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']['und'][0]['value2'];
-
-          // If either field is NULL, throw error
-          if (($sel_doa_from == NULL) || ($sel_doa_to == NULL)) {
-            form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_dates_attendanc', t('Dates of Attendance field is required.'));
-          }
-        }
-
-        // Grab selected email option
-        $sel_noto_email = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_escripsafe']['und'][0]['value'];
-
-        if ($sel_noto_email == "1") {
-
-          // Grab email fields
-          $sel_email = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_email']['und'][0]['value'];
-          $sel_email_c = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_email_c']['und'][0]['value'];
-
-          if (($sel_email == NULL) || ($sel_email_c == NULL)) {
-            form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_info_e_coll][' . LANGUAGE_NONE . '][0][field_transcript_noto_email', t('Notification Email Address fields are required.'));
-          } else {
-            if ($sel_email != $sel_email_c) {
-              form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_info_e_coll][' . LANGUAGE_NONE . '][0][field_transcript_noto_email', t('Notification Email Addresses must match.'));
-            }
-          }
-
-        }
-
-        foreach ($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'] as $key => $value) {
-          $key_holder = (int)$key;
-          $name_check = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'][$key_holder]['field_transcript_re_coll_name']['und'][0]['value'];
-          $email_check1 = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'][$key_holder]['field_transcript_re_coll_email']['und'][0]['value'];
-          $email_check2 = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'][$key_holder]['field_transcript_re_coll_email_c']['und'][0]['value'];
-          if (($name_check == NULL) || ($email_check1 == NULL) || ($email_check2 == NULL)) {
-            form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_info_e_coll][' . LANGUAGE_NONE . '][0][field_transcript_recipient_coll][' . LANGUAGE_NONE . '][$key_holder][field_transcript_re_coll_name', t('Recipient field(s) are required.'));
-          }
-          if ($email_check1 != $email_check2) {
-            form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_info_e_coll][' . LANGUAGE_NONE . '][0][field_transcript_noto_email', t('Recipient Email Addresses must match.'));
-          }
-        }
-
-        //dpm($form,$name='Form');
-        //dpm($form_state['values'],$name='Form State');
-        //dpm($commerce_order,$name='Order');
-        //dpm($commerce_product_type,$name='Product Type');
-
+      // Paper
+      $paper_copies = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['und'][0]['field_transcript_copies_p']['und'][0]['value'];
+      $paper_recipients = array();
+      if (isset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['und'][0]['field_transcript_recipient_mail']['und'])) {
+        $paper_recipients = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll']['und'][0]['field_transcript_recipient_mail']['und'];
       }
+
+      // Remove any recipients beyond use selected # of copies.
+      $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_recipient_coll']['und'] = array_slice($paper_recipients, 0, $paper_copies);
+
+      // Float.
+      $copies = number_format($paper_copies, 2);
+
+
+      // Grab selected Thunderbird alumni choice
+      $sel_tbird_alum = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_tbird_alumni']['und'][0]['value'];
+
+      if ($sel_tbird_alum == "Yes") {
+
+        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_graduation_date']);
+        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']);
+        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']);
+
+        // Grab selected Graduation Date from form
+        $sel_grad_date = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_grad_date_paper']['und'][0]['value'];
+
+        // If either field is NULL, throw error
+        if ($sel_grad_date == NULL) {
+          form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_grad_date_paper', t('Graduate Date field is required.'));
+        }
+      } elseif ($sel_tbird_alum == "No") {
+
+        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_graduation_date']);
+        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_attendanc']);
+        unset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_grad_date_paper']);
+
+        // Grab selected Dates of Attendance (from and to) dates from form
+        $sel_doa_from = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']['und'][0]['value'];
+        $sel_doa_to = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_dates_att_paper']['und'][0]['value2'];
+
+        // If either field is NULL, throw error
+        if (($sel_doa_from == NULL) || ($sel_doa_to == NULL)) {
+          form_set_error('commerce_fieldgroup_pane__group_transcript_personal_info][field_transcript_dates_att_paper', t('Dates of Attendance field is required.'));
+        }
+      }
+
+        //dpm($form,$name='Form');
+        //dpm($form_state['values'],$name='Form State');
+        //dpm($commerce_order,$name='Order');
+        //dpm($commerce_product_type,$name='Product Type');
 
       // Update # of line items (which will adjust the price, accordingly).
       $line_items->quantity = $copies;
@@ -603,11 +409,6 @@ function asu_doc_request_commerce_checkout_form_checkout_custom_form_validate(&$
 function asu_doc_request_commerce_checkout_form_checkout_custom_form_submit(&$form, &$form_state) {
   //dpm($form_state);
 
-  // Grab selected email option
-  if(isset($form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_escripsafe']['und'][0]['value'])) {
-    $sel_noto_email = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll']['und'][0]['field_transcript_noto_escripsafe']['und'][0]['value'];
-  }
-
   // Field Collection values don't get set for some reason, in commerce field panes,
   // so we save them ourselves.
   try {
@@ -617,112 +418,24 @@ function asu_doc_request_commerce_checkout_form_checkout_custom_form_submit(&$fo
     // Load the order
     $commerce_order = commerce_cart_order_load($user->uid);
 
-    // Defining $delivery_method variable
-    $delivery_method = 'NULL';
+    // Get print collection values.
+    $print_collection = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll'][LANGUAGE_NONE][0];
+    $print_copies = $print_collection['field_transcript_copies_p'][LANGUAGE_NONE][0]['value'];
 
-    if (isset($commerce_order->field_transcript_delivery_method['und'][0]['value'])) {
-      $delivery_method = $commerce_order->field_transcript_delivery_method['und'][0]['value'];
-    }
+    // Create the print collection entity and set its "host."
+    $collection0 = entity_create('field_collection_item', array('field_name' => 'field_transcript_info_p_coll'));
+    $collection0->setHostEntity('commerce_order', $commerce_order);
 
-    // Only set values for the selected delivery method so if a user switches
-    // between options, we don't have irrelevant and confusing data on review
-    // page and on order records.
-    if ($delivery_method == 'Paper') {
+    // Make a metadata wrapper for print collection.
+    $c0wrapper = entity_metadata_wrapper('field_collection_item', $collection0);
 
-      // Get print collection values.
-      $print_collection = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_p_coll'][LANGUAGE_NONE][0];
-      $print_copies = $print_collection['field_transcript_copies_p'][LANGUAGE_NONE][0]['value'];
+    // Map in print collection field values.
+    $c0wrapper->field_transcript_copies_p->set($print_copies);
+    $c0wrapper->save();
 
-      // Create the print collection entity and set its "host."
-      $collection0 = entity_create('field_collection_item', array('field_name' => 'field_transcript_info_p_coll'));
-      $collection0->setHostEntity('commerce_order', $commerce_order);
-
-      // Make a metadata wrapper for print collection.
-      $c0wrapper = entity_metadata_wrapper('field_collection_item', $collection0);
-
-      // Map in print collection field values.
-      $c0wrapper->field_transcript_copies_p->set($print_copies);
-      $c0wrapper->save();
-
-
-      // Set electronic to 1 copies (the minimum - won't be used, and will only
-      // be visible on the edit order form).
-
-      // Create the electronic collection entity and set its "host."
-      $collection1 = entity_create('field_collection_item', array('field_name' => 'field_transcript_info_e_coll'));
-      $collection1->setHostEntity('commerce_order', $commerce_order);
-
-      // Make a metadata wrapper for electronic collection.
-      $c1wrapper = entity_metadata_wrapper('field_collection_item', $collection1);
-
-      // Map in electronic collection field values.
-      $c1wrapper->field_transcript_copies_p->set(1);
-      $c1wrapper->save();
-      $owrapper = entity_metadata_wrapper('commerce_order', $commerce_order);
-      //$owrapper->field_transcript_info_e_coll->field_transcript_recipient_coll->field_transcript_re_coll_name->set('Billy Williams');
-      $owrapper->save();
-
-    } elseif ($delivery_method == 'Electronic') { // 'Electronic'
-
-      // Get the electronic collection values.
-      $electronic_collection = $form_state['values']['commerce_fieldgroup_pane__group_transcript_personal_info']['field_transcript_info_e_coll'][LANGUAGE_NONE][0];
-      $electronic_recipients = $electronic_collection['field_transcript_recipient_coll'][LANGUAGE_NONE];
-      $electronic_copies = $electronic_collection['field_transcript_copies_p'][LANGUAGE_NONE][0]['value'];
-      $electronic_noto_escripsafe = $electronic_collection['field_transcript_noto_escripsafe'][LANGUAGE_NONE][0]['value'];
-      $electronic_noto_email = $electronic_collection['field_transcript_noto_email'][LANGUAGE_NONE][0]['value'];
-      $electronic_noto_email_c = $electronic_collection['field_transcript_noto_email_c'][LANGUAGE_NONE][0]['value'];
-
-      // Create the electronic collection entity and set its "host."
-      $collection1 = entity_create('field_collection_item', array('field_name' => 'field_transcript_info_e_coll'));
-      $collection1->setHostEntity('commerce_order', $commerce_order);
-
-      // Make a metadata wrapper for electronic collection.
-      $c1wrapper = entity_metadata_wrapper('field_collection_item', $collection1);
-
-      // Map in electronic collection field values.
-      $c1wrapper->field_transcript_copies_p->set($electronic_copies);
-      $c1wrapper->field_transcript_noto_escripsafe->set($electronic_noto_escripsafe);
-      $c1wrapper->field_transcript_noto_email->set($electronic_noto_email);
-      $c1wrapper->field_transcript_noto_email_c->set($electronic_noto_email_c);
-      $c1wrapper->save();
-
-      // Handle multi-valued nested field collections attached to electronic collection.
-      foreach ($electronic_recipients as $recipient) {
-        $collection2 = entity_create('field_collection_item', array('field_name' => 'field_transcript_recipient_coll'));
-        $collection2->setHostEntity('field_collection_item', $collection1);
-        //$collection2->field_transcript_re_coll_name[LANGUAGE_NONE][0]['value'] = 'Whatevs';
-        //$collection2->save();
-        $c2wrapper = entity_metadata_wrapper('field_collection_item', $collection2);
-
-        // Map in the nested field collection electronic recipient values.
-        $c2wrapper->field_transcript_re_coll_name->set($recipient['field_transcript_re_coll_name'][LANGUAGE_NONE][0]['value']);
-        $c2wrapper->field_transcript_re_coll_email->set($recipient['field_transcript_re_coll_email'][LANGUAGE_NONE][0]['value']);
-        $c2wrapper->field_transcript_re_coll_email_c->set($recipient['field_transcript_re_coll_email_c'][LANGUAGE_NONE][0]['value']);
-        $c2wrapper->save();
-
-      }
-
-      // Set print to 1 copies (the minimum - won't be used, and will only
-      // be visible on the edit order form).
-
-      // Create the print collection entity and set its "host."
-      $collection0 = entity_create('field_collection_item', array('field_name' => 'field_transcript_info_p_coll'));
-      $collection0->setHostEntity('commerce_order', $commerce_order);
-
-      // Make a metadata wrapper for print collection.
-      $c0wrapper = entity_metadata_wrapper('field_collection_item', $collection0);
-
-      // Map in print collection field values.
-      $c0wrapper->field_transcript_copies_p->set(1);
-      $c0wrapper->save();
-
-      $owrapper = entity_metadata_wrapper('commerce_order', $commerce_order);
-      //$owrapper->field_transcript_info_e_coll->field_transcript_recipient_coll->field_transcript_re_coll_name->set('Billy Williams');
-      $owrapper->save();
-
-    } else {
-      //dpm("DIPLOMA - I'm here");
-    }
+    $owrapper = entity_metadata_wrapper('commerce_order', $commerce_order);
+    //$owrapper->field_transcript_info_e_coll->field_transcript_recipient_coll->field_transcript_re_coll_name->set('Billy Williams');
+    $owrapper->save();
 
     // Save order.
 
@@ -745,50 +458,43 @@ function asu_doc_request_commerce_checkout_form_checkout_custom_form_submit(&$fo
 
 function asu_doc_request_commerce_checkout_form_shipping_validate(&$form, &$form_state) {
 
-  // Excluding electronic transcript orders from validation since fields are already being hidden
   // Excluding paper transcripts with pickup shipping service selected from validation since fields aren't used
-    $delivery_method = 'NULL';
-    if (isset($form_state['order']->field_transcript_delivery_method['und'][0]['value'])) {
-      $delivery_method = $form_state['order']->field_transcript_delivery_method['und'][0]['value'];
-    }
 
-    if ($delivery_method != 'Electronic') {
-      if ($form_state['values']['commerce_shipping']['shipping_service'] != 'commerce_pickup__node__4') {
-        if ($form_state['values']['commerce_shipping']['shipping_service'] != 'commerce_pickup__node__5') {
+  if ($form_state['values']['commerce_shipping']['shipping_service'] != 'commerce_pickup__node__4') {
+    if ($form_state['values']['commerce_shipping']['shipping_service'] != 'commerce_pickup__node__5') {
 
-          // Doing our own validation on these fields, as standard validation was
-          // not firing, leading to an entityMetadataWrapper error getting thrown.
-          $country = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['country'];
-          $full_name = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['name_line'];
-          $address_1 = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['thoroughfare'];
-          if (isset($form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['locality'])) {
-            $city = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['locality'];
-          }
-          if (isset($form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['administrative_area'])) {
-            $state = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['administrative_area'];
-          }
-          if (isset($form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['postal_code'])) {
-            $zip = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['postal_code'];
-          }
-
-          // If any of these values are empty, throw validation error message.
-          if ($country == 'US') {
-            if (empty($full_name) || empty($address_1) || empty($city) || empty($state) || empty($zip)) {
-              form_set_error('shipping_validation', t('Missing U.S. shipping values. Please complete shipping details to continue.'));
-            }
-          } else { // International country
-            if (empty($full_name) || empty($address_1)) {
-              form_set_error('shipping_validation', t('Missing international shipping values. Please complete shipping details to continue.'));
-            }
-          }
-
-        } else { // pickup order
-          // Do nothing
-        }
-      } else { // pickup order
-        // Do nothing
+      // Doing our own validation on these fields, as standard validation was
+      // not firing, leading to an entityMetadataWrapper error getting thrown.
+      $country = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['country'];
+      $full_name = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['name_line'];
+      $address_1 = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['thoroughfare'];
+      if (isset($form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['locality'])) {
+        $city = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['locality'];
       }
+      if (isset($form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['administrative_area'])) {
+        $state = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['administrative_area'];
+      }
+      if (isset($form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['postal_code'])) {
+        $zip = $form_state['input']['customer_profile_shipping']['commerce_customer_address']['und'][0]['postal_code'];
+      }
+
+      // If any of these values are empty, throw validation error message.
+      if ($country == 'US') {
+        if (empty($full_name) || empty($address_1) || empty($city) || empty($state) || empty($zip)) {
+          form_set_error('shipping_validation', t('Missing U.S. shipping values. Please complete shipping details to continue.'));
+        }
+      } else { // International country
+        if (empty($full_name) || empty($address_1)) {
+          form_set_error('shipping_validation', t('Missing international shipping values. Please complete shipping details to continue.'));
+        }
+      }
+
+    } else { // pickup order
+      // Do nothing
     }
+  } else { // pickup order
+    // Do nothing
+  }
 
 }
 
@@ -957,22 +663,10 @@ function asu_doc_request_preprocess_entity(&$variables) {
     // Checkout review page.
     if (arg(0) == 'checkout' && arg(2) == 'review') {
       unset($variables['content']['field_transcript_copies_p']);
-
-      // If the form is a paper transript or diploma, unset unncessary eletronic transcript values
-      if (!isset($variables['elements']['field_transcript_noto_email']['#items'][0]['value'])) {
-        unset($variables['content']['field_transcript_recipient_coll']);
-        unset($variables['content']['field_transcript_noto_escripsafe']);
-      }
     }
     // Order view page.
     if (arg(0) == 'admin' && arg(1) == 'commerce' && arg(2) == 'orders') {
       unset($variables['content']['field_transcript_copies_p']);
-
-      // If the form is a paper transript or diploma, unset unncessary eletronic transcript values
-      if (!isset($variables['elements']['field_transcript_noto_email']['#items'][0]['value'])) {
-        unset($variables['content']['field_transcript_recipient_coll']);
-        unset($variables['content']['field_transcript_noto_escripsafe']);
-      }
       //dpm($variables);
       //dpm($variables['elements']['field_transcript_noto_email']['#items'][0]['value']);
     }
