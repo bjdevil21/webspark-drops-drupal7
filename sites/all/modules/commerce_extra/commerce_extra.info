@@ -1,0 +1,15 @@
+name				= Commerce Extra
+description	= Contains multiple extra features for Drupal Commerce.
+core				= 7.x
+package			= Commerce Extra
+
+configure = admin/commerce/config/commerce_extra
+
+dependencies[] = commerce
+
+; Information added by Drupal.org packaging script on 2016-01-20
+version = "7.x-1.0-alpha1+16-dev"
+core = "7.x"
+project = "commerce_extra"
+datestamp = "1453253040"
+

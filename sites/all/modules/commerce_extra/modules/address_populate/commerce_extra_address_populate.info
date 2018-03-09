@@ -1,0 +1,14 @@
+name				= Commerce Extra Address Populate
+description	= Uses user account address field to pre-populate customer profiles in checkout.
+package			= Commerce Extra
+core				= 7.x
+
+dependencies[] = commerce_extra
+dependencies[] = commerce_customer
+
+; Information added by Drupal.org packaging script on 2016-01-20
+version = "7.x-1.0-alpha1+16-dev"
+core = "7.x"
+project = "commerce_extra"
+datestamp = "1453253040"
+

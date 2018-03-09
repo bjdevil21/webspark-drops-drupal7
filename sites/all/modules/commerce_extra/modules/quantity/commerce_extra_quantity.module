@@ -1,0 +1,205 @@
+<?php
+/**
+ * @file
+ *   Contains Commerce Quantity Plus-Minus module's functionality.
+ */
+
+define('COMMERCE_EXTRA_QUANTITY_INCREASE', 1);
+define('COMMERCE_EXTRA_QUANTITY_DECREASE', -1);
+
+/**
+ * Implements CALLBACK_commerce_extra_configure().
+ */
+function commerce_extra_quantity_commerce_extra_configure() {
+  $form = array();
+  $form['commerce_extra_quantity_cardinality'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Quantity cardinality'),
+    '#description' => t('You can change quantity cardinality for quantity widget.'),
+    '#size' => 3,
+    '#default_value' => variable_get('commerce_extra_quantity_cardinality', '1'),
+  );
+  $form['commerce_extra_quantity_allow_zero_cart'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow zero in cart'),
+    '#description' => t('Allow setting number of items to zero in shopping cart so you can remove item.'),
+    '#default_value' => variable_get('commerce_extra_quantity_allow_zero_cart', FALSE),
+  );
+  return $form;
+}
+
+/**
+ * Implements CALLBACK_commerce_extra_configure_validate().
+ */
+function commerce_extra_quantity_commerce_extra_configure_validate(&$form, &$form_state) {
+  if (!is_numeric($form_state['values']['commerce_extra_quantity_cardinality'])) {
+    form_set_error('commerce_extra_quantity_cardinality', t('Field @field_name must be numeric value.', array('@field_name' => t('Quantity cardinality'))));
+  }
+}
+
+/**
+ * Implements CALLBACK_commerce_extra_configure_submit().
+ */
+function commerce_extra_quantity_commerce_extra_configure_submit(&$form, &$form_state) {
+  variable_set('commerce_extra_quantity_cardinality', $form_state['values']['commerce_extra_quantity_cardinality']);
+  variable_set('commerce_extra_quantity_allow_zero_cart', $form_state['values']['commerce_extra_quantity_allow_zero_cart']);
+}
+
+/**
+ * Implements hook_form_alter().
+ * Adds additional theme wrappers for add to cart's quantity textfields.
+ */
+function commerce_extra_quantity_form_alter(&$form, &$form_state, $form_id) {
+
+  // Load quantity cardinality setting
+  $quantity_cardinality = variable_get('commerce_extra_quantity_cardinality', 1);
+
+  // Add to cart form from field api
+  $str = 'commerce_cart_add_to_cart_form_';
+  if (drupal_substr($form_id, 0, drupal_strlen($str)) == $str) {
+    if (isset($form['quantity']) && $form['quantity']['#type'] == 'textfield') {
+      $form['#attached']['js'][] = drupal_get_path('module', 'commerce_extra_quantity') . '/commerce_extra_quantity.js';
+      $form['#attached']['css'][] = drupal_get_path('module', 'commerce_extra_quantity') . '/commerce_extra_quantity.css';
+      $form['quantity']['#theme_wrappers'] = array(
+        'quantity_plusminus_wrapper',
+        'form_element'
+      );
+      $form['quantity']['#amount'] = $quantity_cardinality;
+      $form['quantity']['#limit_down'] = 1;
+      $form['#validate'][] = 'commerce_extra_quantity_validate_cardinality';
+    }
+  }
+
+  // Quantity fields from views
+  $str = 'views_form_commerce_cart_form_';
+  if (drupal_substr($form_id, 0, drupal_strlen($str)) == $str) {
+    if (isset($form['edit_quantity'])) {
+      $form['#attached']['js'][] = drupal_get_path('module', 'commerce_extra_quantity') . '/commerce_extra_quantity.js';
+      $form['#attached']['css'][] = drupal_get_path('module', 'commerce_extra_quantity') . '/commerce_extra_quantity.css';
+      foreach ($form['edit_quantity'] as $key => $value) {
+        if (is_numeric($key) && drupal_substr($key, 0, 1) != '#' && is_array($value)) {
+          $form['edit_quantity'][$key]['#theme_wrappers'] = array(
+            'quantity_plusminus_wrapper',
+            'form_element'
+          );
+          $form['edit_quantity'][$key]['#limit_down'] = variable_get('commerce_extra_quantity_allow_zero_cart', FALSE) ? 0 : 1;
+        }
+      }
+      $form['#validate'][] = 'commerce_extra_quantity_validate_cardinality';
+    }
+  }
+}
+
+/**
+ * Validation callback for checking cardinality.
+ */
+function commerce_extra_quantity_validate_cardinality(&$form, &$form_state) {
+
+  // Figure out quantity level(s)
+  $str = 'commerce_cart_add_to_cart_form_';
+  $view_cart = 'views_form_commerce_cart_form_';
+  $form_id = $form['#form_id'];
+  if (drupal_substr($form_id, 0, drupal_strlen($str)) == $str) {
+    $quantities = array($form_state['values']['quantity']);
+  }
+  elseif (drupal_substr($form_id, 0, drupal_strlen($view_cart)) == $view_cart) {
+    $quantities = $form_state['values']['edit_quantity'];
+  }
+
+  // Validate each quantity
+  $quantity_cardinality = variable_get('commerce_extra_quantity_cardinality', 1);
+  foreach ($quantities as $key => $quantity) {
+    if (($quantity % $quantity_cardinality)) {
+      // Quantity is not divisible by quantity cardinality
+      form_set_error('', t('Incorrect quantity level.'));
+      watchdog('commerce_extra_quantity', 'Tried to submit a form with incorrect quantity level @quantity when having quantity cardinality of @quantity_cardinality', array(
+        '@quantity' => $quantity,
+        '@quantity_cardinality' => $quantity_cardinality
+      ), WATCHDOG_ERROR);
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_extra_quantity_theme($existing, $type, $theme, $path) {
+  return array(
+    'quantity_plusminus_wrapper' => array(
+      'render element' => 'form',
+    ),
+    'quantity_plusminus_link' => array(
+      'variables' => array(
+        'way' => NULL,
+        'quantity' => NULL,
+        'quantity_input_element' => NULL
+      ),
+    ),
+  );
+}
+
+/**
+ * Returns HTML for quantity textfield having links wrapping the textfield.
+ */
+function theme_quantity_plusminus_wrapper($variables) {
+  $amount = isset($variables['form']['#amount']) ? $variables['form']['#amount'] : 1;
+  $limit_down = isset($variables['form']['#limit_down']) ? $variables['form']['#limit_down'] : 1;
+  $decrease = theme('quantity_plusminus_link', array(
+    'way' => COMMERCE_EXTRA_QUANTITY_DECREASE,
+    'quantity' => $variables['form']['#value'],
+    'quantity_input_element' => $variables['form']['#id'],
+    'amount' => $amount,
+    'limit_down' => $limit_down
+  ));
+  $increase = theme('quantity_plusminus_link', array(
+    'way' => COMMERCE_EXTRA_QUANTITY_INCREASE,
+    'quantity' => $variables['form']['#value'],
+    'quantity_input_element' => $variables['form']['#id'],
+    'amount' => $amount,
+    'limit_down' => $limit_down
+  ));
+  return $decrease . $variables['form']['#children'] . $increase;
+}
+
+/**
+ * Returns HTML for link which increases/decreases quantity value.
+ */
+function theme_quantity_plusminus_link($variables) {
+  switch ($variables['way']) {
+    case COMMERCE_EXTRA_QUANTITY_DECREASE:
+      $text = '-';
+      $class = 'commerce-quantity-plusminus-link-decrease';
+      $js_callback = "Drupal.commerce_extra_quantity_quantity('#" . $variables['quantity_input_element'] . "', " . $variables['way'] . ", " . $variables['amount'] . ", " . $variables['limit_down'] . ")";
+      break;
+    case COMMERCE_EXTRA_QUANTITY_INCREASE:
+      $text = '+';
+      $class = 'commerce-quantity-plusminus-link-increase';
+      $js_callback = "Drupal.commerce_extra_quantity_quantity('#" . $variables['quantity_input_element'] . "', " . $variables['way'] . ", " . $variables['amount'] . ", " . $variables['limit_down'] . ")";
+      break;
+    default:
+      $text = '';
+      $class = '';
+      $js_callback = '';
+      break;
+  }
+
+  if ($variables['quantity'] <= 1) {
+    $class .= ' commerce-quantity-plusminus-link-disabled';
+  }
+  $options = array(
+    'attributes' => array(
+      'class' => 'button',
+      'onclick' => $js_callback . '; return false;'
+    ),
+    'html' => FALSE,
+  );
+  $element = array(
+    '#theme' => 'link',
+    '#text' => $text,
+    '#path' => current_path(),
+    '#options' => $options,
+    '#prefix' => '<span class="commerce-quantity-plusminus-link ' . $class . '">',
+    '#suffix' => '</span>',
+  );
+  return render($element);
+}
