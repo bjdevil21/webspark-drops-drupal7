@@ -210,7 +210,19 @@
  *   );
  * @endcode
  */
-$databases = array();
+$databases = array (
+  'default' => array (
+    'default' => array (
+      'database' => 'studentadmin',
+      'username' => 'studentadmin_app',
+      'password' => '9b55603b216c',
+      'host' => 'mysqldbdev.asu.edu',
+      'port' => '', 
+      'driver' => 'mysql',
+      'prefix' => '', 
+    ),  
+  ),  
+);
 
 /**
  * Access control for update.php script.
