@@ -1,11 +1,22 @@
 language: php
 
-# Latest version of 5.5.x on travis-ci.org
-php:
-  - 5.5.29
+addons:
+  artifacts: true
 
-# forces old Travis-CI infrastructure
+# PHP 7
+php:
+  - 7.0
+
+# make sure we test on latest trusty environment
 sudo: required
+dist: trusty
+group: edge
+
+# Cache Composer & Drush directories.
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.drush/cache
 
 mysql:
   database: drupal
@@ -58,13 +69,21 @@ install:
   # Build Behat dependencies
   - cd profiles/openasu/modules/panopoly/panopoly_test/behat
   - composer install --no-interaction
-  - cd /home/travis/build/ASU/webspark-drops-drupal7
+  # Build Behat dependencies
+  - cd ../../../custom/webspark_test/behat
+  - composer install --no-interaction
+
+  - cd $TRAVIS_BUILD_DIR
 
   # Build Codebase
   - mkdir private_files
 
+  # create directory for behat screenshots
+  - sudo mkdir -m 777 /behat_screenshot
+  - mkdir -p sites/default/files/private/isearch/feeds
+
   # Setup files
-  - sudo chmod -R 777 sites/all
+  - sudo chmod -R 777 sites
 
   # Get Selenium
   - wget https://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar
@@ -86,15 +105,16 @@ before_script:
   - drush vset --always-set asu_brand_ci_testing 1
   # Enable Panopoly Test module
   - drush pm-enable panopoly_test --yes
+  - drush pm-enable webspark_test --yes
   - drush cc all
   - cd ./profiles/openasu/modules/panopoly/panopoly_test/behat
 
 script:
-
   - bin/behat --colors --tags '~@webspark_ignore' --tags '~@panopoly_demo' --tags '~@panopoly_search' --config behat.travis.yml
+  - cd ../../../custom/webspark_test/behat
+  - bin/behat --colors --config behat.travis.yml
 
 after_script:
-
   - sleep 3
   - drush pm-disable panopoly_test --yes
   # Turn off ASU Brand filtering of GTM snippet

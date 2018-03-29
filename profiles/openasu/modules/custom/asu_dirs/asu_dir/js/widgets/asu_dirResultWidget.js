@@ -124,7 +124,13 @@
             markup += 'class="displayName viewDetails" id="'
                 + doc.eid + '" class="displayName viewDetails">';
             markup += (doc.displayName != null ? doc.displayName : '') + '</a><br>';
-            markup += '<div class="job-title">' + title_string + '</div></div>'
+
+
+            markup += title_string;
+
+
+            // close the title div
+            markup += '</div>';
 
             if (fieldConfigs.display_short_bio && shortbio != null) {
                 markup += '<div class="short-bio">' + shortbio + '</div>';
@@ -160,7 +166,9 @@
             var markup = '';
             var addLine2 = doc.addressLine2;
             var addLine1 = doc.addressLine1;
+            var addLine3 = doc.addressLine3;
             var cols = classes.join(' ');
+            var address = '';
 
             //CONTACT INFO COLUMN
             markup += '<div class="' + cols + '"><div class="row-profile-contact"><div class="row-profile-email row-field"><a class="emailAddress"';
@@ -173,11 +181,17 @@
             }
 
             if (fieldConfigs.display_building && addLine1 != null) {
-                markup += '<div class="building">' + addLine1 + '</div>';
+                markup += '<div class="isearch-address building">' + addLine1 + '</div>';
 
                 if (addLine2 != null) {
-                    markup += '<div class="room">' + addLine2 + '</div>';
+                    markup += '<div class="isearch-address room">&nbsp;' + addLine2 + '</div>';
                 }
+
+                if (addLine3 != null) {
+                    markup += '<div class="isearch-address line3">&nbsp;' + addLine3 + '</div>';
+                }
+
+
             }
 
             //end contact info
@@ -312,6 +326,7 @@
             var is_tree = this.fieldConfigs.show_tree;
             var fieldConfigs = this.fieldConfigs;
             var confob = 'asu_dir' + fieldConfigs.pane_id;
+            var department;
 
             // Get current dept id from the ASUPeople global, which is defined in the asu_dir module JS
             var dept_nid = ASUPeople[confob].dept_nid;
@@ -330,17 +345,15 @@
 
             // if no current dept index was set, set to the primary title
             if (index == -1) {
-                for (var i = 0; i < dept_names.length; i++) {
-                    if (dept_names[i] == doc.primaryiSearchDepartmentAffiliation) {
-                        index = i;
-                    }
-                }
+                index = $.inArray(doc.primaryiSearchDepartmentAffiliation, doc.departments);
             }
 
             // if we failed to get a primary or current dept title, fallback to the first one found
             if (index == -1) {
                 index = 0;
             }
+
+            department = dept_names[index];
 
             if (doc.titleSource != null) {
                 var titleSource = doc.titleSource[index];
@@ -381,7 +394,13 @@
             }
 
             // Trim the title, since it might show up as a blank space, like " "
-            title_string = title_string.trim();
+            title_string = '<div class="job-title">' + title_string.trim();
+
+            if (fieldConfigs.display_department && department != null) {
+                title_string += '<br>' + department;
+            }
+
+            title_string += '</div>';
 
             return title_string;
         },

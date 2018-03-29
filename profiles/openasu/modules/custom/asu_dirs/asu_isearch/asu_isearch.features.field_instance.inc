@@ -247,6 +247,41 @@ function asu_isearch_field_default_field_instances() {
   );
 
   // Exported field_instance:
+  // 'field_collection_item-field_isearch_affiliations-field_isearch_affil_hide'.
+  $field_instances['field_collection_item-field_isearch_affiliations-field_isearch_affil_hide'] = array(
+    'bundle' => 'field_isearch_affiliations',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'inline',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 16,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_isearch_affil_hide',
+    'label' => 'Hide Affiliation',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 0,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 14,
+    ),
+    'workbench_access_field' => 0,
+  );
+
+  // Exported field_instance:
   // 'field_collection_item-field_isearch_affiliations-field_isearch_affil_local_weight'.
   $field_instances['field_collection_item-field_isearch_affiliations-field_isearch_affil_local_weight'] = array(
     'bundle' => 'field_isearch_affiliations',
@@ -594,6 +629,48 @@ function asu_isearch_field_default_field_instances() {
       'type' => 'text_textfield',
       'weight' => 2,
     ),
+  );
+
+  // Exported field_instance:
+  // 'field_collection_item-field_isearch_affiliations-field_isearch_affil_weight'.
+  $field_instances['field_collection_item-field_isearch_affiliations-field_isearch_affil_weight'] = array(
+    'bundle' => 'field_isearch_affiliations',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'number',
+        'settings' => array(
+          'decimal_separator' => '.',
+          'prefix_suffix' => TRUE,
+          'scale' => 0,
+          'thousand_separator' => '',
+        ),
+        'type' => 'number_integer',
+        'weight' => 15,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_isearch_affil_weight',
+    'label' => 'Affiliation Weight',
+    'required' => 0,
+    'settings' => array(
+      'max' => '',
+      'min' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'number',
+      'settings' => array(),
+      'type' => 'number',
+      'weight' => 13,
+    ),
+    'workbench_access_field' => 0,
   );
 
   // Exported field_instance:
@@ -953,10 +1030,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 50,
+        'type' => 'hidden',
+        'weight' => 31,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1007,7 +1083,7 @@ function asu_isearch_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 16,
+      'weight' => 17,
     ),
     'workbench_access_field' => 0,
   );
@@ -1021,10 +1097,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 49,
+        'type' => 'hidden',
+        'weight' => 34,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1075,7 +1150,75 @@ function asu_isearch_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 15,
+      'weight' => 16,
+    ),
+    'workbench_access_field' => 0,
+  );
+
+  // Exported field_instance:
+  // 'node-asu_isearch_profile-field_executive_courses'.
+  $field_instances['node-asu_isearch_profile-field_executive_courses'] = array(
+    'bundle' => 'asu_isearch_profile',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 39,
+      ),
+      'featured' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'isearch_profile_list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'program_table' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_executive_courses',
+    'label' => 'Executive Education Courses',
+    'required' => 0,
+    'settings' => array(
+      'linkit' => array(
+        'button_text' => 'Search',
+        'enable' => 0,
+        'profile' => '',
+      ),
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'maxlength_js' => '',
+        'maxlength_js_enforce' => 0,
+        'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
+        'maxlength_js_truncate_html' => 0,
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 21,
     ),
     'workbench_access_field' => 0,
   );
@@ -1090,10 +1233,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 52,
+        'type' => 'hidden',
+        'weight' => 33,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1144,9 +1286,68 @@ function asu_isearch_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 17,
+      'weight' => 18,
     ),
     'workbench_access_field' => 0,
+  );
+
+  // Exported field_instance:
+  // 'node-asu_isearch_profile-field_isearch_addr_line_three'.
+  $field_instances['node-asu_isearch_profile-field_isearch_addr_line_three'] = array(
+    'bundle' => 'asu_isearch_profile',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'inline',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 49,
+      ),
+      'featured' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'isearch_profile_list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_isearch_addr_line_three',
+    'label' => 'Address Line 3',
+    'required' => 0,
+    'settings' => array(
+      'linkit' => array(
+        'button_text' => 'Search',
+        'enable' => 0,
+        'profile' => '',
+      ),
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'maxlength_js' => 0,
+        'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 17,
+    ),
   );
 
   // Exported field_instance:
@@ -1161,7 +1362,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 15,
+        'weight' => 50,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1200,7 +1401,7 @@ function asu_isearch_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 21,
+      'weight' => 22,
     ),
   );
 
@@ -1216,7 +1417,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 24,
+        'weight' => 59,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1284,16 +1485,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'field_collection',
-        'settings' => array(
-          'add' => 'Add',
-          'delete' => 'Delete',
-          'description' => TRUE,
-          'edit' => 'Edit',
-          'view_mode' => 'full',
-        ),
-        'type' => 'field_collection_view',
-        'weight' => 3,
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 35,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1332,7 +1526,7 @@ function asu_isearch_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 54,
+      'weight' => 55,
     ),
   );
 
@@ -1345,10 +1539,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 5,
+        'type' => 'hidden',
+        'weight' => 10,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1406,7 +1599,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 16,
+      'weight' => 18,
     ),
   );
 
@@ -1420,9 +1613,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'inline',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 48,
       ),
       'featured' => array(
@@ -1480,7 +1672,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 16,
+      'weight' => 15,
     ),
   );
 
@@ -1496,7 +1688,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'inline',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 18,
+        'weight' => 53,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1553,7 +1745,66 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 17,
+      'weight' => 16,
+    ),
+  );
+
+  // Exported field_instance: 'node-asu_isearch_profile-field_isearch_city'.
+  $field_instances['node-asu_isearch_profile-field_isearch_city'] = array(
+    'bundle' => 'asu_isearch_profile',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 62,
+      ),
+      'featured' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'isearch_profile_list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_isearch_city',
+    'label' => 'City',
+    'required' => 0,
+    'settings' => array(
+      'linkit' => array(
+        'button_text' => 'Search',
+        'enable' => 0,
+        'profile' => '',
+      ),
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'maxlength_js' => 0,
+        'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 18,
     ),
   );
 
@@ -1566,10 +1817,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 7,
+        'type' => 'hidden',
+        'weight' => 12,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1626,7 +1876,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 18,
+      'weight' => 21,
     ),
   );
 
@@ -1642,7 +1892,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'hidden',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 17,
+        'weight' => 52,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1713,10 +1963,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 14,
+        'type' => 'hidden',
+        'weight' => 25,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1788,10 +2037,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 8,
+        'type' => 'hidden',
+        'weight' => 13,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1849,7 +2097,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 17,
+      'weight' => 19,
     ),
   );
 
@@ -1864,7 +2112,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 21,
+        'weight' => 56,
       ),
       'featured' => array(
         'label' => 'above',
@@ -1932,9 +2180,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'email',
         'settings' => array(),
-        'type' => 'email_default',
+        'type' => 'hidden',
         'weight' => 46,
       ),
       'featured' => array(
@@ -1992,7 +2239,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'inline',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 20,
+        'weight' => 55,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2065,7 +2312,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'inline',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 19,
+        'weight' => 54,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2136,10 +2383,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'taxonomy',
         'settings' => array(),
-        'type' => 'taxonomy_term_reference_link',
-        'weight' => 4,
+        'type' => 'hidden',
+        'weight' => 8,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2195,10 +2441,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 6,
+        'type' => 'hidden',
+        'weight' => 11,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2271,7 +2516,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 22,
+        'weight' => 57,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2331,6 +2576,72 @@ function asu_isearch_field_default_field_instances() {
   );
 
   // Exported field_instance:
+  // 'node-asu_isearch_profile-field_isearch_google_scholar'.
+  $field_instances['node-asu_isearch_profile-field_isearch_google_scholar'] = array(
+    'bundle' => 'asu_isearch_profile',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 15,
+      ),
+      'featured' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'isearch_profile_list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'program_table' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_isearch_google_scholar',
+    'label' => 'Google Scholar',
+    'required' => 0,
+    'settings' => array(
+      'linkit' => array(
+        'button_text' => 'Search',
+        'enable' => 0,
+        'profile' => '',
+      ),
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'maxlength_js' => 0,
+        'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 11,
+    ),
+    'workbench_access_field' => 0,
+  );
+
+  // Exported field_instance:
   // 'node-asu_isearch_profile-field_isearch_graduate_faculties'.
   $field_instances['node-asu_isearch_profile-field_isearch_graduate_faculties'] = array(
     'bundle' => 'asu_isearch_profile',
@@ -2340,10 +2651,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 17,
+        'type' => 'hidden',
+        'weight' => 28,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2402,7 +2712,7 @@ function asu_isearch_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 33,
+      'weight' => 34,
     ),
   );
 
@@ -2415,10 +2725,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 8,
+        'type' => 'hidden',
+        'weight' => 43,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2467,7 +2776,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 14,
+      'weight' => 15,
     ),
   );
 
@@ -2481,10 +2790,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 13,
+        'type' => 'hidden',
+        'weight' => 24,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2555,16 +2863,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'field_collection',
-        'settings' => array(
-          'add' => 'Add',
-          'delete' => 'Delete',
-          'description' => TRUE,
-          'edit' => 'Edit',
-          'view_mode' => 'full',
-        ),
-        'type' => 'field_collection_view',
-        'weight' => 5,
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 40,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2603,7 +2904,7 @@ function asu_isearch_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 53,
+      'weight' => 54,
     ),
   );
 
@@ -2618,7 +2919,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 23,
+        'weight' => 58,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2691,10 +2992,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'list',
         'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 12,
+        'type' => 'hidden',
+        'weight' => 47,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2735,7 +3035,7 @@ function asu_isearch_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 18,
+      'weight' => 19,
     ),
   );
 
@@ -2748,13 +3048,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'image',
-        'settings' => array(
-          'image_link' => '',
-          'image_style' => '',
-        ),
-        'type' => 'image',
-        'weight' => 9,
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 44,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2833,7 +3129,7 @@ function asu_isearch_field_default_field_instances() {
         'manualcrop_thumblist' => 0,
       ),
       'type' => 'media_generic',
-      'weight' => 22,
+      'weight' => 23,
     ),
   );
 
@@ -2847,12 +3143,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'entityreference',
-        'settings' => array(
-          'link' => FALSE,
-        ),
-        'type' => 'entityreference_label',
-        'weight' => 10,
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 46,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2893,7 +3186,7 @@ function asu_isearch_field_default_field_instances() {
         'apply_chosen' => '',
       ),
       'type' => 'options_select',
-      'weight' => 20,
+      'weight' => 21,
     ),
   );
 
@@ -2909,7 +3202,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 14,
+        'weight' => 49,
       ),
       'featured' => array(
         'label' => 'above',
@@ -2964,9 +3257,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'inline',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 47,
       ),
       'featured' => array(
@@ -3038,10 +3330,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'list',
         'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 7,
+        'type' => 'hidden',
+        'weight' => 42,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3080,7 +3371,7 @@ function asu_isearch_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 25,
+      'weight' => 26,
     ),
   );
 
@@ -3100,7 +3391,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'hidden',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 25,
+        'weight' => 60,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3149,7 +3440,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 24,
+      'weight' => 25,
     ),
   );
 
@@ -3162,12 +3453,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'image',
-        'settings' => array(
-          'image_link' => '',
-          'image_style' => '',
-        ),
-        'type' => 'image',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 39,
       ),
       'featured' => array(
@@ -3230,7 +3517,7 @@ function asu_isearch_field_default_field_instances() {
         'progress_indicator' => 'throbber',
       ),
       'type' => 'image_image',
-      'weight' => 23,
+      'weight' => 24,
     ),
   );
 
@@ -3244,12 +3531,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'entityreference',
-        'settings' => array(
-          'link' => FALSE,
-        ),
-        'type' => 'entityreference_label',
-        'weight' => 11,
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 45,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3290,7 +3574,7 @@ function asu_isearch_field_default_field_instances() {
         'apply_chosen' => '',
       ),
       'type' => 'options_select',
-      'weight' => 19,
+      'weight' => 20,
     ),
   );
 
@@ -3304,10 +3588,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 13,
+        'type' => 'hidden',
+        'weight' => 48,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3356,7 +3639,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 15,
+      'weight' => 14,
     ),
   );
 
@@ -3370,10 +3653,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 15,
+        'type' => 'hidden',
+        'weight' => 26,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3450,10 +3732,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 17,
+        'type' => 'hidden',
+        'weight' => 6,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3510,7 +3791,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 10,
+      'weight' => 11,
     ),
   );
 
@@ -3524,10 +3805,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 25,
+        'type' => 'hidden',
+        'weight' => 18,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3585,7 +3865,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 12,
+      'weight' => 15,
     ),
   );
 
@@ -3599,10 +3879,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 26,
+        'type' => 'hidden',
+        'weight' => 19,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3660,7 +3939,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 11,
+      'weight' => 14,
     ),
   );
 
@@ -3674,10 +3953,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 27,
+        'type' => 'hidden',
+        'weight' => 20,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3735,7 +4013,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 10,
+      'weight' => 13,
     ),
   );
 
@@ -3749,10 +4027,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 24,
+        'type' => 'hidden',
+        'weight' => 17,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3810,7 +4087,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 13,
+      'weight' => 17,
     ),
   );
 
@@ -3824,10 +4101,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 23,
+        'type' => 'hidden',
+        'weight' => 16,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3884,7 +4160,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 9,
+      'weight' => 12,
     ),
   );
 
@@ -3897,10 +4173,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 16,
+        'type' => 'hidden',
+        'weight' => 27,
       ),
       'featured' => array(
         'label' => 'above',
@@ -3958,7 +4233,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 35,
+      'weight' => 36,
     ),
   );
 
@@ -3974,7 +4249,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 16,
+        'weight' => 51,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4024,7 +4299,7 @@ function asu_isearch_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 15,
+      'weight' => 17,
     ),
   );
 
@@ -4038,9 +4313,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 15,
       ),
       'featured' => array(
@@ -4098,7 +4372,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 14,
+      'weight' => 22,
     ),
   );
 
@@ -4112,9 +4386,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 16,
       ),
       'featured' => array(
@@ -4172,7 +4445,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 15,
+      'weight' => 23,
     ),
   );
 
@@ -4186,9 +4459,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 17,
       ),
       'featured' => array(
@@ -4246,7 +4518,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 16,
+      'weight' => 24,
     ),
   );
 
@@ -4260,9 +4532,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 18,
       ),
       'featured' => array(
@@ -4320,7 +4591,7 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 17,
+      'weight' => 25,
     ),
   );
 
@@ -4334,9 +4605,8 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 14,
       ),
       'featured' => array(
@@ -4386,8 +4656,76 @@ function asu_isearch_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 13,
+      'weight' => 21,
     ),
+  );
+
+  // Exported field_instance:
+  // 'node-asu_isearch_profile-field_isearch_student_info'.
+  $field_instances['node-asu_isearch_profile-field_isearch_student_info'] = array(
+    'bundle' => 'asu_isearch_profile',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'featured' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'isearch_profile_list' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'program_table' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_isearch_student_info',
+    'label' => 'Student Information',
+    'required' => 0,
+    'settings' => array(
+      'linkit' => array(
+        'button_text' => 'Search',
+        'enable' => 0,
+        'profile' => '',
+      ),
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'maxlength_js' => '',
+        'maxlength_js_enforce' => 0,
+        'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
+        'maxlength_js_truncate_html' => 0,
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 16,
+    ),
+    'workbench_access_field' => 0,
   );
 
   // Exported field_instance:
@@ -4400,10 +4738,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 6,
+        'type' => 'hidden',
+        'weight' => 41,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4467,10 +4804,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 35,
+        'type' => 'hidden',
+        'weight' => 22,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4542,10 +4878,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 34,
+        'type' => 'hidden',
+        'weight' => 21,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4615,16 +4950,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'field_collection',
-        'settings' => array(
-          'add' => 'Add',
-          'delete' => 'Delete',
-          'description' => TRUE,
-          'edit' => 'Edit',
-          'view_mode' => 'full',
-        ),
-        'type' => 'field_collection_view',
-        'weight' => 4,
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 38,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4677,10 +5005,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 18,
+        'type' => 'hidden',
+        'weight' => 29,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4739,7 +5066,7 @@ function asu_isearch_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 34,
+      'weight' => 35,
     ),
   );
 
@@ -4754,7 +5081,7 @@ function asu_isearch_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 26,
+        'weight' => 61,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4805,7 +5132,7 @@ function asu_isearch_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_text',
-      'weight' => 14,
+      'weight' => 15,
     ),
     'workbench_access_field' => 0,
   );
@@ -4819,10 +5146,9 @@ function asu_isearch_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'above',
-        'module' => 'text',
         'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 51,
+        'type' => 'hidden',
+        'weight' => 32,
       ),
       'featured' => array(
         'label' => 'above',
@@ -4873,7 +5199,7 @@ function asu_isearch_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 18,
+      'weight' => 20,
     ),
     'workbench_access_field' => 0,
   );
@@ -5202,6 +5528,8 @@ function asu_isearch_field_default_field_instances() {
   // Translatables
   // Included for use with string extractors like potx.
   t('ASURITE ID');
+  t('Address Line 3');
+  t('Affiliation Weight');
   t('Affiliations');
   t('Audio');
   t('Biography');
@@ -5211,6 +5539,7 @@ function asu_isearch_field_default_field_instances() {
   t('Campus Building');
   t('Campus Room');
   t('Caption');
+  t('City');
   t('Configuration');
   t('Consulting');
   t('Courses');
@@ -5224,12 +5553,15 @@ function asu_isearch_field_default_field_instances() {
   t('Employee Type');
   t('Employee Type Key');
   t('Employment Title');
+  t('Executive Education Courses');
   t('Expertise Areas');
   t('Facebook Link');
   t('Fax');
   t('First Name');
+  t('Google Scholar');
   t('Google+ Link');
   t('Graduate Faculties / Mentoring History');
+  t('Hide Affiliation');
   t('Honors/Awards');
   t('If a building code is detected, enabling this option will link the building code to the ASU interactive campus map.');
   t('Images');
@@ -5266,6 +5598,7 @@ function asu_isearch_field_default_field_instances() {
   t('Research Website');
   t('Service');
   t('Short Bio');
+  t('Student Information');
   t('Teaching Website');
   t('This field is used programmatically to render quicktabs.');
   t('This value is provided by the iSearch directory feed.');

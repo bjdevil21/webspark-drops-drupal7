@@ -1,5 +1,5 @@
 /**
- * Define the IS CurrentSearch Widget.
+ * Define the ASU DIR Sort Widget.
  */
 (function ($, history) {
 
@@ -44,7 +44,7 @@
                 self.manager.store.addByValue('sort', self.active_sort + ' ' + self.direction);
             } else {
                 fieldConfigs.show_managers = true;
-                self.manager.store.addByValue('sort', 'lastNameSort asc');
+                self.manager.store.addByValue('sort', sort_items[0].field_name + ' asc');
             }
 
             for (var i = 0; i < sort_items.length; i++) {
@@ -72,8 +72,8 @@
                         //save prev sort before assigning new
                         var prev_sort = self.active_sort;
 
-                        // if prevsort and new sort are title rank, return without doing anything.
-                        // this is because we don't want to have reverse titlerank sort.
+                        // If prevsort and new sort are title rank, return without doing anything.
+                        // This is because we don't want to have reverse titlerank sort.
                         if (prev_sort == field_name && field_name == titlesort_field) {
                             return false;
                         }
@@ -82,9 +82,6 @@
 
                         //go back to first page if changing sort
                         self.manager.store.remove('start');
-
-                        //if there was a previous sort, then do some logic to add active classes, etc.
-                        //note:  there should always be a prev_sort, since we have a default
 
                         //SPECIAL CASE FOR THE TITLESORT FIELD
                         if (field_name == titlesort_field) {
@@ -96,7 +93,7 @@
                             $(self.target).find('.dir-active-sort').removeClass('dir-active-sort');
                             $(this).addClass('dir-active-sort');
                             self.manager.store.remove('sort');
-                            self.manager.store.addByValue('sort', 'lastNameSort asc');
+                            self.manager.store.addByValue('sort', sort_items[0].field_name + ' asc');
                             self.manager.doRequest();
                             return false;
 
@@ -104,17 +101,7 @@
                             ASUPeople[fieldId].fieldConfigs.show_managers = false;
                         }
 
-                        //special logic for ranksort, otherwise switch asc/desc
-                        /*if (field_name == titleSortField) {
-
-                         var target = $(self.target).find('.dir-active-sort');
-                         target.removeClass('dir-active-sort');
-
-                         $(this).addClass('dir-active-sort');
-                         self.direction = 'asc';
-
-                         } else*/
-
+                        // switch direction if clicking on previous sort
                         if (field_name == prev_sort) {
 
                             if (self.direction == 'asc') {
@@ -122,6 +109,7 @@
                             } else {
                                 self.direction = 'asc';
                             }
+                            // else add the new sort value
                         } else {
                             var t2 = $(self.target).find('.dir-active-sort');//.removeClass('dir-active-sort');
                             t2.removeClass('dir-active-sort');
@@ -131,13 +119,8 @@
 
                         var new_sort = self.active_sort + ' ' + self.direction;
 
-                        if (self.active_sort == titlesort_field) {
-                            new_sort += ',lastNameSort asc';
-                        }
-
                         self.manager.store.remove('sort');
                         self.manager.store.addByValue('sort', new_sort);
-
                         self.manager.doRequest();
 
                         $(this).find('.fa').remove();

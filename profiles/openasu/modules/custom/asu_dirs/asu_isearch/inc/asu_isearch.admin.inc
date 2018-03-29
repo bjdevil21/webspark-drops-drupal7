@@ -41,15 +41,7 @@ function asu_isearch_admin_settings_form() {
     '#default_value' => variable_get('isearch_default_photo', ''),
     '#description' => t("Upload an image to use as the default photo for profiles that are not displaying a photo."),
     '#required' => FALSE,
-    '#upload_location' => 'public://asu_isearch_photos/',
-    '#states' => array(
-      'visible' => array(
-        ':input[name="isearch_display_default_photo"]' => array('checked' => TRUE),
-      ),
-      'required' => array(
-        ':input[name="isearch_display_default_photo"]' => array('checked' => TRUE),
-      ),
-    ),
+    '#upload_location' => 'public://asu_isearch_photos/'
   );
 
   // todo: get this working for the solr listings
@@ -63,8 +55,22 @@ function asu_isearch_admin_settings_form() {
   $form['isearch_local_lock'] = array(
     '#type' => 'checkbox',
     '#title' => 'Lock Profiles from Automatic Updates.',
-    '#description' => t('This option will lock profiles so that they are not updated automatically. This also turns off the Solr FERPA checking.  Migrations can still be run manually via the interface at <a href="@link">Migrate</a> or via drush.', array('@link' => '/admin/content/isearch/migrate')),
+    '#description' => t('This option will lock profiles so that they are not updated automatically. This also turns off the Solr FERPA checking.  Migrations can still be run manually via the interface at "/admin/content/isearch/migrate" or via drush.'),
     '#default_value' => variable_get('isearch_local_lock', FALSE),
+  );
+
+  $form['isearch_import_affil_weights'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Import affiliation ordering from iSearch.',
+    '#description' => t('If selected, the affiliation ordering from iSearch will be automatically imported into iSearch Profile nodes on this site whenever a migration is run.'),
+    '#default_value' => variable_get('isearch_import_affil_weights', FALSE),
+  );
+
+  $form['isearch_import_affil_hide'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Import affiliation hide values from iSearch.',
+    '#description' => t('If selected, the option to hide affiliations from display will be automatically imported into iSearch Profile nodes on this site.'),
+    '#default_value' => variable_get('isearch_import_affil_hide', FALSE),
   );
 
   // retrieve global dept configuration
@@ -128,6 +134,25 @@ function asu_isearch_admin_settings_form_submit($form, &$form_state) {
   if (isset($config_value['options'])) {
     unset($config_value['options']);
     $form_state['values']['isearch_admin_feed_dept'] = drupal_json_encode($config_value);
+  }
+
+  // handle the default photo separately from system_settings_form_submit, so that
+  // FILE_STATUS_PERMANENT is set and photo doesn't get deleted
+  if (isset($form_state['values']['isearch_default_photo'])) {
+    $file = file_load($form_state['values']['isearch_default_photo']);
+
+    if ($file) {
+      // Change status to permanent.
+      $file->status = FILE_STATUS_PERMANENT;
+      // Save.
+      file_save($file);
+      // Save file to variable.
+      variable_set('isearch_default_photo', $file->fid);
+      // Record that the module is using the file
+      file_usage_add($file, 'asu_isearch', 'profile_default', $file->fid);
+
+      unset($form_state['values']['isearch_default_photo']);
+    }
   }
 
   system_settings_form_submit($form, $form_state);
