@@ -4,7 +4,11 @@ package = Media
 core = 7.x
 hidden = TRUE
 
-; Information added by drush on 2014-07-20
-version = "7.x-2.0-alpha3+98-dev"
+files[] = includes/MediaModuleTest.inc
+
+; Information added by Drupal.org packaging script on 2017-10-19
+version = "7.x-2.13"
+core = "7.x"
 project = "media"
-datestamp = "1405840733"
+datestamp = "1508430548"
+

@@ -4,6 +4,11 @@
 
 /* =BOOTSTRAP, PANOPOLY & WEBSPARK OVERRIDES
 -------------------------------------------------------------- */
+/*
+html.js {
+  font-size: 100%;
+}*/
+
 #asu_footer ul {
   max-width: 1170px;
   margin: 0 auto;
@@ -33,7 +38,11 @@ div.error label {
 
 /* =GLOBALS
 -------------------------------------------------------------- */
+html {
+	font-size: 100%;
+}
 body {
+	font-size: 1em;
   min-width: 320px;
 }
 
@@ -72,7 +81,6 @@ div.pane-menu-tree {
 body {
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 200;
-  font-size: 16px;
   line-height: 1.44;
   color: #2a2a2a;
   background-color: white;
@@ -87,19 +95,10 @@ a,
 }
 
 a:hover,
-a:focus,
-.ui-widget-content a:hover,
-.ui-widget-content a:focus {
+.ui-widget-content a:hover {
   color: #d23153;
   text-decoration: none;
   border-bottom: 1px dotted #d23153;
-}
-
-a:focus,
-.ui-widget-content a:focus {
-  outline: thin dotted;
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
 }
 
 #header a,
@@ -120,15 +119,15 @@ a.btn, .btn {
   margin-top: 15px;
 }
 
-a.btn:hover, .btn a:hover,
-a.btn:focus, .btn a:focus {
+a.btn:hover, .btn a:hover {
   border-bottom: none;
 }
 
 a.btn-secondary,
 .btn-secondary a,
 a.btn-gold,
-.btn-gold a {
+.btn-gold a
+{
   color: #2a2a2a;
   border-bottom: none;
 }
@@ -137,6 +136,14 @@ a.btn-blue,
 .btn-blue a,
 a.btn-primary,
 .btn-primary a {
+  color: #fff;
+  border-bottom: none;
+}
+/* WCS-980 */
+a.btn-blue:hover,
+.btn-blue a:hover,
+a.btn-primary:hover,
+.btn-primary a:hover {
   color: #fff;
   border-bottom: none;
 }
@@ -202,9 +209,10 @@ h6, .h6 {
 .header__sitename {
   color: #2a2a2a;
   font-family: "Roboto","Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-weight: normal;
+  font-weight: bold;
   font-size: 24px;
   line-height: 1;
+  letter-spacing: -0.5px;
   margin-top: 0;
   margin-bottom: 0;
   padding: 0 0 12px 12px;
@@ -220,7 +228,7 @@ h6, .h6 {
   box-sizing: content-box;
 }
 
-@media (max-width: 930px) {
+@media (max-width: 991px) {
   #header .container {
     width: 100%;
   }
@@ -264,6 +272,13 @@ h6, .h6 {
 /* =IMAGES
 -------------------------------------------------------------- */
 
+/* Added from Panopoly Images CSS file (removed in Panopoly 1.21) */
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}
+
 /* wysiwyg image spacing */
 img.media-element.pull-right {
   margin-left: 20px;
@@ -298,6 +313,7 @@ p.img-thumbnail img {
 
 /* =TABLES
 -------------------------------------------------------------- */
+/* Default table styles */
 table {
   background-color: white;
   margin-bottom: 24px;
@@ -323,6 +339,9 @@ table > thead > tr > td {
   vertical-align: bottom;
   font-weight: bold;
 }
+table > tbody > tr:nth-child(2n+1) {
+	background-color: #F5F5F5;
+}
 
 table > caption + thead > tr:first-child > th,
 table > caption + thead > tr:first-child > td,
@@ -336,6 +355,32 @@ table > thead:first-child > tr:first-child > td {
 table > tbody + tbody {
   border-top: 2px solid #b7b7b7;
 }
+
+/* WYSIWYG Bordered table */
+table.bordered {
+	border-bottom: 1px solid #b7b7b7;
+	border-left: 1px solid #b7b7b7;
+}
+table.bordered > thead > tr > th,
+table.bordered > thead > tr > td,
+table.bordered > tbody > tr > th,
+table.bordered > tbody > tr > td,
+table.bordered > tfoot > tr > th,
+table.bordered > tfoot > tr > td {
+  border-right: 1px solid #b7b7b7;
+}
+table.bordered > tbody > tr:nth-child(2n+1) {
+	background-color: #fff;
+}
+table.bordered > caption + thead > tr:first-child > th,
+table.bordered > caption + thead > tr:first-child > td,
+table.bordered > colgroup + thead > tr:first-child > th,
+table.bordered > colgroup + thead > tr:first-child > td,
+table.bordered > thead:first-child > tr:first-child > th,
+table.bordered > thead:first-child > tr:first-child > td {
+  border-top: 1px solid #b7b7b7;
+}
+
 
 /* =CONTENT CALLOUTS
 -------------------------------------------------------------- */
@@ -419,7 +464,7 @@ table > tbody + tbody {
   background-color: transparent;
   margin: 2em 0;
   padding: 0;
-  color: #828282;
+  color: #555;
   font-size: 14px;
 }
 
@@ -456,6 +501,7 @@ table > tbody + tbody {
   margin-top: 0;
 }
 
+h3.ui-accordion-header,
 h4.ui-accordion-header {
   padding: 10px 20px;
   text-transform: uppercase;
@@ -467,20 +513,29 @@ h4.ui-accordion-header.ui-corner-top {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 }
-
+h3.ui-accordion-header.ui-state-default,
 h4.ui-accordion-header.ui-state-default {
   background-color: #fff;
   border-top: 1px solid #e6e6e6;
   border-right: 1px solid #e6e6e6;
   border-bottom: 1px solid #fff;
   border-left: 1px solid #e6e6e6;
-  color: #909090;
+  color: #767676;
 }
-
-h4.ui-accordion-header.ui-state-hover {
+h3.ui-accordion-header.ui-state-default a,
+h3.ui-accordion-header.ui-state-default a:link,
+h3.ui-accordion-header.ui-state-default a:visited {
+  color: #767676;
+}
+h3.ui-accordion-header.ui-state-hover a,
+h3.ui-accordion-header.ui-state-hover a:focus,
+h3.ui-accordion-header.ui-state-default a:focus,
+h3.ui-accordion-header:focus,
+h4.ui-accordion-header.ui-state-hover,
+h4.ui-accordion-header:focus {
   color: #111;
 }
-
+h3.ui-accordion-header.ui-state-active,
 h4.ui-accordion-header.ui-state-active {
   border-top: 1px solid #e6e6e6;
   border-right: 1px solid #e6e6e6;
@@ -488,12 +543,20 @@ h4.ui-accordion-header.ui-state-active {
   border-left: 1px solid #e6e6e6;
   color: #111;
 }
-
+h3.ui-accordion-header.ui-state-active a,
+h3.ui-accordion-header.ui-state-active a:link,
+h3.ui-accordion-header.ui-state-active a:visited {
+  color: #111;
+}
+h3.ui-accordion-header.ui-state-default:last-of-type,
 h4.ui-accordion-header.ui-state-default:last-of-type {
   border-top: 1px solid #e6e6e6;
   border-right: 1px solid #e6e6e6;
   border-bottom: 1px solid #e6e6e6;
   border-left: 1px solid #e6e6e6;
+}
+.ui-widget h3.ui-accordion-header a {
+  border-bottom: none;
 }
 
 .ui-accordion .ui-accordion-content {
@@ -527,7 +590,7 @@ h4.ui-accordion-header.ui-state-default:last-of-type {
 .ui-accordion .ui-state-active .ui-icon,
 .ui-accordion .ui-state-default .ui-icon,
 .ui-accordion .ui-accordion .ui-state-active .ui-icon {
-  background-image: url("../images/accordion-arrows.png");
+  background-image: url("/profiles/openasu/themes/innovation/images/accordion-arrows.png");
 }
 
 .ui-accordion .ui-icon-triangle-1-e {
@@ -581,18 +644,17 @@ h4.ui-accordion-header.ui-state-default:last-of-type {
   border-color: #859e11;
 }
 
-.alert-success > ul > li,
-.alert-info > ul > li,
-.alert-danger > ul > li,
-.alert-warning > ul > li a.close:hover {
-  color: white;
-  margin: 1em 0;
+.alert-warning *,
+.alert-warning a.close {
+  color: #000;
 }
 
-.alert-warning > ul > li,
-.alert-warning > ul > li a.close,
-{
-  color: black;
+.alert-success,
+.alert-info,
+.alert-danger,
+.alert-warning a.close:hover {
+  color: #fff;
+  margin: 1em 0;
 }
 
 .alert > ul > li > [class^=krumo] {
@@ -630,17 +692,16 @@ h4.ui-accordion-header.ui-state-default:last-of-type {
 
 /* Ctools Modals */
 .ctools-modal-content .btn {
-  margin-top: 3px;
+  margin-top: 0.25em;
   padding: 4px 10px;
-  font-size: 11px;
+  font-size: 0.6925em;
 }
 
 #modalContent .form-submit.btn {
   margin-bottom: 1em;
   padding: 6px 20px;
-  font-size: 18px;
+  font-size: 1.125em;
 }
-
 .ctools-modal-content #edit-settings-spacing {
   -webkit-column-count: 3;
   -moz-column-count: 3;
@@ -655,16 +716,46 @@ h4.ui-accordion-header.ui-state-default:last-of-type {
 }
 
 h2.widget-list {
-  font-size: 14px;
+  font-size: 0.9em;
   line-height: 1.4;
-  margin: 0 0 0 10px;
+  margin: 0 0 0 0.625em;
+}
+/* LH side categories */
+#modalContent .panels-section-column-categories .content-type-button {
+  top: 0.5em;
+  line-height: 1.1em;
+  font-size: 0.75em;
 }
 
-.panels-section-column .content-type-button {
-  top: 3px;
-  line-height: 1.35em;
+#modalContent .panels-section-column-categories .content-type-button div,
+#modalContent .panels-section-column-categories .content-type-button span {
+  left: 3em;
+  position: absolute;
+  top: 0.25em;
+  width: 80%;
 }
 
+#modalContent .panels-section-column-categories .content-type-button > a:hover > img,
+#modalContent .panels-section-column-categories .content-type-button > a > img:hover {
+  border: 2px solid white;
+}
+
+/* Main body of columns with content */
+#modalContent .panels-section-columns > .panels-section-column .content-type-button {
+  font: normal 0.9rem/1.5em "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  top: 0em;
+}
+
+#modalContent .panels-section-columns > .panels-section-column .content-type-button div,
+#modalContent .panels-section-columns > .panels-section-column .content-type-button span {
+  position: relative;
+  top: 0;
+  left: 0;
+}
+#modal-content .form-tablefield input.form-submit.btn,
+#modalContent .form-tablefield input.form-submit.btn {
+  background-color: #8C1D40 !important;
+}
 ul.help-text {
   background-color: #f6f6f6;
   padding: 0.5em 1em;
@@ -672,19 +763,19 @@ ul.help-text {
 
 ul.help-text li {
   list-style: none;
-  padding: 2px 0;
+  padding: 0.125em 0;
   line-height: 1.25;
 }
 
 ul.help-text li.help-title {
-  font-size: 14px;
+  font-size: 0.875em;
   font-weight: bold;
 }
 
 /* =MEDIA QUERIES
 -------------------------------------------------------------- */
 
-@media (max-width: 992px) {
+@media (max-width: 991px) {
 
   .row .col-sm-6:nth-child(3),
   .row .col-sm-6:nth-child(5),
@@ -784,9 +875,9 @@ ul.help-text li.help-title {
   padding-right: 15px;
 }
 
-.section > .container .row-full .maxpayne [class^="pane-"],
-#footer > .container .row-full .maxpayne [class^="pane-"],
-#page-footer > .container .row-full .maxpayne [class^="pane-"] {
+/* 100% width issue - override for flexslider; asuflex.css carries the rest after this rule
+----------------------------------------------------- */
+.section > .container .row-full .pane-bundle-asu-spotlight [class^="pane-"] {
   width: 100% !important;
   padding-left: 0;
   padding-right: 0;
@@ -806,3 +897,64 @@ ul.help-text li.help-title {
 #page-footer #block-asu-brand-asu-brand-footer {
   background-color: #E5E5E5;
 }
+
+/** Token browsing modal
+----------------------------------------------------- */
+
+.ui-widget-content.ui-dialog.token-browser-container {
+  background-color: #fff;
+  padding: 0.5em;
+  border: 1px solid #ddd;
+}
+.ui-widget-content.ui-dialog.token-browser-container,
+.token-browser-container .ui-dialog-titlebar {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+.token-browser-container .ui-dialog-titlebar {
+  background-color: #eaeaec;
+}
+.token-browser-container .ui-dialog-title {
+  color: #333;
+  padding-left: 1em;
+}
+.token-browser-container table.treeTable > tbody > tr > td:not(first-child) {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
+
+/* FOCUS */
+a:focus,
+.ui-widget-content a:focus,
+input:focus,
+a.btn:focus,
+.btn a:focus,
+#skip_to_content:focus,
+#top-content #tabs .nav-pills > li.active > a:focus,
+h4.ui-accordion-header.ui-state-hover,
+h4.ui-accordion-header:focus {
+	 outline:none;
+	 border:1px solid #4D90FE;
+	 -webkit-box-shadow: 0px 0px 5px  #4D90FE;
+	 box-shadow: 0px 0px 5px  #4D90FE;
+}
+
+/** UI Tabs **/
+
+/* fixes for stacked tabs */
+body #content .ui-tabs .ui-tabs-nav li.ui-state-focus a {
+  border-top: none;
+}
+
+body #content .ui-tabs .ui-tabs-nav li.ui-state-focus {
+  margin-bottom: 0;
+}
+
+body #content .ui-tabs .ui-tabs-nav li a {
+  margin-left: 0;
+  border-bottom: none;
+  clear: both;
+}
+
+

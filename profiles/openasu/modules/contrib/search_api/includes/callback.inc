@@ -26,7 +26,7 @@ interface SearchApiAlterCallbackInterface {
   /**
    * Check whether this data-alter callback is applicable for a certain index.
    *
-   * This can be used for hiding the callback on the index's "Workflow" tab. To
+   * This can be used for hiding the callback on the index's "Filters" tab. To
    * avoid confusion, you should only use criteria that are immutable, such as
    * the index's entity type. Also, since this is only used for UI purposes, you
    * should not completely rely on this to ensure certain index configurations
@@ -180,6 +180,21 @@ abstract class SearchApiAbstractAlterCallback implements SearchApiAlterCallbackI
    */
   public function propertyInfo() {
     return array();
+  }
+
+  /**
+   * Determines whether the given index contains multiple types of entities.
+   *
+   * @param SearchApiIndex|null $index
+   *   (optional) The index to examine. Defaults to the index set for this
+   *   plugin.
+   *
+   * @return bool
+   *   TRUE if the index is a multi-entity index, FALSE otherwise.
+   */
+  protected function isMultiEntityIndex(SearchApiIndex $index = NULL) {
+    $index = $index ? $index : $this->index;
+    return $index->datasource() instanceof SearchApiCombinedEntityDataSourceController;
   }
 
 }

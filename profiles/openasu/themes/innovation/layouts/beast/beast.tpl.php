@@ -12,7 +12,7 @@
 
 <div class="panel-display beast clearfix <?php !empty($class) ? print $class : ''; ?>" <?php !empty($css_id) ? print "id=\"$css_id\"" : ''; ?>>
 
-  <section class="section section-post-header">
+  <div class="section section-post-header">
     <div class="container">
       <div class="row row-1 beast-single-column row-full">
         <div class="column col-md-12 beast-post-header-row1">
@@ -20,15 +20,20 @@
         </div>
       </div>
     </div><!-- /.container -->
-  </section><!-- /.section-post-header -->
+  </div><!-- /.section-post-header -->
 
-  <section class="section section-top">
+  <div class="section section-top">
     <div class="container">
       <div class="row row-1 beast-single-column row-full">
         <div class="column col-md-12 beast-top-row1">
           <?php print $content['toprow1']; ?>
         </div>
       </div>
+      <div class="row row-1b beast-single-column">
+        <div class="column col-md-12 beast-top-row1b">
+          <?php print $content['toprow1b']; ?>
+        </div>
+      </div>      
       <div class="row row-2 beast-double-column">
         <div class="column col-md-6 beast-top-row2-column1">
           <?php print $content['toprow2col1']; ?>
@@ -64,20 +69,30 @@
           <?php print $content['toprow5col3']; ?>
         </div>
       </div>
+      <div class="row row-5b beast-single-column">
+        <div class="column col-md-12 beast-top-row5b">
+          <?php print $content['toprow5b']; ?>
+        </div>
+      </div>       
 			<div class="row row-6 beast-single-column row-full">
 				<div class="column col-md-12 beast-top-row6">
 					<?php print $content['toprow6']; ?>
 				</div>
 			</div>
     </div><!-- /.container -->
-  </section><!-- /.section-top -->
+  </div><!-- /.section-top -->
 
 
-  <section class="section section-middle">
+  <div class="section section-middle">
     <div class="container">
       <div class="row row-1 beast-single-column row-full">
         <div class="column col-md-12 beast-middle-row1">
           <?php print $content['middlerow1']; ?>
+        </div>
+      </div>
+      <div class="row row-1b beast-single-column">
+        <div class="column col-md-12 beast-middle-row1b">
+          <?php print $content['middlerow1b']; ?>
         </div>
       </div>
       <div class="row row-2 beast-double-column">
@@ -115,20 +130,30 @@
           <?php print $content['middlerow5col3']; ?>
         </div>
       </div>
+      <div class="row row-5b beast-single-column">
+        <div class="column col-md-12 beast-middle-row5b">
+          <?php print $content['middlerow5b']; ?>
+        </div>
+      </div>
 			<div class="row row-6 beast-single-column row-full">
 				<div class="column col-md-12 beast-middle-row6">
 					<?php print $content['middlerow6']; ?>
 				</div>
 			</div>
     </div><!-- /.container -->
-  </section><!-- /.section-middle -->
+  </div><!-- /.section-middle -->
 
 
-  <section class="section section-bottom">
+  <div class="section section-bottom">
     <div class="container">
       <div class="row row-1 beast-single-column row-full">
         <div class="column col-md-12 beast-bottom-row1">
           <?php print $content['bottomrow1']; ?>
+        </div>
+      </div>
+      <div class="row row-1b beast-single-column">
+        <div class="column col-md-12 beast-bottom-row1b">
+          <?php print $content['bottomrow1b']; ?>
         </div>
       </div>
       <div class="row row-2 beast-double-column">
@@ -166,15 +191,20 @@
           <?php print $content['bottomrow5col3']; ?>
         </div>
       </div>
+      <div class="row row-5b beast-single-column">
+        <div class="column col-md-12 beast-bottom-row5b">
+          <?php print $content['bottomrow5b']; ?>
+        </div>
+      </div>
 			<div class="row row-6 beast-single-column row-full">
 				<div class="column col-md-12 beast-bottom-row6">
 					<?php print $content['bottomrow6']; ?>
 				</div>
 			</div>
     </div><!-- /.container -->
-  </section><!-- /.section-bottom -->
+  </div><!-- /.section-bottom -->
 
-  <section class="section section-pre-footer">
+  <div class="section section-pre-footer">
     <div class="container">
       <div class="row row-1 beast-single-column row-full">
         <div class="column col-md-12 beast-pre-footer-row1">
@@ -182,6 +212,6 @@
         </div>
       </div>
     </div><!-- /.container -->
-  </section><!-- /.section-pre-footer -->
+  </div><!-- /.section-pre-footer -->
 
 </div><!-- /.beast -->
