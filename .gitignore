@@ -1,0 +1,80 @@
+# Ignore paths that contain user-generated content.
+/sites/*/files
+/sites/*/private
+/files/*
+/cache
+
+# ** Only works in OSs that support newer versions of fnmatch (Bash 4+)
+/sites/default/**/files
+/sites/default/**/private
+
+# Avoid accidental modification of pantheon.upstream.yml in sites
+# created from this upstream
+pantheon.upstream.yml
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.bz2
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.tgz
+
+# Logs and databases #
+######################
+*.log
+*.sql
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon
+
+Thumbs.db
+._*
+
+# Vim generated files #
+######################
+*.un~
+
+# SASS #
+##########
+.sass-cache
+
+# Eclipse generated files #
+######################
+.project
+.settings/
+.buildpath
+*/.project
+*/.settings/
+*/.buildpath
+
+# PHPStorm generated files #
+######################
+.idea
+
+# .patch files in Webspark profile subdirectories
+######################
+profiles/openasu/libraries/**/*.patch
+profiles/openasu/modules/**/*.patch
+profiles/openasu/themes/**/*.patch
+profiles/openasu/**/PATCHES.txt
+
+# .gitignore in Drush make-pulled module repos
+######################
+profiles/openasu/modules/**/.gitignore
+!profiles/openasu/modules/panopoly/panopoly_test/.gitignore
+
+# Files for local development
+######################
+webspark**.bash
+sites/default/settings.local.php
+profiles/openasu/modules/panopoly_test/tests/bin
+profiles/openasu/modules/panopoly_test/tests/vendor
