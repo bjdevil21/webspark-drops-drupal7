@@ -1,0 +1,4 @@
+<?php
+    function nomail_mail_alter(&$message) {
+      $message['send'] = FALSE; 
+    }

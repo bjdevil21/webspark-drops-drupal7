@@ -1,0 +1,15 @@
+name = Webspark MegaMenu EOSS
+description = EOSS-Forms Specific variation on Webspark Megamenu
+core = 7.x
+package = ASU Webspark
+version = 7.x-1.2
+project = webspark_megamenu_eoss
+dependencies[] = defaultcontent
+dependencies[] = features
+dependencies[] = menu
+dependencies[] = tb_megamenu
+scripts[] = js/webspark_megamenu_eoss.js
+features[content_menu_links][] = main-menu_home:<front>
+features[features_api][] = api:2
+features[menu_custom][] = main-menu
+features[user_permission][] = administer tb_megamenu
