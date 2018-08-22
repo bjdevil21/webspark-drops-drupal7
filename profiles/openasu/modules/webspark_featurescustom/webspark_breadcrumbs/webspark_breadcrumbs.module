@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Webspark breadcrumbs feature.
+ */
+
+include_once 'webspark_breadcrumbs.features.inc';

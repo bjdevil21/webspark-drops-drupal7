@@ -1,0 +1,519 @@
+<?php
+
+/**
+ *Implements hook_block_info
+ *
+ **/
+function mega_footer_block_info() {
+  $blocks['mega_footer'] = array(
+
+    'info' => t('Mega Footer'),
+    'region' => 'footer',
+    'weight' => -10,
+    'cache' => DRUPAL_CACHE_GLOBAL,
+    'status' => 1,
+  );
+
+  return $blocks;
+}
+
+/**
+ *Implements hook_block view in order to build custom mega footer
+ *
+ **/
+function mega_footer_block_view($delta = '') {
+
+  $block = array();
+
+  if ($delta == 'mega_footer') {
+
+      $mega_menu = menu_tree_all_data('menu-mega-footer-menu');
+      $mega_menu = menu_tree_output($mega_menu);
+
+
+      //Begin with Title and Address
+      $footer_mark =
+          "<div class='megafoot'>
+    <div class='row'>
+    <div class='col-md-4 col-sm-12 space-bot-md megafoot-border'>";
+
+      $logo = variable_get('unit_logo', '');
+
+      $alt = '';
+
+      $check = variable_get('megafoot_logo_alt', NULL);
+
+      if (!empty($check)) {
+          $alt = $check;
+      }
+
+      if ($logo != '' && $logo != NULL) {
+          $file = file_load($logo);
+          $file_url = file_create_url($file->uri);
+
+          if (!empty($file_url)) {
+              $footer_mark .= "<img src='$file_url' alt='$alt' title='$alt'/>";
+          }
+      }
+
+      $footer_mark .= "
+	          <div class='mega-dept-title'>" . variable_get('unit_title', 'Arizona State University') . "</div>";
+
+      $check = variable_get('megafoot_unit_descrip', NULL);
+
+      if (!empty($check)) {
+          $footer_mark .= "<div class='megafoot-description'>" . $check . "</div>";
+      }
+
+      if (variable_get('megafoot_show_contact_info', FALSE) == TRUE) {
+
+          $footer_mark .= "<address>";
+
+          $check = variable_get('unit_address_one', NULL);
+
+          if (!empty($check)) {
+              $footer_mark .= $check . "<br>";
+          }
+          //Check to see if there is a second line to the address
+          $is_line_two = variable_get('unit_address_two', NULL);
+
+          if (!empty($is_line_two)) {
+              $footer_mark .= $is_line_two . "<br>";
+          }
+
+          $check = variable_get('unit_address_three', NULL);
+
+          if (!empty($check)) {
+              $footer_mark .= $check . "<br>";
+          }
+
+          $check = variable_get('unit_phone', NULL);
+
+          if (!empty($check)) {
+              $footer_mark .= "Phone: <a class='phone-link' href='tel:" . $check . "'>" . $check . "</a><br>";
+          }
+          //check to see if fax is provided, and add to markup if so
+          $is_fax = variable_get('unit_fax', '');
+
+          if (!empty($is_fax)) {
+              $footer_mark .= "Fax: <a class='phone-link' href='tel:" . $is_fax . "'>" . $is_fax . "</a><br>";
+          }
+
+          $footer_mark .= "</address>";
+
+      }
+
+
+      $check = variable_get('unit_contact_us', NULL);
+
+      if (!empty($check)) {
+          $footer_mark .= "<p><a class='contact-link' href='" . $check . "'>Contact us</a></p>";
+      }
+
+      //Social Media
+
+      $footer_mark .= "<ul class='social-media'>";
+
+      $footer_mark = mega_footer_social_media('facebook','facebook-square','Facebook',$footer_mark);
+      $footer_mark = mega_footer_social_media('twitter','twitter-square','Twitter',$footer_mark);
+      $footer_mark = mega_footer_social_media('google','google','Google+',$footer_mark);
+      $footer_mark = mega_footer_social_media('linkedin','linkedin-square','LinkedIn',$footer_mark);
+      $footer_mark = mega_footer_social_media('youtube','youtube-square','YouTube',$footer_mark);
+      $footer_mark = mega_footer_social_media('instagram','instagram','Instagram',$footer_mark);
+      $footer_mark = mega_footer_social_media('vimeo','vimeo-square','Vimeo',$footer_mark);
+      $footer_mark = mega_footer_social_media('flickr','flickr','Flickr',$footer_mark);
+      $footer_mark = mega_footer_social_media('pinterest','pinterest-square','Pinterest',$footer_mark);
+      $footer_mark = mega_footer_social_media('rss','rss-square','RSS',$footer_mark);
+      $footer_mark = mega_footer_custom_icon_and_link('social_media','1',$footer_mark);
+      $footer_mark = mega_footer_custom_icon_and_link('social_media','2',$footer_mark);
+      $footer_mark = mega_footer_custom_icon_and_link('social_media','3',$footer_mark);
+
+
+      $footer_mark .= "</ul>";
+
+      $contrib = variable_get('contribute_button', 'Contribute');
+
+      if (variable_get('contribute_link', NULL) != NULL) {
+          //add contribute button and closing div
+          $footer_mark .= "<a class='btn btn-primary' href='" . variable_get('contribute_link', NULL) . "'>$contrib</a>";
+      }
+
+
+      $footer_mark .= "</div>";
+
+      $i = 0;
+      //Now we add the menu items to the right
+      foreach ($mega_menu as $item) {
+
+          if (is_bool($item)) {
+              break;
+          }
+          $caret = "";
+          if (!empty($item['#below'])) {
+              $caret = "caret";
+          }
+
+          $footer_mark .= "<div class='col-md-2 col-sm-3 space-bot-md'>
+          <h2 data-toggle='collapse' data-target='#mega_accord" . $i . "' class='big-foot-head'>" .
+              $item['#title'] . "<span class='$caret'></span></h2>
+          <ul class='big-foot-nav  collapse in' id='mega_accord" . $i . "' style=''>";
+
+          foreach ($item['#below'] as $inner) {
+              if (is_bool($inner)) {
+                  break;
+              }
+
+              $footer_mark .= "<li><a href='" . url($inner['#href']) . "'>" . $inner['#title'] . "</a></li>";
+          }
+
+          $footer_mark .= "</ul></div>";
+          $i++;
+      }
+      $footer_mark .= "</div>";
+
+      $footer_mark .= "</div>";
+
+      $block['content'] = array(
+          '#markup' => $footer_mark,
+          '#attached' => array(
+              'css' => array(
+                  drupal_get_path('module', 'mega_footer') . '/css/megafoot.css',
+              ),/*
+          'js' => array(
+            drupal_get_path('module', 'mega_footer') . '/js/megafoot.js',
+          ),*/
+          )
+      );
+
+  }
+  return $block;
+}
+
+/**
+ *Implements hook_block_configure in order to allow customization of the mega footer block
+ *
+ **/
+function mega_footer_block_configure($delta = '') {
+
+  drupal_add_css(drupal_get_path('module', 'mega_footer') . '/css/megafoot_menu.css');
+  drupal_add_js(drupal_get_path('module', 'mega_footer') . '/js/megafoot_menu.js');
+
+  $form = array();
+  if ($delta == 'mega_footer') {
+
+    $form['unit_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Unit Title'),
+      '#decription' => t('This will be the title of your organization displayed in the mega footer.'),
+      '#default_value' => variable_get('unit_title', 'ASU'),
+      '#required' => FALSE,
+    );
+
+    $form['unit_description'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Unit Description'),
+      '#decription' => t('This will be displayed below the department title.'),
+      '#default_value' => variable_get('megafoot_unit_descrip', NULL),
+      '#required' => FALSE,
+    );
+
+    $form['show_contact_info'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Show Address, Phone, and Fax information (this is not recommended)'),
+      '#description' => t('The ASU Web Standards were amended to move the display of physical addresses
+      and telephone numbers from the mega footer to a contact page. As a result of this change,
+      the Address First Line, Address Second Line, Phone, and Fax fields for the mega footer have been
+      deprecated and their content will no longer be displayed by default. You may override this behavior
+      by checking the Show Address, Phone, and Fax information checkbox, but doing so is against the standard.
+      These deprecated fields and the ability to display their content in the super footer will be removed in a future version.'),
+      '#default_value' => variable_get('megafoot_show_contact_info', FALSE),
+      '#required' => FALSE,
+    );
+
+    $form['unit_address_one'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Address First Line'),
+      '#default_value' => variable_get('unit_address_one', NULL),
+      '#required' => FALSE,
+      '#prefix' => "<div class='mega-dep-group'>"
+    );
+
+    $form['unit_address_two'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Address Second Line'),
+      '#default_value' => variable_get('unit_address_two', NULL),
+      '#required' => FALSE,
+    );
+
+    $form['unit_address_three'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Address Third Line'),
+      '#default_value' => variable_get('unit_address_three', NULL),
+      '#required' => FALSE,
+    );
+
+    $form['unit_phone'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Phone'),
+      '#default_value' => variable_get('unit_phone', NULL),
+      '#required' => FALSE,
+    );
+
+    $form['unit_fax'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Fax'),
+      '#default_value' => variable_get('unit_fax', NULL),
+      '#suffix' => "</div>",
+    );
+
+    $form['unit_contact_us'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Contact us Link'),
+      '#default_value' => variable_get('unit_contact_us', NULL),
+      '#required' => FALSE,
+    );
+
+    $form['unit_facebook_connect'] = social_media_form_array('facebook','Facebook');
+    $form['unit_twitter_connect'] = social_media_form_array('twitter','Twitter');
+    $form['unit_google_connect'] = social_media_form_array('google','Google+');
+    $form['unit_linkedin_connect'] = social_media_form_array('linkedin','LinkedIn');
+    $form['unit_youtube_connect'] = social_media_form_array('youtube','YouTube');
+    $form['unit_instagram_connect'] = social_media_form_array('instagram','Instagram');
+    $form['unit_vimeo_connect'] = social_media_form_array('vimeo','Vimeo');
+    $form['unit_flickr_connect'] = social_media_form_array('flickr','Flickr');
+    $form['unit_pinterest_connect'] = social_media_form_array('pinterest','Pinterest');
+    $form['unit_tumblr_connect'] = social_media_form_array('tumblr','Tumblr');
+
+    $form['unit_rss_connect'] = array(
+      '#type' => 'textfield',
+      '#title' => t('RSS Link'),
+      '#default_value' => variable_get('unit_rss_connect', NULL),
+    );
+
+    $form['contribute_button'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Contribute Button Text'),
+      '#default_value' => variable_get('contribute_button', 'Contribute'),
+    );
+
+    $form['contribute_link'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Contribute Link'),
+      '#default_value' => variable_get('contribute_link', NULL),
+    );
+
+    $form['unit_logo'] = array(
+      '#type' => 'managed_file',
+      '#title' => t('Choose a logo image.'),
+      '#default_value' => variable_get('unit_logo', ''),
+      '#upload_location' => 'public://',
+    );
+
+    $form['megafoot_logo_alt'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Logo Alt Text.'),
+      '#default_value' => variable_get('megafoot_logo_alt', NULL),
+      '#description' => t('Alternative text is used by screen readers,
+      search engines, and when the image cannot be loaded. By adding alt text
+      you improve accessibility and search engine optimization.'),
+    );
+
+    $form = mega_footer_custom_icon_and_link_fields($form,'custom_social_media_1','Custom Social Media 1');
+    $form = mega_footer_custom_icon_and_link_fields($form,'custom_social_media_2','Custom Social Media 2');
+    $form = mega_footer_custom_icon_and_link_fields($form,'custom_social_media_3','Custom Social Media 3');
+  }
+
+  return $form;
+}
+
+/**
+ *Implements hook_block_save
+ *
+ **/
+function mega_footer_block_save($delta = '', $edit = array()) {
+  if ($delta == 'mega_footer') {
+    if ($edit['unit_logo'] != '') {
+        $block = block_load('mega_footer', 'mega_footer');
+        $file = file_load($edit['unit_logo']);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+        file_usage_add($file, 'mega_footer', 'block', $block->bid);
+    }
+
+    if ($edit['unit_custom_social_media_1_logo'] != '') {
+      $block = block_load('mega_footer', 'mega_footer');
+      $file = file_load($edit['unit_custom_social_media_1_logo']);
+      $file->status = FILE_STATUS_PERMANENT;
+      file_save($file);
+      file_usage_add($file, 'mega_footer', 'block', $block->bid);
+    }
+
+    if ($edit['unit_custom_social_media_2_logo'] != '') {
+      $block = block_load('mega_footer', 'mega_footer');
+      $file = file_load($edit['unit_custom_social_media_2_logo']);
+      $file->status = FILE_STATUS_PERMANENT;
+      file_save($file);
+      file_usage_add($file, 'mega_footer', 'block', $block->bid);
+    }
+
+    if ($edit['unit_custom_social_media_3_logo'] != '') {
+      $block = block_load('mega_footer', 'mega_footer');
+      $file = file_load($edit['unit_custom_social_media_3_logo']);
+      $file->status = FILE_STATUS_PERMANENT;
+      file_save($file);
+      file_usage_add($file, 'mega_footer', 'block', $block->bid);
+    }
+
+    variable_set('megafoot_logo_alt', $edit['megafoot_logo_alt']);
+    variable_set('unit_logo', $edit['unit_logo']);
+    variable_set('megafoot_show_contact_info', $edit['show_contact_info']);
+    variable_set('unit_title', $edit['unit_title']);
+    variable_set('megafoot_unit_descrip', $edit['unit_description']);
+    variable_set('unit_address_one', $edit['unit_address_one']);
+    variable_set('unit_address_two', $edit['unit_address_two']);
+    variable_set('unit_address_three', $edit['unit_address_three']);
+    variable_set('unit_phone', $edit['unit_phone']);
+    variable_set('unit_fax', $edit['unit_fax']);
+    variable_set('unit_contact_us', $edit['unit_contact_us']);
+    variable_set('unit_facebook_connect', $edit['unit_facebook_connect']);
+    variable_set('unit_twitter_connect', $edit['unit_twitter_connect']);
+    variable_set('unit_google_connect', $edit['unit_google_connect']);
+    variable_set('unit_linkedin_connect', $edit['unit_linkedin_connect']);
+    variable_set('unit_youtube_connect', $edit['unit_youtube_connect']);
+    variable_set('unit_instagram_connect', $edit['unit_instagram_connect']);
+    variable_set('unit_vimeo_connect', $edit['unit_vimeo_connect']);
+    variable_set('unit_flickr_connect', $edit['unit_flickr_connect']);
+    variable_set('unit_pinterest_connect', $edit['unit_pinterest_connect']);
+    variable_set('unit_tumblr_connect', $edit['unit_tumblr_connect']);
+    variable_set('contribute_button', $edit['contribute_button']);
+    variable_set('contribute_link', $edit['contribute_link']);
+    variable_set('unit_rss_connect', $edit['unit_rss_connect']);
+    variable_set('unit_custom_social_media_1', $edit['unit_custom_social_media_1']);
+    variable_set('unit_custom_social_media_1_name', $edit['unit_custom_social_media_1_name']);
+    variable_set('unit_custom_social_media_1_logo', $edit['unit_custom_social_media_1_logo']);
+    variable_set('unit_custom_social_media_2', $edit['unit_custom_social_media_2']);
+    variable_set('unit_custom_social_media_2_name', $edit['unit_custom_social_media_2_name']);
+    variable_set('unit_custom_social_media_2_logo', $edit['unit_custom_social_media_2_logo']);
+    variable_set('unit_custom_social_media_3', $edit['unit_custom_social_media_3']);
+    variable_set('unit_custom_social_media_3_name', $edit['unit_custom_social_media_3_name']);
+    variable_set('unit_custom_social_media_3_logo', $edit['unit_custom_social_media_3_logo']);
+  }
+}
+
+/**
+ *Implements hook_form_alter
+ * Takes away ability to delete the menu on menu edit form
+ *
+ **/
+function mega_footer_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'menu_edit_menu' && $form['menu_name']['#default_value'] == 'menu-mega-footer-menu') {
+    $form['actions']['delete']['#access'] = FALSE;
+    $form['title']['#access'] = FALSE;
+    $form['description']['#access'] = FALSE;
+    $form['description']['#expanded'] = TRUE;
+    $form['menu_name']['#description'] = 'The top level menu items will not be rendered as links,
+        and instead as titles for each column of links.
+        Adding any more than 4 top-level links will result in the
+        remainder being pushed to the 2nd row.';
+  }
+}
+
+/**
+ * Add social media sections to the page
+ *
+ * @param $name name of social media
+ * @param $class image class name
+ * @param $title social media title
+ * @param $mark footer to add to
+ * @return string
+ */
+function mega_footer_social_media($name,$class,$title,$mark) {
+    $check = variable_get('unit_' . $name . '_connect', NULL);
+    $className = 'fa-' . $class;
+
+    if (!empty($check)) {
+        $mark .= "<li><a href='" . $check . "' title=$title><span class='sr-only'>$title</span>
+    <i class='fa $className' aria-hidden='true'></i></a>
+    </li>";
+    }
+
+    return $mark;
+}
+
+/**
+ * Adds social media link field to form
+ *
+ * @param $name name of social media
+ * @param $title title of social media
+ * @return array
+ */
+function social_media_form_array($name,$title) {
+    return array(
+        '#type' => 'textfield',
+        '#title' => t($title . ' Connect Link'),
+        '#default_value' => variable_get('unit_' . $name . '_connect', NULL),
+    );
+}
+
+/**
+ * Gets custom icon and link and displays it
+ *
+ * @param $type kind of custom field
+ * @param $num count of custom field
+ * @param $mark footer to add to
+ * @return string
+ */
+
+function mega_footer_custom_icon_and_link($type,$num,$mark) {
+    $check = variable_get('unit_custom_' . $type . '_' . $num, NULL);
+
+    $name = variable_get('unit_custom_' . $type . '_' . $num . '_name', NULL);
+
+    $logo = variable_get('unit_custom_' . $type . '_' . $num . '_logo', '');
+
+    if ($logo != '' && $logo != NULL) {
+        $file = file_load($logo);
+        $file_url = file_create_url($file->uri);
+
+        if (!empty($file_url)) {
+            if (!empty($check)) {
+                $mark .= "<li><a href='" . $check . "' title='" . $name . "'><span class='sr-only'>" . $name . "</span>
+        <span class='gray'><img class='fa' id ='" . $name . "' alt ='" . $name . "' src='$file_url' aria-hidden='true' style='top:7px'/></span></a></li>";
+            }
+        }
+    }
+
+    return $mark;
+}
+
+
+/**
+ * Adds custom icon and link fields to the form
+ *
+ * @param $form form to add custom icon and link to
+ * @param $name name to insert for item
+ * @param $title text to display for the field
+ * @return the original form
+ */
+function mega_footer_custom_icon_and_link_fields($form,$name,$title) {
+    $form['unit_' . $name] = array(
+        '#type' => 'textfield',
+        '#title' => t($title . ' Link'),
+        '#default_value' => variable_get('unit_' . $name, NULL),
+    );
+
+    $form['unit_' . $name . '_name'] = array(
+        '#type' => 'textfield',
+        '#title' => t($title . ' Name'),
+        '#default_value' => variable_get('unit_' . $name . '_name', NULL),
+    );
+
+    $form['unit_' . $name . '_logo'] = array(
+        '#type' => 'managed_file',
+        '#title' => t('Choose a ' . strtolower($title) . ' image'),
+        '#default_value' => variable_get('unit_' . $name . '_logo', ''),
+        '#upload_location' => 'public://',
+    );
+
+    return $form;
+}

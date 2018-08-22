@@ -1,0 +1,13 @@
+asu_dir_utilities 7.x-1.3
+-------------------------
+- Added variable for configurable last name sorting field in Solr
+
+asu_dir_utilities 7.x-1.2
+-------------------------
+- added default config for displaying department
+
+asu_dir_utilities 7.x-1.1
+-------------------------
+- long term caching functions for tree and employee types
+- streamlined cached data management
+- added support for Solr schema caching

@@ -1,0 +1,249 @@
+<?php
+
+/**
+ * Future Webspark DB updates here (instead of asu_cas module)
+ */
+
+/**
+ * Implements hook_enable()
+ */
+function webspark_featurescustom_enable() {
+  // place after asu_cas module for execution
+  db_update('system')
+    ->fields(array(
+      'weight' => '2'
+    ))
+    ->condition('name', 'webspark_featurescustom')
+    ->execute();
+
+  /* Since this module has 'required = TRUE' set, we can make certain that the
+  taxonomy module is enabled early in the drush site-install process, avoiding
+  bugs that pop up when panelizer is enabled before it:
+  see https://www.drupal.org/node/2183937 */
+  module_enable(array('taxonomy'));
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function webspark_featurescustom_update_dependencies() {
+  $deps = array();
+  // Makes doubly sure for older Panopoly updates that 7118 comes before 7005 (panopoly_search)
+  // Overrides panopoly_widgets_update_dependencies in panopoly_search.install
+  // Remove this once panopoly patches the issue on their end.
+  $deps['panopoly_search'][7005] = array(
+    'search_api' => 7118,
+    'search_api_db' => 7104,
+    'search_api_solr' => 7102,
+  );
+  // Ensure that ASU Brand module updates to v4.5 last, after other prior updates
+  $deps['asu_brand'][7102] = array(
+    'asu_cas' => 7001,
+    'webspark_featurescustom' => 7002,
+  );
+  return $deps;
+}
+
+/**
+ * Implements hook_update_N()
+ * + Enables ASU Webspark Carousel module for all Webspark users
+ */
+function webspark_featurescustom_update_7000(&$sandbox) {
+  if (!module_exists('uto_carousel')) {
+    module_enable(array('uto_carousel'));
+  }
+}
+
+/**
+ * Implements hook_update_N()
+ * + Spokane - Updates content callout feature's file assets setting in DB
+ */
+function webspark_featurescustom_update_7001(&$sandbox) {
+  if (module_exists('webspark_content_callout')) {
+    $uuid_assets_path = db_select('variable', 'v')
+      ->condition('name', 'uuid_features_file_assets_path')
+      ->fields('v', array('value'))
+      ->execute()
+      ->fetchField();
+    if (isset($uuid_assets_path) && strstr($uuid_assets_path, 'custom/webspark_featurescustom')) {
+      $uuid_assets_path = unserialize($uuid_assets_path);
+      $uuid_assets_path = serialize(preg_replace('|^(.+)/custom(/webspark_featurescustom.+)$|', '$1$2', $uuid_assets_path));
+      db_update('variable')
+        ->fields(array(
+            'value' => $uuid_assets_path,
+          )
+        )
+        ->condition('name', 'uuid_features_file_assets_path')
+        ->execute();
+      drupal_set_message('Webspark Content Callout file assets directory updated in variable table.');
+      watchdog('webspark_updates', '7001 - Webspark Content Callout file assets directory updated in variable table.');
+    }
+    else {
+      drupal_set_message('No Webspark Content Callout settings were applied.');
+      watchdog('webspark_updates', '7001 - No Webspark Content Callout settings were applied.');
+    }
+  }
+}
+
+/**
+ * Implements hook_update_N() -- Ferndale release
+ * + Increases the number of stored Drupal log entries to higher threshold if currently set to 1000 rows or lower.
+ * + Rebuilds Webspark WYSIWYG feature after adding lead paragraph styling
+ * + Forces enabling of Webspark Extras module (has HTTPS code now)
+ */
+
+function webspark_featurescustom_update_7002(&$sandbox) {
+  // WEBSPARK-696
+  $max_log_count = settype(variable_get('dblog_row_limit'), "int");
+  if ($max_log_count <= 1000 && $max_log_count != 0) {
+    variable_set('dblog_row_limit', '100000');
+    watchdog('webspark_updates', "7002 - Increased dblog_row_limit to 100,000 latest log entries.");
+  }
+  // WEBSPARK-366 - ensure this module is enabled
+  if (!module_exists('webspark_extras')) {
+    module_enable(array('webspark_extras'));
+  }
+  // WEBSPARK-796 - update ASU header to v4.4
+  if (variable_get('asu_brand_header_version') == '4.3') {
+    variable_set('asu_brand_header_version', '4.4');
+  }
+}
+
+/**
+ * Implements hook_update_N() -- Billings release
+ * + Disable and uninstall RespondJS module in preparation for removal
+ */
+
+function webspark_featurescustom_update_7003(&$sandbox) {
+  // WEBSPARK-891 - Disable and cleanup after respondjs module
+  if (module_exists('respondjs')) {
+    module_disable(array('respondjs'));
+    watchdog('webspark_updates', "7003 - Disabled respondjs module, which will be removed with next Webspark release.");
+    if (is_null(variable_get('respondjs_scope'))) {
+      variable_del('respondjs_scope');
+      watchdog('webspark_updates', "Deleted respondJS module setting - respondjs_scope");
+    }
+    if (is_null(variable_get('respond_quiet'))) {
+      variable_del('respondjs_quiet');
+      watchdog('webspark_updates', "Deleted respondJS module setting - respondjs_quiet");
+    }
+  }
+}
+
+/**
+ * Implements hook_update_N() -- Sioux Falls release
+ * + Add administrative theme viewing to the editor role.
+ */
+function webspark_featurescustom_update_7004(&$sandbox) {
+  // WEBSPARK-862 - Add administrative theme viewing to the editor role.
+  $role = user_role_load_by_name("editor");
+  if (!empty($role->rid)) {
+    $rid = (int) $role->rid;
+    user_role_grant_permissions($rid, array('view the administration theme'));
+    watchdog('webspark_updates', "7004 - Added view the administrative theme to the editor role.");
+  }
+}
+
+/**
+ * Implements hook_update_N() -- Pillsbury release
+ * + Update header to 4.5 with different logic
+ */
+function webspark_featurescustom_update_7005(&$sandbox) {
+  watchdog('webspark_updates', "7004 - Update header to 4.5 with different logic");
+  if (module_exists('asu_brand')) {
+    $version = variable_get('asu_brand_header_version');
+    if (settype($version, "float") <= 4.5) {
+      variable_set('asu_brand_header_version', '4.5');
+    }
+    else {
+      watchdog('webspark_updates', "7004 not applied. Header must already be v4.5 or higher.");
+    }
+  }
+}
+
+/**
+ * Implements hook_update_N() -- Colorado release
+ * + Set theme to default Drupal theme if old ASU theme is current default.
+ * + Enable Missing Module contrib module to help clean up new Drupal 7.52 errors.
+ *   See Colorado release notes for more information.
+ */
+function webspark_featurescustom_update_7006(&$sandbox) {
+  $display_message = FALSE;
+  $theme = variable_get('theme_default');
+  $admin_theme = variable_get('admin_theme');
+  $message_admin = ($admin_theme == 'asu_webspark_bootstrap') ? 'and administrative theme have both' : 'has';
+  $message = "The old ASU Webspark Bootstrap theme has been removed from 
+      Webspark's codebase because it no longer complies with ASU's current Web
+      Standards (see " . l('the Marketing Hub web site', 'https://brandguide.asu.edu') .
+      " for more information.) <br><br>The main theme " . $message_admin . " been set to a default theme 
+      called Webspark Seven. Go to " . l("/admin/appearance", "Drupal themes") . " 
+      page to select another theme, such as Innovation (the current ASU Web standards
+      theme included with Webspark.)";
+  if ($theme === 'asu_webspark_bootstrap') {
+    variable_set('theme_default', 'webspark_seven');
+    $display_message = TRUE;
+  }
+  if ($admin_theme === 'asu_webspark_bootstrap') {
+    variable_set('admin_theme', 'webspark_seven');
+    $display_message = TRUE;
+  }
+  // Now show message if necessary
+  if ($display_message) {
+    drupal_set_message($message, 'warning');
+    watchdog('webspark_updates', '7006 - ' . $message, WATCHDOG_INFO);
+  }
+  // Missimg Module - enable
+  if (!module_exists('missing_module')) {
+    module_enable(array('missing_module'));
+    drupal_set_message("Make sure that your Webspark site's administrator role " .
+      "(usually 'administrator') receives all of the necessary permissions to " .
+      "use the Missing Module module at /admin/people/permissions", 'status');
+    watchdog('webspark_updates', '7006 - Missing Module contrib module enabled.');
+  }
+  // WEBSPARK-1072 - Moved Webspark Seven theme info around. Need to rebuild.
+  drupal_theme_rebuild();
+}
+
+/**
+ * Implements hook_update_N() --
+ * Since the location of the asu_dir module has changed, rebuild the registry, then
+ * enable asu_dirs suite module, and dir panel module.
+ * @param $sandbox
+ */
+function webspark_featurescustom_update_7008(&$sandbox) {
+  registry_rebuild();
+  if (module_exists('asu_dir')) {
+    module_enable(array('asu_dirs'));
+    module_enable(array('asu_dir_panel'));
+  }
+}
+
+/**
+ * Implements hook_update_N()
+ * -- Reverts Panopoly Page feature to apply missing settings to the Landing Page content type
+ * @param $sandbox
+ */
+function webspark_featurescustom_update_7009(&$sandbox) {
+  // Create the new landing page content type.
+  if (module_exists('panopoly_pages')) {
+    $items = array();
+    $items['panopoly_pages'] = array('variable');
+    features_revert($items);
+    watchdog('webspark_updates', '7009 - Reverts Panopoly Page feature to apply missing settings to the Landing Page content type');
+  }
+  else {
+    watchdog('webspark_updates', '7009 - Panopoly Pages module not enabled. No changes were made.', WATCHDOG_ALERT);
+  }
+  // WEBSPARK-1237 - Add ASU Spotlight permissions to editor role
+  $role = user_role_load_by_name("editor");
+  if (!empty($role->rid)) {
+    $rid = (int) $role->rid;
+    user_role_grant_permissions($rid, array(
+        'create fieldable asu_spotlight',
+        'edit fieldable asu_spotlight',
+        'delete fieldable asu_spotlight',
+      )
+    );
+    watchdog('webspark_updates', "7009 - Add ASU Spotlight permissions to editor role.");
+  }
+}

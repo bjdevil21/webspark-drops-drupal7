@@ -1,0 +1,97 @@
+name = ASU Webspark
+distribution_name = ASU Webspark
+description = A starting point for websites at ASU
+core = 7.x
+exclusive = 1
+;version = VERSION
+; Remember to update in innovation as well for DOM
+version = 1.53
+
+; Drupal Core
+dependencies[] = taxonomy
+dependencies[] = block
+dependencies[] = menu
+dependencies[] = image
+dependencies[] = list
+dependencies[] = number
+dependencies[] = options
+dependencies[] = path
+dependencies[] = search
+dependencies[] = shortcut
+dependencies[] = field
+dependencies[] = field_ui
+dependencies[] = file
+dependencies[] = dblog
+dependencies[] = update
+
+; Panopoly Foundation
+dependencies[] = panopoly_core
+dependencies[] = panopoly_images
+dependencies[] = panopoly_theme
+dependencies[] = panopoly_magic
+dependencies[] = panopoly_admin
+dependencies[] = panopoly_users
+; moved widgets below panopoly_users
+dependencies[] = panopoly_widgets
+
+; Panopoly Toolset
+dependencies[] = panopoly_pages
+dependencies[] = panopoly_search
+dependencies[] = panopoly_wysiwyg
+
+; Panopoly Recommended - Admin
+dependencies[] = navbar
+dependencies[] = backports
+dependencies[] = simplified_menu_admin
+dependencies[] = save_draft
+dependencies[] = module_filter
+dependencies[] = date_popup_authored
+
+
+; OpenASU - Contrib recommended
+dependencies[] = views_ui
+;dependencies[] = contextual
+
+; OpenASU - Contrib modules for features
+dependencies[] = backgroundfield
+dependencies[] = chosen
+dependencies[] = easy_breadcrumb
+dependencies[] = entity_view_mode
+dependencies[] = flexslider
+dependencies[] = fontawesome
+dependencies[] = google_appliance
+dependencies[] = maxlength
+dependencies[] = panels_tabs
+;dependencies[] = quicktabs
+dependencies[] = uuid_features
+dependencies[] = features_override
+dependencies[] = video_embed_field
+dependencies[] = wysiwyg_template
+
+; OpenASU - Toolset
+dependencies[] = modernizr
+
+; OpenASU - Custom
+dependencies[] = asu_brand
+
+; Container module built for Webspark custom features
+dependencies[] = webspark_featurescustom
+dependencies[] = asu_gsa
+dependencies[] = asu_maps_enhanced
+dependencies[] = asu_spotlight
+dependencies[] = uto_carousel
+dependencies[] = asu_securityscanfixes
+dependencies[] = mega_footer
+dependencies[] = webspark_panels_styles
+dependencies[] = webspark_banner
+dependencies[] = webspark_breadcrumbs
+dependencies[] = webspark_content_callout
+dependencies[] = webspark_easyadmin
+dependencies[] = webspark_hero
+dependencies[] = webspark_jumbohero
+dependencies[] = webspark_megamenu
+dependencies[] = mega_footer_menu
+dependencies[] = webspark_wysiwyg
+dependencies[] = webspark_extras
+;dependencies[] = asu_cas (moved to openasu_install)
+;dependencies[] = better_watchdog_ui (moved to openasu_install)

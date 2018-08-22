@@ -1,0 +1,36 @@
+<?php
+
+include_once('uto_carousel.spotlight.inc');
+include_once('uto_carousel.features.inc');
+
+/**
+ * Implementation of hook_entity_info_alter()
+ */
+function uto_carousel_entity_info_alter(&$entity_info) {
+    // Spotlight
+    $entity_info['fieldable_panels_pane']['bundles']['uto_carousel'] = array(
+        'label' => t('Add Carousel'),
+        'description' => t('Add Carousel'),
+        'pane category' => t('ASU Webspark'),
+        'pane top level' => TRUE,
+        'pane icon' => drupal_get_path('module', 'panopoly_widgets') . '/images/icon_spotlight.png',
+        'admin' => array(
+            'path' => 'admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type',
+            'bundle argument' => 4,
+            'real path' => 'admin/structure/fieldable-panels-panes/manage/uto_carousel',
+            'access arguments' => array('administer fieldable panels panes'),
+        ),
+    );
+}
+
+/**
+ * Implements hook_theme()
+ */
+function uto_carousel_theme() {
+    // Summary View
+    $themes['uto_carousel'] = array(
+        'template' => 'templates/uto-carousel-list',
+        'variables' => array('items' => array(), 'settings' => array())
+    );
+    return $themes;
+}

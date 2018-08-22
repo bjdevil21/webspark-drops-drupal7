@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * An installation file for ASU Maps Enhanced
+ **/
+
+/**
+ * Implementation of hook_install().
+ */
+function asu_maps_enhanced_install() {
+
+}
+
+/**
+ *Implements hook_update_N
+ *in order to revert module and add fields
+ *
+ **/
+function asu_maps_enhanced_update_7001(&$sandbox) {
+  features_revert_module('asu_maps_enhanced');
+}
+
+/**
+ * Implements hook_update_N
+ * @param $sandbox
+ *
+ * Update the db to hold a longer list of items for a map
+ */
+function asu_maps_enhanced_update_7002(&$sandbox) {
+  db_query('ALTER TABLE field_data_field_asu_maps_enhanced_items MODIFY field_asu_maps_enhanced_items_map_items longtext');
+  db_query('ALTER TABLE field_revision_field_asu_maps_enhanced_items MODIFY field_asu_maps_enhanced_items_map_items longtext');
+
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function asu_maps_enhanced_uninstall() {
+
+
+}
+
+/**
+ * Implementation of hook_field_schema().
+ */
+function asu_maps_enhanced_field_schema($field) {
+  if ($field['type'] == 'asu_maps_enhanced') {
+
+    $schema['columns']['description'] = array(
+      'type' => 'text',
+      'not null' => FALSE,
+    );
+
+    $schema['columns']['map_items'] = array(
+      'type' => 'text',
+      'not null' => FALSE,
+    );
+
+    return $schema;
+  }
+}

@@ -1,0 +1,46 @@
+<?php
+/**
+ * Code for the Webspark Extras feature.
+ */
+
+include_once 'webspark_extras.features.inc';
+
+/**
+ * @file - Forces custom functionality on initial bootstrapping
+ */
+
+/**
+ * Implements hook_boot()
+ *
+ * Ensures that all pages are forced to HTTPS if site is on Pantheon
+ */
+function webspark_extras_boot() {
+  global $install_state;
+  if (!$install_state) {
+    if (isset($_SERVER['PANTHEON_ENVIRONMENT'])) {
+      if (!isset($_SERVER['HTTP_X_SSL']) || $_SERVER['HTTP_X_SSL'] != 'ON') {
+        header('HTTP/1.0 301 Moved Permanently');
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+        // WEBSPARK-813 - friendlier cache-control settings for 301 redirects
+        header('Cache-Control: public, max-age=3600');
+        exit();
+      }
+    }
+  }
+}
+
+
+function webspark_extras_page_alter(&$page) {
+  $page['header']['skip_html'] = array(
+    '#weight' => -100,
+    '#markup' => '<div class="accessibility-hide"><a href="#main-wrapper" id="skip_to_content">Skip to Main Page Content</a></div>',
+  );
+  $page['header']['#sorted'] = FALSE;
+}
+
+
+function webspark_extras_quicktabs_tabstyles() {
+  $tabstyles_directory = drupal_get_path('module', 'webspark_extras') . '/tabstyles';
+  return array($tabstyles_directory . '/asu_web_standards/asu_web_standards.css' => t('ASU Web Standards'));
+}
+
