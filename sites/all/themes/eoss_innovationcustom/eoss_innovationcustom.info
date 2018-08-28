@@ -14,7 +14,5 @@ regions[closure] = Closure
 
 settings[toggle_logo] = 0 
 
-stylesheets[all][] = css/main.css 
-
-stylesheets[all][] = css/font-awesome.min.css 
+stylesheets[all][] = css/main.css
 
