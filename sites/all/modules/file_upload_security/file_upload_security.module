@@ -360,14 +360,16 @@ function file_upload_security_fix_webforms(&$files = array()) {
         ));
 
       if ($query->execute()) {
-        echo "<p>$nid has been updated.</p>\n";
+        drupal_set_message('Webform file component ' . check_plain($component->cid) . ' at /node/'
+          . check_plain($nid) . ' has been updated.', 'status');
         watchdog('file_upload_security', "Webform file component :cid at /node/:nid
-          has been updated.", array(':nid' => $nid), WATCHDOG_NOTICE);
+          has been updated.", array(':cid' => $component->cid, ':nid' => $nid), WATCHDOG_NOTICE);
       }
       else {
-        echo "<p>$nid could not be updated.</p>\n";
+        drupal_set_message('Webform file component ' . check_plain($component->cid) . ' at /node/'
+          . check_plain($nid) . ' could not be updated.', 'warning');
         watchdog('file_upload_security', "Webform file component :cid at /node/:nid
-          could not be updated.", array(':nid' => $nid), WATCHDOG_WARNING);
+          could not be updated.", array(':cid' => $component->cid, ':nid' => $nid), WATCHDOG_WARNING);
       }
     }
   }
