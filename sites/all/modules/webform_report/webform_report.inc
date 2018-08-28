@@ -373,7 +373,7 @@ function _webform_report_get_report_data($node) {
           // make a webform "component"
           $wfcomp['extra'] = $extra;
           // get select options
-          $columns[$index]['pairs'] = _webform_select_options($wfcomp);
+          $columns[$index]['pairs'] = _webform_select_options($wfcomp, FALSE, FALSE);
         }
         // get options from webforms 2.x
         else {
