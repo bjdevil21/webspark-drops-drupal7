@@ -5676,42 +5676,21 @@ button.close {
 .affix {
   position: fixed;
 }
-
-/** Boostrap v3.3.6 hack - 20180909 - BJR
- * This is necessary for studyabroad's TerraDotta app to work
- * because TD's app uses v3.3.6, and some of the buttons are being
- * hidden in wrong places.
- */
-
 @-ms-viewport {
   width: device-width;
 }
 .visible-xs,
-.visible-sm,
-.visible-md,
-.visible-lg {
+tr.visible-xs,
+th.visible-xs,
+td.visible-xs {
   display: none !important;
 }
-.visible-xs-block,
-.visible-xs-inline,
-.visible-xs-inline-block,
-.visible-sm-block,
-.visible-sm-inline,
-.visible-sm-inline-block,
-.visible-md-block,
-.visible-md-inline,
-.visible-md-inline-block,
-.visible-lg-block,
-.visible-lg-inline,
-.visible-lg-inline-block {
-  display: none !important;
-}
-@media (max-width: 767px) {
+@media (max-width: 929px) {
   .visible-xs {
     display: block !important;
   }
   table.visible-xs {
-    display: table !important;
+    display: table;
   }
   tr.visible-xs {
     display: table-row !important;
@@ -5721,27 +5700,18 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (max-width: 767px) {
-  .visible-xs-block {
-    display: block !important;
-  }
+.visible-sm,
+tr.visible-sm,
+th.visible-sm,
+td.visible-sm {
+  display: none !important;
 }
-@media (max-width: 767px) {
-  .visible-xs-inline {
-    display: inline !important;
-  }
-}
-@media (max-width: 767px) {
-  .visible-xs-inline-block {
-    display: inline-block !important;
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 931px) and (max-width: 991px) {
   .visible-sm {
     display: block !important;
   }
   table.visible-sm {
-    display: table !important;
+    display: table;
   }
   tr.visible-sm {
     display: table-row !important;
@@ -5751,27 +5721,18 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
-  .visible-sm-block {
-    display: block !important;
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .visible-sm-inline {
-    display: inline !important;
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .visible-sm-inline-block {
-    display: inline-block !important;
-  }
+.visible-md,
+tr.visible-md,
+th.visible-md,
+td.visible-md {
+  display: none !important;
 }
 @media (min-width: 992px) and (max-width: 1199px) {
   .visible-md {
     display: block !important;
   }
   table.visible-md {
-    display: table !important;
+    display: table;
   }
   tr.visible-md {
     display: table-row !important;
@@ -5781,27 +5742,18 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (min-width: 992px) and (max-width: 1199px) {
-  .visible-md-block {
-    display: block !important;
-  }
-}
-@media (min-width: 992px) and (max-width: 1199px) {
-  .visible-md-inline {
-    display: inline !important;
-  }
-}
-@media (min-width: 992px) and (max-width: 1199px) {
-  .visible-md-inline-block {
-    display: inline-block !important;
-  }
+.visible-lg,
+tr.visible-lg,
+th.visible-lg,
+td.visible-lg {
+  display: none !important;
 }
 @media (min-width: 1200px) {
   .visible-lg {
     display: block !important;
   }
   table.visible-lg {
-    display: table !important;
+    display: table;
   }
   tr.visible-lg {
     display: table-row !important;
@@ -5811,44 +5763,38 @@ button.close {
     display: table-cell !important;
   }
 }
-@media (min-width: 1200px) {
-  .visible-lg-block {
-    display: block !important;
-  }
-}
-@media (min-width: 1200px) {
-  .visible-lg-inline {
-    display: inline !important;
-  }
-}
-@media (min-width: 1200px) {
-  .visible-lg-inline-block {
-    display: inline-block !important;
-  }
-}
-@media (max-width: 767px) {
-  .hidden-xs {
+@media (max-width: 929px) {
+  .hidden-xs,
+  tr.hidden-xs,
+  th.hidden-xs,
+  td.hidden-xs {
     display: none !important;
   }
 }
-@media (min-width: 768px) and (max-width: 991px) {
-  .hidden-sm {
+@media (min-width: 931px) and (max-width: 991px) {
+  .hidden-sm,
+  tr.hidden-sm,
+  th.hidden-sm,
+  td.hidden-sm {
     display: none !important;
   }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
-  .hidden-md {
+  .hidden-md,
+  tr.hidden-md,
+  th.hidden-md,
+  td.hidden-md {
     display: none !important;
   }
 }
 @media (min-width: 1200px) {
-  .hidden-lg {
+  .hidden-lg,
+  tr.hidden-lg,
+  th.hidden-lg,
+  td.hidden-lg {
     display: none !important;
   }
 }
-
-/** END Bootstrap v3.3.6 hack */
-
 .visible-print,
 tr.visible-print,
 th.visible-print,
