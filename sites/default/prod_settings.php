@@ -224,6 +224,9 @@ $databases = array (
       'port' => '',
       'driver' => 'mysql',
       'prefix' => '',
+      'pdo' => array(
+        PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle',
+      ),
     ),
   ),
 );

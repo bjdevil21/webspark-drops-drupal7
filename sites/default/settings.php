@@ -211,10 +211,8 @@
  * @endcode
  */
 $databases = array (
-  'default' => 
-  array (
-    'default' => 
-    array (
+  'default' => array (
+    'default' => array (
       'database' => 'eoss_forms',
       'username' => 'eoss_forms_app',
       'password' => 'q8fY4nkU827e',
@@ -222,6 +220,9 @@ $databases = array (
       'port' => '',
       'driver' => 'mysql',
       'prefix' => '',
+      'pdo' => array(
+        PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle',
+      ),
     ),
   ),
 );
