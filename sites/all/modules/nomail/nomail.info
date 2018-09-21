@@ -1,3 +1,5 @@
-name = nomail
-description = Disables a site's mail functionality.
+name = No Mail
+description = "Does only one thing: Disables a site's ability to actually send email."
 core = 7.x
+version = 7.x-1.1
+; updated by Bryan Roseberry - 9/21/2018
