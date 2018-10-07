@@ -1,7 +1,70 @@
 <?php
 
+/**
+ * Settings function to improve future-proofing.
+ *
+ * Example usage:
+ * $degreeMappings = asu_rfi_get_degree_mappings_pages();
+ * $degreeContentType = $degreeMappings['content_type'];
+ */
+function asu_rfi_get_degree_mappings_undergrad_post() {
+  // Swap out mapping values based on module enabled.
+  // ASU AP takes priority, but default is to ASU
+  // Degrees (deprecated);
+  if (module_exists('asu_ap')) {
+    $map = array(
+      // Content Type
+      'content_type' => 'asu_ap',
+      // Tables
+      'table_asu_academic_plan' => 'field_data_field_asu_ap_acad_plan',
+      'table_asu_academic_program' => 'field_data_field_asu_ap_acad_prog',
+      'table_asu_degree_awarded' => 'field_data_field_asu_ap_awarded',
+      'table_asu_degree_program' => 'field_data_field_asu_ap_program',
+      'table_asu_diploma_description' => 'field_data_field_asu_ap_diploma_desc',
+      // Fields
+      'field_academic_plan' => 'field_asu_ap_acad_plan',
+      'field_academic_plan_value' => 'field_asu_ap_acad_plan_value',
+      'field_academic_program' => 'field_asu_ap_acad_prog',
+      'field_academic_program_value' => 'field_asu_ap_acad_prog_value',
+      'field_degree_awarded' => 'field_asu_ap_awarded',
+      'field_degree_awarded_value' => 'field_asu_ap_awarded_value',
+      'field_degree_campus' => 'field_asu_ap_campus',
+      'field_degree_program' => 'field_asu_ap_program',
+      'field_degree_program_value' => 'field_asu_ap_program_value',
+      'field_diploma_description' => 'field_asu_ap_diploma_desc',
+      'field_diploma_description_value' => 'field_asu_ap_diploma_desc_value',
+    );
+  } else { // asu_degrees
+    $map = array(
+      // Content Type
+      'content_type' => 'asu_degree',
+      // Tables
+      'table_asu_academic_plan' => 'field_data_field_asu_academic_plan',
+      'table_asu_academic_program' => 'field_data_field_asu_academic_program',
+      'table_asu_degree_awarded' => 'field_data_field_asu_degree_awarded',
+      'table_asu_degree_program' => 'field_data_field_asu_degree_program',
+      'table_asu_diploma_description' => 'field_data_field_asu_diploma_description',
+      // Fields
+      'field_academic_plan' => 'field_asu_academic_plan',
+      'field_academic_plan_value' => 'field_asu_academic_plan_value',
+      'field_academic_program' => 'field_asu_academic_program',
+      'field_academic_program_value' => 'field_asu_academic_program_value',
+      'field_degree_awarded' => 'field_asu_degree_awarded',
+      'field_degree_awarded_value' => 'field_asu_degree_awarded_value',
+      'field_degree_campus' => 'field_asu_degree_campus',
+      'field_degree_program' => 'field_asu_degree_program',
+      'field_degree_program_value' => 'field_asu_degree_program_value',
+      'field_diploma_description' => 'field_asu_diploma_description',
+      'field_diploma_description_value' => 'field_asu_diploma_description_value',
+    );
+  }
+  return $map;
+}
+
 function asu_rfi_undergrad_post($data)
 {
+  $degreeMappings = asu_rfi_get_degree_mappings_undergrad_post();
+
   $nodeid = $data['submission_nodeid'];
 
   $node = node_load($nodeid);
@@ -46,7 +109,7 @@ function asu_rfi_undergrad_post($data)
     $college_code = null;
   } else {
     //Get college code from database based on program code
-    $college_code = db_query('select field_asu_academic_program_value from field_data_field_asu_academic_program prog join field_data_field_asu_academic_plan plan on prog.entity_id = plan.entity_id where plan.field_asu_academic_plan_value = :plancode', array(':plancode' => $prog_code))->fetchField();
+    $college_code = db_query('select ' . $degreeMappings['field_academic_program_value'] . ' from ' . $degreeMappings['table_asu_academic_program'] . ' prog join ' . $degreeMappings['table_asu_academic_plan'] . ' plan on prog.entity_id = plan.entity_id where plan.' . $degreeMappings['field_academic_plan_value'] . ' = :plancode', array(':plancode' => $prog_code))->fetchField();
   }
   $form_mode = variable_get('asu_rfi_form_mode');
   $hashkey = sha1($mw_auth_key . '+' . $nodeid);
@@ -104,7 +167,14 @@ function asu_rfi_undergrad_post($data)
   } else {
     $country = '';
   }
-  
+
+  //enterpriseclientid for EdPlus Leads
+  if (isset($data['enterpriseclientid'])) {
+    $enterpriseclientid = $data['enterpriseclientid'];
+  } else {
+    $enterpriseclientid = '';
+  }
+
   if($location == "no_preference" && sizeof($availableCampuses) == 1 && ($availableCampuses[0] == "Online" || $availableCampuses[0] == "online")){
     $location = "Online";
   }
@@ -146,7 +216,7 @@ function asu_rfi_undergrad_post($data)
     $managedOnline = asu_rfi_check_managed_online($prog_code, $asuOnlineList);
 
     if ($managedOnline == true) {
-      $fields = asu_rfi_online_fields($fields, $nodeid, $ipAddress, $college_code, $type_of_form);
+      $fields = asu_rfi_online_fields($fields, $nodeid, $ipAddress, $college_code, $type_of_form, $enterpriseclientid);
 
       $body = json_encode($fields);
 
@@ -279,7 +349,7 @@ function asu_rfi_correct_campus_idu($campus)
   return $campusId;
 }
 
-function asu_rfi_online_fields($fields, $nodeid, $ip, $college_code, $type_of_form)
+function asu_rfi_online_fields($fields, $nodeid, $ip, $college_code, $type_of_form, $enterpriseclientid)
 {
 
   $fieldsUpdated = array(
@@ -290,10 +360,12 @@ function asu_rfi_online_fields($fields, $nodeid, $ip, $college_code, $type_of_fo
     'phone' => $fields['phone'],
     'prod_test_flag' => $fields['prod_test_flag'],
     'base_url' => $fields['base_url'],
+    'origin_uri' => $GLOBALS['base_url'] . '/' . request_path(),
     'remote_nid' => $nodeid,
     'ldetect_v' => $ip,
     'campaign' => $fields['base_url'] . '-' . $type_of_form . '-UG',
-    'sourceid' => $nodeid,
+    'sourceid' => $nodeid, // Overwritten with API key in Middleware.
+    'enterpriseclientid' => $enterpriseclientid,
   );
 
   return $fieldsUpdated;
