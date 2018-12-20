@@ -3,6 +3,11 @@ description = Feature including input formats for webforms imported from EOSS.as
 core = 7.x
 package = EOSS Features
 version = 7.x-1.0
+
+; More dependencies
+dependencies[] = webform_features
+dependencies[] = blockreference
+
 dependencies[] = caption_filter
 dependencies[] = features
 dependencies[] = filter
