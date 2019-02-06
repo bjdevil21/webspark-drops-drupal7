@@ -1,7 +1,7 @@
 name = EOSS Webform Input Formats
 description = Feature including input formats for webforms imported from EOSS.asu.edu
 core = 7.x
-package = EOSS Features
+package = EOSS Webform Migration
 version = 7.x-1.0
 
 ; More dependencies
