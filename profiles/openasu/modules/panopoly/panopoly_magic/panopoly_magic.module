@@ -492,6 +492,7 @@ function panopoly_magic_form_alter(&$form, &$form_state, $form_id) {
         '#type' => 'button',
         '#value' => t('Update Preview'),
         '#attributes' => $preview_attributes,
+        '#weight' => -100,
         '#ajax' => array(
           'callback' => 'panopoly_magic_ajax_update_preview',
           'wrapper' => 'panopoly-form-widget-preview',
@@ -795,7 +796,9 @@ function panopoly_magic_form_fieldable_panels_panes_fieldable_panels_pane_conten
   }
 
   // Add custom validation function for the reusable title
-  $form['reusable']['admin_title']['#element_validate'][] = 'panopoly_magic_reusable_entity_validate';
+  if (!(!empty($form_state['triggering_element']) && $form_state['triggering_element']['#value'] == 'Update Preview')) {
+    $form['admin']['admin_title']['#element_validate'][] = 'panopoly_magic_reusable_entity_validate';
+  }
 
   // Customize the view mode setting
   if (!empty($form['view_mode'])) {
@@ -827,10 +830,6 @@ function panopoly_magic_form_fieldable_panels_panes_fieldable_panels_pane_conten
     $form['reusable']['#type'] = '';
     $form['reusable']['#title'] = '';
     $form['reusable']['reusable']['#title'] = t('Make this reusable');
-    $form['reusable']['admin_title']['#field_prefix'] = t('Admin Title');
-    $form['reusable']['admin_title']['#title'] = '';
-    $form['reusable']['admin_title']['#size'] = '';
-    $form['reusable']['admin_title']['#description'] = '';
     $form['widget_settings']['reusable'] = $form['reusable'];
     unset($form['reusable']);
   }
@@ -904,8 +903,19 @@ function panopoly_magic_form_views_content_views_panes_content_type_edit_form_al
     $form['exposed']['more_link']['#parents'] = array('more_link');
     unset($form['more_link']);
   }
-  
-    
+
+  // Add an option to the more link text if views allows this to happen
+  if (!empty($form['more_text'])) {
+    $form['exposed']['more_text'] = $form['more_text'];
+    $form['exposed']['more_text']['#parents'] = array('more_text');
+    unset($form['more_text']);
+    $form['exposed']['more_text']['#states'] = array(
+      'visible' => array(
+        ':input[name="more_link"]' => array('checked' => TRUE),
+      ),
+    );
+  }
+
   // Update the field settings for pagers
   if (!empty($form['use_pager']) && !empty($form['pager_id'])) {
     $form['use_pager']['#prefix'] = '<div class="form-item container-inline">';
@@ -1408,7 +1418,7 @@ function panopoly_magic_reusable_entity_validate($element, &$form_state, $form) 
   if (!empty($form_state['values']['reusable'])) {
     // Ensure a title is present.
     if (empty($element['#value'])) {
-      form_error($element, t('If you would like this entity to be reusable, please add a title.'));
+      form_error($element, t('Please add an administrative title to make this entity reusable.'));
     }
   }
 }
@@ -1527,6 +1537,7 @@ function panopoly_magic_preview_callback_fpp($type, $subtype, $plugin, $renderer
     $values = $plugin['preview settings'];
     $values['bundle'] = $plugin['bundle'];
     $fpp = fieldable_panels_panes_create($values);
+    $fpp->fpid = NULL;
   }
   else {
     // For a new (non-existant) FPP with no 'preview settings', don't show
@@ -1543,6 +1554,8 @@ function panopoly_magic_preview_callback_fpp($type, $subtype, $plugin, $renderer
     $block = (object)array(
       'title' => check_plain($fpp->title),
       'content' => $content,
+      'type' => $type,
+      'subtype' => $subtype,
     );
     $pane = panels_new_pane($type, $subtype, TRUE);
     return theme('panels_pane', array('content' => $block, 'pane' => $pane, 'display' => $renderer->display));
