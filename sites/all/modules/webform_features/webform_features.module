@@ -155,8 +155,15 @@ function webform_features_component_machine_name_load($name, $reset = FALSE) {
  * Adds the machine name in the webform_component table.
  */
 function webform_features_webform_component_insert($component) {
+  // Webform 4.x
+  $machine_name = isset($component['form_key']) && !isset($component['machine_name'])
+    ? $component['form_key'] : $component['machine_name'];
+
   db_update('webform_component')
-    ->fields(array('machine_name' => $component['machine_name']))
+    // Webform 3.x
+//    ->fields(array('machine_name' => $component['machine_name']))
+    // Webform 4.x
+      ->fields(array('machine_name' => $machine_name))
     ->condition('cid', $component['cid'])
     ->condition('nid', $component['nid'])
     ->execute();

@@ -66,6 +66,33 @@ function webform_features_export_render($module_name, $data, $export = NULL) {
     if (empty($node)) {
       continue;
     }
+// MANUAL patch to add pathauto alias functionality to Features output - drupal.org/node/2220837 (#31)
+    // If pathauto is set to 0, don't override it.
+    $uri = entity_uri('node', $node);
+    $path = drupal_get_path_alias($uri['path']);
+
+    if ($uri['path'] != $path) {
+      // Add path and pathauto settings.
+      if (!property_exists($node, 'path')) {
+        $node->path = array();
+      }
+
+      if (module_exists('pathauto')) {
+
+        // If we're not using pathauto, ensure it is disabled.
+        if (!isset($node->path['pathauto']) || $node->path['pathauto'] == 0) {
+          $node->path['pathauto'] = FALSE;
+          $node->path['alias'] = $path;
+        }
+        else {
+          $node->path['pathauto'] = TRUE;
+        }
+      }
+      else {
+        $node->path['alias'] = $path;
+      }
+    }
+// END MANUAL patch
 
     $export = clone $node;
 
@@ -183,6 +210,10 @@ function webform_features_revert($module) {
  * Implements hook_features_rebuild().
  */
 function webform_features_rebuild($module) {
+  // Added module_load_include line, per
+  // https://www.drupal.org/project/webform_features/issues/2572991#comment-12913273
+  module_load_include('features.webform.inc', $module, $module);
+
   $nodes = module_invoke($module, 'webform_defaults');
   if (!empty($nodes)) {
     module_load_include('inc', 'node', 'node.pages');
@@ -223,16 +254,19 @@ function webform_features_rebuild($module) {
       }
       _webform_features_rebuild_components($node, $data['webform']['components'], $existing_components_machine_names);
 
-      // Manage conditionals, conditionals_rules and conditionals_actions.
-      db_delete('webform_conditional')
-        ->condition('nid', $node->nid)
-        ->execute();
-      db_delete('webform_conditional_rules')
-        ->condition('nid', $node->nid)
-        ->execute();
-      db_delete('webform_conditional_actions')
-        ->condition('nid', $node->nid)
-        ->execute();
+      // https://www.drupal.org/project/webform_features/issues/2954643
+      if (module_exists('webform_conditional')) {
+        // Manage conditionals, conditionals_rules and conditionals_actions.
+        db_delete('webform_conditional')
+          ->condition('nid', $node->nid)
+          ->execute();
+        db_delete('webform_conditional_rules')
+          ->condition('nid', $node->nid)
+          ->execute();
+        db_delete('webform_conditional_actions')
+          ->condition('nid', $node->nid)
+          ->execute();
+      }
 
       if (!empty($data['webform']['conditionals'])) {
         foreach ($data['webform']['conditionals'] as $index => $conditional) {
