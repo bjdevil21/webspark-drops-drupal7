@@ -260,6 +260,16 @@ function permissions_per_webform_form_webform_configure_form_submit(&$form, &$fo
 }
 
 /**
+ * Implements hook_node_delete().
+ */
+function permissions_per_webform_node_delete($node) {
+  // Delete any permissions related to deleted node.
+  db_delete('permissions_per_webform')
+    ->condition('nid', $node->nid)
+    ->execute();
+}
+
+/**
  * Returns the existing permissions of a webform by node ID.
  *
  * @param int $nid

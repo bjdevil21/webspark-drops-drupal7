@@ -4,8 +4,9 @@ package = Webform
 core = 7.x
 dependencies[] = webform
 
+; Manually changes to alpha2 for patches submitted to drupal.org
 ; Information added by drupal.org packaging script on 2013-09-27
-version = "7.x-1.0-alpha1"
+version = "7.x-1.0-alpha2"
 core = "7.x"
 project = "permissions_per_webform"
 datestamp = "1380321233"
