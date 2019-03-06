@@ -10,15 +10,6 @@ function asu_cas_enable() {
 }
 
 /**
- * Implements hook_uninstall()
- */
-function asu_cas_uninstall() {
-  db_delete('variables')
-    ->condition('name', 'asu_cas_%', 'LIKE')
-    ->execute();
-}
-
-/**
  * Implements hook_update_N();
  *
  * Updating the WebSpark Default Theme from "OpenASU Bootstrap"
