@@ -16567,7 +16567,7 @@ The results of this submission may be viewed at:
         'form_key' => 'first_name',
         'name' => 'First Name',
         'type' => 'textfield',
-        'value' => '[current-user:field-first-name]',
+        'value' => '[current-user:field_first_name]',
         'extra' => array(
           'title_display' => 'before',
           'description_above' => 0,
@@ -55504,7 +55504,7 @@ Submitted values are:
         'form_key' => 'full_name',
         'name' => 'Full name:',
         'type' => 'textfield',
-        'value' => '[current-user:field-first-name] [current-user:field_last_name]',
+        'value' => '[current-user:field_first_name] [current-user:field_last_name]',
         'extra' => array(
           'title_display' => 'before',
           'description_above' => 0,
@@ -58450,7 +58450,7 @@ The results of this submission may be viewed at:
         'form_key' => 'name',
         'name' => 'Name:',
         'type' => 'textfield',
-        'value' => '[current-user:field-first-name] [current-user:field-last-name]',
+        'value' => '[current-user:field_first_name] [current-user:field_last_name]',
         'extra' => array(
           'title_display' => 'before',
           'description_above' => 0,
