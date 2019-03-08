@@ -15615,7 +15615,8 @@ Other Professional Degree|Other Professional Degree',
     ),
   ),
   'path' => array(
-    'pathauto' => TRUE,
+    'pathauto' => FALSE,
+    'alias' => 'enter-nowstudent-shine-contest',
   ),
   'webform' => array(
     'confirmation' => '',
