@@ -241,7 +241,7 @@ function permissions_per_webform_form_webform_configure_form_submit(&$form, &$fo
       if (FALSE !== $oid) {
         $values = array_keys(array_filter($values));
         $default = array_keys(user_roles(FALSE, $operations[$fid]));
-        $diff = array_diff($values, $default);
+        $diff = array_merge(array_diff($values, $default), array_diff($default, $values));
 
         if (!empty($diff)) {
           foreach ($values as $rid) {
