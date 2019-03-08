@@ -40341,7 +40341,8 @@ $(document).ready(function(){
     ),
   ),
   'path' => array(
-    'pathauto' => TRUE,
+    'pathauto' => FALSE,
+    'alias' => 'scene-mentor-interest-form',
   ),
   'webform' => array(
     'confirmation' => '',
@@ -41310,7 +41311,8 @@ $(document).ready(function(){
     ),
   ),
   'path' => array(
-    'pathauto' => TRUE,
+    'pathauto' => FALSE,
+    'alias' => 'strategic-marketing-and-communications/site-analytics-request-form',
   ),
   'webform' => array(
     'confirmation' => '',
