@@ -62,10 +62,19 @@ function permissions_per_webform_update_7000(&$sandbox) {
     ->execute()
     ->fetchAll();
 
-  foreach ($result as $deleted_webform) {
-    db_delete('permissions_per_webform', 'p')
-      ->condition('nid', $deleted_webform->nid)
-      ->execute();
+  if (!empty($result)) {
+    $count = 0;
+    foreach ($result as $deleted_webform) {
+      db_delete('permissions_per_webform')
+        ->condition('nid', $deleted_webform->nid)
+        ->execute();
+      $count++;
+    }
+    $grammar = ($count >= 2) ? "s have" : " has";
+    $message = t("Permissions per Webform settings for %count missing or previously deleted webform"
+      . $grammar . " been deleted.", array('%count' => $count));
+    drupal_set_message($message);
+    watchdog('permissions_per_webform', $message);
   }
 }
 
