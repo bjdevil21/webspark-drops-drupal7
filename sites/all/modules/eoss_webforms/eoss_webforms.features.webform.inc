@@ -6644,6 +6644,25 @@ The results of this submission may be viewed at:
           'from_address' => FALSE,
         ),
       ),
+      10 => array(
+        'email' => 'SamSmith@asu.edu',
+        'subject' => '# [submission:serial]Form submission from: ASU Summer Enrichment Program Entry',
+        'from_name' => 'default',
+        'from_address' => 'default',
+        'template' => 'default',
+        'excluded_components' => array(),
+        'html' => 0,
+        'attachments' => 0,
+        'extra' => FALSE,
+        'exclude_empty' => 0,
+        'status' => 1,
+        'components_machine_names' => array(
+          'email' => FALSE,
+          'subject' => FALSE,
+          'from_name' => FALSE,
+          'from_address' => FALSE,
+        ),
+      ),
     ),
     'components' => array(
       'asu_summer_enrichment_program_entry-summer_program_information' => array(
@@ -12738,7 +12757,7 @@ no|No',
   'body' => array(
     'und' => array(
       0 => array(
-        'value' => '<p>It is expected that the community ambassador will serve as a leader in the community and as such is expected to actively build relationships with other students in their community, serving as a mentor, resource referral, and role-model to others.</p><p><strong>Note: In addition to filling out the form below, you MUST apply on-line&nbsp;through student employment https://cfo.asu.edu/hr-applicant by selecting&nbsp;<br>on-campus student positions and then searching for job requisition number&nbsp;40116BR</strong><strong>.</strong></p><p><strong>Qualifications</strong></p><ul><li>Currently and actively enrolled at ASU</li><li>Completed at least two semesters at ASU</li><li>Ability to connect to a wide range of students</li><li>Must be in good standing with Student Rights &amp; Responsibilities</li><li>Will reside in University House, 922 Place, The District, The Cottages, Vertex, 12fifty5, Villas on Apache, Gateway, Greenleaf Tempe Station, The Hyve, Rise on Apache, Boulevard 1900, or West 6 for the 18-19&nbsp;academic year</li></ul><p><strong>Liaison Duties</strong></p><ul><li>Attend community resource training</li><li>Distribute and post university-related information in a designated off-campus location</li><li>Meet with the off-campus management monthly to determine needs.</li><li>Promote campus program/events in off-campus apartment community.</li><li>Meet with EOSS staff to discuss program development.</li><li>Refer off-campus residents to appropriate university offices for assistance.</li><li>Attend weekly group meetings.</li><li>Other duties as assigned.</li><li>Work 10-15 hours per week</li><li>Maintain a library of ASU resources for students</li></ul>',
+        'value' => '<p>It is expected that the community ambassador will serve as a leader in the community and as such is expected to actively build relationships with other students in their community, serving as a mentor, resource referral, and role-model to others.</p><p><strong>In addition to filling out the form below, you MUST apply on-line through student employment at&nbsp;<a href="/ocss/ambassador-application">https://eoss.asu.edu/ocss/ambassador-application</a>. Reference Job ID: #50056BR.</strong>&nbsp;<strong>Applications will be accepted through March 29, 2019. The start date for this position will be in August 2019.&nbsp;</strong></p><p><strong>Qualifications</strong></p><ul><li>Currently and actively enrolled at ASU</li><li>Completed at least two semesters at ASU</li><li>Ability to connect to a wide range of students</li><li>Must be in good standing with Student Rights &amp; Responsibilities</li><li>Reside at 12Fifty5, 922 Place, Blvd 1900, Gateway, Green Leaf Tempe Station, Rise on Apache, Sterling 920 Terrace, The Cottages, The District, The Hyve, Union Tempe, University House, Vertex, Villas on Apache or West 6 for the 2019-2020 academic year.</li></ul><p><strong>Community Ambassador Duties</strong></p><ul><li>Support student success by referring and connecting students to campus resources.&nbsp;</li><li>Promote community and sense of belonging within the off campus living communities by engaging with students individually and in groups.</li><li>Provide ASU connections to off campus communities by engaging, collaborating and communicating with apartment management.&nbsp;</li><li>Plan, organize and implement programs that support student success.&nbsp;</li><li>Organize, facilitate and document weekly staff meetings and training\'s.&nbsp;</li><li>Ability to work 10-15 hours per week.&nbsp;</li><li>Maintain a library of ASU resources for students</li></ul>',
         'summary' => '',
         'format' => 'filtered_html',
       ),
@@ -13257,6 +13276,25 @@ Please direct any questions to 602-496-1020 or <a href="mailto:info.ada@asu.edu"
         'extra' => FALSE,
         'exclude_empty' => 0,
         'status' => 1,
+        'components_machine_names' => array(
+          'email' => FALSE,
+          'subject' => FALSE,
+          'from_name' => FALSE,
+          'from_address' => FALSE,
+        ),
+      ),
+      4 => array(
+        'email' => 'scott.pennelly@asu.edu',
+        'subject' => 'default',
+        'from_name' => 'default',
+        'from_address' => 'default',
+        'template' => 'default',
+        'excluded_components' => array(),
+        'html' => 0,
+        'attachments' => 0,
+        'extra' => FALSE,
+        'exclude_empty' => 0,
+        'status' => 0,
         'components_machine_names' => array(
           'email' => FALSE,
           'subject' => FALSE,
@@ -21099,7 +21137,7 @@ no|I don\'t need sound',
         'attachments' => 0,
         'extra' => FALSE,
         'exclude_empty' => 0,
-        'status' => 1,
+        'status' => 0,
         'components_machine_names' => array(
           'email' => FALSE,
           'subject' => FALSE,
@@ -21109,6 +21147,25 @@ no|I don\'t need sound',
       ),
       2 => array(
         'email' => 'jgreenh1@mainex1.asu.edu',
+        'subject' => 'default',
+        'from_name' => 'default',
+        'from_address' => 'default',
+        'template' => 'default',
+        'excluded_components' => array(),
+        'html' => 0,
+        'attachments' => 0,
+        'extra' => FALSE,
+        'exclude_empty' => 0,
+        'status' => 1,
+        'components_machine_names' => array(
+          'email' => FALSE,
+          'subject' => FALSE,
+          'from_name' => FALSE,
+          'from_address' => FALSE,
+        ),
+      ),
+      3 => array(
+        'email' => 'nakita.saxon@asu.edu',
         'subject' => 'default',
         'from_name' => 'default',
         'from_address' => 'default',
@@ -58800,12 +58857,14 @@ I am self-enrolling and will provide my manager\'s information.|I am self-enroll
           'items' => 'asuprep.asu.edu|asuprep.asu.edu
 eoss.asu.edu|eoss.asu.edu
 changemaker.asu.edu|changemaker.asu.edu
+decisioncenter.asu.edu|decisioncenter.asu.edu
 fitness.asu.edu|fitness.asu.edu
+greekvillage.asu.edu|greekvillage.asu.edu
 homecoming.asu.edu|homecoming.asu.edu
 housing.asu.edu|housing.asu.edu
+sexualviolenceprevention.asu.edu|sexualviolenceprevention.asu.edu
 wellness.asu.edu|wellness.asu.edu
 scihub.asu.edu|scihub.asu.edu
-Decitioncenter.asu.edu|decisioncenter.asu.edu
 other|other',
           'multiple' => 1,
           'title_display' => 'before',
