@@ -4,7 +4,7 @@
  * Implementation of DrupalUser7Migration for EOSS.
  */
 
-class EOSSWebformSubmissionUsers extends DrupalUser7Migration {
+class EOSSWebformSubmissionUser extends DrupalUser7Migration {
   /**
    * EOSSSubmissionUsers constructor.
    * @param array $arguments

@@ -13,7 +13,7 @@ function eoss_migration_migrate_api() {
 
   // Pre-set common arguments for creating classes
   $common_arguments = array(
-    'source_connection' => 'eoss-migrate',
+    'source_connection' => 'legacy',
     'source_version'=> 'd7',
     'format_mappings' => array(
       '1' => 'filtered_html',
@@ -42,8 +42,8 @@ function eoss_migration_migrate_api() {
       'group_name' => 'EOSSSubmissions',
     );
   $users_arguments = $common_arguments + array(
-      'class_name' => 'EOSSSubmissionUsers',
-      'machine_name' => 'EOSSSubmissionUsers',
+      'class_name' => 'EOSSWebformSubmissionUser',
+      'machine_name' => 'EOSSWebformSubmissionUser',
       'description' => t('Migration of webform submission user IDs'),
       'dependencies' => array('WebformSubmittedData'),
       'group_name' => 'EOSSUsers',
@@ -63,7 +63,7 @@ function eoss_migration_migrate_api() {
     // Ex. MigrateCommentNodeHandler - adds comment fields to nodes when imported
     // from a source without any comments (if desired)
     'destination handlers' => array(
-      'EOSSDestinationUser',
+      'EOSSDrupalDestinationUser',
     ),
     // FH -
     'field handlers' => array(
@@ -82,7 +82,7 @@ function eoss_migration_migrate_api() {
         'title' => t('EOSS Webform Submissions'),
       ),
       'EOSSUsers' => array(
-        'title' => t('EOSS Webform Submitting Users'),
+        'title' => t('EOSS Webform Submission Users'),
       ),
       'EOSSFiles' => array(
         'title' => t('EOSS Webform Submitted Files'),

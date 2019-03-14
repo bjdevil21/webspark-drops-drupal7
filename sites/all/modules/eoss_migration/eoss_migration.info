@@ -14,8 +14,8 @@ files[] = includes/submitted_data.inc
 files[] = includes/last_download.inc
 
 ; DrupalUser7Migration
-files[] = includes/eoss_users.inc
-files[] = includes/eoss_destination_user.inc
+files[] = includes/EOSSWebformSubmissionUser.inc
+files[] = includes/EOSSDrupalDestinationUser.inc
 
 ; File migration
 files[] = includes/eoss_files.inc
