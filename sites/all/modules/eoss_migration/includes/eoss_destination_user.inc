@@ -3,7 +3,7 @@
 * We add support for UUIDs - just in case they're needed.
 */
 
-class EOSSDestinationUser extends DrupalDestinationUser {
+class EOSSDrupalDestinationUser extends DrupalDestinationUser {
   /**
    * Implementation of Migration::fields().
    *

@@ -11,9 +11,6 @@
  */
 function eoss_migration_migrate_api() {
 
-  /* @HOWTO Values available in __construct($arguments)
-   * Ultimately set in $api['migrations'] array */
-
   // Pre-set common arguments for creating classes
   $common_arguments = array(
     'source_connection' => 'eoss-migrate',
@@ -66,7 +63,7 @@ function eoss_migration_migrate_api() {
     // Ex. MigrateCommentNodeHandler - adds comment fields to nodes when imported
     // from a source without any comments (if desired)
     'destination handlers' => array(
-      'MigrateExtrasNodeFlagHandler',
+      'EOSSDestinationUser',
     ),
     // FH -
     'field handlers' => array(
@@ -74,11 +71,11 @@ function eoss_migration_migrate_api() {
       'MigrateMediaFieldHandler',
     ),
     'migrations' => array(
-      'EOSSWebformSubmissions' => $submissions_arguments,
-      'EOSSWebformSubmittedData' => $submitted_data_arguments,
-      'EOSSWebformLastDownload' => $last_download_arguments,
+//      'EOSSWebformSubmissions' => $submissions_arguments,
+//      'EOSSWebformSubmittedData' => $submitted_data_arguments,
+//      'EOSSWebformLastDownload' => $last_download_arguments,
       'EOSSSubmissionUsers' => $users_arguments,
-      'EOSSSubmissionFiles' => $files_arguments,
+//      'EOSSSubmissionFiles' => $files_arguments,
     ),
     'groups' => array(
       'EOSSSubmissions' => array(

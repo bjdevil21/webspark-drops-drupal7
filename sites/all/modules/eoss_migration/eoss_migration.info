@@ -1,14 +1,14 @@
 name = EOSS Webform Submissions Migration
 description = "Migration of webform submissions (the rest is done in Features and SQL scripts)"
 version = 7.x-1.0-alpha1
-core = 7
+core = 7.x
 package = EOSS Webform Migration
 
 dependencies[] = migrate
 dependencies[] = migrate_d2d
 dependencies[] = webform
 
-;  include the files that contain your Migrate classes
+; Include the files that contain your Migrate classes
 files[] = includes/submissions.inc
 files[] = includes/submitted_data.inc
 files[] = includes/last_download.inc
