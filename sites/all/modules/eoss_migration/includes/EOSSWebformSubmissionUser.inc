@@ -2,6 +2,7 @@
 /**
  * @file
  * Implementation of DrupalUser7Migration for EOSS.
+ * * Migrate d2d class extension for d7
  */
 
 class EOSSWebformSubmissionUser extends DrupalUser7Migration {
