@@ -9,13 +9,18 @@ dependencies[] = migrate_d2d
 dependencies[] = webform
 
 ; Include the files that contain your Migrate classes
+
+; Base API class + arguments data
+files[] = eoss_migration.migrate.inc
+
+; Webform Submissions + Submitted Data + Last Download tables
 files[] = includes/submissions.inc
 files[] = includes/submitted_data.inc
 files[] = includes/last_download.inc
 
-; DrupalUser7Migration
+; Submitting users
 files[] = includes/EOSSWebformSubmissionUser.inc
 files[] = includes/EOSSDrupalDestinationUser.inc
 
-; File migration
+; Submitted files
 files[] = includes/eoss_files.inc

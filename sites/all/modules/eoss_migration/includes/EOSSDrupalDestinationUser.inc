@@ -4,6 +4,10 @@
 */
 
 class EOSSDrupalDestinationUser extends DrupalDestinationUser {
+
+  public function __construct(array $arguments) {
+    parent::__construct($arguments);
+  }
   /**
    * Implementation of Migration::fields().
    *

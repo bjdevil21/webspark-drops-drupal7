@@ -10,12 +10,15 @@ class EOSSWebformSubmissionUser extends DrupalUser7Migration {
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    parent::__construct($arguments);
     // Add UUID field (sourceFields defined initially in parent class)
     $this->sourceFields['uuid'] = t('UUID');
+
+    // Now call constructor with added field
+    parent::__construct($arguments);
+
     $this->addFieldMapping('uuid', 'uuid');
-    // Extends DrupalDestinationUser() DrupalUser7Migration()
-    $this->destination = new EOSSDrupalDestinationUser();
+    // Extends DrupalDestinationUser()
+    $this->destination = new EOSSDrupalDestinationUser($arguments);
   }
 
   /**
@@ -47,6 +50,7 @@ class EOSSWebformSubmissionUser extends DrupalUser7Migration {
     }
     // Check for duplicate user names in destination
     // Don't insert or update if exists already
+    // EDIT - It should UPDATE the record, vs. create a new one. We'll see...
     /*
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('users', 'u')
@@ -68,7 +72,7 @@ class EOSSWebformSubmissionUser extends DrupalUser7Migration {
   public function complete($account, $row) {
     parent::complete($account, $row);
 
-    $query = db_insert('users_roles', 'ur') // Table name no longer needs {}
+    $query = db_insert('users_roles', 'ur')
     ->fields('ur', array(
       'uid' => $row->uid,
       'rid' => 5,
