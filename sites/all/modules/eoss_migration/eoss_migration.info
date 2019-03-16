@@ -19,7 +19,7 @@ files[] = includes/submitted_data.inc
 files[] = includes/last_download.inc
 
 ; Submitting users
-files[] = includes/EOSSWebformSubmissionUser.inc
+files[] = includes/EOSSDrupalUser7Migration.inc
 files[] = includes/EOSSDrupalDestinationUser.inc
 
 ; Submitted files

@@ -5,7 +5,7 @@
  * * Migrate d2d class extension for d7
  */
 
-class EOSSWebformSubmissionUser extends DrupalUser7Migration {
+class EOSSDrupalUser7Migration extends DrupalUser7Migration {
   /**
    * EOSSSubmissionUsers constructor.
    * @param array $arguments
@@ -19,7 +19,7 @@ class EOSSWebformSubmissionUser extends DrupalUser7Migration {
 
     $this->addFieldMapping('uuid', 'uuid');
     // Extends DrupalDestinationUser()
-    $this->destination = new EOSSDrupalDestinationUser($arguments);
+    $this->destination = new EOSSDrupalDestinationUser();
   }
 
   /**

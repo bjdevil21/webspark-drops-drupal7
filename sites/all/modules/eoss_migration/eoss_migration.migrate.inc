@@ -42,8 +42,8 @@ function eoss_migration_migrate_api() {
       'group_name' => 'EOSSSubmissions',
     );
   $users_arguments = $common_arguments + array(
-      'class_name' => 'EOSSWebformSubmissionUser',
-      'machine_name' => 'EOSSWebformSubmissionUser',
+      'class_name' => 'EOSSDrupalUser7Migration',
+      'machine_name' => 'EOSSDrupalUser7Migration',
       'description' => t('Migration of webform submission user IDs'),
 //      'soft_dependencies' => array('WebformSubmittedData'),
       'group_name' => 'EOSSUsers',
@@ -73,7 +73,7 @@ function eoss_migration_migrate_api() {
 //      'EOSSWebformSubmissions' => $submissions_arguments,
 //      'EOSSWebformSubmittedData' => $submitted_data_arguments,
 //      'EOSSWebformLastDownload' => $last_download_arguments,
-      'EOSSSubmissionUsers' => $users_arguments,
+      'EOSSDrupalUser7Migration' => $users_arguments,
 //      'EOSSSubmissionFiles' => $files_arguments,
     ),
     'groups' => array(

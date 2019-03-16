@@ -1,10 +1,9 @@
 <?php
 /**
- * We add support for UUIDs - just in case they're needed.
- * Migrate d2d extension
- */
+* We add support for UUIDs - just in case they're needed.
+*/
 
-class EOSSDrupalDestinationUser extends MigrateDestinationUser {
+class EOSSDrupalDestinationUser extends DrupalDestinationUser {
 
   public function __construct(array $arguments) {
     parent::__construct($arguments);
