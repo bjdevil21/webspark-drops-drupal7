@@ -38,6 +38,8 @@ set in $api['migrations'] array.
       - Workaround: pass an array into arguments() and use key => value pairs to pass in that data.
       - See https://www.drupal.org/node/1012810 for more possible workarounds for this.
       - https://youtu.be/3fG4wBvLrOI?t=1257
+      - Advanced functions that help utilize mappings
+        - https://www.drupal.org/node/1133448
 
 (These values generally coincide with the four top level Migrate classes (alongside Migration [base])
   - MigrateSource

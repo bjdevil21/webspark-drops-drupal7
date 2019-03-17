@@ -16,8 +16,30 @@ class EOSSDrupalUser7Migration extends DrupalUser7Migration {
 
     // Now call constructor with added field
     parent::__construct($arguments);
-
     $this->addFieldMapping('uuid', 'uuid');
+    $this->addFieldMapping('field_first_name', 'field_first_name');
+    $this->addFieldMapping('field_last_name', 'field_last_name');
+
+    $this->addUnmigratedSources(array(
+      'field_user_about',
+      'field_user_picture',
+    ));
+    $this->addUnmigratedDestinations(array(
+      'field_user_about',
+      'field_user_picture',
+      'field_user_about:summary',
+      'field_user_about:format',
+      'field_user_picture:file_class',
+      'field_user_picture:preserve_files',
+      'field_user_picture:destination_dir',
+      'field_user_picture:destination_file',
+      'field_user_picture:file_replace',
+      'field_user_picture:source_dir',
+      'field_user_picture:urlencode',
+      'field_user_picture:alt',
+      'field_user_picture:title',
+    ));
+
     // Extends DrupalDestinationUser()
     $this->destination = new EOSSDrupalDestinationUser();
   }
@@ -49,18 +71,22 @@ class EOSSDrupalUser7Migration extends DrupalUser7Migration {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
-    // Check for duplicate user names in destination
-    // Don't insert or update if exists already
-    // EDIT - It should UPDATE the record, vs. create a new one. We'll see...
-    /*
-    $query = Database::getConnection('default', $this->sourceConnection)
+    // Check for duplicate user names in destination DB and skip the insert or
+    // update if it exists already.
+
+    // UPDATE - It should've just SQL UPDATE VALUES on the user record (vs. create
+    // a new one, but it instead created a new user with _\d on the end of the name.
+    // Maybe it was checking by email address (instead of ASURITE ID)?
+    $query = Database::getConnection('default', 'default')
       ->select('users', 'u')
       ->fields('u', array('name'))
       ->condition('u.name', $row->name)
-      ->execute()->fetchAll();
+      ->orderBy('u.uid')
+      ->execute()
+      ->fetchAll();
     if (count($query) > 0) {
       return FALSE;
-    }*/
+    }
   }
 
   /**
@@ -73,11 +99,12 @@ class EOSSDrupalUser7Migration extends DrupalUser7Migration {
   public function complete($account, $row) {
     parent::complete($account, $row);
 
-    $query = db_insert('users_roles', 'ur')
-    ->fields('ur', array(
-      'uid' => $row->uid,
+    $query = db_insert('users_roles')
+    ->fields(array(
+      'uid' => $account->uid,
       'rid' => 5,
     ));
     $query->execute();
+
   }
 }

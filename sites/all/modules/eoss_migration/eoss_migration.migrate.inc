@@ -63,11 +63,11 @@ function eoss_migration_migrate_api() {
     // Ex. MigrateCommentNodeHandler - adds comment fields to nodes when imported
     // from a source without any comments (if desired)
     'destination handlers' => array(
-      'EOSSDrupalDestinationUser',
+ //     'EOSSDrupalDestinationUser',
     ),
-    // FH -
+    // Field Handlers - Manipulate the data for Drupal consumption -
     'field handlers' => array(
-      'MigrateNameHandler',
+ //     'MigrateNameHandler',
     ),
     'migrations' => array(
 //      'EOSSWebformSubmissions' => $submissions_arguments,

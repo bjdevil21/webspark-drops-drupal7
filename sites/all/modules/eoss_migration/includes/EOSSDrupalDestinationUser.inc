@@ -4,27 +4,34 @@
 */
 
 class EOSSDrupalDestinationUser extends DrupalDestinationUser {
-
-  public function __construct(array $arguments) {
-    parent::__construct($arguments);
-  }
-
   /**
    * @param null $migration
    * @return array
    */
-  /**
-   * Implementation of Migration::fields().
-   *
-   * Bring in Path alias addition from DrupalDestinationUser and skip it
-   *
-   * @param $migration
-   * @return $fields
-   */
   public function fields($migration = NULL) {
     $fields = parent::fields($migration);
-    $fields['path'] = t('Path alias');
     $fields['uuid'] = t('UUID');
+    unset($fields['field_first_name:language']);
+    unset($fields['field_last_name:language']);
     return $fields;
   }
+  public function prepareRollback($entity_id) {
+    // Code to execute before an entity has been rolled back
+    // Need to get new, mapped uid
+    foreach ($entity_id as $new_uid) {
+      db_delete('users_roles')
+        ->condition('uid', $new_uid)
+        ->condition('rid', 5)
+        ->execute();
+    }
+  }
+
+  public function bulkRollback(array $uids) {
+    migrate_instrument_start('user_delete_multiple');
+    $this->prepareRollback($uids);
+    user_delete_multiple($uids);
+    $this->completeRollback($uids);
+    migrate_instrument_stop('user_delete_multiple');
+  }
+
 }
