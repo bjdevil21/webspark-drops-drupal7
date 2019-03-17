@@ -15,14 +15,14 @@ dependencies[] = webform_submission_uuid
 files[] = eoss_migration.migrate.inc
 
 ; Webform Submissions + Submitted Data + Last Download tables
-files[] = includes/EOSSMigrateWebformSubmission.inc
-files[] = includes/EOSSMigrateDestinationWebformSubmission.inc
+files[] = includes/src/EOSSMigrateWebformSubmission.inc
+files[] = includes/dst/EOSSMigrateDestinationWebformSubmission.inc
 files[] = includes/submitted_data.inc
 files[] = includes/last_download.inc
 
 ; Submitting users
-files[] = includes/EOSSDrupalUser7Migration.inc
-files[] = includes/EOSSDrupalDestinationUser.inc
+files[] = includes/src/EOSSDrupalUser7Migration.inc
+files[] = includes/dst/EOSSDrupalDestinationUser.inc
 
 ; Submitted files
 files[] = includes/eoss_files.inc
