@@ -23,8 +23,34 @@
  * - hidden
  */
 // No grid or hidden component types in eoss-migrate
-class MigrateDestinationWebformSubmissionEOSS extends MigrateDestinationEntity {
+class MigrateDestinationWebformSubmissionEOSS extends MigrateDestination {
 
+  // this or parent must implement the following (see MigrateDestination class)
+  /*
+   * - getKeySchema() - MySQL requirement..
+   *    To support MigrateSQLMap maps, derived destination classes should return
+   * schema field definition(s) corresponding to the primary key of the
+   * destination being implemented. These are used to construct the destination
+   * key fields of the map table for a migration using this destination.
+   *
+   * - bulkRollback(array $ids) - $ids is an array of single-field keys to be deleted
+   *
+   * - import(stdClass $object, stdClass $row) - must constructs one new object
+   * (pre-populated using field mappings in the Migration). It is expected to
+   * call:
+   *     - prepare() and
+   *     - complete() handlers,
+   * passing them $row (the raw data from the source).
+   *
+   * - fields() - returning an array of available destination fields.
+   *
+   * - __toString() - @return string - Description of the destination being migrated into
+   *
+   */
+
+  /**
+   * @return array
+   */
   static public function getKeySchema() {
     return array(
       'sid' => array(
@@ -65,14 +91,14 @@ class MigrateDestinationWebformSubmissionEOSS extends MigrateDestinationEntity {
     parent::__construct('node', 'webform');
 
     if (empty($node)) {
-      throw new Exception(t("You must provide a webform node ID in __construct()."));
+      throw new MigrateException(t("You must provide a webform node ID to " . __CLASS__ . '::' . __METHOD__));
     }
 
     // Make sure it's a webform node.
     $types = webform_variable_get('webform_node_types');
     if (!in_array($node->type, $types)) {
-      throw new Exception(t("The %type content type is not configured to accept 
-      webform submissions.", array('%type' => $node->type)));
+      throw new MigrateException(t("The %type content type is not configured to accept webform submissions.",
+        array('%type' => $node->type)));
     }
     $this->node = $node;
 
@@ -95,30 +121,10 @@ class MigrateDestinationWebformSubmissionEOSS extends MigrateDestinationEntity {
     ));
   }
 
-  /**
-   * Returns a list of fields available to be mapped.
-   *
-   * @return array
-   *   Keys: machine names of the fields (to be passed to addFieldMapping)
-   *   Values: Human-friendly descriptions of the fields.
-   */
   public function fields() {
     // Fields defined by the schema. nid is omitted since it should come from
     // $this->node.
-    $fields = array(
-      'sid' => t('The unique identifier for this submission.'),
-      'uid' => t('The id of the user that completed this submission.'),
-      'nid' => t('The node ID of the webform that created the submission.'),
-      'is_draft' => t('Is this submission not completed?'),
-      'submitted' => t('Timestamp of when the form was submitted.'),
-      'remote_addr' => t('The IP address of the user that submitted the form.'),
-      // EOSS additions
-      'uuid' => t('The unique webform submission UUID'),
-      'serial' => t('The serial ID of the submission; like a primary key'),
-      'completed' => t('Timestamp of when submission ID was completed.'),
-      'highest_valid_page' => t(''),
-      'modified' => t('Timestamp of when submission ID was last modified.'),
-    );
+    $fields = MigrateWebformSubmissionFields::whichWebformDBCols('all');
 
     // Create a field for each component on the webform.
     foreach ($this->node->webform['components'] as $component) {
@@ -126,8 +132,6 @@ class MigrateDestinationWebformSubmissionEOSS extends MigrateDestinationEntity {
       $fields['data_' . $component['form_key']] = t('@type: @name', array('@type' => $component['type'], '@name' => $component['name']));
     }
 
-    // Then add in anything provided by handlers.
-    $fields += migrate_handler_invoke_all('WebformSubmission', 'fields', $this->node);
     return $fields;
   }
 
@@ -148,7 +152,6 @@ class MigrateDestinationWebformSubmissionEOSS extends MigrateDestinationEntity {
     );
     // Call any general object handlers.
     migrate_handler_invoke_all('WebformSubmission', 'prepare', $entity, $source_row, $this->node);
-
     // Then call any prepare handler for this specific Migration.
     if (method_exists($migration, 'prepare')) {
       $migration->prepare($entity, $source_row, $this->node);

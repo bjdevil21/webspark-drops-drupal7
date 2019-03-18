@@ -85,6 +85,8 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
       ->execute()
       ->fetchAll();
     if (count($query) > 0) {
+      MigrationBase::displayMessage('[SKIP] - Drupal user ID ' . $row->name .
+        ' already exists.', 'status');
       return FALSE;
     }
   }
@@ -105,6 +107,5 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
       'rid' => 5,
     ));
     $query->execute();
-
   }
 }

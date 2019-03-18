@@ -68,9 +68,10 @@ function eoss_migration_migrate_api() {
     // Field Handlers - Manipulate the data for Drupal consumption -
     'field handlers' => array(
  //     'MigrateNameHandler',
+      //'MigrateDestinationWebformSubmissionEOSS',
     ),
     'migrations' => array(
-      'MigrateDestinationWebformSubmissionEOSS' => $submissions_arguments,
+      'MigrateWebformSubmissionEOSS' => $submissions_arguments,
 //      'EOSSWebformSubmittedData' => $submitted_data_arguments,
 //      'MigrateWebformLastDownloadEOSS' => $last_download_arguments,
       'DrupalUser7MigrationEOSS' => $users_arguments,

@@ -19,6 +19,8 @@ files[] = includes/src/MigrateWebformSubmissionEOSS.inc
 files[] = includes/dst/MigrateDestinationWebformSubmissionEOSS.inc
 files[] = includes/submitted_data.inc
 files[] = includes/last_download.inc
+;; Global output for webform submission table fields
+files[] = includes/MigrateWebformSubmissionFields.inc
 
 ; Submitting users
 files[] = includes/src/DrupalUser7MigrationEOSS.inc

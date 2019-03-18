@@ -10,16 +10,15 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
    * MigrateWebformSubmissionEOSS constructor.
    * @param array $arguments
    */
+
   public function __construct($arguments) {
     parent::__construct($arguments);
-
-    $query = $this->query();
 
     $table_name = 'webform_submissions';
 
     $this->source = new MigrateSourceSQL(
-      $query,
-      $this->whichWebformDBCols('all'),
+      $this->query(),
+      $this->getWebformCols('all'),
       NULL,
       array(
         'map_joinable' => FALSE,
@@ -27,7 +26,28 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       )
     );
 
+    // @TODO - WHICH destination handler?
+    //
+    // MigrateDestinationWebformSubmissionEOSS - Updated clone of Migrate Extra's webform.inc
+    //   - MigrateDestinationWebformSubmission class
+    //   - builds its own key functions and extends MigrateDestination
+    // MigrateDestinationTable - pass in the table name only, and see what gets mapped.
+    //
     $this->destination = new MigrateDestinationTable($table_name);
+
+    $this->addSimpleMappings($this->getWebformCols('simple'));
+
+    // Node ID mapping
+    $this->addFieldMapping('nid', 'nid');
+    // This mapping will be done manually below in prepareRow because Features API
+    // was used for building the webform nodes already.
+    // ->sourceMigration($arguments['node_migrations']);
+
+    // Default uid to 1 if we're not mapping it.
+    $this->removeFieldMapping('uid');
+    $this->addFieldMapping('uid', 'uid')
+      ->sourceMigration('DrupalUser7MigrationEOSS')
+      ->defaultValue(0); // Anonymous user
 
     $this->map = new MigrateSQLMap(
       $this->machineName,
@@ -42,56 +62,19 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       ),
       MigrateDestinationTable::getKeySchema($table_name)
     );
-
-    $this->addSimpleMappings($this->whichWebformDBCols('simple'));
-
-    // Node ID mapping
-    $this->addFieldMapping('nid', 'nid');
-    // This mapping will be done manually below in prepareRow because Features API
-    // was used for building the webform nodes already.
-    // ->sourceMigration($arguments['node_migrations']);
-
-    // Default uid to 1 if we're not mapping it.
-    $this->removeFieldMapping('uid');
-    $this->addFieldMapping('uid', 'uid')
-      ->sourceMigration('DrupalUser7MigrationEOSS')
-      ->defaultValue(0); // Anonymous user
   }
 
   protected function query() {
-    $what_fields = $this->whichWebformDBCols('all');
+    $what_fields = array_keys($this->getWebformCols('all'));
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
       ->fields('wss', $what_fields)
-      ->condition('sid', '330000', '>') // debugging
-      ->orderBy('sid', 'ASC');
+      ->condition('wss.sid', '330000', '>') // debugging
+      ->orderBy('wss.sid', 'ASC');
     return $query;
   }
 
-  protected function whichWebformDBCols($what_columns = 'all') {
-    // Used cols instead of fields to avoid method name overlapping.
-    $simple_cols = array(
-      'completed', // Always the same as completed
-      'highest_valid_page', // ALWAYS 0
-      'is_draft', // ALWAYS 0
-      'modified',
-      'remote_addr',
-      'sid',
-      'serial', // This is the webform submission ID # for just THAT form, in order.
-      'submitted', // Always the same as completed
-      'uuid',
-    );
-    $complex_cols = array(
-      'nid',
-      'uid',
-    );
-    if ($what_columns == 'simple') {
-      return $simple_cols;
-    }
-    else {
-      return array_merge($simple_cols, $complex_cols);
-    }
-  }
+  // whichWebformDBCols method moved out to separate class for global access.
 
   /**
    * @param $row
@@ -120,7 +103,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       $query = Database::getConnection('default')
         ->select('node', 'n')
         ->fields('n', array('nid'))
-        ->condition('uuid', $uuid);
+        ->condition('uuid', $row->uuid);
       $new_nid = $query->execute()->fetchField();
       if (!$new_nid) { // No matching webform in destination? Skip...
         return FALSE;
@@ -134,12 +117,12 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
   public function prepare($entity, $row) {
     // No transforms necessary
   }
-
   /**
-   *
+   * @param string $cols
+   * @return array of webform_submission DB cols
    */
-  public function getWebformNodeIDs() {
-
+  public function getWebformCols($cols = 'all') {
+    return MigrateWebformSubmissionFields::whichWebformDBCols($cols);
   }
 }
 
