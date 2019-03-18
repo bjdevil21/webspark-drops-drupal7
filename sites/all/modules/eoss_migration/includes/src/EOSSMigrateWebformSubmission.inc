@@ -47,22 +47,23 @@ class EOSSMigrateWebformSubmission extends DrupalMigration {
 
     // Node ID mapping
     $this->addFieldMapping('nid', 'nid');
-    // This is taken care of manually in prepareRow because I used Features API
-    // for webform nodes.
+    // This mapping will be done manually below in prepareRow because Features API
+    // was used for building the webform nodes already.
     // ->sourceMigration($arguments['node_migrations']);
 
     // Default uid to 1 if we're not mapping it.
     $this->removeFieldMapping('uid');
     $this->addFieldMapping('uid', 'uid')
       ->sourceMigration('EOSSDrupalUser7Migration')
-      ->defaultValue(0);
+      ->defaultValue(0); // Anonymous user
   }
 
   protected function query() {
-    $what_fields = $this->whichWebformDBCols();
+    $what_fields = $this->whichWebformDBCols('all');
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
       ->fields('wss', $what_fields)
+      ->condition('sid', '330000', '>') // debugging
       ->orderBy('sid', 'ASC');
     return $query;
   }
@@ -75,8 +76,8 @@ class EOSSMigrateWebformSubmission extends DrupalMigration {
       'is_draft', // ALWAYS 0
       'modified',
       'remote_addr',
-      'serial', // This is the webform submission ID # for just THAT form, in order.
       'sid',
+      'serial', // This is the webform submission ID # for just THAT form, in order.
       'submitted', // Always the same as completed
       'uuid',
     );
@@ -114,20 +115,7 @@ class EOSSMigrateWebformSubmission extends DrupalMigration {
     }
     */
 
-    // @TODO - Manual nid mapping of nodes imported manually with features
-    // 1) Get UUID from source
-    $query = Database::getConnection('default', $this->sourceConnection)
-      ->select('node', 'n')
-      ->fields('n', array('uuid'))
-      ->condition('type', 'webform')
-      ->condition('nid', $row->nid);
-    $uuid = $query
-      ->execute()
-      ->fetchField();
-    if (!$uuid) { // no UUID? Skip...
-      return FALSE;
-    }
-    // 2) Get new nid from destination
+    // Manual nid mapping of nodes imported manually with features, by uuid.
     else {
       $query = Database::getConnection('default')
         ->select('node', 'n')
@@ -145,6 +133,13 @@ class EOSSMigrateWebformSubmission extends DrupalMigration {
 
   public function prepare($entity, $row) {
     // No transforms necessary
+  }
+
+  /**
+   *
+   */
+  public function getWebformNodeIDs() {
+
   }
 }
 

@@ -24,14 +24,14 @@ function eoss_migration_migrate_api() {
       'class_name' => 'EOSSMigrateWebformSubmission',
       'machine_name' => 'EOSSMigrateWebformSubmission',
       'description' => t('Migration of submissions from EOSS.asu.edu'),
-      'group_name' => 'EOSSWebform',
+      'group_name' => 'EOSSSubmissions',
       'dependencies' => array('EOSSDrupalUser7Migration'), // After users come in
     );
   $submitted_data_arguments = $common_arguments + array(
       'class_name' => 'EOSSMigrateWebformSubmittedData',
       'machine_name' => 'EOSSMigrateWebformSubmittedData',
       'description' => t('Migration of submitted data from EOSS.asu.edu'),
-      'group_name' => 'EOSSWebform',
+      'group_name' => 'EOSSSubmissions',
       'dependencies' => array('EOSSMigrateWebformSubmission'),
     );
   $last_download_arguments = $common_arguments + array(
