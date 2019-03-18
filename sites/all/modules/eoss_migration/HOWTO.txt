@@ -8,7 +8,22 @@ set in $api['migrations'] array.
   - Allows you to look up the old, source IDs based on the destination IDs - AFTER the migration
     that created the map is completed. Allows rollbacks, etc.
 
-* To do a basic migration, you only need to set the following:
+###############
+Non-video notes:
+
+* To do a basic migration, you need a source class and a destination class (a destination handler).
+* There are examples of both online.
+
+  ** Find a destination handler class that someone has already created for the type of node/entity that you're
+    planning on migrating into. See migrate_examples as a good starting point.
+    - Destination classes will always come out of MigrateDestination.
+
+  ** Also look for a source class online for a starting point. Many of these exist in the Migrate and Migrate Extras
+    module(s).
+    Back to video...
+###############
+
+  You only need to set the following in your source class:
 
   * __construct:
     - $this->source
@@ -41,7 +56,7 @@ set in $api['migrations'] array.
       - Advanced functions that help utilize mappings
         - https://www.drupal.org/node/1133448
 
-(These values generally coincide with the four top level Migrate classes (alongside Migration [base])
+(These values generally coincide with the four top level Migrate classes (alongside Migration and MigrationBase])
   - MigrateSource
   - MigrateDestination
   - MigrateMap
@@ -49,7 +64,7 @@ set in $api['migrations'] array.
 
 * Dependencies
 
-When you set a dependency, you have to run that migration BEFORE the current migration can be run.
+When you set a migration dependency, you have to run that migration BEFORE the current migration can be run.
 (Set this in $arguments.)
   - Ex. You have the old IDs from the source and you want to get new IDs for users in the destination:
     - $this->addFieldMapping('uid', 'old_id')->sourceMigration('<previousMigration>');
@@ -65,9 +80,16 @@ and you need the billing info for the user profile).
     - This creates a new but empty record that gives you that new ID. When <previousMigration>
     runs, it'll go to the $migration (the "2nd" migration) and create the record stub.
     Then when the 2nd migration runs, it updates and populate the stub record with the right info.
-    https://youtu.be/3fG4wBvLrOI?t=1503
+    Denver video time: https://youtu.be/3fG4wBvLrOI?t=1503
 
-* Additional, important methods in your Migrate class (after __construct method)
+##############
+non-video notes:
+Great stubs resource:
+https://www.drupal.org/node/1013506
+back to video
+##############
+
+* Additional, important methods in your Migrate source class (after __construct method)
   - These are presented in execution order):
 
   1 prepareRow($row) -- Add or change values by editing the $row object properties, which
@@ -97,3 +119,5 @@ and you need the billing info for the user profile).
   - There are other methods that are required by the process, but they are USUALLY set and handled in
     parent classes.
 
+END OF VIDEO
+#########################
