@@ -103,9 +103,13 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       $query = Database::getConnection('default')
         ->select('node', 'n')
         ->fields('n', array('nid'))
-        ->condition('uuid', $row->uuid);
+        ->condition('nid', $old_nid);
       $new_nid = $query->execute()->fetchField();
+      var_dump('row ID: ' . $row->nid);
+      var_dump('new nid: ' . $new_nid);
+
       if (!$new_nid) { // No matching webform in destination? Skip...
+        var_dump("no match");
         return FALSE;
       }
       else {
