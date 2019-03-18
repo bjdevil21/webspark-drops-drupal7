@@ -23,7 +23,7 @@
  * - hidden
  */
 // No grid or hidden component types in eoss-migrate
-class EOSSMigrateDestinationWebformSubmission extends MigrateDestination {
+class MigrateDestinationWebformSubmissionEOSS extends MigrateDestinationEntity {
 
   static public function getKeySchema() {
     return array(
@@ -62,7 +62,7 @@ class EOSSMigrateDestinationWebformSubmission extends MigrateDestination {
    *   A node object that's type has been enabled for webform use.
    */
   public function __construct($node) {
-    parent::__construct();
+    parent::__construct('node', 'webform');
 
     if (empty($node)) {
       throw new Exception(t("You must provide a webform node ID in __construct()."));
@@ -108,10 +108,16 @@ class EOSSMigrateDestinationWebformSubmission extends MigrateDestination {
     $fields = array(
       'sid' => t('The unique identifier for this submission.'),
       'uid' => t('The id of the user that completed this submission.'),
-      'is_draft' => t('Is this a draft of the submission?'),
+      'nid' => t('The node ID of the webform that created the submission.'),
+      'is_draft' => t('Is this submission not completed?'),
       'submitted' => t('Timestamp of when the form was submitted.'),
       'remote_addr' => t('The IP address of the user that submitted the form.'),
-      'uuid'
+      // EOSS additions
+      'uuid' => t('The unique webform submission UUID'),
+      'serial' => t('The serial ID of the submission; like a primary key'),
+      'completed' => t('Timestamp of when submission ID was completed.'),
+      'highest_valid_page' => t(''),
+      'modified' => t('Timestamp of when submission ID was last modified.'),
     );
 
     // Create a field for each component on the webform.
@@ -122,7 +128,6 @@ class EOSSMigrateDestinationWebformSubmission extends MigrateDestination {
 
     // Then add in anything provided by handlers.
     $fields += migrate_handler_invoke_all('WebformSubmission', 'fields', $this->node);
-
     return $fields;
   }
 
@@ -180,7 +185,7 @@ class EOSSMigrateDestinationWebformSubmission extends MigrateDestination {
    *   Raw source data object - passed through to complete handlers.
    */
   public function import(stdClass $entity, stdClass $row) {
-    // Updating previously-migrated content?
+
     $migration = Migration::currentMigration();
     if (isset($row->migrate_map_destid1)) {
       if (isset($entity->sid) && $entity->sid != $row->migrate_map_destid1) {
@@ -285,19 +290,18 @@ class EOSSMigrateDestinationWebformSubmission extends MigrateDestination {
    *
    * @param $sids
    *   Array of submission IDs to be deleted.
-   */
-
-
-$migration = Migration::currentMigration();
+   *
+  $migration = Migration::currentMigration();
 
   // Call any general entity handlers (in particular, the builtin field handler)
-migrate_handler_invoke_all('Entity', 'prepareRollback', $entity_id);
+  migrate_handler_invoke_all('Entity', 'prepareRollback', $entity_id);
   // Then call any entity-specific handlers
-migrate_handler_invoke_all($this->entityType, 'prepareRollback', $entity_id);
+  migrate_handler_invoke_all($this->entityType, 'prepareRollback', $entity_id);
   // Then call any prepare handler for this specific Migration.
-if (method_exists($migration, 'prepareRollback')) {
-$migration->prepareRollback($entity_id);
-}
+  if (method_exists($migration, 'prepareRollback')) {
+  $migration->prepareRollback($entity_id);
+  }
+   */
 
   public function bulkRollback(array $sids) {
     migrate_instrument_start(__METHOD__);
@@ -305,7 +309,7 @@ $migration->prepareRollback($entity_id);
     foreach (webform_get_submissions(array('sid' => $sids)) as $submission) {
       webform_submission_delete($this->node, $submission);
     }
-    $this->completeRollback($uids);
+    $this->completeRollback($sids);
     migrate_instrument_stop(__METHOD__);
   }
 }

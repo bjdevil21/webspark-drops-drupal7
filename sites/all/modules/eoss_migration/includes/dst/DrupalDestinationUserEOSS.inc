@@ -3,7 +3,7 @@
 * We add support for UUIDs - just in case they're needed.
 */
 
-class EOSSDrupalDestinationUser extends DrupalDestinationUser {
+class DrupalDestinationUserEOSS extends DrupalDestinationUser {
   /**
    * @param null $migration
    * @return array

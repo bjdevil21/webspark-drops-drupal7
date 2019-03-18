@@ -4,10 +4,10 @@
  * Migrate EOSS webform submissions into eoss-forms
  * Run this after
  */
-class EOSSMigrateWebformSubmission extends DrupalMigration {
+class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
   /**
-   * EOSSMigrateWebformSubmission constructor.
+   * MigrateWebformSubmissionEOSS constructor.
    * @param array $arguments
    */
   public function __construct($arguments) {
@@ -54,7 +54,7 @@ class EOSSMigrateWebformSubmission extends DrupalMigration {
     // Default uid to 1 if we're not mapping it.
     $this->removeFieldMapping('uid');
     $this->addFieldMapping('uid', 'uid')
-      ->sourceMigration('EOSSDrupalUser7Migration')
+      ->sourceMigration('DrupalUser7MigrationEOSS')
       ->defaultValue(0); // Anonymous user
   }
 

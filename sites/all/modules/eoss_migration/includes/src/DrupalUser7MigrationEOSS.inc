@@ -5,7 +5,7 @@
  * * Migrate d2d class extension for d7
  */
 
-class EOSSDrupalUser7Migration extends DrupalUser7Migration {
+class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
   /**
    * EOSSSubmissionUsers constructor.
    * @param array $arguments
@@ -41,7 +41,7 @@ class EOSSDrupalUser7Migration extends DrupalUser7Migration {
     ));
 
     // Extends DrupalDestinationUser()
-    $this->destination = new EOSSDrupalDestinationUser();
+    $this->destination = new DrupalDestinationUserEOSS();
   }
 
   /**
