@@ -70,7 +70,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
       ->fields('wss', $what_fields)
-      ->condition('wss.sid', '331692', '>') // debugging
+      //->condition('wss.sid', '331692', '>') // debugging
       ->orderBy('wss.sid', 'ASC');
     return $query;
   }
