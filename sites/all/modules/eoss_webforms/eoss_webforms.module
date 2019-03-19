@@ -15,8 +15,7 @@ function eoss_webforms_post_features_enable_feature($component) {
 
   $table = 'migrate_map_custom_nids';
   $class = 'MigrateWebformSubmissionEOSS';
-
-  // WORKS half way
+  
   $src_query = Database::getConnection('default', 'eossMigrate')
     ->select('node', 'n1')
     ->fields('n1', array('nid', 'uuid'))

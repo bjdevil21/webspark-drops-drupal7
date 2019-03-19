@@ -11,6 +11,9 @@ dependencies[] = strongarm
 dependencies[] = text
 dependencies[] = webform
 dependencies[] = webform_features
+; Ensure that the non-registered SQL tables have been deleted before hook_schema() gets fired.
+dependencies[] = eoss_webforms_inputformats
+
 features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:2
 features[field_instance][] = node-webform-body
