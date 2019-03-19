@@ -70,7 +70,7 @@ When you set a migration dependency, you have to run that migration BEFORE the c
     - $this->addFieldMapping('uid', 'old_id')->sourceMigration('<previousMigration>');
     - $this->dependencies = array('<previousMigration>');
 
-  - Circular dependencies (need the user profile that doesn't exist yet for that billing table,
+* Circular dependencies (need the user profile that doesn't exist yet for that billing table,
 and you need the billing info for the user profile).
 
     - SOLUTION FOR THESE: Add a sourceMigration('<previousMigration') to your <newMigration> class

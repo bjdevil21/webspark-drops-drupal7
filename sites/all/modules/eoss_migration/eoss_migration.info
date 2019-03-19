@@ -16,7 +16,8 @@ files[] = eoss_migration.migrate.inc
 
 ; Webform Submissions + Submitted Data + Last Download tables
 files[] = includes/src/MigrateWebformSubmissionEOSS.inc
-files[] = includes/dst/MigrateDestinationWebformSubmissionEOSS.inc
+; Using MigrateDestinationTable from Migrate module instead of below
+;files[] = includes/dst/MigrateDestinationWebformSubmissionEOSS.inc
 files[] = includes/submitted_data.inc
 files[] = includes/last_download.inc
 ;; Global output for webform submission table fields

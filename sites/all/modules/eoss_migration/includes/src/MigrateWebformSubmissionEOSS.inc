@@ -26,13 +26,10 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       )
     );
 
-    // @TODO - WHICH destination handler?
-    //
     // MigrateDestinationWebformSubmissionEOSS - Updated clone of Migrate Extra's webform.inc
     //   - MigrateDestinationWebformSubmission class
     //   - builds its own key functions and extends MigrateDestination
-    // MigrateDestinationTable - pass in the table name only, and see what gets mapped.
-    //
+    // SELECTED -> MigrateDestinationTable - pass in the table name only, and see what gets mapped.
     $this->destination = new MigrateDestinationTable($table_name);
 
     $this->addSimpleMappings($this->getWebformCols('simple'));
@@ -45,23 +42,25 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     // Source ID mapping
     $this->addFieldMapping('sid', 'sid');
 
-    // Default uid to 1 if we're not mapping it.
+    // Default uid to 0 if we're not mapping it.
     $this->removeFieldMapping('uid');
     $this->addFieldMapping('uid', 'uid')
       ->sourceMigration('DrupalUser7MigrationEOSS')
       ->defaultValue(0); // Anonymous user
 
+    $mappable_key = array(
+      'sid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Source component ID',
+        'alias' => 's',
+      ),
+    );
+
     $this->map = new MigrateSQLMap(
       $this->machineName,
-      array(
-        'sid' => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Source component ID',
-          'alias' => 's',
-        ),
-      ),
+      $mappable_key,
       MigrateDestinationTable::getKeySchema($table_name)
     );
   }
@@ -71,7 +70,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
       ->fields('wss', $what_fields)
-      ->condition('wss.sid', '331690', '>') // debugging
+      ->condition('wss.sid', '331692', '>') // debugging
       ->orderBy('wss.sid', 'ASC');
     return $query;
   }
@@ -105,8 +104,9 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
   }
 
   public function prepare($entity, $row) {
-    // No transforms necessary
-    var_dump($entity);
+    // Remove the old submission ID from $entity (not $row),
+    // so the insert can create the new record and map it properly.
+    unset($entity->sid);
   }
   /**
    * @param string $cols

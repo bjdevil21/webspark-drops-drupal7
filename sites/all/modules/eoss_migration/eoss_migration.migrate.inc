@@ -63,11 +63,12 @@ function eoss_migration_migrate_api() {
     // from a source without any comments (if desired)
     'destination handlers' => array(
  //     'DrupalDestinationUserEOSS',
+//      'MigrateDestinationTableEOSS',
+//      'MigrateDestinationWebformSubmissionEOSS',
     ),
     // Field Handlers - Manipulate the data for Drupal consumption -
     'field handlers' => array(
  //     'MigrateNameHandler',
-      //'MigrateDestinationWebformSubmissionEOSS',
     ),
     'migrations' => array(
       'MigrateWebformSubmissionEOSS' => $submissions_arguments,
