@@ -41,7 +41,9 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     $this->addFieldMapping('nid', 'nid');
     // This mapping will be done manually below in prepareRow because Features API
     // was used for building the webform nodes already.
-    // ->sourceMigration($arguments['node_migrations']);
+
+    // Source ID mapping
+    $this->addFieldMapping('sid', 'sid');
 
     // Default uid to 1 if we're not mapping it.
     $this->removeFieldMapping('uid');
@@ -69,12 +71,10 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
       ->fields('wss', $what_fields)
-      ->condition('wss.sid', '330000', '>') // debugging
+      ->condition('wss.sid', '331690', '>') // debugging
       ->orderBy('wss.sid', 'ASC');
     return $query;
   }
-
-  // whichWebformDBCols method moved out to separate class for global access.
 
   /**
    * @param $row
@@ -86,30 +86,16 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       return FALSE;
     }
 
-    // This checks if the destination nid exists for a particular webform before inserting the submission.
-    /*
-    $result = db_select("node", "n")
-      ->fields("n", array("nid"))
-      ->condition("nid", $row->nid)
-      ->execute()
-      ->fetchField();
-    if (!$result) {
-      return FALSE;
-    }
-    */
-
-    // Manual nid mapping of nodes imported manually with features, by uuid.
+    // Manual sourceMigration() implementation for nids imported Features API; keyed by uuid.
     else {
       $query = Database::getConnection('default')
-        ->select('node', 'n')
-        ->fields('n', array('nid'))
-        ->condition('nid', $old_nid);
+        ->select('migrate_map_custom_nids', 'mm')
+        ->fields('mm', array('nid'))
+        ->condition('src_nid', $row->nid);
       $new_nid = $query->execute()->fetchField();
-      var_dump('row ID: ' . $row->nid);
-      var_dump('new nid: ' . $new_nid);
 
       if (!$new_nid) { // No matching webform in destination? Skip...
-        var_dump("no match");
+        MigrationBase::displayMessage('[SKIP] - Webform does not exist for submission ID ' . $row->sid, 'status');
         return FALSE;
       }
       else {
@@ -120,6 +106,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
   public function prepare($entity, $row) {
     // No transforms necessary
+    var_dump($entity);
   }
   /**
    * @param string $cols

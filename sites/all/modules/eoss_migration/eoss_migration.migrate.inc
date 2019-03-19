@@ -20,41 +20,40 @@ function eoss_migration_migrate_api() {
     ),
   );
 
-  $submissions_arguments = $common_arguments + array(
-      'class_name' => 'MigrateWebformSubmissionEOSS',
-      'machine_name' => 'MigrateWebformSubmissionEOSS',
-      'description' => t('Migration of submissions from EOSS.asu.edu'),
-      'group_name' => 'EOSSSubmissions',
-      'dependencies' => array('DrupalUser7MigrationEOSS'), // After users come in
-    );
-  $submitted_data_arguments = $common_arguments + array(
-      'class_name' => 'MigrateWebformSubmittedDataEOSS',
-      'machine_name' => 'MigrateWebformSubmittedDataEOSS',
-      'description' => t('Migration of submitted data from EOSS.asu.edu'),
-      'group_name' => 'EOSSSubmissions',
-      'dependencies' => array('MigrateWebformSubmissionEOSS'),
-    );
-  $last_download_arguments = $common_arguments + array(
-      'class_name' => 'MigrateWebformLastDownloadEOSS',
-      'machine_name' => 'MigrateWebformLastDownloadEOSS',
-      'description' => t('Migration of last download of submission logs by EOSS.asu.edu webform administrators'),
-      'group_name' => 'EOSSSubmissions',
-      'dependencies' => array('MigrateWebformSubmissionEOSS'),
-    );
   $users_arguments = $common_arguments + array(
-      'class_name' => 'DrupalUser7MigrationEOSS',
-      'machine_name' => 'DrupalUser7MigrationEOSS',
-      'description' => t('Migration of webform submission user IDs'),
-      'group_name' => 'EOSSUsers',
-//      'soft_dependencies' => array(''), // After features + custom MySQL - which could've been done in Migrate API!!
-    );
+    'class_name' => 'DrupalUser7MigrationEOSS',
+    'machine_name' => 'DrupalUser7MigrationEOSS',
+    'description' => t('Migration of webform submission user IDs'),
+    'group_name' => 'EOSSUsers',
+  );
+  $submissions_arguments = $common_arguments + array(
+    'class_name' => 'MigrateWebformSubmissionEOSS',
+    'machine_name' => 'MigrateWebformSubmissionEOSS',
+    'description' => t('Migration of submissions from EOSS.asu.edu'),
+    'group_name' => 'EOSSSubmissions',
+    'dependencies' => array('DrupalUser7MigrationEOSS'), // After users come in
+  );
+  $submitted_data_arguments = $common_arguments + array(
+    'class_name' => 'MigrateWebformSubmittedDataEOSS',
+    'machine_name' => 'MigrateWebformSubmittedDataEOSS',
+    'description' => t('Migration of submitted data from EOSS.asu.edu'),
+    'group_name' => 'EOSSSubmissions',
+    'dependencies' => array('MigrateWebformSubmissionEOSS'),
+  );
+  $last_download_arguments = $common_arguments + array(
+    'class_name' => 'MigrateWebformLastDownloadEOSS',
+    'machine_name' => 'MigrateWebformLastDownloadEOSS',
+    'description' => t('Migration of last download of submission logs by EOSS.asu.edu webform administrators'),
+    'group_name' => 'EOSSSubmissions',
+    'dependencies' => array('MigrateWebformSubmissionEOSS'),
+  );
   $files_arguments = $common_arguments + array(
-      'class_name' => 'MigrateSubmissionFilesEOSS',
-      'machine_name' => 'MigrateSubmissionFilesEOSS',
-      'description' => t('Migration of webform submission files'),
-      'group_name' => 'EOSSFiles',
-      'dependencies' => array('MigrateWebformSubmittedDataEOSS'),
-    );
+    'class_name' => 'MigrateSubmissionFilesEOSS',
+    'machine_name' => 'MigrateSubmissionFilesEOSS',
+    'description' => t('Migration of webform submission files'),
+    'group_name' => 'EOSSFiles',
+    'dependencies' => array('MigrateWebformSubmittedDataEOSS'),
+  );
 
   $api = array(
     'api' => 2,

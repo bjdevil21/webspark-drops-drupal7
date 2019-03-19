@@ -16,7 +16,6 @@ class MigrateWebformSubmissionFields {
   public static function whichWebformDBCols($what_columns = 'all') {
     // Used cols instead of fields to avoid method name overlapping.
     $simple_cols = array(
-      'sid' => t('The unique identifier for this submission.'),
       'is_draft' => t('Is this submission not completed?'),
       'submitted' => t('Timestamp of when the form was submitted.'),
       'remote_addr' => t('The IP address of the user that submitted the form.'),
@@ -30,6 +29,7 @@ class MigrateWebformSubmissionFields {
     $complex_cols = array(
       'uid' => t('The id of the user that completed this submission.'),
       'nid' => t('The node ID of the webform that created the submission.'),
+      'sid' => t('The unique identifier for this submission.'),
     );
     if ($what_columns == 'simple') {
       return array_keys($simple_cols);
