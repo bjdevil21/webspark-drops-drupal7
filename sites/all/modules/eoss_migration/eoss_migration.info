@@ -1,6 +1,6 @@
 name = Migration Webform Submissions EOSS
 description = "Migration of webform submissions for EOSS"
-version = 7.x-1.0-alpha3
+version = 7.x-1.0-alpha4
 core = 7.x
 package = EOSS Webform Migration
 
@@ -14,18 +14,23 @@ dependencies[] = webform_submission_uuid
 ; Base API class + arguments data
 files[] = eoss_migration.migrate.inc
 
-; Webform Submissions + Submitted Data + Last Download tables
-files[] = includes/src/MigrateWebformSubmissionEOSS.inc
-; Using MigrateDestinationTable from Migrate module instead of below
-;files[] = includes/dst/MigrateDestinationWebformSubmissionEOSS.inc
-files[] = includes/submitted_data.inc
-files[] = includes/last_download.inc
-;; Global output for webform submission table fields
+; Helper class to manage fields
 files[] = includes/MigrateWebformSubmissionFields.inc
 
-; Submitting users
+; MIGRATIONS
+; Users (Webform submitters not already in eoss-forms)
 files[] = includes/src/DrupalUser7MigrationEOSS.inc
 files[] = includes/dst/DrupalDestinationUserEOSS.inc
 
-; Submitted files
-files[] = includes/eoss_files.inc
+; Webform Submissions
+files[] = includes/src/MigrateWebformSubmissionEOSS.inc
+; Alternative to MigrateDestinationTable from Migrate module
+;files[] = includes/dst/MigrateDestinationWebformSubmissionEOSS.inc
+
+; Submitted files (managed, usage)
+files[] = includes/src/MigrateWebformFileManagedEOSS.inc
+;files[] = includes/src/MigrateWebformFileUsageEOSS.inc
+
+; Submitted data records (webform_submitted_data)
+;files[] = includes/src/MigrateWebformSubmttedDataEOSS.inc
+files[] = includes/last_download.inc
