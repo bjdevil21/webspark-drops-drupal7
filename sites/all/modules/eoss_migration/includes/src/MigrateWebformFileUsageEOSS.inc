@@ -3,15 +3,19 @@
 /**
  * Created by PhpStorm.
  * User: bryan
- * Date: 3/19/19
- * Time: 2:49 PM
+ * Date: 3/20/19
+ * Time: 8:38 AM
  */
-class MigrateWebformFileManagedEOSS extends DrupalMigration {
+class MigrateWebformFileUsageEOSS extends DrupalMigration  {
 
+  /**
+   * MigrateWebformsFileUsageEOSS constructor.
+   * @param array $arguments
+   */
   public function __construct($arguments) {
     parent::__construct($arguments);
 
-    $table_name = 'file_managed';
+    $table_name = 'file_usage';
 
     $this->source = new MigrateSourceSQL(
       $this->query(),
@@ -30,6 +34,8 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     // file ID mapping
     // @TODO - add in createStub to make file_usage stubs, or do file_usage first
     $this->addFieldMapping('fid', 'fid');
+//      ->sourceMigration('')
+//    ->createStub();
 
     // Default uid to 0 if we're not mapping it.
     $this->removeFieldMapping('uid');
@@ -43,7 +49,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'File ID',
-        'alias' => 'fm',
+        'alias' => 'fu',
       ),
     );
 
@@ -52,18 +58,6 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       $mappable_key,
       MigrateDestinationTable::getKeySchema($table_name)
     );
-  }
-
-  // @TODO - Select query to grab all files
-  public function query() {
-    $fm_query = Database::getConnection('default', $this->sourceConnection)
-      ->select('file_managed', 'fm');
-    $fm_query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
-    $fm_query->fields('fm', $this->getFieldCols('all'))
-      ->condition('fm.fid', '', '>') // debugging condition
-      ->condition('fu.module', 'webform', 'LIKE') // All attached file entries
-      ->orderBy('fm.fid', 'ASC');
-    return $fm_query;
   }
 
   /**
@@ -75,14 +69,38 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
-
 //        MigrationBase::displayMessage('[SKIP] - Webform does not exist for submission ID ' . $row->sid, 'status');
   }
 
   public function prepare($entity, $row) {
-    // Remove the old File ID from $entity (not $row),
-    // so the insert can create the new record and map it properly.
-    unset($entity->fid);
+  }
+
+  /**
+   * @return \SelectQueryInterface
+   */
+  public function query() {
+    // TODO: Implement query() method.
+    $fu_query = Database::getConnection('default', $this->sourceConnection)
+      ->select('file_usage', 'fu');
+    $fu_query->fields('fu', $this->getFieldCols('all'))
+      ->orderBy('fu.fid');
+    return $fu_query;
+  }
+
+  /**
+   * @param $migration - Object that has migration data
+   * @param $fid - new ID to inject
+   */
+  public function createStub($migration, array $fid) {
+    // Create file_usage stub
+    $fu = new stdClass();
+    $fu->fid = $fid;
+    $fu->id = '';
+    $fu->module = 'webform';
+    $fu->type = 'submission';
+    $fu->count = 1;
+    $primary_keys = array('fid');
+      drupal_write_record('file_usage', $fu, $primary_keys);
   }
 
   /**

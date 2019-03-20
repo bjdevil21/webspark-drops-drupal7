@@ -39,6 +39,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     // This mapping will be done manually below in prepareRow because Features API
     // was used for building the webform nodes already.
 
+    // @TODO - Create stub for file_usage table
     // Source ID mapping
     $this->addFieldMapping('sid', 'sid');
 
@@ -100,6 +101,12 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       else {
         $row->nid = (int) $new_nid;
       }
+      // Now create stubs for file_usage table
+      // https://www.drupal.org/node/1013506
+      $source_id = $row->sid;
+      MigrationBase::displayMessage(__CLASS__ . '::' . __METHOD__ . ' -- Submission ID:' . $source_id, 'status');
+      $row->sid = $this->handleSourceMigration('MigrateWebformFileUsageEOSS', $source_id);
+      MigrationBase::displayMessage(__CLASS__ . '::' . __METHOD__ . ' -- Updated ID:' . $row->sid, 'status');
     }
   }
 

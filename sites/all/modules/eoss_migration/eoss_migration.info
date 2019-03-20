@@ -24,12 +24,13 @@ files[] = includes/dst/DrupalDestinationUserEOSS.inc
 
 ; Webform Submissions
 files[] = includes/src/MigrateWebformSubmissionEOSS.inc
-; Alternative to MigrateDestinationTable from Migrate module
+; Destination will be pre-built MigrateDestinationTable (Migrate module)
+; Alternative
 ;files[] = includes/dst/MigrateDestinationWebformSubmissionEOSS.inc
 
 ; Submitted files (managed, usage)
 files[] = includes/src/MigrateWebformFileManagedEOSS.inc
-;files[] = includes/src/MigrateWebformFileUsageEOSS.inc
+files[] = includes/src/MigrateWebformFileUsageEOSS.inc
 
 ; Submitted data records (webform_submitted_data)
 ;files[] = includes/src/MigrateWebformSubmttedDataEOSS.inc

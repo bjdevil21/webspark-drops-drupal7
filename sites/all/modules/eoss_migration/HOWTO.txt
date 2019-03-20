@@ -73,14 +73,20 @@ When you set a migration dependency, you have to run that migration BEFORE the c
 * Circular dependencies (need the user profile that doesn't exist yet for that billing table,
 and you need the billing info for the user profile).
 
-    - SOLUTION FOR THESE: Add a sourceMigration('<previousMigration') to your <newMigration> class
-    (like above), then add createStub($newMigration, $source_key) method call to your
-    <previousMigration> class.
+    - SOLUTION FOR THESE: Add a sourceMigration('<otherMigration>') method call to your <currentMigration> class
+    (like above), then add createStub($currentMigration, $source_key) method call to your
+    <otherMigration> class.
 
-    - This creates a new but empty record that gives you that new ID. When <previousMigration>
-    runs, it'll go to the $migration (the "2nd" migration) and create the record stub.
-    Then when the 2nd migration runs, it updates and populate the stub record with the right info.
-    Denver video time: https://youtu.be/3fG4wBvLrOI?t=1503
+    - Flow: currentMigration runs before otherMigration. When currentMigration comes to the fieldMapping step,
+     it will temporarily jump to otherMigration, which runs for one iteration and ONLY creates a database stub.
+     It then immediately jumps back to currentMigration to continue its iteration. The created stub that will be
+     fully populated as an update (vs create/insert) when otherMigration runs later.
+
+    - Another way of saying this: This creates a new but empty record that gives you that new ID. When
+    <previousMigration> runs, it'll go to the $migration (the "2nd" migration) and create the record stub.
+    Then when the 2nd migration runs later, it updates and populate the stub record with the right info.
+    (Denver video time: https://youtu.be/3fG4wBvLrOI?t=1503)
+    * Drupal.org further explanation (along with alternate way to do this) - https://www.drupal.org/node/1013506
 
 ##############
 non-video notes:

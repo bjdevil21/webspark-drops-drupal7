@@ -60,7 +60,10 @@ function eoss_migration_migrate_api() {
     'machine_name' => 'MigrateWebformFileUsageEOSS',
     'description' => t('Migration of file usage webform submission files attached to file components.'),
     'group_name' => 'EOSSFiles',
-    'dependencies' => array('MigrateWebformFileManagedEOSS'),
+    'dependencies' => array(
+      'MigrateWebformFileManagedEOSS',
+      'MigrateWebformSubmissionEOSS',
+    ),
   );
 
   $api = array(
