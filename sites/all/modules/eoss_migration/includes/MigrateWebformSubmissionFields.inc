@@ -18,7 +18,7 @@ class MigrateWebformSubmissionFields {
    * @param string $what_columns
    * @return array of webform_submission DB table columns
    */
-  public function whichWebformDBCols($column_set = 'all') {
+  public function whichWebformSubmissionCols($column_set = 'all') {
     // Used cols instead of fields to avoid method name overlapping.
     $simple_cols = array(
       'is_draft' => t('Is this submission not completed?'),
@@ -43,7 +43,27 @@ class MigrateWebformSubmissionFields {
    * @param string $what_columns
    * @return array of webform_submission DB table columns
    */
-  public function whichFileCols($column_set = 'all') {
+  public function whichWebformDataCols($column_set = 'all') {
+    // Used cols instead of fields to avoid method name overlapping.
+    $simple_cols = array(
+      'no' => 'Usually 0, but not if it has multiple values it will be more',
+      'data' => 'The submitted value of this field.',
+    );
+    if ($column_set == 'simple') {
+      return array_keys($simple_cols);
+    }
+    else {
+      $this->commonFields['cid'];
+      unset($this->commonFields['uid']);
+      return (array) array_merge($simple_cols, $this->commonFields);
+    }
+  }
+
+  /**
+   * @param string $what_columns
+   * @return array of webform_submission DB table columns
+   */
+  public function whichFileManagedCols($column_set = 'all') {
     // Used cols instead of fields to avoid method name overlapping.
     $simple_cols = array(
       'filename' => t('The filename.'),
@@ -60,7 +80,7 @@ class MigrateWebformSubmissionFields {
       return array_keys($simple_cols);
     }
     else {
-      // Adaft for fileManaged
+      // fileManaged
       unset($this->commonFields['sid']);
       unset($this->commonFields['nid']);
       $this->commonFields['fid'];
@@ -68,7 +88,7 @@ class MigrateWebformSubmissionFields {
     }
   }
 
-  public function whileFileUsageCols($column_set = 'all') {
+  public function whichFileUsageCols($column_set = 'all') {
     $simple_cols = array (
       'module' => t('Will be string webform'),
       'type' => t('will be string submission'),
@@ -78,11 +98,24 @@ class MigrateWebformSubmissionFields {
       return array_keys($simple_cols);
     }
     else {
-      // Adaft for fileManaged
+      // File Usage
       unset($this->commonFields['sid']);
       unset($this->commonFields['nid']);
+      unset($this->commonFields['uid']);
       $this->commonFields['fid'];
       $this->commonFields['id'];
+      return (array) array_merge($simple_cols, $this->commonFields);
+    }
+  }
+
+  public function whichWebformLastDownloadCols($column_set = 'all') {
+    $simple_cols = array (
+      'requested' => t('Timestamp of last download requested.'),
+    );
+    if ($column_set == 'simple') {
+      return array_keys($simple_cols);
+    }
+    else {
       return (array) array_merge($simple_cols, $this->commonFields);
     }
   }
