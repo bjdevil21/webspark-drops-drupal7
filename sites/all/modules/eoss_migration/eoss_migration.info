@@ -1,6 +1,6 @@
 name = Migration Webform Submissions EOSS
 description = "Migration of webform submissions for EOSS"
-version = 7.x-1.0-alpha4
+version = 7.x-1.0-alpha6
 core = 7.x
 package = EOSS Webform Migration
 
@@ -33,5 +33,5 @@ files[] = includes/src/MigrateWebformFileManagedEOSS.inc
 files[] = includes/src/MigrateWebformFileUsageEOSS.inc
 
 ; Submitted data records (webform_submitted_data)
-;files[] = includes/src/MigrateWebformSubmttedDataEOSS.inc
-files[] = includes/last_download.inc
+files[] = includes/src/MigrateWebformSubmttedDataEOSS.inc
+files[] = includes/src/MigrateWebformLastDownload.inc
