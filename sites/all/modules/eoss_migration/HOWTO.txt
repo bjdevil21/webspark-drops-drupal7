@@ -103,7 +103,8 @@ back to video
     - Can skip this record by return FALSE based on any if/then PHP logic you want to use.
     ..THEN..
 
-  2 the field handlers modify the values into a more Drupal-friendly value (nested arrays, etc.)
+  2 the field handlers modify the values into a more Drupal-friendly value (nested arrays, etc.), by calling its
+    own field-level prepare() methods,
     ..THEN..
 
   3 prepare($entity, $row) -- Can edit the now Drupal-generated entity ($entity) before
