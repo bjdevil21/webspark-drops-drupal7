@@ -1,0 +1,8 @@
+name = EOSS Webforms Content
+description = "Generates NID mapping for the Migrate API AFTER the EOSS Webforms Content module is enabled."
+core = 7.x
+package = EOSS Webform Migration Followup
+version = 7.x-1.0
+
+dependencies[] = eoss_webforms
+no autodetect = 1
