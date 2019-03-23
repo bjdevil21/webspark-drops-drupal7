@@ -88,8 +88,8 @@ function eoss_migration_migrate_api() {
       'MigrateWebformSubmissionEOSS' => $submissions_arguments,
       'MigrateWebformFileManagedEOSS' => $file_managed_arguments,
       'MigrateWebformFileUsageEOSS' => $file_usage_arguments,
-      'MigrateWebformSubmttedDataEOSS' => $submitted_data_arguments,
-      'MigrateWebformLastDownloadEOSS' => $last_download_arguments,
+//      'MigrateWebformSubmttedDataEOSS' => $submitted_data_arguments,
+//      'MigrateWebformLastDownloadEOSS' => $last_download_arguments,
     ),
     'groups' => array(
       'EOSSSubmissions' => array(
