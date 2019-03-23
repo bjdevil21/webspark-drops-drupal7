@@ -39,7 +39,7 @@ function eoss_webforms_followup_install() {
       ->condition('n2.type', 'webform')
       ->condition('n2.uuid', $src_uuid)
       ->orderBy('n2.nid');
-    $result = $query->execute()->fetchObject(); // only one UUID
+    $result = $query->execute()->fetchAll(); // only one UUID
     $result[0]->src_nid = $src_nid;
     $results[$src_uuid] = $result;
   }

@@ -5,7 +5,7 @@
  *
  * Implements hook_schema().
  */
-function eoss_webforms_schema() {
+function eoss_webforms_followup_schema() {
   $schema['migrate_map_custom_nids'] = array(
     'description' => 'Webform node ID (nid) mapping for source and destination nodes.',
     'fields' => array(
