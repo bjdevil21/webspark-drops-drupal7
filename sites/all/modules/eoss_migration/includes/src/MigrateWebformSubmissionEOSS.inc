@@ -39,7 +39,6 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     // This mapping will be done manually below in prepareRow because Features API
     // was used for building the webform nodes already.
 
-    // @TODO - Create stub for file_usage table
     // Source ID mapping
     $this->addFieldMapping('sid', 'sid');
 
@@ -66,13 +65,32 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     );
   }
 
-  protected function query() {
+
+
+protected function query() {
     $what_fields = array_keys($this->getFieldCols('all'));
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
-      ->fields('wss', $what_fields)
-      //->condition('wss.sid', '331692', '>') // debugging
-      ->orderBy('wss.sid', 'ASC');
+      ->fields('wss', $what_fields);
+      //->condition('wss.sid', '331685', '>')// debugging
+
+    // DEBUGGING
+    $db_or = db_or(); // Object
+    //Returns a new DatabaseCondition, set to "OR" all conditions together.
+    $subjids = array(
+      '296057',
+      '296060',
+      '296065',
+      '296069',
+      '296075',
+    );
+    foreach($subjids as $subjid){
+      $db_or->condition('wss.sid',$subjid,'=');
+    }
+    $query->condition($db_or);
+    // END DEBUGGING
+
+    $query->orderBy('wss.sid', 'ASC');
     return $query;
   }
 
@@ -81,12 +99,11 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
    * @return bool
    */
   public function prepareRow($row) {
-    // Skip record validation
+
+    // Manual sourceMigration() implementation for nids imported Features API; keyed by uuid.
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
-
-    // Manual sourceMigration() implementation for nids imported Features API; keyed by uuid.
     else {
       $query = Database::getConnection('default')
         ->select('migrate_map_custom_nids', 'mm')
@@ -101,13 +118,12 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       else {
         $row->nid = (int) $new_nid;
       }
-      // Now create stubs for file_usage table
-      // https://www.drupal.org/node/1013506
-      $source_id = $row->sid;
-      MigrationBase::displayMessage(__CLASS__ . '::' . __METHOD__ . ' -- Submission ID:' . $source_id, 'status');
-      $row->sid = $this->handleSourceMigration('MigrateWebformFileUsageEOSS', $source_id);
-      MigrationBase::displayMessage(__CLASS__ . '::' . __METHOD__ . ' -- Updated ID:' . $row->sid, 'status');
+      if (empty($row->sid)) {
+        return FALSE;
+      }
     }
+
+    return $row;
   }
 
   public function prepare($entity, $row) {
@@ -115,14 +131,16 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     // so the insert can create the new record and map it properly.
     unset($entity->sid);
   }
+
   /**
    * @param string $cols
    * @return array of webform_submission DB cols
    */
   public function getFieldCols($cols = 'all') {
-    $columns = new MigrateWebformSubmissionFields();
-    $new = $columns->whichWebformDBCols($cols);
+    $columns = new MigrateFieldsEOSS();
+    $new = $columns->whichWebformSubmissionCols($cols);
     return $new;
   }
+
 }
 

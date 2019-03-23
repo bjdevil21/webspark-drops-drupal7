@@ -90,8 +90,45 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
    * @return array of webform_submission DB cols
    */
   public function getFieldCols($cols = 'all') {
-    $columns = new MigrateWebformSubmissionFields();
-    $new = $columns->whichFileCols($cols);
+    $columns = new MigrateFieldsEOSS();
+    $new = $columns->whichFileManagedCols($cols);
     return $new;
+  }
+
+  /**
+   * Create stub for file_managed table
+   *
+   * @param $migration - Object that has migration data
+   * @param $ids - new ID to inject
+   */
+  public function createStub($migration, array $ids) {
+
+    $migration = Migration::currentMigration();
+
+    MigrationBase::displayMessage(__METHOD__ . ' -FM == ids- ' . var_dump($ids), 'status');
+    MigrationBase::displayMessage('FFFFFFFFFFFFFFFFFFFMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM----------------', 'status');
+    //MigrationBase::displayMessage(__METHOD__ . ' -AA- ' . var_dump($migration), 'status');
+
+    if (!($ids[0])) {
+      MigrationBase::displayMessage('FFFFFFFFFFFFFFFMMMMMMMMMMMMMMMMMMMM - FALSE ids[0] -', 'status');
+      return FALSE;
+    }
+
+    // Create file_usage stub
+    //  if ($migration->sourceValues->fid)
+        //->type == 'file');
+    $fm = new stdClass();
+    $fm->fid = ''; // auto-increment
+    $fm->uid = $ids[1];
+    $fm->filename = 'stub';
+    $fm->uri = 'stub';
+    $fm->filemime = 'stub';
+    $fm->filesize = 0;
+    $fm->status = 0;
+    $fm->timestamp = 0;
+    $fm->type = 'stub';
+    $fm->uuid = 'stub';
+    $primary_keys = array('fid');
+    drupal_write_record('file_managed', $fm, $primary_keys);
   }
 }

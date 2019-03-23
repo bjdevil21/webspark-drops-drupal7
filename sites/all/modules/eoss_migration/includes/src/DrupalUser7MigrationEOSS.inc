@@ -76,7 +76,6 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
 
     // UPDATE - It should've just SQL UPDATE VALUES on the user record (vs. create
     // a new one, but it instead created a new user with _\d on the end of the name.
-    // Maybe it was checking by email address (instead of ASURITE ID)?
     $query = Database::getConnection('default', 'default')
       ->select('users', 'u')
       ->fields('u', array('name'))

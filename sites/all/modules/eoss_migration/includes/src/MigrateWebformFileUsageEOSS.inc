@@ -32,9 +32,9 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
     $this->addSimpleMappings($this->getFieldCols('simple'));
 
     // file ID mapping
-    // @TODO - add in createStub to make file_usage stubs, or do file_usage first
+    // @TODO - deal with mapping to fm
     $this->addFieldMapping('fid', 'fid');
-//      ->sourceMigration('')
+//    ->sourceMigration('')
 //    ->createStub();
 
     // Default uid to 0 if we're not mapping it.
@@ -88,28 +88,56 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
   }
 
   /**
-   * @param $migration - Object that has migration data
-   * @param $fid - new ID to inject
-   */
-  public function createStub($migration, array $fid) {
-    // Create file_usage stub
-    $fu = new stdClass();
-    $fu->fid = $fid;
-    $fu->id = '';
-    $fu->module = 'webform';
-    $fu->type = 'submission';
-    $fu->count = 1;
-    $primary_keys = array('fid');
-      drupal_write_record('file_usage', $fu, $primary_keys);
-  }
-
-  /**
    * @param string $cols
    * @return array of webform_submission DB cols
    */
   public function getFieldCols($cols = 'all') {
-    $columns = new MigrateWebformSubmissionFields();
-    $new = $columns->whichFileCols($cols);
+    $columns = new MigrateFieldsEOSS();
+    $new = $columns->whichFileUsageCols($cols);
     return $new;
   }
+
+  /** @TODO -
+   * Create stub for file_managed table
+   *
+   * @param $migration - Object that has migration data
+   * @param $ids - new ID to inject
+   */
+  public function createStub($migration, $ids) {
+
+    $migration = Migration::currentMigration();
+
+    MigrationBase::displayMessage(__METHOD__ . ' -FU- ' . var_dump($ids), 'status');
+    MigrationBase::displayMessage('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU+++++++++++', 'status');
+    //MigrationBase::displayMessage(__METHOD__ . ' -AA- ' . var_dump($migration), 'status');
+
+    if (empty($ids[0])) {
+      return FALSE;
+      MigrationBase::displayMessage('FFFFuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu - FALSE ids[0] -', 'status');
+
+    }
+
+    // Create file_usage stub
+    //  if ($migration->sourceValues->fid)
+    //->type == 'file');
+    $fu = new stdClass();
+    $fu->fid = $ids[0];
+    $fu->id = $ids[1]; // New submission ID -- either pass this in with $ids, or run a custom query here with source $fid?
+    $fu->status = 1;
+    $fu->module = 'webform';
+    $fu->type = 'submission';
+
+    $primary_keys = array('fid');
+    if (drupal_write_record('file_usage', $fu, $primary_keys)) {
+      MigrationBase::displayMessage(__METHOD__ . ' -- TRUE -- record ' . var_dump($fu) . ' written to file_usage.', 'status');
+
+      return $fu;
+      // @TODO file moving logic??
+    }
+    else {
+      MigrationBase::displayMessage(__METHOD__ . ' -- No file_usage record writted. FALSE.', 'status');
+      return FALSE;
+    }
+  }
+
 }
