@@ -124,7 +124,7 @@ class MigrateDestinationWebformSubmissionEOSS extends MigrateDestination {
   public function fields() {
     // Fields defined by the schema. nid is omitted since it should come from
     // $this->node.
-    $fields = MigrateWebformSubmissionFields::whichWebformDBCols('all');
+    $fields = $this->getFieldCols('all');
 
     // Create a field for each component on the webform.
     foreach ($this->node->webform['components'] as $component) {
@@ -315,4 +315,11 @@ class MigrateDestinationWebformSubmissionEOSS extends MigrateDestination {
     $this->completeRollback($sids);
     migrate_instrument_stop(__METHOD__);
   }
+
+  public function getFieldCols($cols = 'all') {
+    $columns = new MigrateFieldsEOSS();
+    $new = $columns->whichWebformSubmissionCols($cols);
+    return $new;
+  }
+
 }
