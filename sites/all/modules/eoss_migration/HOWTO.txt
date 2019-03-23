@@ -77,14 +77,33 @@ and you need the billing info for the user profile).
     (like above), then add createStub($currentMigration, $source_key) method call to your
     <otherMigration> class.
 
-    - Flow: currentMigration runs before otherMigration. When currentMigration comes to the fieldMapping step,
-     it will temporarily jump to otherMigration, which runs for one iteration and ONLY creates a database stub.
-     It then immediately jumps back to currentMigration to continue its iteration. The created stub that will be
-     fully populated as an update (vs create/insert) when otherMigration runs later.
+    - Primary purpose is to create a new value and pass it back to the migration that needs it.
+    It does this by 1) creating a DB record in createStub() call that doesn't exist yet that you need (including
+    the new primary key you need), and 2) return the new value (ex. destination ID - destid1) via return
+    $new_value from the createStub function.
 
-    - Another way of saying this: This creates a new but empty record that gives you that new ID. When
-    <previousMigration> runs, it'll go to the $migration (the "2nd" migration) and create the record stub.
-    Then when the 2nd migration runs later, it updates and populate the stub record with the right info.
+    - Flow: currentMigration runs before otherMigration. When currentMigration comes to the fieldMapping step,
+     it can temporarily jump to otherMigration via a chained createStub call.
+
+     This runs for one iteration and ONLY creates a database stub (as manually defined -> ex. new stdClass, $foo->destid = bar, etc.).
+     It then immediately jumps back to currentMigration (with return $foo->destid value) to continue its
+     iteration in currentMigration. The created stub that will be
+
+     This step is repeated with each currentMigration iteration.
+
+     The newly minted stubs are fully populated as an update (vs create/insert) when otherMigration runs later.
+
+     - Alternative flow: Instead of using ->createStub('otherMigration') in __construct, call handleSourceMigration
+     method in prepareRow. This does the createStub in a more dynamic manner (you can modify values in prepareRow
+     or in createStub method in otherMigration class.
+
+     Ex.
+           $destination_ids = $this->handleSourceMigration(array(
+             'MigrateWebformFileManagedEOSS',
+             'MigrateWebformFileUsageEOSS',
+           ),
+             $source_ids);
+
     (Denver video time: https://youtu.be/3fG4wBvLrOI?t=1503)
     * Drupal.org further explanation (along with alternate way to do this) - https://www.drupal.org/node/1013506
 
