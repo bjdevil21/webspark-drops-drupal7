@@ -91,7 +91,7 @@ class MigrateDestinationWebformSubmissionEOSS extends MigrateDestination {
     parent::__construct('node', 'webform');
 
     if (empty($node)) {
-      throw new MigrateException(t("You must provide a webform node ID to " . __CLASS__ . '::' . __METHOD__));
+      throw new MigrateException(t("You must provide a webform node ID to " . __METHOD__));
     }
 
     // Make sure it's a webform node.

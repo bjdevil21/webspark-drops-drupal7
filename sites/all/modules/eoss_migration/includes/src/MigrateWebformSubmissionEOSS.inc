@@ -36,8 +36,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
     // Node ID mapping
     $this->addFieldMapping('nid', 'nid');
-    // This mapping will be done manually below in prepareRow because Features API
-    // was used for building the webform nodes already.
+    // Features API was used for building the webform nodes already. See prepareRow() for update code.
 
     // Source ID mapping
     $this->addFieldMapping('sid', 'sid');
@@ -69,11 +68,14 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
 protected function query() {
     $what_fields = array_keys($this->getFieldCols('all'));
+
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
       ->fields('wss', $what_fields);
+
       //->condition('wss.sid', '331685', '>')// debugging
 
+  /*
     // DEBUGGING
     $db_or = db_or(); // Object
     //Returns a new DatabaseCondition, set to "OR" all conditions together.
@@ -89,10 +91,11 @@ protected function query() {
     }
     $query->condition($db_or);
     // END DEBUGGING
-
+*/
     $query->orderBy('wss.sid', 'ASC');
     return $query;
   }
+
 
   /**
    * @param $row
@@ -121,6 +124,7 @@ protected function query() {
       if (empty($row->sid)) {
         return FALSE;
       }
+      MigrationBase::displayMessage('Webform submission ID ' . $row->sid . ' from node ID ' . $row->nid . ' imported', 'status');
     }
 
     return $row;

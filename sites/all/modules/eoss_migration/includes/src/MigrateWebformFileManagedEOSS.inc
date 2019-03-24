@@ -54,13 +54,12 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     );
   }
 
-  // @TODO - Select query to grab all files
   public function query() {
     $fm_query = Database::getConnection('default', $this->sourceConnection)
       ->select('file_managed', 'fm');
     $fm_query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
     $fm_query->fields('fm', $this->getFieldCols('all'))
-      ->condition('fm.fid', '', '>') // debugging condition
+      // ->condition('fm.fid', '', '>') // debugging condition
       ->condition('fu.module', 'webform', 'LIKE') // All attached file entries
       ->orderBy('fm.fid', 'ASC');
     return $fm_query;
@@ -76,7 +75,32 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       return FALSE;
     }
 
-//        MigrationBase::displayMessage('[SKIP] - Webform does not exist for submission ID ' . $row->sid, 'status');
+
+    ////////////////////
+    // @TODO - Create stubs for file_usage tables
+    // https://www.drupal.org/node/1013506
+    ////////////////////
+
+    $source_fid = $row->fid;
+
+    MigrationBase::displayMessage(__METHOD__ . ' -- SRC File ID:' . $source_fid, 'status');
+
+    $destination_fid = $this->handleSourceMigration(array(
+      'MigrateWebformFileUsageEOSS',
+    ),
+      $source_fid);
+
+    /**
+     * @TODO may have to break out this into two to do a "stub from a stub" patch for file_usage
+     */
+
+    MigrationBase::displayMessage('WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS', 'status');
+    MigrationBase::displayMessage(__METHOD__ . ' -- DST User ID:' . var_dump($destination_fid), 'status');
+    MigrationBase::displayMessage('WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS', 'status');
+    ///////////////////
+    // END STUBS code
+    ///////////////////
+
   }
 
   public function prepare($entity, $row) {
@@ -95,40 +119,4 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     return $new;
   }
 
-  /**
-   * Create stub for file_managed table
-   *
-   * @param $migration - Object that has migration data
-   * @param $ids - new ID to inject
-   */
-  public function createStub($migration, array $ids) {
-
-    $migration = Migration::currentMigration();
-
-    MigrationBase::displayMessage(__METHOD__ . ' -FM == ids- ' . var_dump($ids), 'status');
-    MigrationBase::displayMessage('FFFFFFFFFFFFFFFFFFFMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM----------------', 'status');
-    //MigrationBase::displayMessage(__METHOD__ . ' -AA- ' . var_dump($migration), 'status');
-
-    if (!($ids[0])) {
-      MigrationBase::displayMessage('FFFFFFFFFFFFFFFMMMMMMMMMMMMMMMMMMMM - FALSE ids[0] -', 'status');
-      return FALSE;
-    }
-
-    // Create file_usage stub
-    //  if ($migration->sourceValues->fid)
-        //->type == 'file');
-    $fm = new stdClass();
-    $fm->fid = ''; // auto-increment
-    $fm->uid = $ids[1];
-    $fm->filename = 'stub';
-    $fm->uri = 'stub';
-    $fm->filemime = 'stub';
-    $fm->filesize = 0;
-    $fm->status = 0;
-    $fm->timestamp = 0;
-    $fm->type = 'stub';
-    $fm->uuid = 'stub';
-    $primary_keys = array('fid');
-    drupal_write_record('file_managed', $fm, $primary_keys);
-  }
 }

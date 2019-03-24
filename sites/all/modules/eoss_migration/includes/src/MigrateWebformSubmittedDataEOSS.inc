@@ -38,8 +38,8 @@ class MigrateWebformSubmttedDataEOSS extends DrupalMigration {
     $this->addSimpleMappings($this->getFieldCols('simple'));
 
     // Component ID
-    // @TODO - prepareRow will do custom mapping
     $this->addFieldMapping('cid', 'cid');
+    // @TODO - prepareRow will do custom mapping in prepareRow
 
     // Node ID
     $this->addFieldMapping('nid', 'nid')
