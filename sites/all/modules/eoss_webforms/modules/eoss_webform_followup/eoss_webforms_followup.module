@@ -1,56 +1,16 @@
 <?php
-/**
- * @file
- * Code for the eoss_webforms followup module.
- * Moved code here because hook_post_features_enable_feature didn't work in eoss_webforms.module.
- */
 
 /**
- * Returns name of temporary table, submissions migrate class name
+ * Helper function - Returns name of temporary table, submissions migrate class name
  * @param string $type
  * @return mixed
  */
 function _eoss_webforms_followup_migration_data($type = 'table_nid') {
   $names = array(
     'table_nid' => 'migrate_map_custom_nids',
-    'class' => 'MigrateWebformSubmissionEOSS',
+    'table_cid' => 'migrate_map_custom_cid',
+    'class_nid' => 'MigrateWebformSubmissionEOSS',
+    'class_cid' => 'MigrateWebformSubmittedDataEOSS',
   );
   return $names[$type];
-}
-
-/**
- * Generate required mappings for Migrate API:
- * - Node ids - nid
- *
- * Implements hook_install().
- */
-function eoss_webforms_followup_install() {
-  // NIDs
-  $src_query = Database::getConnection('default', 'eossMigrate')
-    ->select('node', 'n1')
-    ->fields('n1', array('nid', 'uuid'))
-    ->condition('n1.type', 'webform')
-    ->orderBy('n1.nid');
-  $results_src = $src_query->execute()->fetchAllKeyed();
-  foreach ($results_src as $src_nid=>$src_uuid) {
-    $query = Database::getConnection('default')
-      ->select('node', 'n2')
-      ->fields('n2', array('nid', 'title', 'uuid'))
-      ->condition('n2.type', 'webform')
-      ->condition('n2.uuid', $src_uuid)
-      ->orderBy('n2.nid');
-    $result = $query->execute()->fetchAll(); // only one UUID
-    $result[0]->src_nid = $src_nid;
-    $results[$src_uuid] = $result;
-  }
-  foreach($results as $key => $resultObj) {
-    db_insert(_eoss_webforms_followup_migration_data('table_nid'))->fields(array(
-      'nid' => $resultObj[0]->nid,
-      'title' => $resultObj[0]->title,
-      'uuid' => $resultObj[0]->uuid,
-      'migration_class' => _eoss_webforms_followup_migration_data('class'),
-      'created' => REQUEST_TIME,
-      'src_nid' => $resultObj[0]->src_nid,
-    ))->execute();
-  }
 }
