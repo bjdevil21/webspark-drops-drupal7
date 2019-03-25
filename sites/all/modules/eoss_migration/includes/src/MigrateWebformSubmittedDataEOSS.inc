@@ -93,7 +93,6 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
 
   }
 
-  // @TODO - Select query to grab webform_submitted_data (all of it)
   public function query() {
 
     $what_fields = $this->getFieldCols('all');
@@ -101,7 +100,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
     $wsd_query->fields('wsd', $what_fields)
-      ->condition('wsd.sid', '331680', '>') // debugging condition - a dozen or so webform submissions
+      ->condition('wsd.sid', '331692', '>') // debugging condition - a dozen or so webform submissions
       ->orderBy('wsd.sid', 'ASC');
     return $wsd_query;
   }
@@ -128,7 +127,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
 
     $source_fid = $row->fid;
 
-    MigrationBase::displayMessage(__METHOD__ . ' -- SRC File ID:' . $source_fid, 'status');
+    MigrationBase::displayMessage(__METHOD__ . ' -- SRC File ID:' . var_dump($row), 'status');
 
     $destination_fid = $this->handleSourceMigration(array(
       'MigrateWebformFileUsageEOSS',

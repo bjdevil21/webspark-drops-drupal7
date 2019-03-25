@@ -38,6 +38,19 @@ Non-video notes:
       - Used for passing in schema of your keyed rows (usually IDs - uid, nid, etc.)
       - Ex. $this->map = new MigrateSQLMap(
 
+#################
+Non-video notes
+
+*  in the migrate_map_<yourMigrationTable> DB table:
+  - The number of array elements being passed into MigrateSQLMap (in array $source_key - 2nd param)
+    corresponds with the number of srcid<X> keys
+  - The number of array elements being passed into MigrateSQLMap (in array $source_key - 3nd param)
+    corresponds with the number of destid<X> keys
+*
+
+Back to video...
+#################
+
       Parameters:
       - $this->machineName, - set this in the arguments array.
       - array(), - array with the SOURCE DB schema (see hook_schema) for your IDs
@@ -147,3 +160,5 @@ back to video
 
 END OF VIDEO
 #########################
+
+#
