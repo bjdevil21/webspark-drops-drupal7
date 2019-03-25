@@ -34,7 +34,7 @@ function eoss_migration_migrate_api() {
     'dependencies' => array('DrupalUser7MigrationEOSS'), // After users come in
   );
   $submitted_data_arguments = $common_arguments + array(
-    'class_name' => 'MigrateWebformSubmttedDataEOSS',
+    'class_name' => 'MigrateWebformSubmittedDataEOSS',
     'machine_name' => 'wsdEOSS',
     'description' => t('Migration of submitted data from EOSS.asu.edu.'),
     'group_name' => 'EOSSSubmissions',
@@ -52,10 +52,7 @@ function eoss_migration_migrate_api() {
     'machine_name' => 'fuEOSS',
     'description' => t('Migration of file usage webform submission files attached to file components.'),
     'group_name' => 'EOSSFiles',
-    'dependencies' => array(
-      'MigrateWebformFileManagedEOSS',
-      'MigrateWebformSubmissionEOSS',
-    ),
+    'dependencies' => array('MigrateWebformSubmissionEOSS'),
   );
   $last_download_arguments = $common_arguments + array(
     'class_name' => 'MigrateWebformLastDownloadEOSS',
@@ -88,7 +85,7 @@ function eoss_migration_migrate_api() {
       'MigrateWebformSubmissionEOSS' => $submissions_arguments,
       'MigrateWebformFileManagedEOSS' => $file_managed_arguments,
       'MigrateWebformFileUsageEOSS' => $file_usage_arguments,
-//      'MigrateWebformSubmttedDataEOSS' => $submitted_data_arguments,
+      'MigrateWebformSubmittedDataEOSS' => $submitted_data_arguments,
 //      'MigrateWebformLastDownloadEOSS' => $last_download_arguments,
     ),
     'groups' => array(

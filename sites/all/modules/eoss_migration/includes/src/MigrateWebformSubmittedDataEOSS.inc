@@ -6,10 +6,10 @@
  * Date: 3/19/19
  * Time: 2:44 PM
  */
-class MigrateWebformSubmttedDataEOSS extends DrupalMigration {
+class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
 
   /**
-   * MigrateWebformSubmttedDataEOSS constructor.
+   * MigrateWebformSubmittedDataEOSS constructor.
    * @param array $arguments
    */
   function __construct(array $arguments) {
@@ -72,12 +72,6 @@ class MigrateWebformSubmttedDataEOSS extends DrupalMigration {
           'description' => 'Source component ID',
           'alias' => 'c',
         ),
-        'no' => array('type' => 'varchar',
-          'length' => 128,
-          'not null' => TRUE,
-          'description' => 'Source component instance ID?',
-          'alias' => 'o',
-        ),
       ),
     );
 
@@ -94,15 +88,41 @@ class MigrateWebformSubmttedDataEOSS extends DrupalMigration {
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
     $wsd_query->fields('wsd', $this->getFieldCols('all'))
-      ->condition('wsd.sid', '331690', '>') // debugging condition - a single webform submission
+      ->condition('wsd.sid', '331680', '>') // debugging condition - a dozen or so webform submissions
       ->orderBy('wsd.sid', 'ASC');
     return $wsd_query;
   }
 
+  /**
+   * Update cid to new cid.
+   * @param $row
+   * @return mixed
+   */
   function prepareRow($row) {
-    return parent::prepareRow($row);
-    // @TODO - Create stub for file_usage table below in prepareRow.
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
 
+    // Grab new cid from matched (needs to be tested)
+    $query = Database::getConnection('default')
+      ->select(_eoss_webforms_followup_migration_data('table_cid'), 'mc')
+      ->fields('mc', array('cid'))
+      ->condition('mc.src_cid', $row->cid);
+    $new_cid = $query->execute()->fetchField();
+    $row->cid = $new_cid;
+
+    // @TODO - Create stub for file_managed table below in prepareRow.
+
+    $source_fid = $row->fid;
+
+    MigrationBase::displayMessage(__METHOD__ . ' -- SRC File ID:' . $source_fid, 'status');
+
+    $destination_fid = $this->handleSourceMigration(array(
+      'MigrateWebformFileUsageEOSS',
+    ),
+      $source_fid);
+
+    return $row;
 
   }
 

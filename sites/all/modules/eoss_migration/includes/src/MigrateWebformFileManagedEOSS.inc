@@ -74,39 +74,14 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
-
-
-    ////////////////////
-    // @TODO - Create stubs for file_usage tables
-    // https://www.drupal.org/node/1013506
-    ////////////////////
-
-    $source_fid = $row->fid;
-
-    MigrationBase::displayMessage(__METHOD__ . ' -- SRC File ID:' . $source_fid, 'status');
-
-    $destination_fid = $this->handleSourceMigration(array(
-      'MigrateWebformFileUsageEOSS',
-    ),
-      $source_fid);
-
-    /**
-     * @TODO may have to break out this into two to do a "stub from a stub" patch for file_usage
-     */
-
-    MigrationBase::displayMessage('WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS', 'status');
-    MigrationBase::displayMessage(__METHOD__ . ' -- DST User ID:' . var_dump($destination_fid), 'status');
-    MigrationBase::displayMessage('WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS', 'status');
-    ///////////////////
-    // END STUBS code
-    ///////////////////
-
   }
 
   public function prepare($entity, $row) {
     // Remove the old File ID from $entity (not $row),
     // so the insert can create the new record and map it properly.
     unset($entity->fid);
+
+    // Now do file
   }
 
   /**
