@@ -52,26 +52,36 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     // @TODO -- Figure out why does this combination of DB cols work when none
     // of them alone are unique..
     // Adapted from Migrate Webform module's submitteddata.inc
+
     $mappable_keys = array(
-      array(
-        'nid' => array('type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Source node ID',
-          'alias' => 'n',
-        ),
-        'sid' => array('type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Source submission ID',
-          'alias' => 's',
-        ),
-        'cid' => array('type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Source component ID',
-          'alias' => 'c',
-        ),
+      'nid' => array(
+        'description' => 'The node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'sid' => array(
+        'description' => 'The unique identifier for this submission.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cid' => array(
+        'description' => 'The identifier for this component within this node, starts at 0 for each node.',
+        'type' => 'int',
+        'size' => 'small',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'no' => array(
+        'description' => 'Usually this value is 0, but if a field has multiple values (such as a time or date), it may require multiple rows in the database.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '0',
       ),
     );
 
@@ -135,8 +145,11 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
   /**
    *
    * @param string $cols
-   * - 'simpleOnly' - only returns simple fields that are Simple mapped.
-   * - 'all' - returns associative array with key (col IDs) => value (field descriptions) pairs
+   * - 'simpleOnly' - only returns fields that are Simple mapped (no keys)
+   * - 'all' - returns all fields
+   * @param string $associative - If yes, returns associative array with
+   * key (col IDs) => value (field descriptions) pairs. Otherwise, simple array.
+   *
    * @return array of webform_submission DB cols
    */
   public function getFieldCols($cols = 'simpleOnly', $associative = 'no') {

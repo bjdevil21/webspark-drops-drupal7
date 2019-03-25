@@ -32,7 +32,7 @@ class MigrateFieldsEOSS {
       'modified' => t('Timestamp of when submission ID was last modified'),
     );
     if ($column_set == 'simpleOnly') {
-      return array_keys($simple_cols);
+      return $simple_cols;
     }
     else {
       return (array) array_merge($simple_cols, $this->commonFields);
@@ -50,7 +50,7 @@ class MigrateFieldsEOSS {
       'data' => 'The submitted values',
     );
     if ($column_set == 'simpleOnly') {
-      return array_keys($simple_cols);
+      return $simple_cols;
     }
     else {
       $this->commonFields['cid'] = t('The webform component ID.');
@@ -77,7 +77,7 @@ class MigrateFieldsEOSS {
     );
 
     if ($column_set == 'simpleOnly') {
-      return array_keys($simple_cols);
+      return $simple_cols;
     }
     else {
       // fileManaged
@@ -95,7 +95,7 @@ class MigrateFieldsEOSS {
       'count' => t('will be 1 for all webform submision records'),
     );
     if ($column_set == 'simpleOnly') {
-      return array_keys($simple_cols);
+      return $simple_cols;
     }
     else {
       // File Usage
@@ -113,7 +113,7 @@ class MigrateFieldsEOSS {
       'requested' => t('Timestamp of last download requested'),
     );
     if ($column_set == 'simpleOnly') {
-      return array_keys($simple_cols);
+      return $simple_cols;
     }
     else {
       return (array) array_merge($simple_cols, $this->commonFields);

@@ -43,13 +43,12 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
       ->sourceMigration('DrupalUser7MigrationEOSS');
 
     $mappable_keys = array(
-      array(
-        'nid' => array('type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Source node ID',
-          'alias' => 'n',
-        ),
+      'nid' => array(
+        'description' => 'The node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
       ),
     );
 

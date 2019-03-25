@@ -29,7 +29,7 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
 
     $this->destination = new MigrateDestinationTable($table_name);
 
-    $this->addSimpleMappings($this->getFieldCols('simple'));
+    $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
 
     // file ID mapping
     // @TODO - deal with mapping to fm

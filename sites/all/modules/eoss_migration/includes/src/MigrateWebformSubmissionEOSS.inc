@@ -64,14 +64,12 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     );
   }
 
-
-
 protected function query() {
-    $what_fields = array_keys($this->getFieldCols('all'));
+    $what_fields = $this->getFieldCols('all');
 
     $query = Database::getConnection('default', $this->sourceConnection)
-      ->select('webform_submissions', 'wss')
-      ->fields('wss', $what_fields);
+      ->select('webform_submissions','ws')
+      ->fields('ws', $what_fields);
   /*
     // DEBUGGING
     $db_or = db_or(); // Object
@@ -89,7 +87,7 @@ protected function query() {
     $query->condition($db_or);
     // END DEBUGGING
 */
-    $query->orderBy('wss.sid', 'ASC');
+    $query->orderBy('ws.sid', 'ASC');
     return $query;
   }
 
@@ -140,6 +138,7 @@ protected function query() {
   public function getFieldCols($cols = 'simpleOnly', $associative = 'no') {
     $columns = new MigrateFieldsEOSS();
     $new = $columns->whichWebformSubmissionCols($cols);
+
     if ($associative == 'no') { // return only keys as DB column names
       return array_keys($new);
     }

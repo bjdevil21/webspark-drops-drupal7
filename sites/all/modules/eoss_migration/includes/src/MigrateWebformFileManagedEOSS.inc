@@ -25,7 +25,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
     $this->destination = new MigrateDestinationTable($table_name);
 
-    $this->addSimpleMappings($this->getFieldCols('simple'));
+    $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
 
     // file ID mapping
     // @TODO - add in createStub to make file_usage stubs, or do file_usage first
