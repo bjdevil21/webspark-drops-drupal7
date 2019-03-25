@@ -36,18 +36,19 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
     // Node ID mapping
     $this->addFieldMapping('nid', 'nid');
-    // Features API was used for building the webform nodes already. See prepareRow() for update code.
+    // sourceMigration values taken care of in prepareRow() SQL logic because
+    // Features API was used for building the webform nodes already.
 
-    // Source ID mapping
+    // Submission ID mapping
     $this->addFieldMapping('sid', 'sid');
 
-    // Default uid to 0 if we're not mapping it.
+    // User ID mapping -- Default uid to 0 if we're not mapping it.
     $this->removeFieldMapping('uid');
     $this->addFieldMapping('uid', 'uid')
       ->sourceMigration('DrupalUser7MigrationEOSS')
       ->defaultValue(0); // Anonymous user
 
-    $mappable_key = array(
+    $mappable_keys = array(
       'sid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
@@ -59,12 +60,12 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
     $this->map = new MigrateSQLMap(
       $this->machineName,
-      $mappable_key,
+      $mappable_keys,
       MigrateDestinationTable::getKeySchema($table_name)
     );
   }
 
-protected function query() {
+  protected function query() {
     $what_fields = $this->getFieldCols('all');
 
     $query = Database::getConnection('default', $this->sourceConnection)
@@ -97,7 +98,6 @@ protected function query() {
    * @return bool
    */
   public function prepareRow($row) {
-
     // Manual sourceMigration() implementation for nids imported Features API; keyed by uuid.
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
@@ -109,6 +109,7 @@ protected function query() {
         ->condition('src_nid', $row->nid);
       $new_nid = $query->execute()->fetchField();
 
+      $old_nid = $row->nid;
       if (!$new_nid) { // No matching webform in destination? Skip...
         MigrationBase::displayMessage('[SKIP] - Webform does not exist for submission ID ' . $row->sid, 'status');
         return FALSE;
@@ -119,15 +120,21 @@ protected function query() {
       if (empty($row->sid)) {
         return FALSE;
       }
-      MigrationBase::displayMessage('Webform submission ID ' . $row->sid . ' from node ID ' . $row->nid . ' imported', 'status');
+      MigrationBase::displayMessage('Importing old submission ID# ' . $row->sid
+        . ' from old NID ' . $old_nid . ' into new NID ' . $row->nid, 'status');
     }
 
     return $row;
   }
 
+  /**
+   * Remove the old submission ID from $entity (not $row) so the insert can
+   * create the new record and map it properly.
+   *
+   * @param $entity
+   * @param $row
+   */
   public function prepare($entity, $row) {
-    // Remove the old submission ID from $entity (not $row),
-    // so the insert can create the new record and map it properly.
     unset($entity->sid);
   }
 
@@ -148,4 +155,3 @@ protected function query() {
   }
 
 }
-

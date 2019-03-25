@@ -37,23 +37,23 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
 
     $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
 
-    // Component ID
-    $this->addFieldMapping('cid', 'cid');
-    // @TODO - prepareRow will do custom mapping in prepareRow
-
     // Node ID
-    $this->addFieldMapping('nid', 'nid')
-      ->sourceMigration('MigrateWebformSubmissionEOSS');
+    $this->addFieldMapping('nid', 'nid');
+    // prepareRow will do custom mapping
 
     // Submission ID
     $this->addFieldMapping('sid', 'sid')
       ->sourceMigration('MigrateWebformSubmissionEOSS');
 
+    // Component ID
+    $this->addFieldMapping('cid', 'cid');
+    // prepareRow will do custom mapping
+
     // @TODO -- Figure out why does this combination of DB cols work when none
     // of them alone are unique..
     // Adapted from Migrate Webform module's submitteddata.inc
 
-    $mappable_keys = array(
+    $mappable_src_keys = array(
       'nid' => array(
         'description' => 'The node identifier of a webform.',
         'type' => 'int',
@@ -61,7 +61,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'sid' => array(
+      'sid' => array( // Must be first in this case, due to mapping in destination only mapping sid
         'description' => 'The unique identifier for this submission.',
         'type' => 'int',
         'unsigned' => TRUE,
@@ -87,8 +87,9 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
 
     $this->map = new MigrateSQLMap(
       $this->machineName,
-      $mappable_keys,
+      $mappable_src_keys,
       MigrateDestinationTable::getKeySchema($table_name)
+//      $mappable_dst_keys
     );
 
   }
@@ -100,7 +101,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
     $wsd_query->fields('wsd', $what_fields)
-      ->condition('wsd.sid', '331692', '>') // debugging condition - a dozen or so webform submissions
+      ->condition('wsd.sid', '331694', '>') // debugging condition - a dozen or so webform submissions
       ->orderBy('wsd.sid', 'ASC');
     return $wsd_query;
   }
@@ -115,19 +116,9 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
       return FALSE;
     }
 
-    // Grab new cid from matched (needs to be tested)
-    $query = Database::getConnection('default')
-      ->select(_eoss_webforms_followup_migration_data('table_cid'), 'mc')
-      ->fields('mc', array('cid'))
-      ->condition('mc.src_cid', $row->cid);
-    $new_cid = $query->execute()->fetchField();
-    $row->cid = $new_cid;
-
     // @TODO - Create stub for file_managed table below in prepareRow.
-
+/*
     $source_fid = $row->fid;
-
-    MigrationBase::displayMessage(__METHOD__ . ' -- SRC File ID:' . var_dump($row), 'status');
 
     $destination_fid = $this->handleSourceMigration(array(
       'MigrateWebformFileUsageEOSS',
@@ -135,10 +126,33 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
       $source_fid);
 
     return $row;
-
+*/
   }
 
-  function prepare() {
+  /**
+   * @param $entity
+   * @param $row
+   */
+  public function prepare($entity, $row) {
+    MigrationBase::displayMessage(__METHOD__ . ' -- Row before:', 'status');
+    MigrationBase::displayMessage('' . var_dump($row), 'status');
+//    MigrationBase::displayMessage(__METHOD__ . ' -- Entity before:', 'status');
+//    MigrationBase::displayMessage('' . var_dump($entity), 'status');
+
+    // Grab new cid and nid from matched (needs to be tested)
+    $query = Database::getConnection('default')
+      ->select(_eoss_webforms_followup_migration_data('table_cid'), 'mc')
+      ->fields('mc', array('cid', 'nid'))
+      ->condition('mc.src_cid', $row->cid)
+      ->condition('mc.src_nid', $row->nid);
+    $result = $query->execute()->fetch();
+    $entity->cid = $result->cid;
+    $entity->nid = $result->nid;
+
+//    MigrationBase::displayMessage(__METHOD__ . ' -- Row after:', 'status');
+//    MigrationBase::displayMessage('' . var_dump($row), 'status');
+    MigrationBase::displayMessage(__METHOD__ . ' -- Entity after:', 'status');
+    MigrationBase::displayMessage('' . var_dump($entity), 'status');
   }
 
   /**

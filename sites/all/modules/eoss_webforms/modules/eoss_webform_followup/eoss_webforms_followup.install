@@ -11,7 +11,7 @@ function eoss_webforms_followup_schema() {
     'description' => 'Webform node ID (nid) mapping for source and destination nodes.',
     'fields' => array(
       'nid' => array(
-        'description' => 'New destination node ID',
+        'description' => 'Destination node ID',
         'type' => 'int',
         'not null' => TRUE,
         'unsigned' => TRUE,

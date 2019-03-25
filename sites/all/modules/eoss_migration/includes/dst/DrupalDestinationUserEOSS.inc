@@ -20,8 +20,8 @@ class DrupalDestinationUserEOSS extends DrupalDestinationUser {
    * Rolls back role IDs for imported users (roles were not brought over in the user import).
    * @param $entity_id
    */
-  public function prepareRollback($entity_id) {
-    // Code to execute before an entity has been rolled back
+  public function completeRollback($entity_id) {
+    // Delete extra added user role for deleted user
     foreach ($entity_id as $new_uid) {
       db_delete('users_roles')
         ->condition('uid', $new_uid)
