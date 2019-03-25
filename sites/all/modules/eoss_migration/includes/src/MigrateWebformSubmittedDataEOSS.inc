@@ -21,7 +21,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
 
     $this->source = new MigrateSourceSQL(
       $this->query(),
-      $this->getFieldCols('all'),
+      $this->getFieldCols('all', 'yes'),
       NULL,
       array(
         'map_joinable' => FALSE,
@@ -35,7 +35,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
      * Mappings
      */
 
-    $this->addSimpleMappings($this->getFieldCols('simple'));
+    $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
 
     // Component ID
     $this->addFieldMapping('cid', 'cid');
@@ -85,9 +85,12 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
 
   // @TODO - Select query to grab webform_submitted_data (all of it)
   public function query() {
+
+    $what_fields = $this->getFieldCols('all');
+
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
-    $wsd_query->fields('wsd', $this->getFieldCols('all'))
+    $wsd_query->fields('wsd', $what_fields)
       ->condition('wsd.sid', '331680', '>') // debugging condition - a dozen or so webform submissions
       ->orderBy('wsd.sid', 'ASC');
     return $wsd_query;
@@ -130,12 +133,20 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
   }
 
   /**
+   *
    * @param string $cols
+   * - 'simpleOnly' - only returns simple fields that are Simple mapped.
+   * - 'all' - returns associative array with key (col IDs) => value (field descriptions) pairs
    * @return array of webform_submission DB cols
    */
-  public function getFieldCols($cols = 'all') {
+  public function getFieldCols($cols = 'simpleOnly', $associative = 'no') {
     $columns = new MigrateFieldsEOSS();
     $new = $columns->whichWebformDataCols($cols);
-    return $new;
+    if ($associative == 'no') { // return only keys as DB column names
+      return array_keys($new);
+    }
+    else {
+      return $new;
+    }
   }
 }

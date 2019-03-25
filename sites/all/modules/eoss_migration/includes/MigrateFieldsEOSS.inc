@@ -31,7 +31,7 @@ class MigrateFieldsEOSS {
       'highest_valid_page' => t(''),
       'modified' => t('Timestamp of when submission ID was last modified'),
     );
-    if ($column_set == 'simple') {
+    if ($column_set == 'simpleOnly') {
       return array_keys($simple_cols);
     }
     else {
@@ -49,11 +49,11 @@ class MigrateFieldsEOSS {
       'no' => 'Usually 0 or 1',
       'data' => 'The submitted values',
     );
-    if ($column_set == 'simple') {
+    if ($column_set == 'simpleOnly') {
       return array_keys($simple_cols);
     }
     else {
-      $this->commonFields['cid'];
+      $this->commonFields['cid'] = t('The webform component ID.');
       unset($this->commonFields['uid']);
       return (array) array_merge($simple_cols, $this->commonFields);
     }
@@ -76,14 +76,14 @@ class MigrateFieldsEOSS {
       'uuid' => t('A unique hash ID (UUID) for the file'),
     );
 
-    if ($column_set == 'simple') {
+    if ($column_set == 'simpleOnly') {
       return array_keys($simple_cols);
     }
     else {
       // fileManaged
       unset($this->commonFields['sid']);
       unset($this->commonFields['nid']);
-      $this->commonFields['fid'];
+      $this->commonFields['fid'] = t('The file ID');
       return (array) array_merge($simple_cols, $this->commonFields);
     }
   }
@@ -94,7 +94,7 @@ class MigrateFieldsEOSS {
       'type' => t('will be string submission'),
       'count' => t('will be 1 for all webform submision records'),
     );
-    if ($column_set == 'simple') {
+    if ($column_set == 'simpleOnly') {
       return array_keys($simple_cols);
     }
     else {
@@ -102,8 +102,8 @@ class MigrateFieldsEOSS {
       unset($this->commonFields['sid']);
       unset($this->commonFields['nid']);
       unset($this->commonFields['uid']);
-      $this->commonFields['fid'];
-      $this->commonFields['id'];
+      $this->commonFields['fid'] = t('The file ID');
+      $this->commonFields['id'] = t('The webform submission ID');
       return (array) array_merge($simple_cols, $this->commonFields);
     }
   }
@@ -112,7 +112,7 @@ class MigrateFieldsEOSS {
     $simple_cols = array (
       'requested' => t('Timestamp of last download requested'),
     );
-    if ($column_set == 'simple') {
+    if ($column_set == 'simpleOnly') {
       return array_keys($simple_cols);
     }
     else {

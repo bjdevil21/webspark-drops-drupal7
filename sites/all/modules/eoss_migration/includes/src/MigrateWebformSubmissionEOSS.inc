@@ -18,7 +18,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
     $this->source = new MigrateSourceSQL(
       $this->query(),
-      $this->getFieldCols('all'),
+      $this->getFieldCols('all', 'yes'),
       NULL,
       array(
         'map_joinable' => FALSE,
@@ -32,7 +32,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     // SELECTED -> MigrateDestinationTable - pass in the table name only, and see what gets mapped.
     $this->destination = new MigrateDestinationTable($table_name);
 
-    $this->addSimpleMappings($this->getFieldCols('simple'));
+    $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
 
     // Node ID mapping
     $this->addFieldMapping('nid', 'nid');
@@ -72,9 +72,6 @@ protected function query() {
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions', 'wss')
       ->fields('wss', $what_fields);
-
-      //->condition('wss.sid', '331685', '>')// debugging
-
   /*
     // DEBUGGING
     $db_or = db_or(); // Object
@@ -140,10 +137,15 @@ protected function query() {
    * @param string $cols
    * @return array of webform_submission DB cols
    */
-  public function getFieldCols($cols = 'all') {
+  public function getFieldCols($cols = 'simpleOnly', $associative = 'no') {
     $columns = new MigrateFieldsEOSS();
     $new = $columns->whichWebformSubmissionCols($cols);
-    return $new;
+    if ($associative == 'no') { // return only keys as DB column names
+      return array_keys($new);
+    }
+    else {
+      return $new;
+    }
   }
 
 }
