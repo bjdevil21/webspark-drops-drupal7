@@ -129,8 +129,19 @@ function eoss_webforms_followup_install() {
   $cid_class = _eoss_webforms_followup_migration_data('class_cid');
   $nid_class = _eoss_webforms_followup_migration_data('class_nid');
 
+  $tables = array($cid_table, $nid_table);
+  foreach($tables as $table) {
+    $table_check = Database::getConnection('default')
+      ->schema()->tableExists($table);
+    if (!$table_check) {
+      throw new MigrateException(t("The migration table @table in the @conn database does not exist.",
+        array('@table' => $table, '@conn' => 'eossMigrate')));
+    }
+  }
+
   /** Populate custom NID mappings table */
-  $src_query = Database::getConnection('default', $this->sourceConnection)
+
+  $src_query = Database::getConnection('default', 'eossMigrate')
     ->select('node', 'n1')
     ->fields('n1', array('nid', 'uuid'))
     ->condition('n1.type', 'webform')
@@ -162,18 +173,6 @@ function eoss_webforms_followup_install() {
   }
 
   /** Populate custom CID mappings table */
-  // Make sure the migration custom_cid table is in place
-
-  $tables = array($cid_table, $nid_table);
-
-  foreach($tables as $table) {
-    $table_check = Database::getConnection('default')
-      ->schema()->tableExists($table);
-    if (!$table_check) {
-      throw new MigrateException(t("The migration table @table in the @conn database does not exist.",
-        array('@table' => $table, '@conn' => 'eossMigrate')));
-    }
-  }
 
   $src_query = Database::getConnection('default',  'eossMigrate')
     ->select('webform_component', 'wc')
@@ -182,26 +181,29 @@ function eoss_webforms_followup_install() {
   $results = $src_query->execute()->fetchAll();
 
   foreach ($results as $result) {
+    // More data cleanup
+    _cid_import_pre_insert($result);
 
-    _cid_import_prematch_cleanup($result);
+    // Prep work: Get destination NID for insertion
+    $subquery = db_select($nid_table, 'm')
+      ->fields('m', array('nid'))
+      ->condition('m.src_nid', $result->nid);
+    $dst_nid = $subquery->execute()->fetchField(); // get first column data from single result
 
-    $subquery = db_select($nid_table, 'mn')
-      ->fields('mn', array('nid'))
-      ->condition('mn.src_nid', $result->nid);
-    $dst_nid = $query->execute()->fetchField('nid');
-
+    // Main "stub" data inserted into cid_table. Still missing the new CID, but has everything else.
     db_insert($cid_table)
       ->fields(array(
         'machine_name' => $result->machine_name,
         'cid' => $result->cid,
         'src_cid' => $result->cid,
         'src_nid' => $result->nid,
-        'nid' => (!empty($dst_nid)) ? $dst_nid : 0,
+        'nid' => (!empty($dst_nid)) ? (int) $dst_nid : 0,
         'migration_class' => $cid_class,
         'created' => REQUEST_TIME,
       ))->execute();
   }
 
+  // Finally, update with the new destination CID values
   $subquery = Database::getConnection('default')
     ->select('webform_component', 'wc')
     ->fields('wc', array('machine_name', 'cid'))
@@ -223,15 +225,9 @@ function eoss_webforms_followup_install() {
  * @param $result
  * @return mixed
  */
-function _cid_import_prematch_cleanup($result) {
-
+function _cid_import_pre_insert($result) {
   if ($result->machine_name == 'eoss_marketing_request_form-how_are_you_going_to_measure_success_what_is_your_benchmark_for_success_select_all_that_apply_digital') {
     $result->machine_name = 'eoss_marketing_request_form-what_is_benchmark_to_measure_success_select_all_that_apply_digital';
   }
-/*$query = db_update($cid_table)
-    ->fields(array(
-      ''
-    ));
-*/
   return $result;
 }
