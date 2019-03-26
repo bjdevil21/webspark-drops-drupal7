@@ -101,7 +101,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
     $wsd_query->fields('wsd', $what_fields)
-      ->condition('wsd.sid', '331694', '>') // debugging condition - a dozen or so webform submissions
+      ->condition('wsd.sid', '331500', '>') // debugging condition - a dozen or so webform submissions
       ->orderBy('wsd.sid', 'ASC');
     return $wsd_query;
   }
@@ -134,11 +134,6 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
    * @param $row
    */
   public function prepare($entity, $row) {
-    MigrationBase::displayMessage(__METHOD__ . ' -- Row before:', 'status');
-    MigrationBase::displayMessage('' . var_dump($row), 'status');
-//    MigrationBase::displayMessage(__METHOD__ . ' -- Entity before:', 'status');
-//    MigrationBase::displayMessage('' . var_dump($entity), 'status');
-
     // Grab new cid and nid from matched (needs to be tested)
     $query = Database::getConnection('default')
       ->select(_eoss_webforms_followup_migration_data('table_cid'), 'mc')
@@ -148,11 +143,6 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $result = $query->execute()->fetch();
     $entity->cid = $result->cid;
     $entity->nid = $result->nid;
-
-//    MigrationBase::displayMessage(__METHOD__ . ' -- Row after:', 'status');
-//    MigrationBase::displayMessage('' . var_dump($row), 'status');
-    MigrationBase::displayMessage(__METHOD__ . ' -- Entity after:', 'status');
-    MigrationBase::displayMessage('' . var_dump($entity), 'status');
   }
 
   /**
