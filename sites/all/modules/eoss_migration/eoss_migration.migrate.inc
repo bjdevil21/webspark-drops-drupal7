@@ -61,7 +61,7 @@ function eoss_migration_migrate_api() {
     'group_name' => 'EOSSSubmissions',
     'dependencies' => array(
       'DrupalUser7MigrationEOSS',
-      'MigrateWebformSubmissionEOSS'
+      'MigrateWebformSubmissionEOSS',
     ),
   );
 
@@ -82,11 +82,11 @@ function eoss_migration_migrate_api() {
     ),
     'migrations' => array(
       'DrupalUser7MigrationEOSS' => $users_arguments,
+      'MigrateWebformLastDownloadEOSS' => $last_download_arguments,
       'MigrateWebformSubmissionEOSS' => $submissions_arguments,
       'MigrateWebformFileManagedEOSS' => $file_managed_arguments,
       'MigrateWebformFileUsageEOSS' => $file_usage_arguments,
       'MigrateWebformSubmittedDataEOSS' => $submitted_data_arguments,
-      'MigrateWebformLastDownloadEOSS' => $last_download_arguments,
     ),
     'groups' => array(
       'EOSSSubmissions' => array(

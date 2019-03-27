@@ -111,6 +111,48 @@ function eoss_webforms_followup_schema() {
       'machine_name_UNIQUE' => array('machine_name'),
     ),
   );
+  $schema['migrate_map_custom_uid'] = array(
+    'description' => 'User ID mapping for source and destination users. If user exists in destination, user the same user ID.',
+    'fields' => array(
+      'uid' => array(
+        'description' => 'New destination user ID.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'src_uid' => array(
+        'description' => 'Source user ID. Same if already existed on destination.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'name' => array(
+        'description' => 'The Drupal name (usually the user ASURITE ID).',
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
+      ),
+      'migration_class' => array(
+        'description' => 'The Migrate API class(es) that needs this data.',
+        'type' => 'varchar',
+        'length' => '128',
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'description' => 'Timestamp for the creation time of this record.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('uid'),
+    'unique keys' => array(
+      'name_UNIQUE' => array('name'),
+      'uid_UNIQUE' => array('uid'),
+    ),
+  );
 
   return $schema;
 }

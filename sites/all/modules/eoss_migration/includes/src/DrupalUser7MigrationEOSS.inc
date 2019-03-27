@@ -51,20 +51,26 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
    * @return QueryConditionInterface
    */
   protected function query() {
-    /* QUERY: SELECT u.* FROM {users} u
-    INNER JOIN {webform_submissions} ws ON u.uid = ws.uid
-    WHERE  (u.uid > '0')
-    GROUP BY u.uid
-    ORDER BY u.uid ASC */
-    // below same as db_select
-    $query = Database::getConnection('default', $this->sourceConnection)
+
+    // Query 1 webform submission users
+    $query = Database::getConnection('default', 'eossMigrate')
       ->select('users', 'u');
     $query->innerJoin('webform_submissions', 'ws', 'u.uid = ws.uid');
     $query->fields('u')
       ->condition('u.uid', 0, '>')
-      ->groupBy('u.uid')
-      ->orderBy('u.uid', 'ASC');
+      ->groupBy('u.uid');
+    // Query 2 webform_last_download users
+    $query2 = Database::getConnection('default', 'eossMigrate')
+      ->select('users', 'u');
+    $query2->rightJoin('webform_last_download', 'wld', 'u.uid = wld.uid');
+    $query2->fields('u')
+      ->condition('u.uid', 0, '>')
+      ->groupBy('u.uid');
+    $query->union($query2);
+//    $result = $query->execute()->fetchAll();
+
     return $query;
+
   }
 
   public function prepareRow($row) {
@@ -76,6 +82,7 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
 
     // UPDATE - It should've just SQL UPDATE VALUES on the user record (vs. create
     // a new one, but it instead created a new user with _\d on the end of the name.
+    // Skipping update
     $query = Database::getConnection('default', 'default')
       ->select('users', 'u')
       ->fields('u', array('name'))
@@ -85,8 +92,15 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
       ->fetchAll();
 
     if (count($query) > 0) {
-      MigrationBase::displayMessage('[SKIP] - Drupal user ID ' . $row->name .
-        ' already exists.', 'status');
+      // Log in messages table.
+      $message = t('[SKIP] - Drupal user ID !name skipped because it already exists.',
+        array(
+          '!name' => $row->name,
+        ));
+      $migration = Migration::currentMigration();
+      //$migration->saveMessage($message, Migration::MESSAGE_INFORMATIONAL);
+      // Display message.
+      MigrationBase::displayMessage($message, 'status');
       return FALSE;
     }
   }

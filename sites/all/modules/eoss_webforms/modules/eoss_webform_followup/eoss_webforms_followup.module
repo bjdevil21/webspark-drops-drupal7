@@ -9,8 +9,10 @@ function _eoss_webforms_followup_migration_data($type = 'table_nid') {
   $names = array(
     'table_nid' => 'migrate_map_custom_nids',
     'table_cid' => 'migrate_map_custom_cid',
+    'table_uid' => 'migrate_map_custom_uid',
     'class_nid' => 'MigrateWebformSubmissionEOSS',
     'class_cid' => 'MigrateWebformSubmittedDataEOSS',
+    'class_uid' => 'MigrateWebformLastDownloadEOSS',
   );
   return $names[$type];
 }
