@@ -46,6 +46,10 @@ Non-video notes
     corresponds with the number of srcid<X> keys
   - The number of array elements being passed into MigrateSQLMap (in array $source_key - 3nd param)
     corresponds with the number of destid<X> keys
+* The sourceid<X> and destid<X> elements should be equally mapped. If you map four columns in the source, then there
+  needs to be four destid keys that are identified by the destination handler as a primary key.
+* If the destid has fewer keys than source, then the rest of the values MUST be populated in prepare(), in the
+  $entity object (not $row... in prepare(), $row == src, $entity == dest).
 * When creating custom maps outside of Migrate (not smart), you should add their mappings into both
   the import and rollback sides of the process.
 

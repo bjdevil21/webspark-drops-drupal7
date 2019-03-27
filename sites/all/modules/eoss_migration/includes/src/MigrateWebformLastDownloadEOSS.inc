@@ -28,23 +28,29 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
     $this->destination = new MigrateDestinationTable($table_name);
 
     // Mappings
-    $this->addSimpleMappings($this->getFieldCols('simple'));
+    $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
+
     // Node ID
-    $this->addFieldMapping('nid', 'nid')
-      ->sourceMigration('MigrateWebformSubmissionEOSS');
+    $this->addFieldMapping('nid', 'nid');
+      // prepare() will need to manage this
 
     // Submission ID
     $this->addFieldMapping('sid', 'sid')
       ->sourceMigration('MigrateWebformSubmissionEOSS');
 
-    // Default uid to 0 if we're not mapping it.
+    // User ID
     $this->removeFieldMapping('uid');
     $this->addFieldMapping('uid', 'uid')
       ->sourceMigration('DrupalUser7MigrationEOSS');
 
     $mappable_keys = array(
       'nid' => array(
-        'description' => 'The node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'uid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -63,25 +69,48 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
   // @TODO - Select query to grab webform_submitted_data (all of it)
   public function query() {
     $wld_query = Database::getConnection('default', $this->sourceConnection)
-      ->select('webform_last_download', 'wld');
-    $wld_query->fields('wld', $this->getFieldCols('all'))
-      ->condition('wld.sid', '331680', '>') // debugging condition - a single webform submission
-      ->orderBy('wld.sid', 'ASC');
+      ->select('webform_last_download', 'wld')
+      ->fields('wld', $this->getFieldCols('all'))
+      ->orderBy('wld.nid', 'ASC');
     return $wld_query;
   }
 
   function prepareRow($row) {
-    return parent::prepareRow($row);
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
+    MigrationBase::displayMessage(var_dump($row), 'status');
+    if ($row->uid == 0) {
+      MigrationBase::displayMessage('[SKIP] - Drupal user ID ' . $row->uid . ' records will not be imported.', 'status');
+      return FALSE;
+    }
   }
 
-  function prepare() {
+  /**
+   * @param $entity
+   * @param $row
+   */
+  function prepare($entity, $row) {
+    // Grab new nid from matched (needs to be tested)
+    $query = Database::getConnection('default')
+      ->select(_eoss_webforms_followup_migration_data('table_nid'), 'mn')
+      ->fields('mn', array('nid'))
+      ->condition('mn.src_nid', $row->nid);
+    $result = $query->execute()->fetch();
+    if (!$result) {
+      MigrationBase::displayMessage('[SKIP] - No matching destination webform for source node ID ' . $row->nid, 'status');
+      return FALSE;
+    }
+    $entity->nid = $result->nid;
+
   }
 
   /**
    *
    * @param string $cols
    * - 'simpleOnly' - only returns simple fields that are Simple mapped.
-   * - 'all' - returns associative array with key (col IDs) => value (field descriptions) pairs
+   * - 'all' - returns simple + other fields as defined in MigrateFieldsEOSS class method
+   * @param string $associative - return associative array with descriptions (yes) or just simple array of values (no).
    * @return array of webform_submission DB cols
    */
   public function getFieldCols($cols = 'simpleOnly', $associative = 'no') {

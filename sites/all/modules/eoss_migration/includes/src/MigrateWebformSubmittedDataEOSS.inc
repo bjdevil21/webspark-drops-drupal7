@@ -49,9 +49,8 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $this->addFieldMapping('cid', 'cid');
     // prepareRow will do custom mapping
 
-    // @TODO -- Figure out why does this combination of DB cols work when none
-    // of them alone are unique..
-    // Adapted from Migrate Webform module's submitteddata.inc
+    // Because there are four source keys and no primary keys in the destination,
+    // their values MUST be otherwise populated in $entity, in the prepare() function.
 
     $mappable_src_keys = array(
       'nid' => array(

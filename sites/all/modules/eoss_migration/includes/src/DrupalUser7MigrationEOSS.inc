@@ -83,6 +83,7 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
       ->orderBy('u.uid')
       ->execute()
       ->fetchAll();
+
     if (count($query) > 0) {
       MigrationBase::displayMessage('[SKIP] - Drupal user ID ' . $row->name .
         ' already exists.', 'status');
