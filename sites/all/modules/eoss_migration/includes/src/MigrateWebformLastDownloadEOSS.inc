@@ -8,6 +8,33 @@
  */
 class MigrateWebformLastDownloadEOSS extends DrupalMigration {
 
+  protected $customMapTable = 'migrate_map_custom_nid';
+
+  public function getCustomMapTable() {
+    return $this->customMapTable;
+  }
+
+  public function setCustomMapTable($table) {
+    $this->customMapTable = _eoss_webforms_followup_migration_data($table);
+  }
+
+  /**
+   * @var \stdClass|string
+   */
+  protected $customMappings = '';
+
+  public function getCustomMappings() {
+    return $this->customMappings;
+  }
+
+  public function setCustomMappings(stdClass $mappings) {
+    $this->customMappings = $mappings;
+  }
+
+  /**
+   * MigrateWebformLastDownloadEOSS constructor.
+   * @param array $arguments
+   */
   function __construct(array $arguments) {
     parent::__construct($arguments);
 
@@ -32,7 +59,7 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
 
     // Node ID
     $this->addFieldMapping('nid', 'nid');
-      // prepare() will need to manage this
+    // prepare() will need to manage this
 
     // Submission ID
     $this->addFieldMapping('sid', 'sid')
@@ -40,8 +67,8 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
 
     // User ID
     $this->removeFieldMapping('uid');
-    $this->addFieldMapping('uid', 'uid')
-      ->sourceMigration('DrupalUser7MigrationEOSS');
+    $this->addFieldMapping('uid', 'uid');
+    // prepare()
 
     $mappable_keys = array(
       'nid' => array(
@@ -64,6 +91,8 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
       MigrateDestinationTable::getKeySchema($table_name)
     );
 
+    $this->customMappings = new stdClass();
+
   }
 
   // @TODO - Select query to grab webform_submitted_data (all of it)
@@ -75,34 +104,51 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
     return $wld_query;
   }
 
-  function prepareRow($row) {
+  /**
+   * Add new NIDs, UIDs from custom mapping tables
+   * @param $row
+   * @return bool
+   */
+  public function prepareRow($row) {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
-    MigrationBase::displayMessage(var_dump($row), 'status');
-    if ($row->uid == 0) {
-      MigrationBase::displayMessage('[SKIP] - Drupal user ID ' . $row->uid . ' records will not be imported.', 'status');
+    $query = Database::getConnection('default')
+      ->select($this->customMapTable, 'mn')
+      ->fields('mn', array('nid'))
+      ->condition('mn.src_nid', $row->nid);
+    $new_nid = $query->execute()->fetchField();
+
+    $query = Database::getConnection('default')
+      ->select('migrate_map_drupaluser7migrationeoss', 'mu')
+      ->fields('mu', array('destid1'))
+      ->condition('mu.sourceid1', $row->uid);
+    $new_uid = $query->execute()->fetchField();
+
+    if (is_null($new_nid) || empty($new_nid)) {
+      $this->queueMessage('No webform matching webform source ID ' . $row->nid, MigrationBase::MESSAGE_NOTICE);
       return FALSE;
+    }
+    else {
+      $this->customMappings->newNid = (int) $new_nid;
+    }
+    if (empty($new_uid) || is_null($new_uid)) {
+      $this->queueMessage('Drupal user ID ' . $row->uid . ' cannot be found, so their last download record will not be imported.', MigrationBase::MESSAGE_NOTICE);
+      return FALSE;
+    }
+    else {
+      $this->customMappings->newUid = (int) $new_uid;
     }
   }
 
   /**
+   * Plug new nid, uid from custom mapping into $entity
    * @param $entity
    * @param $row
    */
   function prepare($entity, $row) {
-    // Grab new nid from matched (needs to be tested)
-    $query = Database::getConnection('default')
-      ->select(_eoss_webforms_followup_migration_data('table_nid'), 'mn')
-      ->fields('mn', array('nid'))
-      ->condition('mn.src_nid', $row->nid);
-    $result = $query->execute()->fetch();
-    if (!$result) {
-      MigrationBase::displayMessage('[SKIP] - No matching destination webform for source node ID ' . $row->nid, 'status');
-      return FALSE;
-    }
-    $entity->nid = $result->nid;
-
+      $entity->nid = $this->customMappings->newNid;
+      $entity->uid = $this->customMappings->newUid;
   }
 
   /**

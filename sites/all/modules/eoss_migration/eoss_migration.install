@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_install()
+ * Implements hook_install().
  */
 function eoss_migration_install() {
   migrate_static_registration();

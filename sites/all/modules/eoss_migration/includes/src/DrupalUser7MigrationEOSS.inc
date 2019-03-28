@@ -42,10 +42,11 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
 
     // Extends DrupalDestinationUser()
     $this->destination = new DrupalDestinationUserEOSS();
+
   }
 
   /**
-   * Query for the basic user data, butpare down the user list to return only
+   * Query for the basic user data, but pare down the user list to return only
    * users that have an entry in the webform_submissions table.
    *
    * @return QueryConditionInterface
@@ -58,16 +59,8 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
     $query->innerJoin('webform_submissions', 'ws', 'u.uid = ws.uid');
     $query->fields('u')
       ->condition('u.uid', 0, '>')
-      ->groupBy('u.uid');
-    // Query 2 webform_last_download users
-    $query2 = Database::getConnection('default', 'eossMigrate')
-      ->select('users', 'u');
-    $query2->rightJoin('webform_last_download', 'wld', 'u.uid = wld.uid');
-    $query2->fields('u')
-      ->condition('u.uid', 0, '>')
-      ->groupBy('u.uid');
-    $query->union($query2);
-//    $result = $query->execute()->fetchAll();
+      ->groupBy('u.uid')
+      ->orderBy('u.uid');
 
     return $query;
 
@@ -93,14 +86,14 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
 
     if (count($query) > 0) {
       // Log in messages table.
-      $message = t('[SKIP] - Drupal user ID !name skipped because it already exists.',
+      $message = t('Drupal user ID !name skipped because it already exists.',
         array(
           '!name' => $row->name,
         ));
       $migration = Migration::currentMigration();
       //$migration->saveMessage($message, Migration::MESSAGE_INFORMATIONAL);
       // Display message.
-      MigrationBase::displayMessage($message, 'status');
+      MigrationBase::queueMessage($message, MigrationBase::MESSAGE_WARNING);
       return FALSE;
     }
   }

@@ -104,7 +104,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
     }
     else {
       $query = Database::getConnection('default')
-        ->select('migrate_map_custom_nids', 'mm')
+        ->select('migrate_map_custom_nid', 'mm')
         ->fields('mm', array('nid'))
         ->condition('src_nid', $row->nid);
       $new_nid = $query->execute()->fetchField();

@@ -7,7 +7,7 @@
  */
 function _eoss_webforms_followup_migration_data($type = 'table_nid') {
   $names = array(
-    'table_nid' => 'migrate_map_custom_nids',
+    'table_nid' => 'migrate_map_custom_nid',
     'table_cid' => 'migrate_map_custom_cid',
     'table_uid' => 'migrate_map_custom_uid',
     'class_nid' => 'MigrateWebformSubmissionEOSS',
@@ -19,7 +19,8 @@ function _eoss_webforms_followup_migration_data($type = 'table_nid') {
 
 
 /**
- * Webform Features pre-cid mappings creation - data cleanup
+ * Webform Features pre-cid mappings creation - data cleanup on eoss_webform generated
+ * data (bad field names, etc.) due to bugs in Webform Features module.
  * @param $result
  * @return mixed
  */
