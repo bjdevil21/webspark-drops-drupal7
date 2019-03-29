@@ -38,6 +38,9 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
   function __construct(array $arguments) {
     parent::__construct($arguments);
 
+    $this->description = t('Migrates the webform_last_download table data for the 
+      eoss-migrate -> eoss-forms site migration.');
+
     $table_name = 'webform_last_download';
 
     // @TODO - create new database col for primary key before migration?

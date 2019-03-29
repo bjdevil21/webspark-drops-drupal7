@@ -15,6 +15,10 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
   function __construct(array $arguments) {
     parent::__construct($arguments);
 
+    $this->description = t('Migrates the webform_submitted_data table data (holds the 
+      individual data points for each submission) for the eoss-migrate -> eoss-forms 
+      site migration.');
+
     $table_name = 'webform_submitted_data';
 
     // @TODO - create new database col for primary key before migration?

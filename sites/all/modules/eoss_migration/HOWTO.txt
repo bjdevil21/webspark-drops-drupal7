@@ -46,8 +46,9 @@ Non-video notes
     corresponds with the number of srcid<X> keys
   - The number of array elements being passed into MigrateSQLMap (in array $source_key - 3nd param)
     corresponds with the number of destid<X> keys
-* The sourceid<X> and destid<X> elements should be equally mapped. If you map four columns in the source, then there
-  needs to be four destid keys that are identified by the destination handler as a primary key.
+* The sourceid<X> and destid<X> elements should be equally mapped. If you have four keyed columns in
+  the source, then there needs to be four destid columns (that are primary keys by
+  MigrateDestinationTable, for example,) that are identified by the destination handler as a primary key.
 * If the destid has fewer keys than source, then the rest of the values MUST be populated in prepare(), in the
   $entity object (not $row... in prepare(), $row == src, $entity == dest).
 * When creating custom maps outside of Migrate (not smart), you should add their mappings into both
@@ -147,23 +148,46 @@ back to video
   3 prepare($entity, $row) -- Can edit the now Drupal-generated entity ($entity) before
   - Drupal finally saves it.
     - The $row object is available for reference, but editing it does nothing.
-    - THEN the $entity is saved by the destination (handlers?)
+    - The $entity object here is your last chance to manipulate the data to be saved into Drupal.
+      - Good time to add any custom data (like fields that aren't defined elsewhere, etc.)
+
+    ..THEN the data is saved..
+
+##############
+Non-video notes:
+Saved by:
+    - import() - the $entity is saved into the destination (usually DB table(s)). This method
+    is defined in your destination handler (class), as defined by $this->destination in your
+    source class constructor.
+##############
+
     ..THEN..
 
   4 complete($ent, $row) -- Post-import processing for doing other work RELATED TO the
     newly-minted entity $ent, like adding roles to a new user, etc.
     - The new $entity ID is now available for viewing, if needed.
-    - You shouldn't have to save anything related to the entity. If so, you're doing it wrong.
+    - You shouldn't have to save anything related to the data being migrated. If so, you're
+      doing it wrong.
+
     ..THEN..
 
   5 The migration map is updated with the old and new IDs (based on what schema is defined
     in the map).
-    ..DONE!
+
+##############
+Non-video notes:
+Each migration's map is stored in a newly-minted DB table, named "migrate_map_<className>".
+There's also an accompanying "migrate_message_<className>" table that you can put custom log
+entries into with methods in the Migrate + MigrateBase classes:
+In prepareRow(), use queueMessage().
+In prepare(), use saveMessage().
+See https://www.drupal.org/node/1132582 for more information.
+##############
+
+    ..then PROFIT!
 
   - There are other methods that are required by the process, but they are USUALLY set and handled in
     parent classes.
 
 END OF VIDEO
 #########################
-
-#

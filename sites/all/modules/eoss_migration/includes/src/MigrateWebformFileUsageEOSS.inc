@@ -15,6 +15,9 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
   public function __construct($arguments) {
     parent::__construct($arguments);
 
+    $this->description = t('Migrates the file_usage table data for the 
+      eoss-migrate -> eoss-forms site migration.');
+
     $table_name = 'file_usage';
 
     $this->source = new MigrateSourceSQL(

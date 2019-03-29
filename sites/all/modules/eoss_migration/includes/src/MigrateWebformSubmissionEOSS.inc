@@ -14,6 +14,9 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
   public function __construct($arguments) {
     parent::__construct($arguments);
 
+    $this->description = t('Migrates the webform_submissions table data (holds the 
+    main webform submission records) for the eoss-migrate -> eoss-forms site migration.');
+
     $table_name = 'webform_submissions';
 
     $this->source = new MigrateSourceSQL(
@@ -26,10 +29,6 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
       )
     );
 
-    // MigrateDestinationWebformSubmissionEOSS - Updated clone of Migrate Extra's webform.inc
-    //   - MigrateDestinationWebformSubmission class
-    //   - builds its own key functions and extends MigrateDestination
-    // SELECTED -> MigrateDestinationTable - pass in the table name only, and see what gets mapped.
     $this->destination = new MigrateDestinationTable($table_name);
 
     $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
@@ -70,25 +69,8 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submissions','ws')
-      ->fields('ws', $what_fields);
-  /*
-    // DEBUGGING
-    $db_or = db_or(); // Object
-    //Returns a new DatabaseCondition, set to "OR" all conditions together.
-    $subjids = array(
-      '296057',
-      '296060',
-      '296065',
-      '296069',
-      '296075',
-    );
-    foreach($subjids as $subjid){
-      $db_or->condition('wss.sid',$subjid,'=');
-    }
-    $query->condition($db_or);
-    // END DEBUGGING
-*/
-    $query->orderBy('ws.sid', 'ASC');
+      ->fields('ws', $what_fields)
+      ->orderBy('ws.sid', 'ASC');
     return $query;
   }
 

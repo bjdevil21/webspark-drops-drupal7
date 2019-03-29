@@ -16,6 +16,11 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
 
     // Now call constructor with added field
     parent::__construct($arguments);
+
+    $this->description =
+      t('Migrates EOSS.asu.edu Drupal users that have submitted a webform or downloaded 
+      submission reports to eoss-forms.asu.edu.');
+
     $this->addFieldMapping('uuid', 'uuid');
     $this->addFieldMapping('field_first_name', 'field_first_name');
     $this->addFieldMapping('field_last_name', 'field_last_name');

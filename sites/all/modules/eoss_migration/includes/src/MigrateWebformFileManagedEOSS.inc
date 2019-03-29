@@ -11,6 +11,9 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
   public function __construct($arguments) {
     parent::__construct($arguments);
 
+    $this->description = t('Migrates file_managed table data (and their attached 
+      files in the files directory) for the eoss-migrate -> eoss-forms site migration.');
+
     $table_name = 'file_managed';
 
     $this->source = new MigrateSourceSQL(

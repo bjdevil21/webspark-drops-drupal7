@@ -8,6 +8,12 @@ class DrupalDestinationUserEOSS extends DrupalDestinationUser {
    * @param null $migration
    * @return array
    */
+  public function __construct(array $options = array()) {
+    parent::__construct($options);
+    $this->description =
+      t('Custom destination for user data being migated by the DrupalUser7MigrationEOSS class.');
+  }
+
   public function fields($migration = NULL) {
     $fields = parent::fields($migration);
     $fields['uuid'] = t('UUID');
