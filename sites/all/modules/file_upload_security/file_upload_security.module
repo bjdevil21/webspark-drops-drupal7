@@ -66,8 +66,7 @@ function file_upload_security_form_field_ui_field_edit_form_alter(&$form, &$form
  */
 function file_upload_security_form_field_ui_field_settings_form_alter(&$form, &$form_state) {
   if (array_key_exists('field', $form) && array_key_exists('type', $form['field'])) {
-    if (array_key_exists('#value', $form['field']['type']) && in_array($form['field']['type']['#value'], 
-file_upload_security_field_types())) {
+    if (array_key_exists('#value', $form['field']['type']) && in_array($form['field']['type']['#value'], file_upload_security_field_types())) {
       $bundle = (array_key_exists('#bundle', $form)) ? $form['#bundle'] : NULL;
       $type = (array_key_exists('#entity_type', $form)) ? $form['#entity_type'] : NULL;
 
@@ -196,15 +195,13 @@ function file_upload_security_set_message($bundle, $type = 'protect') {
   $psa_link = l(t('the Drupal Security Team public service announcement'), FILE_UPLOAD_SECURITY_PSA);
 
   if ($type == 'protect') {
-    $message = t('The site administrator has restricted file uploads to prevent anonymous users uploading malicious files to public 
-areas. See !url for further details.', array(
+    $message = t('The site administrator has restricted file uploads to prevent anonymous users uploading malicious files to public areas. See !url for further details.', array(
       '@bundle' => $bundle,
       '!url' => $psa_link,
     ));
   }
   else {
-    $message = t('The @bundle content type can be created by anonymous users. Allowing those users to upload files into the public 
-file storage can be a security risk. See !url for further details.', array(
+    $message = t('The @bundle content type can be created by anonymous users. Allowing those users to upload files into the public file storage can be a security risk. See !url for further details.', array(
       '@bundle' => $bundle,
       '!url' => $psa_link,
     ));
@@ -230,10 +227,8 @@ function file_upload_security_fix_files() {
     }
   }
   else {
-    watchdog('file_upload_security', 'Attempted to fix insecure files without private file system being set.', array(), 
-WATCHDOG_ERROR);
-    drupal_set_message(t('Legacy files cannot be moved without a private file system being configured. Please set up a private file 
-path at !url.', array(
+    watchdog('file_upload_security', 'Attempted to fix insecure files without private file system being set.', array(), WATCHDOG_ERROR);
+    drupal_set_message(t('Legacy files cannot be moved without a private file system being configured. Please set up a private file path at !url.', array(
       '!url' => l(t('the file system admin page'), '/admin/config/media/file-system'),
     )));
   }
@@ -278,10 +273,8 @@ function file_upload_security_fix_fields(&$files = array()) {
           $updated_fields[$field] = $bundles;
         }
 
-        $field_table = (isset($info['storage']['details']['sql']['FIELD_LOAD_CURRENT'])) ? 
-key($info['storage']['details']['sql']['FIELD_LOAD_CURRENT']) : NULL;
-        $field_column = (isset($info['storage']['details']['sql']['FIELD_LOAD_CURRENT'][$field_table]['fid'])) ? 
-$info['storage']['details']['sql']['FIELD_LOAD_CURRENT'][$field_table]['fid'] : NULL;
+        $field_table = (isset($info['storage']['details']['sql']['FIELD_LOAD_CURRENT'])) ? key($info['storage']['details']['sql']['FIELD_LOAD_CURRENT']) : NULL;
+        $field_column = (isset($info['storage']['details']['sql']['FIELD_LOAD_CURRENT'][$field_table]['fid'])) ? $info['storage']['details']['sql']['FIELD_LOAD_CURRENT'][$field_table]['fid'] : NULL;
 
         if ($field_table && $field_column) {
           $query = db_select($field_table, 'f')
@@ -291,8 +284,7 @@ $info['storage']['details']['sql']['FIELD_LOAD_CURRENT'][$field_table]['fid'] : 
           $files = $files + $query->fetchAllKeyed(0, 0);
         }
         else {
-          drupal_set_message(t('You are using non-sql storage for the field :field. These files will need to be manually moved and 
-files_managed updated.', array(
+          drupal_set_message(t('You are using non-sql storage for the field :field. These files will need to be manually moved and files_managed updated.', array(
             ':field' => $field,
           )), 'error');
         }
@@ -308,7 +300,7 @@ files_managed updated.', array(
  *   Passed by reference to collect fids that may require moving on server.
  */
 function file_upload_security_fix_webforms(&$files = array()) {
-  // Get all file IDs into array for future fixes
+  // Get all file IDs into array for future fixes.
   $scheme_condition = db_or()
     ->condition('extra', '%s:6:"scheme";s:6:"public"%', 'LIKE')
     ->condition('extra', '%s:6:"scheme";%', 'NOT LIKE');
@@ -321,7 +313,7 @@ function file_upload_security_fix_webforms(&$files = array()) {
   $query->fields('s', array('data'));
   $files = $files + $query->execute()->fetchAllKeyed(1, 1);
 
-  // Update ALL serial array instances of public files to private
+  // Update ALL serial array instances of public files to private.
   db_update('webform_component')
     ->expression('extra', 'REPLACE(extra, :public_scheme, :private_scheme)', array(
       ':public_scheme' => 's:6:"scheme";s:6:"public"',
@@ -331,7 +323,7 @@ function file_upload_security_fix_webforms(&$files = array()) {
     ->execute();
 
   // Add multiple webforms per site support
-  // Get all webform nodes
+  // Get all webform nodes.
   $webform_list = db_select('webform_component', 'wc')
     ->distinct()
     ->fields('wc', array('nid'))
@@ -340,8 +332,8 @@ function file_upload_security_fix_webforms(&$files = array()) {
     ->groupBy('wc.nid')
     ->execute()->fetchCol();
 
-  // Update each webform's components individually
-  foreach($webform_list as $key=>$nid) {
+  // Update each webform's components individually.
+  foreach ($webform_list as $key => $nid) {
     $select = db_select('webform_component', 'c')
       ->fields('c', array('cid', 'extra'))
       ->condition('nid', $nid)
@@ -360,16 +352,24 @@ function file_upload_security_fix_webforms(&$files = array()) {
         ));
 
       if ($query->execute()) {
-        drupal_set_message('Webform file component ' . check_plain($component->cid) . ' at /node/'
-          . check_plain($nid) . ' has been updated.', 'status');
-        watchdog('file_upload_security', "Webform file component :cid at /node/:nid
-          has been updated.", array(':cid' => $component->cid, ':nid' => $nid), WATCHDOG_NOTICE);
+        drupal_set_message(t('Webform file component :cid for Node :nid has been updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        )), 'status');
+        watchdog('file_upload_security', 'Webform file component :cid for Node :nid has been updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        ), WATCHDOG_NOTICE);
       }
       else {
-        drupal_set_message('Webform file component ' . check_plain($component->cid) . ' at /node/'
-          . check_plain($nid) . ' could not be updated.', 'warning');
-        watchdog('file_upload_security', "Webform file component :cid at /node/:nid
-          could not be updated.", array(':cid' => $component->cid, ':nid' => $nid), WATCHDOG_WARNING);
+        drupal_set_message(t('Webform file component :cid for Node :nid could not be updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        )), 'warning');
+        watchdog('file_upload_security', 'Webform file component :cid for Node :nid could not be updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        ), WATCHDOG_WARNING);
       }
     }
   }
@@ -458,8 +458,7 @@ function file_upload_security_fix_finished($success, $results, $operations) {
       $success_count = count($results);
 
       if ($success_count) {
-        drupal_set_message(t(':success files were successfully moved. :count files were not moved - please check your logs for 
-errors.', array(
+        drupal_set_message(t(':success files were successfully moved. :count files were not moved - please check your logs for errors.', array(
           ':success' => $success_count,
           ':count' => $count,
         )));
@@ -604,4 +603,3 @@ function file_upload_security_field_types() {
     'image',
   );
 }
-
