@@ -85,6 +85,8 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
     $fu_query = Database::getConnection('default', $this->sourceConnection)
       ->select('file_usage', 'fu');
     $fu_query->fields('fu', $this->getFieldCols('all'))
+      ->condition('fu.module', 'webform', 'LIKE')
+      ->condition('fu.type', 'submission', 'LIKE')
       ->orderBy('fu.fid');
     return $fu_query;
   }

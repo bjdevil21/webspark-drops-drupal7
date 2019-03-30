@@ -16,6 +16,7 @@ files[] = eoss_migration.migrate.inc
 
 ; Helper class to manage fields
 files[] = includes/MigrateFieldsEOSS.inc
+files[] = includes/MigrateWebformFileDirectories.inc
 
 ; MIGRATIONS
 ; Users (Webform submitters not already in eoss-forms)
@@ -27,6 +28,7 @@ files[] = includes/src/MigrateWebformSubmissionEOSS.inc
 
 ; Submitted files (managed, usage)
 files[] = includes/src/MigrateWebformFileManagedEOSS.inc
+files[] = includes/dst/MigrateDestinationFileManagedEOSS.inc
 files[] = includes/src/MigrateWebformFileUsageEOSS.inc
 
 ; Submitted data records (webform_submitted_data)

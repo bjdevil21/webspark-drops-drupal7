@@ -93,7 +93,7 @@ class MigrateWebformSubmissionEOSS extends DrupalMigration {
 
       $old_nid = $row->nid;
       if (!$new_nid) { // No matching webform in destination? Skip...
-        MigrationBase::displayMessage('[SKIP] - Webform does not exist for submission ID ' . $row->sid, 'status');
+        MigrationBase::saveMessage('[SKIP] - Webform does not exist for submission ID ' . $row->sid, 'status');
         return FALSE;
       }
       else {

@@ -76,8 +76,7 @@ function eoss_migration_migrate_api() {
     // from a source without any comments (if desired)
     'destination handlers' => array(
 //      'DrupalDestinationUserEOSS',
-//      'MigrateDestinationTable',
-//      'MigrateDestinationWebformSubmissionEOSS',
+//      'MigrateDestinationFileManagedEOSS',
     ),
     // Field Handlers - Manipulate individual fields for Drupal consumption on the destination end
     'field handlers' => array(

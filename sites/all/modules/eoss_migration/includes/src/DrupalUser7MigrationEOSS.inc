@@ -98,7 +98,7 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
       $migration = Migration::currentMigration();
       //$migration->saveMessage($message, Migration::MESSAGE_INFORMATIONAL);
       // Display message.
-      MigrationBase::queueMessage($message, MigrationBase::MESSAGE_WARNING);
+      Migration::queueMessage($message, MigrationBase::MESSAGE_WARNING);
       return FALSE;
     }
   }

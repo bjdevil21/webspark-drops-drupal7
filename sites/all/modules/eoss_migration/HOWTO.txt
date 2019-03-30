@@ -143,6 +143,15 @@ back to video
 
   2 the field handlers modify the values into a more Drupal-friendly value (nested arrays, etc.), by calling its
     own field-level prepare() methods,
+
+##############
+Non-video notes:
+Field handlers are invoked once per node, for each field detected. Existing, default field
+handler classes are in plugins/destinations/fields.inc (in Migrate module).
+Good for Field API, but not for non-fields.
+See https://www.drupal.org/node/1429096 for examples.
+##############
+
     ..THEN..
 
   3 prepare($entity, $row) -- Can edit the now Drupal-generated entity ($entity) before
