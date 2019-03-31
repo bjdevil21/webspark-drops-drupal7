@@ -9,7 +9,7 @@ class MigrateWebformFileDirectories {
    * Directories for file migration (src, dest)
    * @var
    */
-  //@TODO -- Get new folder name into these
+
   protected $srcFolder = '/home/bryan/eoss-migrate/sites/default/files/webform/';
   protected $dstFolder = DRUPAL_ROOT . '/sites/default/files/webform/';
 
@@ -23,13 +23,7 @@ class MigrateWebformFileDirectories {
   /**
    * @var (obj upon instantiation) List of directory names
    */
-  protected $directoryNames;
-  public function getDirectoryNames() {
-    return $this->directoryNames;
-  }
-  public function setDirectoryNames($directoryNames) {
-    $this->directoryNames = $directoryNames;
-  }
+  public $directoryNames;
 
   /**
    * MigrateWebformFileDirectories constructor.
@@ -39,7 +33,7 @@ class MigrateWebformFileDirectories {
   public function __construct($node_id = 0) {
 
     // INIT directoryNames variable
-    $this->setDirectoryNames(new stdClass());
+    $this->directoryNames = new stdClass();
 
     // Get webform nodes info for directory name creation
     $query = Database::getConnection('default', 'default')
@@ -61,6 +55,9 @@ class MigrateWebformFileDirectories {
     if (count($results) === 1) { // set special property for single output
       $this->singleDir = $this->directoryNames->{$result->uuid};
     }
+    else {
+      $this->singleDir = "";
+    }
   }
 
   /**
@@ -75,31 +72,37 @@ class MigrateWebformFileDirectories {
    * for webform submitted files.
    *
    * @param string $fid - file ID from either file_managed or file_usage DB tables
-   * @param string $db_conn - should be default
    * @return bool if FALSE, else object $result
    */
-  public static function getInfoFromFid( string $fid, $db_conn = 'default') {
-    // @TODO -- 3) prepareRow will update each fm.uri, and
-    $migration = Migration::currentMigration();
-    $query = Database::getConnection('default', $db_conn)
+  public function getInfoFromFid($uuid) {
+    $query = Database::getConnection('default', 'default')
       ->select('file_managed', 'fm');
-    $query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
+
+    // @TODO add uuid column to fu and fill it up on eoss-migrate
+
+    $query->innerJoin('file_usage', 'fu', 'fm.uuid = fu.uuid');
     $query->innerJoin('webform_submissions', 'ws', 'fu.id = ws.sid');
     $query->innerJoin('node', 'n', 'ws.nid = n.nid');
     $query->fields('fm', array('fid', 'uri'))
-      ->fields('n', array('machine_name'))
+      ->fields('n', array('uuid'))
       ->isNotNull('ws.nid')
       ->condition('fm.uri', 'p%', 'LIKE')
       ->condition('fu.module', 'webform', 'LIKE')
-      ->condition('fm.fid', $fid)
+      ->condition('fm.uuid', $uuid)
       ->orderBy('ws.nid');
-    $result = $query->execute()->fetchObject();
-    if (!$result) {
+    $results = $query->execute()->fetchAll();
+    var_dump(__METHOD__);
+    var_dump("-----------------");
+    var_dump($uuid);
+    var_dump("-----------------");
+    if (count($results) <> 1) {
       Migration::displayMessage(__METHOD__ . ' - Number of records for file ID ' . $fid . ' is not exactly 1.');
       return FALSE;
     }
     else {
-      return $result;
+      foreach ($results as $result) {
+        return $result;
+      }
     }
   }
 

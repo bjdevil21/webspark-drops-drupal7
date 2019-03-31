@@ -10,6 +10,14 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
   protected $fileInfo;
 
+  public function getFileInfo() {
+    return $this->fileInfo;
+  }
+
+  public function setFileInfo($fileInfo) {
+    $this->fileInfo = $fileInfo;
+  }
+
   /**
    * MigrateWebformFileManagedEOSS constructor.
    * @param array $arguments
@@ -37,7 +45,6 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     $this->addSimpleMappings($this->getFieldCols('simpleOnly'));
 
     // file ID mapping
-    // @TODO - add in createStub to make file_usage stubs, or do file_usage first
     $this->addFieldMapping('fid', 'fid');
 
     // Default uid to 0 if we're not mapping it.
@@ -63,10 +70,18 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         'default' => '',
         'binary' => TRUE,
       ),
+      'uuid' => array(
+        'type' => 'char',
+        'length' => 64, // was 36
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'The Universally Unique Identifier.',
+      ),
     );
 // Have to add uri for custom rollback changes
     $dst_schema = MigrateDestinationTable::getKeySchema($table_name);
     $dst_schema['uri'] = $mappable_key['uri'];
+    $dst_schema['uuid'] = $mappable_key['uuid'];
 
     $this->map = new MigrateSQLMap(
       $this->machineName,
@@ -85,8 +100,8 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       ->select('file_managed', 'fm');
     $fm_query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
     $fm_query->fields('fm', $this->getFieldCols('all'))
-      // ->condition('fm.fid', '', '>') // debugging condition
-      ->condition('fu.module', 'webform', 'LIKE')// All attached file entries
+      ->condition('fm.fid', '46600', '>') // debugging condition
+      ->condition('fu.module', 'webform', 'LIKE')
       ->condition('fu.type', 'submission', 'LIKE')
       ->orderBy('fm.fid', 'ASC');
     return $fm_query;
@@ -96,7 +111,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
    * preImport()
    *
    * Before import begins - Four steps:
-   * 1) Update each webform file component
+   * 1) Update each webform file component's directory
    * 2) Create destination directories based on webform data (one for each form)
    * #3, 4 in other classes
    */
@@ -108,8 +123,10 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     $query = Database::getConnection('default')
       ->select('migrate_map_custom_cid', 'mc');
     $query->innerJoin('webform_component', 'wc', 'wc.machine_name = mc.machine_name');
+    $query->innerJoin('node', 'n', 'n.nid = mc.nid');
     $query->fields('mc', array('machine_name', 'nid', 'cid'))
       ->fields('wc', array('extra'))
+      ->fields('n', array('uuid'))
       ->condition('wc.type', 'file')
       ->orderBy('mc.nid');
     $results = $query->execute()->fetchAll();
@@ -119,23 +136,30 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         $extra = unserialize($result->extra);
         if (is_array($extra)) {
       // #1... update each webform file component - QA
-          $extra['directory'] = $this->fileInfo->getDirectoryNames()->{$result->machine_name};
+
+          $extra['directory'] = $this->fileInfo->directoryNames->{$result->uuid};
           $extra = serialize($extra);
-          db_update('webform_component', 'wc')
+          Database::getConnection('default', 'default')
+            ->update('webform_component')
             ->fields(array(
               'extra' => $extra,
             ))
-            ->condition('wc.nid', $result->nid)
-            ->condition('wc.cid', $result->cid)
+            ->condition('nid', $result->nid)
+            ->condition('cid', $result->cid)
             ->execute();
 
       // #2... Create directories - __toString returns the single result - QA
+          
           $directory = new MigrateWebformFileDirectories($result->nid);
 
-          if (file_prepare_directory($this->fileInfo->getDstFolder())) {
+          if (file_prepare_directory($directory)) {
+            var_dump(__METHOD__);
+            var_dump($this->fileInfo);
             $target = $this->fileInfo->getDstFolder() . '/' . $directory;
             if (!file_exists($target) && !is_dir($target)) {
               drupal_mkdir($target);
+              $migration->displayMessage('Directory ' . $directory . ' created.',
+                MigrationBase::MESSAGE_NOTICE);
             }
             else {
               $migration->saveMessage('Directory ' . $directory . ' already exists. Skipping.',
@@ -158,27 +182,17 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
-    // 3) prepareRow will update each fm.uri, and
 
-    /*
-    $query = Database::getConnection('default', $this->sourceConnection)
-      ->select('file_managed', 'fm');
-    $query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
-    $query->innerJoin('webform_submissions', 'ws', 'fu.id = ws.sid');
-    $query->innerJoin('node', 'n', 'ws.nid = n.nid');
-    $query->fields('fm', array('uri'))
-      ->fields('n', array('machine_name'))
-      ->isNotNull('ws.nid')
-      ->condition('fm.uri', 'p%', 'LIKE')
-      ->condition('fu.module', 'webform', 'LIKE')
-      ->condition('fm.fid', $row->fid) // limited to one row by fid
-      ->orderBy('ws.nid');
-    $result = $query->execute()->fetchObject();
-    */
-    $result = $this->fileInfo->getInfoFromFid($row->fid);
+    // 3) prepareRow will update each fm.uri, and
+    // @todo clone uuid from fm->fu in new db column
+
+    $result = $this->fileInfo->getInfoFromFid($row->uuid);
+
+    var_dump(__METHOD__);
+    var_dump($result);
 
     if ($result) {
-      $dir = $this->fileInfo->getDirectoryNames()->{$result->machine_name};
+      $dir = $this->fileInfo->directoryNames->{$result->uuid};
 
       MigrationBase::displayMessage('fm_uri::before -- ' . $result->uri, MigrationBase::MESSAGE_INFORMATIONAL);
       MigrationBase::displayMessage('newDirectory -- ' . $dir, MigrationBase::MESSAGE_INFORMATIONAL);
@@ -187,11 +201,17 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       MigrationBase::displayMessage('fm_uri::after -- ' . $fm_uri, MigrationBase::MESSAGE_INFORMATIONAL);
 
       // Update the URI
-      db_update('file_managed', 'fm')
+      db_update('file_managed')
         ->fields(array(
           'uri' => $fm_uri,
         ))
-        ->condition('fm.fid', $result->fid)
+        ->condition('fid', $entity->fid)
+        ->execute();
+      db_update('migrate_map_migratewebformfilemanagedeoss')
+        ->fields(array(
+          'uri' => $fm_uri,
+        ))
+        ->condition('source1id', $row->fid)
         ->execute();
     }
   }
@@ -219,4 +239,5 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       return $new;
     }
   }
+
 }

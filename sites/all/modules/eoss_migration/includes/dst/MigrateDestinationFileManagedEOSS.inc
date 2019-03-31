@@ -35,8 +35,11 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
 
     // @TODO - Get single node directory inserted right V here.
 
-    $file_info = $this->fileInfo->getInfoFromFid($entity->fid);
-    $this->dstFileURI = $this->fileInfo->getDstFolder() . $file_info->machine_name
+    var_dump(__METHOD__);
+    var_dump($entity);
+
+    $file_info = $this->fileInfo->getInfoFromFid($entity->uuid);
+    $this->dstFileURI = $this->fileInfo->getDstFolder() . $file_info->uuid
       . '/' . $entity->filename;
 
     // DEBUG
@@ -75,10 +78,16 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
     if (isset($ids['fid'])) {
       $file_record = $this->getFileTimestamp($ids['fid']);
       $file_info = $this->fileInfo->getInfoFromFid($ids['fid']);
+      var_dump(__METHOD__);
+      var_dump($file_info);
 
       foreach ($file_record as $record) {
         $this->srcFileURI = $this->fileInfo->getSrcFolder() . $record->filename;
-        $this->dstFileURI = $this->fileInfo->getDstFolder() . $file_info->machine_name . '/' . $record->filename;
+        $this->dstFileURI = $this->fileInfo->getDstFolder() . $file_info->sss . '/' . $record->filename;
+
+        // DEBUG
+        $migration->saveMessage('srcFileURI:: ' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
+        $migration->saveMessage('dstFileURI:: ' . $this->dstFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
 
         // Move files back...
         if (rename($this->dstFileURI, $this->srcFileURI)) {

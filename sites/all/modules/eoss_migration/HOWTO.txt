@@ -146,10 +146,10 @@ back to video
 
 ##############
 Non-video notes:
-Field handlers are invoked once per node, for each field detected. Existing, default field
-handler classes are in plugins/destinations/fields.inc (in Migrate module).
-Good for Field API, but not for non-fields.
-See https://www.drupal.org/node/1429096 for examples.
+* Field handlers are invoked once per node, for each field detected.
+  - Existing, default field handler classes are in plugins/destinations/fields.inc (in Migrate module).
+  - Good for Field API, but not for non-fields.
+  - See https://www.drupal.org/node/1429096 for examples.
 ##############
 
     ..THEN..
@@ -160,7 +160,7 @@ See https://www.drupal.org/node/1429096 for examples.
     - The $entity object here is your last chance to manipulate the data to be saved into Drupal.
       - Good time to add any custom data (like fields that aren't defined elsewhere, etc.)
 
-    ..THEN the data is saved..
+    ..THEN the destination handler class takes over from the source class, and the data is saved..
 
 ##############
 Non-video notes:
@@ -185,12 +185,11 @@ Saved by:
 
 ##############
 Non-video notes:
-Each migration's map is stored in a newly-minted DB table, named "migrate_map_<className>".
-There's also an accompanying "migrate_message_<className>" table that you can put custom log
-entries into with methods in the Migrate + MigrateBase classes:
-In prepareRow(), use queueMessage().
-In prepare(), use saveMessage().
-See https://www.drupal.org/node/1132582 for more information.
+* Each migration's map is stored in a newly-minted DB table, named "migrate_map_<className>".
+* There's also an accompanying "migrate_message_<className>" table that you can put custom log entries into with methods in the Migrate + MigrateBase classes:
+  - In prepareRow(), use queueMessage().
+  - In prepare(), use saveMessage().
+  See https://www.drupal.org/node/1132582 for more information.
 ##############
 
     ..then PROFIT!
