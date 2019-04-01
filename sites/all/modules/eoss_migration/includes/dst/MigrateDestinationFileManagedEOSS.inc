@@ -35,9 +35,18 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
     // @TODO - Get single node directory inserted right V here.
 
     var_dump(__METHOD__);
-    var_dump($entity);
+    var_dump("----------------- entity->fid");
+    var_dump($entity->fid);
+    var_dump("----------------- this -> srcFileURI");
+    var_dump($this->srcFileURI);
+
 
     $file_info = MigrateWebformFileDirectories::getFileInfoFromCustomMap($entity->fid);
+
+    var_dump("----------------- file_info (should be node-generated folder name)");
+    var_dump($file_info);
+    var_dump("-----------------");
+
     $this->dstFileURI = MigrateWebformFileDirectories::getDstFolder() . $file_info->uuid
       . '/' . $entity->filename;
 

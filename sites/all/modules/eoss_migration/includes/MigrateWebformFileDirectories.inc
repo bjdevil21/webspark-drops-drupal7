@@ -72,11 +72,8 @@ class MigrateWebformFileDirectories {
    * @return bool if FALSE, else object $result
    */
   public static function getFileInfoFromCustomMap($fid) {
-    $query = Database::getConnection('default', 'default')
-      ->select('file_managed', 'fm');
 
     // @TODO add uuid column to fu and fill it up on eoss-migrate
-
     $query = Database::getConnection('default', 'default')
       ->select('file_managed', 'fm');
     $query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
@@ -87,7 +84,7 @@ class MigrateWebformFileDirectories {
       ->isNotNull('ws.nid')
       ->condition('fm.uri', 'p%', 'LIKE')
       ->condition('fu.module', 'webform', 'LIKE')
-      ->condition('fu.fid', $fid)
+      ->condition('fm.fid', $fid)
       ->groupBy('n.nid')
       ->orderBy('ws.nid');
 

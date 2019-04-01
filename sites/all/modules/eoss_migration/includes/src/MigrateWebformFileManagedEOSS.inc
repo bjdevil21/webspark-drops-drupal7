@@ -51,37 +51,13 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         'description' => 'File ID',
         'alias' => 'fm',
       ),
-      /*
-      // Have to add uri for custom rollback changes
-      'uri' => array(
-        'description' => 'The URI to access the file (either local or remote).',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'binary' => TRUE,
-      ),
-      'uuid' => array(
-        'type' => 'char',
-        'length' => 64, // was 36
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'The Universally Unique Identifier.',
-      ),
-      */
     );
-// Have to add uri for custom rollback changes
-    $dst_schema = MigrateDestinationTable::getKeySchema($table_name);
-//    $dst_schema['uri'] = $mappable_key['uri'];
-//    $dst_schema['uuid'] = $mappable_key['uuid'];
 
     $this->map = new MigrateSQLMap(
       $this->machineName,
       $mappable_key,
-//      MigrateDestinationTable::getKeySchema($table_name)
-      $dst_schema
+      MigrateDestinationTable::getKeySchema($table_name)
     );
-
 
   }
 
@@ -182,6 +158,17 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
+    // Grab latest AUTO_INCREMENT data for fid update
+    $query = Database::getConnection('default', 'informationSchema')
+      ->select('tables', 't')
+      ->condition('t.table_schema', 'eoss-forms', 'LIKE')
+      ->condition('t.table_name', 'file_managed', 'LIKE');
+    $query->addExpression('AUTO_INCREMENT');
+    $fid = $query->execute()->fetchField();
+
+    // CREATE STUB NOW...
+    $fu_row = $this->handleSourceMigration(array('MigrateWebformFileUsageEOSS'), $fid);
+
   }
 
   /**
@@ -201,11 +188,14 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     $query->addExpression('AUTO_INCREMENT');
     $fid = $query->execute()->fetchField();
 
+    var_dump(__METHOD__);
+    var_dump("----------------- AUTO_INCREMENT fid");
+    var_dump($fid);
+    var_dump("-----------------");
+
+
     if (is_int($fid)) {
       $entity->fid = $fid;
-
-      // CREATE STUB NOW...
-      $fu_row = $this->handleSourceMigration(array('MigrateWebformFileUsageEOSS'), $entity->fid);
 
       // Then... @TODO - #3 complete will update each fm.uri
 

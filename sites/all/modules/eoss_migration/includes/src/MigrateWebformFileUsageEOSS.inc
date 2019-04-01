@@ -39,11 +39,9 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
     $this->addFieldMapping('fid', 'fid')
       ->sourceMigration('MigrateWebformFileManagedEOSS');
 
-    // Default uid to 0 if we're not mapping it.
-    $this->removeFieldMapping('uid');
-    $this->addFieldMapping('uid', 'uid')
-      ->sourceMigration('DrupalUser7MigrationEOSS')
-      ->defaultValue(0); // Anonymous user
+    // Submission ID mapping
+    $this->addFieldMapping('id', 'id')
+      ->defaultValue(0); // no submission ID --
 
     $mappable_key = array(
       'fid' => array(
@@ -71,6 +69,22 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
+    // @TODO - get webform submission ID from map
+    // (different column labels prohibit using the existing data in migrate_map from webform_submissions
+    $query = Database::getConnection('default', 'default')
+      ->select('migrate_map_migratewebformsubmissioneoss', 'mw')
+      ->fields('mw', array('destid1'))
+      ->condition('mw.sourceid1', $row->id)
+      ->orderBy('mw.sourceid1');
+    $result = $query->execute()->fetchField();
+
+    if ($result) {
+      $row->id = $result;
+    }
+    else {
+      $this->queueMessage('No submission ID matches this file_usage entry. Skipping.', MIGRATION::MESSAGE_ERROR);
+      return FALSE;
+    }
   }
 
   public function prepare($entity, $row) {
@@ -89,6 +103,62 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
       ->orderBy('fu.fid');
     return $fu_query;
   }
+
+  /**
+   * Create stubs for file_managed migration
+   *
+   * @param $migration - Object that has migration data
+   * @param $ids - new ID to inject
+   */
+  public function createStub($migration, $fid) {
+
+    $migration = Migration::currentMigration();
+
+    $fid = array_pop($fid);
+
+    var_dump(__METHOD__);
+    var_dump("-----------------");
+    var_dump($fid);
+    var_dump("-----------------");
+
+    if (empty($fid)) {
+      MigrationBase::displayMessage('---------------- [SKIP] No fid value. file_usage createStub skipped. -', MIGRATION::MESSAGE_ERROR);
+      return FALSE;
+    }
+
+    // Create file_usage stub
+    $fu = new stdClass();
+    $fu->fid = (int) $fid;
+    $fu->id = 0; // New submission ID -- either run a custom query here with source $fid, or update on file_usage run
+    $fu->count = 1;
+    $fu->module = 'webform';
+    $fu->type = 'submission';
+
+    // Create or update if exists already
+    $dest_id = db_merge('file_usage')
+      ->key(array(
+        'fid' => $fu->fid,
+      ))
+      ->fields(array(
+        'fid' => $fu->fid,
+        'module' => $fu->module,
+        'type' => $fu->type,
+        'id' => $fu->id,
+        'count' => $fu->count,
+      ))
+      ->execute();
+
+    if ($dest_id) {
+      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid '
+        . var_dump($fu->fid) . ' updated/inserted to file_usage.', MIGRATION::MESSAGE_INFORMATIONAL);
+      return $fu;
+    }
+    else {
+      MigrationBase::displayMessage(__METHOD__ . ' -- No file_usage record written.', MIGRATION::MESSAGE_ERROR);
+      return FALSE;
+    }
+  }
+
   /**
    *
    * @param string $cols
@@ -104,61 +174,6 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
     }
     else {
       return $new;
-    }
-  }
-
-
-
-  /** @TODO -
-   * Create stub for file_managed table
-   *
-   * @param $migration - Object that has migration data
-   * @param $ids - new ID to inject
-   */
-  public function createStub($migration, $fid) {
-
-    $migration = Migration::currentMigration();
-
-    var_dump(__METHOD__);
-    var_dump("-----------------");
-    var_dump($fid);
-    var_dump("-----------------");
-
-    if (empty($fid)) {
-      MigrationBase::displayMessage('---------------- [SKIP] No fid value. file_usage createStub skipped. -', MIGRATION::MESSAGE_ERROR);
-      return FALSE;
-    }
-
-    // Create file_usage stub
-    $fu = new stdClass();
-    $fu->fid = $fid;
-    $fu->id = ''; // New submission ID -- either run a custom query here with source $fid, or update on file_usage run
-    $fu->status = 1;
-    $fu->module = 'webform';
-    $fu->type = 'submission';
-
-    // Create or update if exists already
-    $dest_id = db_merge('file_usage')
-      ->key(array(
-        'fid' => $fu->fid,
-      ))
-      ->fields(array(
-        'fid' => $fu->fid,
-        'id' => $fu->id,
-        'status' => $fu->status,
-        'module' => $fu->module,
-        'type' => $fu->type,
-      ))
-      ->execute();
-
-    if ($dest_id) {
-      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid '
-        . var_dump($fu->fid) . ' updated/inserted to file_usage.', MIGRATION::MESSAGE_INFORMATIONAL);
-      return $fu;
-    }
-    else {
-      MigrationBase::displayMessage(__METHOD__ . ' -- No file_usage record written.', MIGRATION::MESSAGE_ERROR);
-      return FALSE;
     }
   }
 
