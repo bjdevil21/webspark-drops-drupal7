@@ -9,26 +9,29 @@ class MigrateWebformFileDirectories {
    * Directories for file migration (src, dest)
    * @var
    */
-
-  protected $srcFolder = '/home/bryan/eoss-migrate/sites/default/files/webform/';
-  protected $dstFolder = DRUPAL_ROOT . '/sites/default/files/webform/';
-
-  public function getSrcFolder() {
-    return $this->srcFolder;
+  protected static $srcFolder = '/home/bryan/eoss-migrate/sites/default/files/webform/';
+  protected static $dstFolder = DRUPAL_ROOT . '/sites/default/files/webform/';
+  public static function getSrcFolder() {
+    return self::$srcFolder;
   }
-  public function getDstFolder() {
-    return $this->dstFolder;
+  public static function getDstFolder() {
+    return self::$dstFolder;
   }
 
   /**
    * @var (obj upon instantiation) List of directory names
    */
-  public $directoryNames;
+  protected $directoryNames;
+  public function getDirectoryNames() {
+    return $this->directoryNames;
+  }
 
   /**
    * MigrateWebformFileDirectories constructor.
    *
    * Builds default directory names list upon each instantiation.
+   * @param $node_id -
+   * @return string (or object if node_id not set) files directory
    */
   public function __construct($node_id = 0) {
 
@@ -45,6 +48,7 @@ class MigrateWebformFileDirectories {
     if ($node_id > 0) {
       $query->condition('n.nid', $node_id);
     }
+    $query->groupBy('n.nid'); // Return only one result per nid, since they're all the same across nids.
     $query->orderBy('n.nid');
     $results = $query->execute()->fetchAll();
 
@@ -61,40 +65,42 @@ class MigrateWebformFileDirectories {
   }
 
   /**
-   * @return string - The directory given the number of node IDs == 1
-   */
-  public function __toString() {
-    return (string) $this->singleDir;
-  }
-
-  /**
    * Return information about file in file_managed.fid for better directory structure
    * for webform submitted files.
    *
    * @param string $fid - file ID from either file_managed or file_usage DB tables
    * @return bool if FALSE, else object $result
    */
-  public function getInfoFromFid($uuid) {
+  public static function getFileInfoFromCustomMap($fid) {
     $query = Database::getConnection('default', 'default')
       ->select('file_managed', 'fm');
 
     // @TODO add uuid column to fu and fill it up on eoss-migrate
 
-    $query->innerJoin('file_usage', 'fu', 'fm.uuid = fu.uuid');
+    $query = Database::getConnection('default', 'default')
+      ->select('file_managed', 'fm');
+    $query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
     $query->innerJoin('webform_submissions', 'ws', 'fu.id = ws.sid');
     $query->innerJoin('node', 'n', 'ws.nid = n.nid');
     $query->fields('fm', array('fid', 'uri'))
-      ->fields('n', array('uuid'))
+      ->fields('n', array('nid', 'uuid'))
       ->isNotNull('ws.nid')
       ->condition('fm.uri', 'p%', 'LIKE')
       ->condition('fu.module', 'webform', 'LIKE')
-      ->condition('fm.uuid', $uuid)
+      ->condition('fu.fid', $fid)
+      ->groupBy('n.nid')
       ->orderBy('ws.nid');
-    $results = $query->execute()->fetchAll();
+
     var_dump(__METHOD__);
+
+    $results = $query->execute()->fetchAll();
+
+    var_dump("----------------- fid");
+    var_dump($fid);
+    var_dump("----------------- results");
+    var_dump($results);
     var_dump("-----------------");
-    var_dump($uuid);
-    var_dump("-----------------");
+
     if (count($results) <> 1) {
       Migration::displayMessage(__METHOD__ . ' - Number of records for file ID ' . $fid . ' is not exactly 1.');
       return FALSE;

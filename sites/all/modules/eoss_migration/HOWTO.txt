@@ -104,7 +104,8 @@ and you need the billing info for the user profile).
     - Flow: currentMigration runs before otherMigration. When currentMigration comes to the fieldMapping step,
      it can temporarily jump to otherMigration via a chained createStub call.
 
-     This runs for one iteration and ONLY creates a database stub (as manually defined -> ex. new stdClass, $foo->destid = bar, etc.).
+     This runs for one iteration and ONLY creates a database stub (as manually defined -> ex. new stdClass,
+     $foo->destid = bar, etc.).
      It then immediately jumps back to currentMigration (with return $foo->destid value) to continue its
      iteration in currentMigration. The created stub that will be
 

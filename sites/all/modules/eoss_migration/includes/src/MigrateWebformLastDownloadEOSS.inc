@@ -23,7 +23,7 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
    */
   protected $customMappings = '';
 
-  public function getCustomMappings() {
+  public function getFileInfoFromCustomMaps() {
     return $this->customMappings;
   }
 

@@ -71,7 +71,6 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
-//        MigrationBase::displayMessage('[SKIP] - Webform does not exist for submission ID ' . $row->sid, 'status');
   }
 
   public function prepare($entity, $row) {
@@ -116,46 +115,49 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
    * @param $migration - Object that has migration data
    * @param $ids - new ID to inject
    */
-  public function createStub($migration, $id) {
+  public function createStub($migration, $fid) {
 
     $migration = Migration::currentMigration();
 
-    MigrationBase::displayMessage(__METHOD__ . ' -FU- ' . var_dump($id), 'status');
-    MigrationBase::displayMessage('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU+++++++++++', 'status');
-    //MigrationBase::displayMessage(__METHOD__ . ' -AA- ' . var_dump($migration), 'status');
+    var_dump(__METHOD__);
+    var_dump("-----------------");
+    var_dump($fid);
+    var_dump("-----------------");
 
-    if (empty($id)) {
-      MigrationBase::displayMessage('FFFFFFFFFFFFFFuuuuuuuuuuuuuuuuuuuuuuu - FALSE id -', 'status');
+    if (empty($fid)) {
+      MigrationBase::displayMessage('---------------- [SKIP] No fid value. file_usage createStub skipped. -', MIGRATION::MESSAGE_ERROR);
       return FALSE;
     }
 
     // Create file_usage stub
     $fu = new stdClass();
-    $fu->fid = '';
-    $fu->id = ''; // New submission ID -- either pass this in with $ids, or run a custom query here with source $fid?
+    $fu->fid = $fid;
+    $fu->id = ''; // New submission ID -- either run a custom query here with source $fid, or update on file_usage run
     $fu->status = 1;
     $fu->module = 'webform';
     $fu->type = 'submission';
 
-    $dest_id = db_insert('file_usage', 'fu')
-      ->fields('fu', array(
-        'fid' => '',
-        'id' => '',
-        'status' => 1,
-        'module' => 'webform',
-        'type' => 'submission',
+    // Create or update if exists already
+    $dest_id = db_merge('file_usage')
+      ->key(array(
+        'fid' => $fu->fid,
+      ))
+      ->fields(array(
+        'fid' => $fu->fid,
+        'id' => $fu->id,
+        'status' => $fu->status,
+        'module' => $fu->module,
+        'type' => $fu->type,
       ))
       ->execute();
 
     if ($dest_id) {
-      MigrationBase::displayMessage(__METHOD__ . ' -- Record ' . var_dump($fu->fid) . ' written to file_usage.', 'status');
-
-      // @TODO file moving logic??
-
-      return $fu->fid;
+      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid '
+        . var_dump($fu->fid) . ' updated/inserted to file_usage.', MIGRATION::MESSAGE_INFORMATIONAL);
+      return $fu;
     }
     else {
-      MigrationBase::displayMessage(__METHOD__ . ' -- No file_usage record written.', 'status');
+      MigrationBase::displayMessage(__METHOD__ . ' -- No file_usage record written.', MIGRATION::MESSAGE_ERROR);
       return FALSE;
     }
   }

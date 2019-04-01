@@ -20,26 +20,25 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
    */
   public function __construct($table_name) {
     parent::__construct($table_name);
-
-    $this->fileInfo = new MigrateWebformFileDirectories();
   }
 
   public function complete($entity, stdClass $source_row) {
     parent::complete($entity, $source_row);
 
-    // Move files from eoss-migrate (local) to eoss-forms (local)
     $migration = Migration::currentMigration();
 
+    // #4 - Move files from eoss-migrate (local) to eoss-forms (local)
+
     // Set up directory names
-    $this->srcFileURI = $this->fileInfo->getSrcFolder() . $source_row->filename;
+    $this->srcFileURI = MigrateWebformFileDirectories::getSrcFolder() . $source_row->filename;
 
     // @TODO - Get single node directory inserted right V here.
 
     var_dump(__METHOD__);
     var_dump($entity);
 
-    $file_info = $this->fileInfo->getInfoFromFid($entity->uuid);
-    $this->dstFileURI = $this->fileInfo->getDstFolder() . $file_info->uuid
+    $file_info = MigrateWebformFileDirectories::getFileInfoFromCustomMap($entity->fid);
+    $this->dstFileURI = MigrateWebformFileDirectories::getDstFolder() . $file_info->uuid
       . '/' . $entity->filename;
 
     // DEBUG
@@ -55,15 +54,15 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
       touch($this->srcFileURI, $source_row->timestamp); // reset timestamp
       // DEBUG
       $migration->saveMessage('[SUCCESS-I] Filename ' . $source_row->filename . ' moved to '
-        . $this->fileInfo->getDstFolder(), MigrationBase::MESSAGE_INFORMATIONAL);
+        . MigrateWebformFileDirectories::getDstFolder(), MigrationBase::MESSAGE_INFORMATIONAL);
     }
+
   }
 
 
   /**
    * Rolls back URIs from custom, new directory information to original directories,
    * based on mapping(?)
-   * @TODO - Test mapping in constructor changes.
    *
    * See parent::prepareRollback.
    * @param array $ids
@@ -74,16 +73,23 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
     // Move files back before rollBack (the ID will be lost before the file move can happen)
     $migration = Migration::currentMigration();
 
+    var_dump(__METHOD__);
+    var_dump("-----------------");
+    var_dump($ids);
+    var_dump("-----------------");
+
     // Manually repull row here before rollback of files
     if (isset($ids['fid'])) {
       $file_record = $this->getFileTimestamp($ids['fid']);
-      $file_info = $this->fileInfo->getInfoFromFid($ids['fid']);
+
+      // @TODO - Get getFileInfoFromCustomMap working
+      $file_info = MigrateWebformFileDirectories::getFileInfoFromCustomMap($ids['fid']);
       var_dump(__METHOD__);
       var_dump($file_info);
 
       foreach ($file_record as $record) {
-        $this->srcFileURI = $this->fileInfo->getSrcFolder() . $record->filename;
-        $this->dstFileURI = $this->fileInfo->getDstFolder() . $file_info->sss . '/' . $record->filename;
+//        $this->srcFileURI = MigrateWebformFileDirectories::getSrcFolder() . $record->filename;
+//        $this->dstFileURI = MigrateWebformFileDirectories::getDstFolder() . '/' . $file_info->uuid . '/' . $record->filename;
 
         // DEBUG
         $migration->saveMessage('srcFileURI:: ' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
@@ -94,11 +100,13 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
           // Then reset the modified date
           touch($this->srcFileURI, $record->timestamp); // reset timestamp
           $migration->displayMessage('[SUCCESS-R] File ' . $this->dstFileURI
-            . ' moved back to ' . $this->fileInfo->getSrcFolder(), MigrationBase::MESSAGE_INFORMATIONAL);
+            . ' moved back to ' . MigrateWebformFileDirectories::getSrcFolder(), MigrationBase::MESSAGE_INFORMATIONAL);
         }
       }
     }
   }
+
+  // @TODO - Implement postRollBack to delete empty webform files directories after completeRollbacks are all called
 
   /**
    * Gets timestamp of file before their migration
