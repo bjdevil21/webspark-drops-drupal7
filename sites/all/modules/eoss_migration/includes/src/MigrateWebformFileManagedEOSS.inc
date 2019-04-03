@@ -53,6 +53,10 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       ),
     );
 
+    $dst_schema = MigrateDestinationTable::getKeySchema($table_name);
+    $dst_schema[] = $mappable_key['uid'];
+
+
     $this->map = new MigrateSQLMap(
       $this->machineName,
       $mappable_key,
@@ -85,7 +89,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     parent::preImport();
 
     // Get preset directory names for all webforms
-    $fileInfo = new MigrateWebformFileDirectories;
+    $fileInfo = new MigrateWebformFilesLibrary;
     $fileInfo = $fileInfo->getDirectoryNames();
 
     // Get methods for messaging methods
@@ -108,6 +112,9 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         $extra = unserialize($result->extra);
         if (is_array($extra)) {
 
+          // #0) Get private/public setting
+          $fileInfo->private = $extra['private'];
+
       // #1) Update each webform file component - QA
           $extra['directory'] = $fileInfo->{$result->uuid};
           $extra = serialize($extra);
@@ -120,22 +127,37 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
             ->condition('cid', $result->cid)
             ->execute();
 
-      // #2... Create directories - __toString returns the single result - QA
-          // Get directory for single nid
-          $directory = new MigrateWebformFileDirectories($result->nid);
+      // #2... Create default directories for each file component's settings
+          // NOTE: Other directories will be created later if needed.
+          $directory = new MigrateWebformFilesLibrary($result->nid);
 
-          $dstFolder = $directory->getDstFolder();
+          $dstFolder = $directory->getDstAbsFileFolder();
+          $files_subdir = ($fileInfo->private == 1) ? MigrateWebformFilesLibrary::getPrivateFolder()
+              : MigrateWebformFilesLibrary::getPublicFolder();
+          $dstFolder .= $files_subdir;
+
           if (file_prepare_directory($dstFolder)) {
             $target = $dstFolder . '/' . $directory->singleDir;
-
+            // Create record of folder creation (or existence)
+            db_merge('migrate_map_custom_files_dirs')
+              ->key(array(
+                'directory' => $directory->singleDir,
+              ))
+              ->fields(array(
+                'directory_full' => $target,
+                'nid' => $result->nid,
+                'cid' => $result->cid,
+              ))
+              ->execute();
+            // Make new directory if doesn't exist
             if (!file_exists($target) && !is_dir($target)) {
               drupal_mkdir($target);
-              $migration->saveMessage('Directory ' . $target . ' created.',
+              MigrationBase::displayMessage('Directory ' . $target . ' created.',
                 MigrationBase::MESSAGE_INFORMATIONAL);
             }
             else {
-              $migration->saveMessage('Directory ' . $target . ' already exists. Skipping.',
-                MigrationBase::MESSAGE_NOTICE);
+              MigrationBase::displayMessage('Directory ' . $target . ' already exists. Skipping.',
+                MigrationBase::MESSAGE_INFORMATIONAL);
             }
           }
           else {
@@ -158,6 +180,20 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
+    // Get sid from old DB + new DB mappings...
+    $query = Database::getConnection('default', $this->sourceConnection)
+      ->select('file_usage', 'fu')
+      ->fields('fu', array('id'))
+      ->condition('fu.fid', $row->fid);
+    $sid_old = $query->execute()->fetchField();
+    $query = Database::getConnection('default')
+      ->select('migrate_map_migratewebformsubmissioneoss', 'mm')
+      ->fields('mm', array('destid1'))
+      ->condition('mm.sourceid1', $sid_old);
+    $sid = $query->execute()->fetchField();
+
+    variable_set('eoss_migration_current_submission_id', $sid);
+
     // Grab latest AUTO_INCREMENT data for fid update
     $query = Database::getConnection('default', 'informationSchema')
       ->select('tables', 't')
@@ -188,54 +224,26 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     $query->addExpression('AUTO_INCREMENT');
     $fid = $query->execute()->fetchField();
 
-    var_dump(__METHOD__);
-    var_dump("----------------- AUTO_INCREMENT fid");
-    var_dump($fid);
-    var_dump("-----------------");
-
-
-    if (is_int($fid)) {
+    if (!empty($fid)) {
       $entity->fid = $fid;
 
-      // Then... @TODO - #3 complete will update each fm.uri
+      // Then... 3) Update each file_managed uri in $entity
+      $nid_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($row->fid, 'nid'); // src fid => dst nid
+      $uri_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($row->fid, 'src_uri'); // src fid => src URI
 
-      var_dump(__METHOD__);
-      var_dump("----------------- row");
-      var_dump($row);
-      var_dump("-----------------");
-      var_dump(__METHOD__);
-      var_dump("----------------- entity");
-      var_dump($entity);
+      if ($uri_result && $nid_result) { // Update the URI with new directory information
+        $directory = new MigrateWebformFilesLibrary($nid_result->nid);
+        $src_files_base = (MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, 'src'));
+        $dst_files_base = (MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, 'dst'));
 
-      $result = MigrateWebformFileDirectories::getFileInfoFromCustomMap($entity->fid);
-
-      var_dump("----------------- result");
-      var_dump($result);
-      var_dump("-----------------");
-
-      if ($result) { // Update the URI with new directory information
-        $directory = new MigrateWebformFileDirectories($result->nid);
-
-        MigrationBase::displayMessage('fm_uri::before -- ' . $result->uri, MigrationBase::MESSAGE_INFORMATIONAL);
-        MigrationBase::displayMessage('newDirectory -- ' . $directory, MigrationBase::MESSAGE_INFORMATIONAL);
-        $fm_uri = preg_replace('|^(p\w{5,6})://webform/(.+)$|', "$1://webform/$directory/$2", $result->uri);
-        // DEBUG --
-        MigrationBase::displayMessage('fm_uri::after -- ' . $fm_uri, MigrationBase::MESSAGE_INFORMATIONAL);
-
-        db_update('file_managed')
-          ->fields(array(
-            'uri' => $fm_uri,
-          ))
-          ->condition('fid', $row->fid)
-          ->execute();
+        $src_pattern = '|^(p\w{5,6})\://' . $src_files_base . '(.+)$|';
+        $dst_pattern = '$1://' . $dst_files_base . $directory->singleDir . '/$2';
+        $entity->uri = preg_replace($src_pattern, $dst_pattern, $uri_result->uri);
       }
-
     }
     else {
-      unset($entity->fid);
       $this->saveMessage('FID could not be determined by auto_increment check. File not going to move properly...', MIGRATION::MESSAGE_ERROR);
     }
-
   }
 
   /**

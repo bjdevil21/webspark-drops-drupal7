@@ -111,46 +111,46 @@ function eoss_webforms_followup_schema() {
       'machine_name_UNIQUE' => array('machine_name'),
     ),
   );
-  $schema['migrate_map_custom_uid'] = array(
-    'description' => 'User ID mapping for source and destination users. If user exists in destination, user the same user ID.',
+  $schema['migrate_map_custom_files_dirs'] = array(
+    'description' => 'List of all added files/webform subdirectories during migration.',
     'fields' => array(
-      'uid' => array(
-        'description' => 'New destination user ID.',
-        'type' => 'int',
+      'id' => array(
+        'description' => 'Simple, numerical ID.',
+        'type' => 'serial',
         'not null' => TRUE,
         'unsigned' => TRUE,
       ),
-      'src_uid' => array(
-        'description' => 'Source user ID. Same if already existed on destination.',
+      'nid' => array(
+        'description' => 'Webform node ID related to the directory.',
         'type' => 'int',
         'not null' => TRUE,
         'unsigned' => TRUE,
         'default' => 0,
       ),
-      'name' => array(
-        'description' => 'The Drupal name (usually the user ASURITE ID).',
-        'type' => 'varchar',
-        'length' => '32',
+      'cid' => array(
+        'description' => 'Webform component ID uploading to the directory.',
+        'type' => 'int',
         'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
       ),
-      'migration_class' => array(
-        'description' => 'The Migrate API class(es) that needs this data.',
+      'directory' => array(
+        'description' => 'New files directory (URI path)',
         'type' => 'varchar',
         'length' => '128',
         'not null' => TRUE,
       ),
-      'created' => array(
-        'description' => 'Timestamp for the creation time of this record.',
-        'type' => 'int',
+      'directory_full' => array(
+        'description' => 'New files directory (full/absolute path)',
+        'type' => 'varchar',
+        'length' => '255',
         'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0,
       ),
     ),
-    'primary key' => array('uid'),
+    'primary key' => array('id'),
     'unique keys' => array(
-      'name_UNIQUE' => array('name'),
-      'uid_UNIQUE' => array('uid'),
+      'directory_UNIQUE' => array('directory'),
+      'directory_full_UNIQUE' => array('directory_full'),
     ),
   );
 

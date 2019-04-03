@@ -113,45 +113,30 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
   public function createStub($migration, $fid) {
 
     $migration = Migration::currentMigration();
+    $sid = variable_get('eoss_migration_current_submission_id', 0);
 
-    $fid = array_pop($fid);
-
-    var_dump(__METHOD__);
-    var_dump("-----------------");
-    var_dump($fid);
-    var_dump("-----------------");
-
-    if (empty($fid)) {
-      MigrationBase::displayMessage('---------------- [SKIP] No fid value. file_usage createStub skipped. -', MIGRATION::MESSAGE_ERROR);
+    if (empty($fid) || empty($sid)) {
+      MigrationBase::displayMessage('[SKIP] No fid or sid value. file_usage createStub skipped. -', MIGRATION::MESSAGE_ERROR);
       return FALSE;
     }
 
     // Create file_usage stub
-    $fu = new stdClass();
-    $fu->fid = (int) $fid;
-    $fu->id = 0; // New submission ID -- either run a custom query here with source $fid, or update on file_usage run
-    $fu->count = 1;
-    $fu->module = 'webform';
-    $fu->type = 'submission';
-
+    $fu = array(
+      'fid' => (int) $fid[0],
+      'id' => (int) $sid, // hack insertion method
+      'module' => 'webform',
+      'type' => 'submission',
+      'count' => 1,
+    );
     // Create or update if exists already
-    $dest_id = db_merge('file_usage')
-      ->key(array(
-        'fid' => $fu->fid,
-      ))
-      ->fields(array(
-        'fid' => $fu->fid,
-        'module' => $fu->module,
-        'type' => $fu->type,
-        'id' => $fu->id,
-        'count' => $fu->count,
-      ))
+    $dest_id = db_insert('file_usage')
+      ->fields($fu)
       ->execute();
 
     if ($dest_id) {
-      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid '
-        . var_dump($fu->fid) . ' updated/inserted to file_usage.', MIGRATION::MESSAGE_INFORMATIONAL);
-      return $fu;
+      MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
+      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid ' . $fu['fid'] . ' updated/inserted to file_usage.', 'status');
+      return array($fu['fid']);
     }
     else {
       MigrationBase::displayMessage(__METHOD__ . ' -- No file_usage record written.', MIGRATION::MESSAGE_ERROR);
