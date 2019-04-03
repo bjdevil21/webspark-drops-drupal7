@@ -16,16 +16,11 @@ class MigrateWebformFilesLibrary {
   private static $publicFolder = "webform/";
 
   /**
-   * @return string
+   *
+   * @return string - Absolute file directory for OS (private or public)
    */
-  public static function getSrcAbsFileFolder(): string {
-    return self::$srcAbsFileFolder;
-  }
-  /**
-   * @return string
-   */
-  public static function getDstAbsFileFolder(): string {
-    return self::$dstAbsFileFolder;
+  public static function getAbsFileFolder($mig_side): string {
+    return ($mig_side == 'dst') ? self::$dstAbsFileFolder : self::$srcAbsFileFolder;
   }
   /**
    * @return string
@@ -47,7 +42,6 @@ class MigrateWebformFilesLibrary {
    * (Does not include the entire file path)
    */
   protected $directoryNames;
-
   public function getDirectoryNames() {
     return $this->directoryNames;
   }
@@ -99,8 +93,9 @@ class MigrateWebformFilesLibrary {
    */
   public static function getFileInfoFromCustomMap($fid, $data_type = 'nid') {
 
-    // Option 1 - Old FID ==> New NID (and ==> New UUID via extra modifier)
-    //// Part 1 - Old FID => Old NID
+    // Option 1: (depending on data_type)
+    //// nid: Old FID => New NID
+    //// n_uuid: Old FID => Old UUID (same as New UUID)
     if ($data_type == 'nid' || $data_type == 'n_uuid') {
       $data_point = ($data_type == 'nid') ? 'nid' : 'uuid';
       $query = Database::getConnection('default', 'eossMigrate')
@@ -125,15 +120,6 @@ class MigrateWebformFilesLibrary {
           ->condition('mn.src_nid', $results[0]->nid);
         $results = $query2->execute()->fetchAll();
       }
-    }
-    // Option 1 Extra modifier - new NID => New node UUID
-    // (ONLY for uuid)
-    if ($data_type == 'n_uuid') {
-      $query2Addition = Database::getConnection('default', 'default')
-        ->select('migrate_map_custom_nid', 'mn')
-        ->fields('mn', array('uuid'))
-        ->condition('mn.nid', $results[0]->nid);
-      $results = $query2Addition->execute()->fetchAll();
     }
 
     // Option 2 - Old FID => Old URI
@@ -165,7 +151,7 @@ class MigrateWebformFilesLibrary {
 
     // Process the results
     if (count($results) <> 1) {
-      Migration::displayMessage(__METHOD__ . ' - Number of records for source file ID ' . $fid . ' is not exactly 1.');
+      Migration::displayMessage(__METHOD__ . ' - Number of records for source file ID ' . $fid . ' is not SOMTHING like 1.');
       return FALSE;
     }
     else {
@@ -176,21 +162,19 @@ class MigrateWebformFilesLibrary {
   }
 
   /**
-   * Checks if URI was for a public or private file
-   * @param $uri
-   * @return string $prefix - Four different permutations of $uri base, based on
-   * 1) relative vs. absolute URI, and 2) private vs. public
+   * Get portion of file location in OS, based on URI
    *
+   * @param $uri - URI of file_managed DB entry
+   * @param (bool) $is_uri_base - If TRUE, always return publicFolder
+   *   (private vs. public managed in URI stream wrapper)
+   * @return (string) URI-determined portion of file location.
    */
-  public static function isUriPrivate($uri, $migration_side, $absolute = FALSE) {
-    if ($absolute) {
-      $prefix = ($migration_side == 'dst') ? self::$dstAbsFileFolder : self::$srcAbsFileFolder;
-    } else {
-      $prefix = '';
+  public static function isUriPrivate($uri, $for_uri = FALSE) {
+    if (!$for_uri) { // for inclusion in file path
+      return (preg_match('|^private://(.+)$|', $uri)) ? self::$privateFolder : self::$publicFolder;
     }
-    $webform_root = (preg_match('|^private://(.+)$|', $uri))
-      ? self::$privateFolder : self::$publicFolder;
-    return $prefix . $webform_root;
+    else { // for inclusion in the URI
+      return self::$publicFolder;
+    }
   }
-
 }

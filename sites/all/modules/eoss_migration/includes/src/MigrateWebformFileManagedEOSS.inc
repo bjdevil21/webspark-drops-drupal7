@@ -131,7 +131,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
           // NOTE: Other directories will be created later if needed.
           $directory = new MigrateWebformFilesLibrary($result->nid);
 
-          $dstFolder = $directory->getDstAbsFileFolder();
+          $dstFolder = $directory->getAbsFileFolder('dst');
           $files_subdir = ($fileInfo->private == 1) ? MigrateWebformFilesLibrary::getPrivateFolder()
               : MigrateWebformFilesLibrary::getPublicFolder();
           $dstFolder .= $files_subdir;
@@ -233,17 +233,22 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
       if ($uri_result && $nid_result) { // Update the URI with new directory information
         $directory = new MigrateWebformFilesLibrary($nid_result->nid);
-        $src_files_base = (MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, 'src'));
-        $dst_files_base = (MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, 'dst'));
+        // Same URI bases for now - won't stay that way if migration includes public -> private transition...
+        $src_uri_base = MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, TRUE);
+        $dst_uri_base = MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, TRUE);
 
-        $src_pattern = '|^(p\w{5,6})\://' . $src_files_base . '(.+)$|';
-        $dst_pattern = '$1://' . $dst_files_base . $directory->singleDir . '/$2';
+        $src_pattern = '|^(p\w{5,6})\://' . $src_uri_base . '(.+)$|';
+        $dst_pattern = '$1://' . $dst_uri_base . $directory->singleDir . '/$2';
         $entity->uri = preg_replace($src_pattern, $dst_pattern, $uri_result->uri);
+      }
+      else {
+        MigrationBase::saveMessage('[FAIL-Prepare] nid_result or uri_result not set.', MIGRATION::MESSAGE_ERROR);
       }
     }
     else {
-      $this->saveMessage('FID could not be determined by auto_increment check. File not going to move properly...', MIGRATION::MESSAGE_ERROR);
+      MigrationBase::saveMessage('[FAIL-Prepare] Failed auto_increment check.', MIGRATION::MESSAGE_ERROR);
     }
+    var_dump('stoppage');
   }
 
   /**
