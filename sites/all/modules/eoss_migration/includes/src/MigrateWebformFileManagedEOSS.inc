@@ -92,7 +92,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     $fileInfo = new MigrateWebformFilesLibrary;
     $fileInfo = $fileInfo->getDirectoryNames();
 
-    // Get methods for messaging methods
+    // Get object for messaging methods
     $migration = Migration::currentMigration();
 
     // Get webform UUIDs, NIDs, CIDs linked up by Features-generated machine name
@@ -177,7 +177,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
   public function prepareRow($row) {
     // Skip record validation
     if (parent::prepareRow($row) === FALSE) {
-      MigrationBase::saveMessage('[SKIP] - prepareRow parent skipped import.', MIGRATION::MESSAGE_ERROR);
+      MigrationBase::saveMessage('[SKIP] - prepareRow parent skipped import.', MIGRATION::MESSAGE_NOTICE);
       return FALSE;
     }
     // Get sid from old DB + new DB mappings...
@@ -246,9 +246,8 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       }
     }
     else {
-      MigrationBase::saveMessage('[FAIL-Prepare] Failed auto_increment check.', MIGRATION::MESSAGE_ERROR);
+      MigrationBase::saveMessage('[FAIL-Prepare] auto_increment select failed.', MIGRATION::MESSAGE_ERROR);
     }
-    //var_dump('stoppage');
   }
 
   /**

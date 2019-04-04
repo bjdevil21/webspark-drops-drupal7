@@ -867,6 +867,12 @@ function drush_migrate_audit($args = NULL) {
  * Roll back one specified migration
  */
 function drush_migrate_rollback($args = NULL) {
+
+  //// XHPROF START
+  tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
+  MigrationBase::displayMessage('INIT - ' . __FUNCTION__, 'status');
+  ////
+
   try {
     if (drush_get_option('notify', FALSE)) {
       // Capture non-informational output for mailing
@@ -968,6 +974,15 @@ function drush_migrate_rollback($args = NULL) {
   if (drush_get_option('notify')) {
     _drush_migrate_notify();
   }
+
+  //// XHPROF END
+  MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
+  file_put_contents(
+    sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid() . '.' . __FUNCTION__ . '-eoss-forms.xhprof',
+    serialize(tideways_xhprof_disable())
+  );
+  ////
+
 }
 
 /**
@@ -1188,6 +1203,12 @@ function drush_migrate_pre_migrate_import($args = NULL) {
  *  A comma delimited list of machine names, or the special name 'all'
  */
 function drush_migrate_import($args = NULL) {
+
+  //// XHPROF START
+  tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
+  MigrationBase::displayMessage('INIT - ' . __FUNCTION__, 'status');
+  ////
+
   $status = NULL;
 
   try {
@@ -1360,6 +1381,14 @@ function drush_migrate_import($args = NULL) {
   if (drush_get_option('notify')) {
     _drush_migrate_notify();
   }
+
+  //// XHPROF END
+  MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
+  file_put_contents(
+    sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid() . '.' . __FUNCTION__ . '-eoss-forms.xhprof',
+    serialize(tideways_xhprof_disable())
+  );
+  ////
 
   return $status;
 }
