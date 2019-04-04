@@ -66,7 +66,7 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
               'cid' => 0, // (default 0 will denote a custom entry)
             ))
             ->execute();
-          MigrationBase::displayMessage('[SUCCESS-I] - Directory ' . $dst_dir_base . ' created for '
+          MigrationBase::displayMessage('[SUCCESS-I] - New directory ' . $dst_dir_base . ' created for '
             . $entity->filename, 'status');
         }
       } else {
@@ -125,12 +125,12 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
         if (rename($this->dstFileURI, $this->srcFileURI)) {
           // Then reset the modified date
           touch($this->srcFileURI, $dst_fid_result->timestamp); // reset timestamp
-          $migration->saveMessage('[SUCCESS-R] Move file ' . $dst_fid_result->filename
-            . ' back to ' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
+          MigrationBase::displayMessage('[SUCCESS-R] Moved file ' . $dst_fid_result->filename
+            . ' back to ' . $this->srcFileURI, 'status');
         }
         else {
-          $migration->displayMessage('[FAIL-R] Could not move file ' . $dst_fid_result->filename
-            . ' back to ' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
+          MigrationBase::displayMessage('[FAIL-R] Could not move file ' . $dst_fid_result->filename
+            . ' back to ' . $this->srcFileURI, 'warning');
         }
         // Delete any attached file_usage stubs created.
         db_delete('file_usage')
@@ -138,8 +138,8 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
           ->execute();
       }
       else {
-        $migration->saveMessage('[FAIL-R] File ' . $dst_fid_result->filename
-          . ' does not exist at ' . $this->dstFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
+        MigrationBase::displayMessage('[FAIL-R] File ' . $dst_fid_result->filename
+          . ' does not exist at ' . $this->dstFileURI, 'error');
       }
     }
   }
