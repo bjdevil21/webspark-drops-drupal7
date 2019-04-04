@@ -70,7 +70,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       ->select('file_managed', 'fm');
     $fm_query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
     $fm_query->fields('fm', $this->getFieldCols('all'))
-      ->condition('fm.fid', '46600', '>') // debugging condition
+     // ->condition('fm.fid', '44000', '>') // debugging condition
       ->condition('fu.module', 'webform', 'LIKE')
       ->condition('fu.type', 'submission', 'LIKE')
       ->orderBy('fm.fid', 'ASC');
@@ -172,12 +172,12 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
           . ' webform component could not be retrieved and updated.');
       }
     }
-
   }
 
   public function prepareRow($row) {
     // Skip record validation
     if (parent::prepareRow($row) === FALSE) {
+      MigrationBase::saveMessage('[SKIP] - prepareRow parent skipped import.', MIGRATION::MESSAGE_ERROR);
       return FALSE;
     }
     // Get sid from old DB + new DB mappings...

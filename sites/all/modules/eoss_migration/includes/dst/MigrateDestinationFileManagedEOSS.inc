@@ -50,7 +50,6 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
     $dst_dir_base = MigrateWebformFilesLibrary::getAbsFileFolder('dst') . $dst_uri_base . $directory->singleDir;
     $this->dstFileURI = $dst_dir_base . '/' . $entity->filename;
 
-
     if (file_exists($this->srcFileURI)) {
       // First check if directory exists. If not, create it before attempting file move
       if (!file_exists($dst_dir_base) && !is_dir($dst_dir_base)) {
@@ -67,13 +66,11 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
               'cid' => 0, // (default 0 will denote a custom entry)
             ))
             ->execute();
-          MigrationBase::displayMessage('[SUCCESS-I] - Directory ' . $dst_dir_base . ' created.', 'status');
-        } else {
-          MigrationBase::displayMessage('[SKIP-I] - Directory ' . $dst_dir_base . ' could not be created on the fly for file ' . $this->dstFileURI, 'warning');
+          MigrationBase::displayMessage('[SUCCESS-I] - Directory ' . $dst_dir_base . ' created for '
+            . $entity->filename, 'status');
         }
       } else {
-        //$migration->saveMessage('[FAIL-I] - Directory ' . $dst_dir_base . ' either already exists or cannot be written in.', MigrationBase::MESSAGE_ERROR);
-        MigrationBase::displayMessage('[SKIP-I] - Directory ' . $dst_dir_base . ' either already exists or cannot be written in.', 'status');
+        //MigrationBase::displayMessage('[SKIP-I] - Directory ' . $dst_dir_base . ' already exists or access is denied.', 'status');
       }
 
       // Now move the actual files
@@ -85,6 +82,10 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
       else {
         $migration->saveMessage('[FAIL-I] - Could not move filename ' . $source_row->filename . '.', MigrationBase::MESSAGE_ERROR);
       }
+    }
+    else {
+      $migration->saveMessage('[WARNING-I] Filename ' . $source_row->filename . ' does not exist at '
+        . $this->srcFileURI, MigrationBase::MESSAGE_WARNING);
     }
   }
 
@@ -104,31 +105,31 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
 
     if (is_int($fid)) {
       // Repull fm row here before rollback of files
-      $dst_fid_record = $this->getDstFileRecord($fid); // Will return one file_managed result object.
-      $dst_fid_record = $dst_fid_record[0]; // Take out of array and return only object
+      $dst_fid_result = $this->getDstFileRecord($fid); // Will return one file_managed result object.
+      $dst_fid_result = $dst_fid_result[0]; // Take out of array and return only object
       $src_fid_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($fid, 'src_fid'); // All old fm data
       $nid_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($src_fid_result->fid, 'nid'); // new n.nid
       $directory = new MigrateWebformFilesLibrary($nid_result->nid);
 
       // Use same URI bases for now - won't stay that way if migration includes public -> private transition...
       $src_uri_base = MigrateWebformFilesLibrary::isUriPrivate($src_fid_result->uri, FALSE);
-      $dst_uri_base = MigrateWebformFilesLibrary::isUriPrivate($dst_fid_record->uri, FALSE);
+      $dst_uri_base = MigrateWebformFilesLibrary::isUriPrivate($dst_fid_result->uri, FALSE);
 
       $this->srcFileURI = MigrateWebformFilesLibrary::getAbsFileFolder('src')
         . $src_uri_base . $src_fid_result->filename;
       $this->dstFileURI = MigrateWebformFilesLibrary::getAbsFileFolder('dst')
-        . $dst_uri_base . $directory->singleDir . '/' . $dst_fid_record->filename;
+        . $dst_uri_base . $directory->singleDir . '/' . $dst_fid_result->filename;
 
       // Move files back to src directories
       if (file_exists($this->dstFileURI)) {
         if (rename($this->dstFileURI, $this->srcFileURI)) {
           // Then reset the modified date
-          touch($this->srcFileURI, $dst_fid_record->timestamp); // reset timestamp
-          $migration->displayMessage('[SUCCESS-R] Move file ' . $dst_fid_record->filename
+          touch($this->srcFileURI, $dst_fid_result->timestamp); // reset timestamp
+          $migration->saveMessage('[SUCCESS-R] Move file ' . $dst_fid_result->filename
             . ' back to ' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
         }
         else {
-          $migration->displayMessage('[FAIL-R] Could not move file ' . $dst_fid_record->filename
+          $migration->displayMessage('[FAIL-R] Could not move file ' . $dst_fid_result->filename
             . ' back to ' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
         }
         // Delete any attached file_usage stubs created.
@@ -137,8 +138,8 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
           ->execute();
       }
       else {
-        $migration->displayMessage('[FAIL-R] File ' . $dst_fid_record->filename
-          . ' does not exist.' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
+        $migration->saveMessage('[FAIL-R] File ' . $dst_fid_result->filename
+          . ' does not exist at ' . $this->dstFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
       }
     }
   }

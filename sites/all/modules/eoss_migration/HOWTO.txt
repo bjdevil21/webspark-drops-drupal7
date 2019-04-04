@@ -191,6 +191,11 @@ Non-video notes:
   - In prepareRow(), use queueMessage().
   - In prepare(), use saveMessage().
   See https://www.drupal.org/node/1132582 for more information.
+ * Messages to be saved in DB table: use $migration->saveMessage(), $migration->queueMessage(), etc.
+   - Migration class-defined message CONSTANTS (ex. MigrationBase::MESSAGE_INFORMATIONAL) set error codes in the database.
+ * Messages to be output to screen: use MigrationBase::saveMessage, ::displayMessage, etc.
+   - Migration
+
 ##############
 
     ..then PROFIT!
