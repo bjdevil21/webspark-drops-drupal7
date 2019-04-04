@@ -58,23 +58,27 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
           // Create record of folder creation (or existence)
           db_merge('migrate_map_custom_files_dirs')
             ->key(array(
-              'directory' => $directory->singleDir,
+              'directory_full' => $dst_dir_base,
             ))
             ->fields(array(
-              'directory_full' => $dst_dir_base, // nid, cid = 0 (will note a custom entry)
+              'directory' => $directory->singleDir,
+              'directory_full' => $dst_dir_base,
+              'nid' => 0, // (default 0 will denote a custom entry)
+              'cid' => 0, // (default 0 will denote a custom entry)
             ))
             ->execute();
-          MigrationBase::displayMessage('[SUCCESS-I] - Directory ' . $dst_dir_base . ' created.', MigrationBase::MESSAGE_INFORMATIONAL);
+          MigrationBase::displayMessage('[SUCCESS-I] - Directory ' . $dst_dir_base . ' created.', 'status');
         } else {
-          MigrationBase::displayMessage('[SKIP-I] - Directory ' . $dst_dir_base . ' could not be created on the fly for file ' . $this->dstFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
+          MigrationBase::displayMessage('[SKIP-I] - Directory ' . $dst_dir_base . ' could not be created on the fly for file ' . $this->dstFileURI, 'warning');
         }
       } else {
-        $migration->saveMessage('[FAIL-I] - Directory ' . $dst_dir_base . ' either already exists or cannot be written in.', MigrationBase::MESSAGE_ERROR);
+        //$migration->saveMessage('[FAIL-I] - Directory ' . $dst_dir_base . ' either already exists or cannot be written in.', MigrationBase::MESSAGE_ERROR);
+        MigrationBase::displayMessage('[SKIP-I] - Directory ' . $dst_dir_base . ' either already exists or cannot be written in.', 'status');
       }
 
       // Now move the actual files
       if (rename($this->srcFileURI, $this->dstFileURI)) {
-        touch($this->srcFileURI, $source_row->timestamp); // reset timestamp
+        //touch($this->srcFileURI, $source_row->timestamp); // reset timestamp
         $migration->saveMessage('[SUCCESS-I] Moved filename ' . $source_row->filename . ' to '
             . $this->dstFileURI . $directory->singleDir, MigrationBase::MESSAGE_INFORMATIONAL);
       }
@@ -101,8 +105,10 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
     if (is_int($fid)) {
       // Repull fm row here before rollback of files
       $dst_fid_record = $this->getDstFileRecord($fid); // Will return one file_managed result object.
+      $dst_fid_record = $dst_fid_record[0]; // Take out of array and return only object
       $src_fid_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($fid, 'src_fid'); // All old fm data
-      $uuid_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($src_fid_result->fid, 'n_uuid'); // old n.uuid
+      $nid_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($src_fid_result->fid, 'nid'); // new n.nid
+      $directory = new MigrateWebformFilesLibrary($nid_result->nid);
 
       // Use same URI bases for now - won't stay that way if migration includes public -> private transition...
       $src_uri_base = MigrateWebformFilesLibrary::isUriPrivate($src_fid_result->uri, FALSE);
@@ -111,7 +117,7 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
       $this->srcFileURI = MigrateWebformFilesLibrary::getAbsFileFolder('src')
         . $src_uri_base . $src_fid_result->filename;
       $this->dstFileURI = MigrateWebformFilesLibrary::getAbsFileFolder('dst')
-        . $dst_uri_base . $uuid_result->uuid . '/' . $dst_fid_record->filename;
+        . $dst_uri_base . $directory->singleDir . '/' . $dst_fid_record->filename;
 
       // Move files back to src directories
       if (file_exists($this->dstFileURI)) {
@@ -129,6 +135,10 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
         db_delete('file_usage')
           ->condition('fid', $fid)
           ->execute();
+      }
+      else {
+        $migration->displayMessage('[FAIL-R] File ' . $dst_fid_record->filename
+          . ' does not exist.' . $this->srcFileURI, MigrationBase::MESSAGE_INFORMATIONAL);
       }
     }
   }
@@ -148,20 +158,19 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
       $result = file_scan_directory($dir->directory_full, '/^.+$/');
       if (count($result) == 0) {
         if (drupal_rmdir($dir->directory_full)) {
-          Migration::displayMessage('[SUCCESS-R] - Deleted directory ' . $dir->directory_full . '.', 'warning');
+          Migration::displayMessage('[SUCCESS-R] - Deleted directory ' . $dir->directory_full . '.', 'status');
         } else {
           Migration::displayMessage('[FAIL-R] - Could not delete ' . $dir->directory_full . ' directory.', 'warning');
         }
       }
       else {
-        Migration::displayMessage('[FAIL-R] Non-empty directory ' . $dir->directory_full . '. Skipping delete.', 'status');
+        Migration::displayMessage('[FAIL-R] Non-empty directory ' . $dir->directory_full . '. Skipping delete.', 'warning');
       }
       // Delete all files_dirs mapping entries
       db_delete('migrate_map_custom_files_dirs')
         ->condition('id', $dir->id)
         ->execute();
     }
-    var_dump('-----------debug----------');
   }
 
   /**
