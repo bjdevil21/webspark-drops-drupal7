@@ -616,4 +616,4 @@ if (isset($_SERVER['PANTHEON_ENVIRONMENT'])) {
 }
 
 // Increase memory for execution issues
-ini_set('memory_limit', '256M');
+ini_set('memory_limit', '768M');
