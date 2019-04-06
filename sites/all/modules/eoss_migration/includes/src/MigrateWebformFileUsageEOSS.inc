@@ -6,6 +6,12 @@
  * Date: 3/20/19
  * Time: 8:38 AM
  */
+
+/** UPDATE
+ * This class isn't really necessary since I'm building the file_usage stubs with all of the
+ * information that is necessary.
+ */
+
 class MigrateWebformFileUsageEOSS extends DrupalMigration  {
 
   /**
@@ -116,7 +122,6 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
     $sid = variable_get('eoss_migration_current_submission_id', 0);
 
     if (empty($fid) || empty($sid)) {
-      MigrationBase::displayMessage('[SKIP] No fid or sid value. file_usage createStub skipped. -', MIGRATION::MESSAGE_ERROR);
       return FALSE;
     }
 
@@ -134,12 +139,11 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
       ->execute();
 
     if ($dest_id) {
-      MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
-      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid ' . $fu['fid'] . ' updated/inserted to file_usage.', 'status');
+//      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid ' . $fu['fid'] . ' updated/inserted to file_usage.', 'status');
       return array($fu['fid']);
     }
     else {
-      MigrationBase::displayMessage(__METHOD__ . ' -- No file_usage record written.', MIGRATION::MESSAGE_ERROR);
+      $migration->queueMessage(__METHOD__ . ' --dest_id-- ' . $dest_id . ' -- No file_usage record written.', MIGRATION::MESSAGE_WARNING);
       return FALSE;
     }
   }

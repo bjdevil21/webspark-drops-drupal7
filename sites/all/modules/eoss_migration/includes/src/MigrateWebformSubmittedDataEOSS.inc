@@ -1,12 +1,55 @@
 <?php
 
 /**
- * Created by PhpStorm.
- * User: bryan
- * Date: 3/19/19
- * Time: 2:44 PM
+ * Migration class for the webform_submitted_data table.
  */
+
 class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
+
+  /**
+   * Mapped cid, nid values
+   * @var
+   */
+  protected $currentCid;
+  protected $currentNid;
+  protected $currentSid;
+
+  /**
+   * @return mixed
+   */
+  public function getCurrentCid() {
+    return $this->currentCid;
+  }
+  /**
+   * @param mixed $current_cid
+   */
+  public function setCurrentCid($currentCid) {
+    $this->currentCid = $currentCid;
+  }
+  /**
+   * @return mixed
+   */
+  public function getCurrentNid() {
+    return $this->currentNid;
+  }
+  /**
+   * @param mixed $currentNid
+   */
+  public function setCurrentNid($currentNid) {
+    $this->currentNid = $currentNid;
+  }
+  /**
+   * @return mixed
+   */
+  public function getCurrentSid() {
+    return $this->currentSid;
+  }
+  /**
+   * @param mixed $currentSid
+   */
+  public function setCurrentSid($currentSid) {
+    $this->currentSid = $currentSid;
+  }
 
   /**
    * MigrateWebformSubmittedDataEOSS constructor.
@@ -33,7 +76,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
       )
     );
 
-    $this->destination = new MigrateDestinationTable($table_name);
+    $this->destination = new MigrateDestinationWebformSubmittedDataEOSS($table_name);
 
     /**
      * Mappings
@@ -92,26 +135,32 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
       $this->machineName,
       $mappable_src_keys,
       MigrateDestinationTable::getKeySchema($table_name)
-//      $mappable_dst_keys
     );
 
   }
 
+  /**
+   * @return \SelectQueryInterface
+   */
   public function query() {
-
     $what_fields = $this->getFieldCols('all');
 
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
     $wsd_query->fields('wsd', $what_fields)
-      ->condition('wsd.sid', '331500', '>') // debugging condition - a dozen or so webform submissions
+//      ->condition('wsd.sid', '100000', '>') // debugging condition
+      ->condition('wsd.sid', '150000', '<') // debugging condition
+      ->condition('wsd.nid', '0', '>')
+      ->condition('wsd.cid', '0', '>')
       ->orderBy('wsd.sid', 'ASC');
     return $wsd_query;
   }
 
   /**
-   * Update cid to new cid.
-   * @param $row
+   * Drop empty/null/zero records if cid or nid.
+   * Populate skipped data in separate table.
+   *
+   * @param $row - src DB row
    * @return mixed
    */
   function prepareRow($row) {
@@ -119,17 +168,71 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
       return FALSE;
     }
 
-    // @TODO - Create stub for file_managed table below in prepareRow.
-/*
-    $source_fid = $row->fid;
+    // Skip if no src nid or src cid.
+    foreach ($row as $property => $value) {
+      if ($property == 'nid' || $property == 'cid' || $property == 'sid') {
+        if ($value == 0 || is_null($value) || empty($value)) {
+          $migration = Migration::currentMigration();
+          $migration->queueMessage('[SKIP] - ' . $property . ':::' . $value
+            . ' not set. Skipping.', Migration::MESSAGE_NOTICE);
+          return FALSE;
+        }
+      }
+    }
 
-    $destination_fid = $this->handleSourceMigration(array(
-      'MigrateWebformFileUsageEOSS',
-    ),
-      $source_fid);
+    // Skip if:
+    // * SRC cid was valid but is no longer in the webform (due to form edits).
+    // * SRC sid has no mapped destination
+    // * SRC sid == 0
 
-    return $row;
-*/
+    $this->setCurrentSid(0); // ...assume bad SID as default locally
+    $this->setCurrentCid(0);
+    $this->setCurrentNid(0);
+
+    // Check for existing nid + cid
+    $query = Database::getConnection()
+      ->select(_eoss_webforms_followup_migration_data('table_cid'), 'mc')
+      ->fields('mc', array('cid', 'nid'))
+      ->condition('mc.src_cid', $row->cid)
+      ->condition('mc.src_nid', $row->nid);
+    $result = $query->execute()->fetch();
+
+    // IF there's a valid nid + cid, check for valid sid
+    if ($result) {
+      $this->setCurrentCid($result->cid);
+      $this->setCurrentNid($result->nid);
+      $query2 = Database::getConnection('default')
+       ->select('migrate_map_migratewebformsubmissioneoss', 'mws')
+       ->fields('mws', array('destid1'))
+       ->condition('mws.sourceid1', $row->sid);
+      $result2 = $query2->execute()->fetchAll();
+      if (count($result2) === 1) {
+        foreach ($result2 as $result_sid) {
+          $this->setCurrentSid($result_sid->destid1);
+        }
+      }
+    }
+
+    // SKIP if no valid nid, cid, or sid
+    if (!$result || $this->currentSid == 0) {
+      $migration = Migration::currentMigration();
+      $message = "Source SID# " . $row->sid . ' saved in migrate_map_custom_orphaned_ws_data table.';
+      $migration->queueMessage($message, Migration::MESSAGE_WARNING);
+      // save the data in migrate_map_orphaned_submitted_data table for later perusal (just in case).
+      db_insert('migrate_map_custom_orphaned_ws_data')
+        ->fields(array(
+          'src_nid' => $row->nid,
+          'src_cid' => $row->cid,
+          'src_sid' => $row->sid,
+          'no' => $row->no,
+          'data' => $row->data,
+          'nid' => $this->currentNid,
+          'cid' => $this->currentCid,
+          'sid' => $this->currentSid,
+        ))
+        ->execute();
+      return FALSE;
+    }
   }
 
   /**
@@ -137,7 +240,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
    * @param $row
    */
   public function prepare($entity, $row) {
-    // Grab new cid and nid from matched (needs to be tested)
+    // Grab new cid and nid from custom migration table
     $query = Database::getConnection('default')
       ->select(_eoss_webforms_followup_migration_data('table_cid'), 'mc')
       ->fields('mc', array('cid', 'nid'))
@@ -149,7 +252,6 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
   }
 
   /**
-   *
    * @param string $cols
    * - 'simpleOnly' - only returns fields that are Simple mapped (no keys)
    * - 'all' - returns all fields
@@ -168,4 +270,5 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
       return $new;
     }
   }
+
 }

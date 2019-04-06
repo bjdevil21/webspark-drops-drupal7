@@ -70,7 +70,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       ->select('file_managed', 'fm');
     $fm_query->innerJoin('file_usage', 'fu', 'fm.fid = fu.fid');
     $fm_query->fields('fm', $this->getFieldCols('all'))
-     // ->condition('fm.fid', '44000', '>') // debugging condition
+//      ->condition('fm.fid', '46550', '>') // debugging condition
       ->condition('fu.module', 'webform', 'LIKE')
       ->condition('fu.type', 'submission', 'LIKE')
       ->orderBy('fm.fid', 'ASC');
@@ -175,11 +175,15 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
   }
 
   public function prepareRow($row) {
+
     // Skip record validation
     if (parent::prepareRow($row) === FALSE) {
       MigrationBase::saveMessage('[SKIP] - prepareRow parent skipped import.', MIGRATION::MESSAGE_NOTICE);
       return FALSE;
     }
+
+    $migration = Migration::currentMigration();
+
     // Get sid from old DB + new DB mappings...
     $query = Database::getConnection('default', $this->sourceConnection)
       ->select('file_usage', 'fu')
@@ -192,18 +196,25 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
       ->condition('mm.sourceid1', $sid_old);
     $sid = $query->execute()->fetchField();
 
-    variable_set('eoss_migration_current_submission_id', $sid);
+    // Skip if there's no migrated submission ID in dst site
+    if (!$sid) {
+      $migration->queueMessage('[SKIP] No new ws.sid set for old fid ID ' . $row->fid, MIGRATION::MESSAGE_NOTICE);
+      return FALSE;
+    }
+    else { // Make file_managed entry + file_usage stub
+      variable_set('eoss_migration_current_submission_id', $sid);
 
-    // Grab latest AUTO_INCREMENT data for fid update
-    $query = Database::getConnection('default', 'informationSchema')
-      ->select('tables', 't')
-      ->condition('t.table_schema', 'eoss-forms', 'LIKE')
-      ->condition('t.table_name', 'file_managed', 'LIKE');
-    $query->addExpression('AUTO_INCREMENT');
-    $fid = $query->execute()->fetchField();
+      // Grab latest AUTO_INCREMENT data for fid update
+      $query = Database::getConnection('default', 'informationSchema')
+        ->select('tables', 't')
+        ->condition('t.table_schema', 'eoss-forms', 'LIKE')
+        ->condition('t.table_name', 'file_managed', 'LIKE');
+      $query->addExpression('AUTO_INCREMENT');
+      $fid = $query->execute()->fetchField();
 
-    // CREATE STUB NOW...
-    $fu_row = $this->handleSourceMigration(array('MigrateWebformFileUsageEOSS'), $fid);
+      // CREATE STUB NOW...
+      $fu_row = $this->handleSourceMigration(array('MigrateWebformFileUsageEOSS'), $fid);
+    }
 
   }
 

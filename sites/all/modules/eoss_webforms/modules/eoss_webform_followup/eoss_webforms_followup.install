@@ -153,6 +153,75 @@ function eoss_webforms_followup_schema() {
     ),
   );
 
+  $schema['migrate_map_orphaned_ws_data'] = array(
+    'description' => 'Orphaned submission data for possible later reference. Includes src fields for future mapping.',
+    'fields' => array(
+      'src_nid' => array(
+        'description' => 'The SRC node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'nid' => array(
+        'description' => 'The DST node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'src_sid' => array(
+        'description' => 'The SRC unique identifier for this submission.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'sid' => array(
+        'description' => 'The DST unique identifier for this submission.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'src_cid' => array(
+        'description' => 'The SRC identifier for this component within this node, starts at 0 for each node.',
+        'type' => 'int',
+        'size' => 'small',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cid' => array(
+        'description' => 'The DST identifier for this component within this node. Likely ZERO if here.',
+        'type' => 'int',
+        'size' => 'small',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'no' => array( // No need for duplicate column, since this is the same data.
+        'description' => 'Usually this value is 0, but if a field has multiple values (such as a time or date), it may require multiple rows in the database.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'data' => array( // No need for duplicate column, since this is the same data.
+        'description' => 'The submitted value of this field, may be serialized for some components.',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('src_nid', 'src_sid', 'src_cid', 'no', 'sid'),
+    'indexes' => array(
+      'nid' => array('src_nid'),
+      'sid_nid' => array('src_sid', 'src_nid'),
+      'sid' => array('sid'),
+    ),
+  );
+
   return $schema;
 }
 

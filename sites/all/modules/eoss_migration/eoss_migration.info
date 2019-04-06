@@ -33,6 +33,7 @@ files[] = includes/src/MigrateWebformFileUsageEOSS.inc
 
 ; Submitted data records (webform_submitted_data)
 files[] = includes/src/MigrateWebformSubmittedDataEOSS.inc
+files[] = includes/dst/MigrateDestinationWebformSubmittedDataEOSS.inc
 
 ; Last Download records
 files[] = includes/src/MigrateWebformLastDownloadEOSS.inc

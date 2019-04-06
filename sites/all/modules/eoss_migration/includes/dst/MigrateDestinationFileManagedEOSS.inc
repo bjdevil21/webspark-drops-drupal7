@@ -131,8 +131,7 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
         if (rename($this->dstFileURI, $this->srcFileURI)) {
           // Then reset the modified date
           touch($this->srcFileURI, $dst_fid_result->timestamp); // reset timestamp
-          MigrationBase::displayMessage('[SUCCESS-R] Moved file ' . $dst_fid_result->filename
-            . ' back to ' . $this->srcFileURI, 'status');
+//          MigrationBase::displayMessage('[SUCCESS-R] Moved file ' . $dst_fid_result->filename . ' back to ' . $this->srcFileURI, 'status');
         }
         else {
           MigrationBase::displayMessage('[FAIL-R] Could not move file ' . $dst_fid_result->filename
@@ -206,7 +205,7 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
    * @return bool
    */
   private function getRealFileName($uri, $filename) {
-    $real = preg_match('|^.+\/([^\/]+?)$|', '$1', $uri);
+    $real = preg_replace('|^.+\/([^\/]+?)$|', "$1", $uri);
     return ($real !== $filename) ? $real : $filename;
   }
 }
