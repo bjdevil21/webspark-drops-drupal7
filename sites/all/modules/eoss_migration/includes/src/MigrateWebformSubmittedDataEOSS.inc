@@ -148,8 +148,8 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
     $wsd_query->fields('wsd', $what_fields)
-      ->condition('wsd.sid', '330500', '>') // debugging condition
-//      ->condition('wsd.sid', '150000', '<') // debugging condition
+//      ->condition('wsd.sid', '331247', '>') // debugging condition
+//      ->condition('wsd.sid', '331275', '<') // debugging condition
       ->condition('wsd.nid', '0', '>')
       ->condition('wsd.cid', '0', '>')
       ->orderBy('wsd.sid', 'ASC');
@@ -249,6 +249,37 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $result = $query->execute()->fetch();
     $entity->cid = $result->cid;
     $entity->nid = $result->nid;
+
+    // Transform file IDs in 'data' column via file_managed mapping
+    if (preg_match('|^\s*?\d{2,6}\s*?$|', $row->data)) { // lowest fid on eossMigrate > 20
+      $type = Database::getConnection()
+        ->select('webform_component', 'wc')
+        ->fields('wc', array('type'))
+        ->condition('wc.cid', $entity->cid)
+        ->condition('wc.nid', $entity->nid)
+        ->execute()->fetchField();
+      if ($type == 'file') {
+        $query = Database::getConnection()
+          ->select('migrate_map_migratewebformfilemanagedeoss', 'mfm')
+          ->fields('mfm', array('destid1'))
+          ->condition('mfm.sourceid1', trim($row->data));
+        $results = $query->execute()->fetchAll();
+        if (count($results) == 1) {
+          foreach ($results as $result) {
+            $entity->data = $result->destid1;
+          }
+        }
+        else {
+          MigrationBase::displayMessage('The wsd.data value ' . $entity->data
+            . ' has no matching source fid in the file_managed mapping table.', 'warning');
+        }
+      } else {
+        // Not a 'file' webform component
+      }
+    } else {
+      // Not a number
+    }
+    // @TODO - Do select components need any transformation?
   }
 
   /**

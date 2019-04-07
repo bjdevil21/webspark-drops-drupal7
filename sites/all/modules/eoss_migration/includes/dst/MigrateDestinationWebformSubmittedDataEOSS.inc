@@ -13,7 +13,7 @@ class MigrateDestinationWebformSubmittedDataEOSS extends MigrateDestinationTable
     if ($query2) {
       db_delete('migrate_map_custom_orphaned_ws_data')
         ->execute();
-      $migration->saveMessage('All orphaned data deleted from migrate_map_custom_orphaned_ws_data table.',
+      MigrationBase::displayMessage('All orphaned data deleted from migrate_map_custom_orphaned_ws_data table.',
         'status');
     }
     else {

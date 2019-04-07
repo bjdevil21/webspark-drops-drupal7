@@ -869,8 +869,8 @@ function drush_migrate_audit($args = NULL) {
 function drush_migrate_rollback($args = NULL) {
 
   //// XHPROF START
-  tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
-  MigrationBase::displayMessage('INIT - ' . __FUNCTION__, 'status');
+//  tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
+//  MigrationBase::displayMessage('INIT - ' . __FUNCTION__, 'status');
   ////
 
   try {
@@ -976,11 +976,11 @@ function drush_migrate_rollback($args = NULL) {
   }
 
   //// XHPROF END
-  MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
-  file_put_contents(
-    sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid() . '.' . __FUNCTION__ . '-eoss-forms.xhprof',
-    serialize(tideways_xhprof_disable())
-  );
+//  MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
+//  file_put_contents(
+//    sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid() . '.' . __FUNCTION__ . '-eoss-forms.xhprof',
+//    serialize(tideways_xhprof_disable())
+//  );
   ////
 
 }
@@ -1205,8 +1205,8 @@ function drush_migrate_pre_migrate_import($args = NULL) {
 function drush_migrate_import($args = NULL) {
 
   //// XHPROF START
-  tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
-  MigrationBase::displayMessage('INIT - ' . __FUNCTION__, 'status');
+//  tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
+//  MigrationBase::displayMessage('INIT - ' . __FUNCTION__, 'status');
   ////
 
   $status = NULL;
@@ -1383,11 +1383,11 @@ function drush_migrate_import($args = NULL) {
   }
 
   //// XHPROF END
-  MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
-  file_put_contents(
-    sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid() . '.' . __FUNCTION__ . '-eoss-forms.xhprof',
-    serialize(tideways_xhprof_disable())
-  );
+//  MigrationBase::displayMessage('EXIT - ' . __FUNCTION__, 'status');
+//  file_put_contents(
+//    sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid() . '.' . __FUNCTION__ . '-eoss-forms.xhprof',
+//    serialize(tideways_xhprof_disable())
+//  );
   ////
 
   return $status;
