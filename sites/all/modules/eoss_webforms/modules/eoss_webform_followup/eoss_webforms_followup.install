@@ -292,10 +292,10 @@ function eoss_webforms_followup_install() {
   $results = $src_query->execute()->fetchAll();
 
   foreach ($results as $result) {
-    // More data cleanup
-    _eoss_webforms_followup_cid_import_pre_insert($result);
+    // Major data cleanup related to Features bugs, duplicate component machine names, etc.
+    $result = _eoss_webforms_followup_cid_import_pre_insert($result);
 
-    // Prep work: Get destination NID for insertion
+      // Prep work: Get destination NID for insertion
     $subquery = db_select($nid_table, 'm')
       ->fields('m', array('nid'))
       ->condition('m.src_nid', $result->nid);

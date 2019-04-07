@@ -148,8 +148,8 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
     $wsd_query = Database::getConnection('default', $this->sourceConnection)
       ->select('webform_submitted_data', 'wsd');
     $wsd_query->fields('wsd', $what_fields)
-//      ->condition('wsd.sid', '100000', '>') // debugging condition
-      ->condition('wsd.sid', '150000', '<') // debugging condition
+      ->condition('wsd.sid', '330500', '>') // debugging condition
+//      ->condition('wsd.sid', '150000', '<') // debugging condition
       ->condition('wsd.nid', '0', '>')
       ->condition('wsd.cid', '0', '>')
       ->orderBy('wsd.sid', 'ASC');
@@ -157,7 +157,7 @@ class MigrateWebformSubmittedDataEOSS extends DrupalMigration {
   }
 
   /**
-   * Drop empty/null/zero records if cid or nid.
+   * Drop records if cid or nid empty/null/zero.
    * Populate skipped data in separate table.
    *
    * @param $row - src DB row

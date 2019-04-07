@@ -29,9 +29,6 @@ function _eoss_webforms_followup_cid_import_pre_insert($result) {
   /* Update feature keys in eoss-migrate that didn't migrate due to bad/duplicate machine names
   This was mostly the Contact Us forms. */
 
-  // Did migrate but possibly incorrectly
-  // Didn't migrate right at all.
-
   $names = array(
     'contact_us-email' => array(
       'form_key' => 'email',
@@ -175,9 +172,7 @@ function _eoss_webforms_followup_cid_import_pre_insert($result) {
       'form_key' => 'preferred_method_of_contact',
       'machine_name' => 'contact_us_students_families-preferred_method_of_contact',
     ),
-
     // This key hit a sweet spot of bugginess at 129 characters long.
-
     'eoss_marketing_request_form-how_are_you_going_to_measure_success_what_is_your_benchmark_for_success_select_all_that_apply_digital' => array(
       'form_key' => 'what_is_benchmark_to_measure_success_select_all_that_apply_digital',
       'machine_name' => 'eoss_marketing_request_form-what_is_benchmark_to_measure_success_select_all_that_apply_digital',
@@ -188,11 +183,19 @@ function _eoss_webforms_followup_cid_import_pre_insert($result) {
     if ($result->cid == 14) {
       $result->form_key = 'email_address_4';
       $result->machine_name = 'web_development_request-email_address_4';
+      $result->cid = 12; // This won't be available because email_address_4 does not exist to map
     }
     if ($result->cid == 13) {
       $result->form_key = 'name_6';
       $result->machine_name = 'web_development_request-name_6';
+      $result->cid = 10; // This should be mapping, but just to be safe...
     }
+  }
+
+  // Change web_development_request-name_2_2 to web_development_request-name_2
+  // (matches Feature-defined name now)
+  if ($result->machine_name == 'web_development_request-name_2_2') {
+    $result->machine_name = 'web_development_request-name_2';
   }
 
   foreach($names as $src => $dst) {
