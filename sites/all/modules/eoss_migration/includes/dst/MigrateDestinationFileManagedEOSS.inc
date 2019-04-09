@@ -37,17 +37,19 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
 
     $migration = Migration::currentMigration();
 
-    // Set up SRC directory name
+    // Get SRC directory name
     $src_uri_base = MigrateWebformFilesLibrary::isUriPrivate($source_row->uri, FALSE);
 
-    // Get REAL filename
+    // Get REAL filename (in case of duplicate renaming by Drupal upon upload)
     $true_filename = $this->getRealFileName($source_row->uri, $source_row->filename);
 
-    $this->srcFileURI = MigrateWebformFilesLibrary::getAbsFileFolder('src')
-      . $src_uri_base . $true_filename;
+    $this->srcFileURI = MigrateWebformFilesLibrary::getAbsFileFolder('src') . $src_uri_base . $true_filename;
 
     // Set up DST directory name
-    $dst_uri_base = MigrateWebformFilesLibrary::isUriPrivate($entity->uri, FALSE);
+    $dst_uri_base = (MigrateWebformFileManagedEOSS::MIGRATE_FORCE_PRIVATE_FILES == 1)
+      ? "private/webform/"
+      : MigrateWebformFilesLibrary::isUriPrivate($entity->uri, FALSE);
+
     /// Convoluted path to new File URI
     $nid_result = MigrateWebformFilesLibrary::getFileInfoFromCustomMap($source_row->fid, 'nid');
     $directory = new MigrateWebformFilesLibrary($nid_result->nid, 'nid');
@@ -112,7 +114,9 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
 
       // Use same URI bases for now - won't stay that way if migration includes public -> private transition...
       $src_uri_base = MigrateWebformFilesLibrary::isUriPrivate($src_fid_result->uri, FALSE);
-      $dst_uri_base = MigrateWebformFilesLibrary::isUriPrivate($dst_fid_result->uri, FALSE);
+      $dst_uri_base = (MigrateWebformFileManagedEOSS::MIGRATE_FORCE_PRIVATE_FILES == 1)
+        ? 'private/webform/'
+        : MigrateWebformFilesLibrary::isUriPrivate($dst_fid_result->uri, FALSE);
 
       $true_filename = $this->getRealFileName($src_fid_result->uri, $src_fid_result->filename);
 

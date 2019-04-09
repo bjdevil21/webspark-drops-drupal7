@@ -9,11 +9,10 @@
 class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
   /**
-   * ADDITION: Set to TRUE to create public AND private file directories
-   * (alongside the default created directory) for future migration to all-private
-   * folders.
+   * ADDITION: Set to TRUE to force destination entries to private file directories
+   * for migration to all-private folders.
    */
-  const MIGRATE_CREATE_PRIVATE_DIRS = TRUE;
+  const MIGRATE_FORCE_PRIVATE_FILES = TRUE;
 
   /**
    * MigrateWebformFileManagedEOSS constructor.
@@ -120,7 +119,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         if (is_array($extra)) {
 
       // #0) Get private/public setting
-          $fileInfo->private = $extra['private'];
+          $fileInfo->private = (self::MIGRATE_FORCE_PRIVATE_FILES == 1) ? 1 : $extra['private'];
 
       // #1) Update each webform file component - QA
           $extra['directory'] = $fileInfo->{$result->uuid};
@@ -157,8 +156,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
               // OPTIONAL: Generate the private version of the directory as well?
               // When file_upload_security is run, this will allow for the
-              if (self::MIGRATE_CREATE_PRIVATE_DIRS == 1
-                && $fileInfo->private != 1) {
+              if (self::MIGRATE_FORCE_PRIVATE_FILES == 1) {
                 $this->createPrivateFolder($fileInfo, $dstFolder, $directory->singleDir);
               }
 
@@ -252,12 +250,19 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
       if ($uri_result && $nid_result) { // Update the URI with new directory information
         $directory = new MigrateWebformFilesLibrary($nid_result->nid);
-        // Same URI bases for now - won't stay that way if migration includes public -> private transition...
+
         $src_uri_base = MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, TRUE);
-        $dst_uri_base = MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, TRUE);
+        // Force all directory bases to private?
+        $dst_uri_base = (self::MIGRATE_FORCE_PRIVATE_FILES == 1)
+          ? "private/webform/"
+          : MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, TRUE);
 
         $src_pattern = '|^(p\w{5,6})\://' . $src_uri_base . '(.+)$|';
-        $dst_pattern = '$1://' . $dst_uri_base . $directory->singleDir . '/$2';
+        // Force all URIs to private?
+        $dst_pattern = (self::MIGRATE_FORCE_PRIVATE_FILES == 1)
+          ? 'private://' . $dst_uri_base . $directory->singleDir . '/$2'
+          : '$1://' . $dst_uri_base . $directory->singleDir . '/$2';
+
         $entity->uri = preg_replace($src_pattern, $dst_pattern, $uri_result->uri);
       }
       else {
