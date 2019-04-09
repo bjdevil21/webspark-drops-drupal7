@@ -26,7 +26,7 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
    * - Creates file_usage entries
    * - Moves file_managed referenced files from src -> dst, putting each file in
    *   a different folder.
-   * - New download folders are generated on the fly for new private directories, if needed.
+   * - New download folders are generated on the fly for new directories, if needed.
    *   (public folders generated in preImport call).
    *
    * @param $entity
@@ -58,18 +58,13 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
       // First check if directory exists. If not, create it before attempting file move
       if (!file_exists($dst_dir_base) && !is_dir($dst_dir_base)) {
         if (drupal_mkdir($dst_dir_base)) {
-          // Create record of folder creation (or existence)
-          db_merge('migrate_map_custom_files_dirs')
-            ->key(array(
-              'directory_full' => $dst_dir_base,
-            ))
-            ->fields(array(
-              'directory' => $directory->singleDir,
-              'directory_full' => $dst_dir_base,
-              'nid' => 0, // (default 0 will denote a custom entry)
-              'cid' => 0, // (default 0 will denote a custom entry)
-            ))
-            ->execute();
+          // Create record of folder creation (or existence).
+          // Zeroes will denote a newly created record here.
+          $result = new stdClass();
+          $result->nid = 0;
+          $result->cid = 0;
+          MigrateWebformFileManagedEOSS::createFolderRecord($result, $directory->singleDir, $dst_dir_base);
+
           MigrationBase::displayMessage('[SUCCESS-I] - New directory ' . $dst_dir_base . ' created for '
             . $true_filename, 'status');
         }
@@ -200,9 +195,11 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
   }
 
   /**
-   * Get dst file_managed record
-   * @param int $fid - Destination file ID
-   * @return bool
+   * Get actual file name from URI, just in case there was a duplicate file and an
+   * _\d was attached to the file name.
+   * @param string $uri - URI to parse for filename
+   * @param string $filename - Assumed filename from file_managed.filename record
+   * @return - Actual file name to be used for finding and moving files
    */
   private function getRealFileName($uri, $filename) {
     $real = preg_replace('|^.+\/([^\/]+?)$|', "$1", $uri);

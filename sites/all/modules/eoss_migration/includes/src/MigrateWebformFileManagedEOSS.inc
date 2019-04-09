@@ -9,6 +9,13 @@
 class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
   /**
+   * ADDITION: Set to TRUE to create public AND private file directories
+   * (alongside the default created directory) for future migration to all-private
+   * folders.
+   */
+  const MIGRATE_CREATE_PRIVATE_DIRS = TRUE;
+
+  /**
    * MigrateWebformFileManagedEOSS constructor.
    * @param array $arguments
    */
@@ -112,7 +119,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         $extra = unserialize($result->extra);
         if (is_array($extra)) {
 
-          // #0) Get private/public setting
+      // #0) Get private/public setting
           $fileInfo->private = $extra['private'];
 
       // #1) Update each webform file component - QA
@@ -127,8 +134,8 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
             ->condition('cid', $result->cid)
             ->execute();
 
-      // #2... Create default directories for each file component's settings
-          // NOTE: Other directories will be created later if needed.
+      // #2... Create default directories for each file component (only one per webform)
+      // NOTE: Other directories will be created later if needed.
           $directory = new MigrateWebformFilesLibrary($result->nid);
 
           $dstFolder = $directory->getAbsFileFolder('dst');
@@ -138,22 +145,23 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
           if (file_prepare_directory($dstFolder)) {
             $target = $dstFolder . '/' . $directory->singleDir;
-            // Create record of folder creation (or existence)
-            db_merge('migrate_map_custom_files_dirs')
-              ->key(array(
-                'directory' => $directory->singleDir,
-              ))
-              ->fields(array(
-                'directory_full' => $target,
-                'nid' => $result->nid,
-                'cid' => $result->cid,
-              ))
-              ->execute();
+
+            // Create record of folder creation (or existence) - existing at this point or not.
+            $this->createFolderRecord($result, $directory->singleDir, $target);
+
             // Make new directory if doesn't exist
             if (!file_exists($target) && !is_dir($target)) {
               drupal_mkdir($target);
               MigrationBase::displayMessage('Directory ' . $target . ' created.',
                 MigrationBase::MESSAGE_INFORMATIONAL);
+
+              // OPTIONAL: Generate the private version of the directory as well?
+              // When file_upload_security is run, this will allow for the
+              if (self::MIGRATE_CREATE_PRIVATE_DIRS == 1
+                && $fileInfo->private != 1) {
+                $this->createPrivateFolder($fileInfo, $dstFolder, $directory->singleDir);
+              }
+
             }
             else {
               MigrationBase::displayMessage('Directory ' . $target . ' already exists. Skipping.',
@@ -277,6 +285,54 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
     else {
       return $new;
     }
+  }
+
+  /**
+   * Create private files directory for webform component
+   */
+  private function createPrivateFolder($fileInfo,
+                                       string $dstFolder,
+                                       string $nid_directory) {
+
+    $files_subdir = MigrateWebformFilesLibrary::getPrivateFolder();
+    $dstFolder .= $files_subdir;
+    // Build entire directory name
+    $private_target = $dstFolder . $files_subdir . $nid_directory;
+
+    // Repeat code above (should've been modularized...)
+    // Make new directory if doesn't exist
+    if (!file_exists($private_target) && !is_dir($private_target)) {
+      drupal_mkdir($private_target);
+      MigrationBase::displayMessage('Complementary private directory ' . $private_target
+        . ' also created.', MigrationBase::MESSAGE_INFORMATIONAL);
+
+      //  $this->createPrivateFolder($fileInfo, $dstFolder, $directory->singleDir);
+    }
+    else {
+      MigrationBase::displayMessage('Complementary private directory ' . $private_target
+        . ' already exists. Skipping.', MigrationBase::MESSAGE_INFORMATIONAL);
+    }
+  }
+
+  /**
+   * Create DB record of folder creation (or existence) in migrate_map_custom_files_dirs
+   *
+   * @param $result
+   * @param $target
+   * @param $single_dir
+   */
+  public static function createFolderRecord($result, string $single_dir, string $target) {
+    db_merge('migrate_map_custom_files_dirs')
+      ->key(array(
+        'directory_full' => $target,
+      ))
+      ->fields(array(
+        'directory' => $single_dir,
+        'directory_full' => $target,
+        'nid' => $result->nid,
+        'cid' => $result->cid,
+      ))
+      ->execute();
   }
 
 }
