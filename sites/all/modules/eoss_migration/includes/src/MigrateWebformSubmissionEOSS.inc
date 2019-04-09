@@ -1,8 +1,14 @@
 <?php
 
 /**
- * Migrate EOSS webform submissions into eoss-forms
- * Run this after
+ * Migrate API source class for webform submissions
+ *
+ *
+ * DB tables are involved:
+ *
+ * - webform_submissions
+ * - migrate_map_custom_nid
+ *
  */
 class MigrateWebformSubmissionEOSS extends DrupalMigration {
 

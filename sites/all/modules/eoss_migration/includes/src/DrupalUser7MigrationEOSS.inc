@@ -1,8 +1,19 @@
 <?php
 /**
  * @file
- * Implementation of DrupalUser7Migration for EOSS.
+ * Implementation of
  * * Migrate d2d class extension for d7
+ */
+
+/**
+ * Migrate API source class for user entity migration
+ * Extends DrupalUser7Migration class (migrate_d2d module)
+ *
+ * DB tables are involved:
+ *
+ * - webform_submissions
+ * - users
+ * - users_roles
  */
 
 class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
@@ -68,7 +79,6 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
       ->orderBy('u.uid');
 
     return $query;
-
   }
 
   public function prepareRow($row) {

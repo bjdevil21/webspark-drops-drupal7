@@ -2,6 +2,17 @@
 
 /**
  * Migration class for the webform_submitted_data table.
+ *
+ * DB Tables:
+ * - webform_submitted_data
+ * - webform_component
+ * - migrate_map_migratewebformsubmissioneoss
+ * - migrate_map_migratewebformfilemanagedeoss
+ * - migrate_map_custom_nid
+ * - migrate_map_custom_cid
+ * - migrate_map_custom_orphaned_ws_data
+ * - migrate_map_custom_files_dirs
+ *
  */
 
 class MigrateWebformSubmittedDataEOSS extends DrupalMigration {

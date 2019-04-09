@@ -1,16 +1,24 @@
 <?php
 
 /**
- * Created by PhpStorm.
- * User: bryan
- * Date: 3/19/19
- * Time: 2:49 PM
+ * Migrate API source class
+ *
+ * DB tables
+ * - file_managed
+ * - file_usage (stubs)
+ *
+ * Manages the source side of the migration, including the query, preparing the source
+ * and the destination versions of the data BEFORE the import. (Altering may occur
+ * in the destination handler class).
+ *
  */
+
 class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
   /**
-   * ADDITION: Set to TRUE to force destination entries to private file directories
-   * for migration to all-private folders.
+   * Set below to TRUE to force destination entries to private file directories
+   * for migration to all-private folders. FALSE maintains the source directory
+   * stream wrapper (public or private).
    */
   const MIGRATE_FORCE_PRIVATE_FILES = TRUE;
 
@@ -120,8 +128,9 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
 
       // #0) Get private/public setting
           $fileInfo->private = (self::MIGRATE_FORCE_PRIVATE_FILES == 1) ? 1 : $extra['private'];
+          $extra['private'] = (self::MIGRATE_FORCE_PRIVATE_FILES == 1) ? 1 : $extra['private'];
 
-      // #1) Update each webform file component - QA
+          // #1) Update each webform file component - QA
           $extra['directory'] = $fileInfo->{$result->uuid};
           $extra = serialize($extra);
           Database::getConnection('default', 'default')

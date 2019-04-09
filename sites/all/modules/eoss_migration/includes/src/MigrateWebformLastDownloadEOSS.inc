@@ -1,11 +1,16 @@
 <?php
 
 /**
- * Created by PhpStorm.
- * User: bryan
- * Date: 3/21/19
- * Time: 5:37 AM
+ * Migrate API source class for last download data.
+ *
+ * DB tables:
+ *
+ * - webform_last_download
+ * - migrate_map_custom_nid
+ * - migrate_map_drupaluser7migrationeoss
+ *
  */
+
 class MigrateWebformLastDownloadEOSS extends DrupalMigration {
 
   protected $customMapTable = 'migrate_map_custom_nid';
@@ -19,7 +24,7 @@ class MigrateWebformLastDownloadEOSS extends DrupalMigration {
   }
 
   /**
-   * @var \stdClass|string
+   * @var
    */
   protected $customMappings = '';
 

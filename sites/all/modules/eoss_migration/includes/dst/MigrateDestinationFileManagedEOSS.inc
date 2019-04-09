@@ -1,7 +1,14 @@
 <?php
 
 /**
- * file_managed - Adds file handling of the actual files related to the file_managed records..
+ * Migrate API destination handler
+ *
+ * DB tables
+ * - file_managed
+ * - file_usage (stubs)
+ *
+ * Handling of the actual files related to the file_managed + file_usage DB tables.
+ *
  */
 class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
   /**
@@ -149,7 +156,7 @@ class MigrateDestinationFileManagedEOSS extends MigrateDestinationTable {
   }
 
   /**
-   * @TODO Implement postRollBack to delete empty webform files directories after completeRollbacks are all called
+   * Delete empty webform file directories after rollback is finished.
    */
   public function postRollback() {
     // Call up all the directories

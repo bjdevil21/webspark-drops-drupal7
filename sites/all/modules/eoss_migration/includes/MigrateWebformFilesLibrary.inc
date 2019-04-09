@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Creates directory information for file moves/migrations
+ * Library of functions related to some of the EOSS migration classes.
  */
 class MigrateWebformFilesLibrary {
 
@@ -14,6 +14,7 @@ class MigrateWebformFilesLibrary {
   private static $dstAbsFileFolder = DRUPAL_ROOT . '/sites/default/files/';
   private static $privateFolder = "private/webform/";
   private static $publicFolder = "webform/";
+  // @TODO Use variable_get('file_public_path'), etc. if possible
 
   /**
    *
@@ -34,8 +35,6 @@ class MigrateWebformFilesLibrary {
   public static function getPublicFolder(): string {
     return self::$publicFolder;
   }
-
-  // @TODO call variable_get('file_public_path'), etc.
 
   /**
    * @var (obj upon instantiation) List of Node UUID-based directory names

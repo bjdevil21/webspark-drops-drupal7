@@ -1,11 +1,18 @@
 <?php
 
 /**
- * Helper class for webform submission migration
+ * Helper Library
+ * List of DB columns to be added/removed from columns to be migrated, one
+ * method per migration source class.
  */
 
 class MigrateFieldsEOSS {
 
+  /**
+   * MigrateFieldsEOSS constructor.
+   *
+   * @return (array) default list of commonly used columns.
+   */
   public function __construct() {
     $this->commonFields = array(
       'uid' => t('The uid of the submitter'),
@@ -16,7 +23,7 @@ class MigrateFieldsEOSS {
 
   /**
    * @param string $what_columns
-   * @return array of webform_submission DB table columns
+   * @return (array) webform_submission DB table columns
    */
   public function whichWebformSubmissionCols($column_set = 'all') {
     // Used cols instead of fields to avoid method name overlapping.
@@ -41,7 +48,7 @@ class MigrateFieldsEOSS {
 
   /**
    * @param string $what_columns
-   * @return array of webform_submission DB table columns
+   * @return (array) webform_submitted_data DB table columns
    */
   public function whichWebformDataCols($column_set = 'all') {
     // Used cols instead of fields to avoid method name overlapping.
@@ -60,8 +67,8 @@ class MigrateFieldsEOSS {
   }
 
   /**
-   * @param string $what_columns
-   * @return array of webform_submission DB table columns
+   * @param string $column_set - Return all or just simple columns list.
+   * @return (array) file_managed DB table columns
    */
   public function whichFileManagedCols($column_set = 'all') {
     // Used cols instead of fields to avoid method name overlapping.
@@ -88,6 +95,28 @@ class MigrateFieldsEOSS {
     }
   }
 
+  /**
+   * @param string $column_set - Return all or just simple columns list.
+   * @return (array) webform_last_download DB table columns
+   */
+  public function whichWebformLastDownloadCols($column_set = 'all') {
+    $simple_cols = array (
+      'requested' => t('Timestamp of last download requested'),
+    );
+    if ($column_set == 'simpleOnly') {
+      return $simple_cols;
+    }
+    else {
+      return (array) array_merge($simple_cols, $this->commonFields);
+    }
+  }
+
+  /**
+   * Not currently being used.
+   *
+   * @param string $column_set - Return all or just simple columns list.
+   * @return (array) file_usage DB table columns
+   */
   public function whichFileUsageCols($column_set = 'all') {
     $simple_cols = array (
       'module' => t('Will be string webform'),
@@ -104,18 +133,6 @@ class MigrateFieldsEOSS {
       unset($this->commonFields['uid']);
       $this->commonFields['fid'] = t('The file ID');
       $this->commonFields['id'] = t('The webform submission ID');
-      return (array) array_merge($simple_cols, $this->commonFields);
-    }
-  }
-
-  public function whichWebformLastDownloadCols($column_set = 'all') {
-    $simple_cols = array (
-      'requested' => t('Timestamp of last download requested'),
-    );
-    if ($column_set == 'simpleOnly') {
-      return $simple_cols;
-    }
-    else {
       return (array) array_merge($simple_cols, $this->commonFields);
     }
   }

@@ -1,7 +1,13 @@
 <?php
 
 /**
- * Delete the orphaned data table data after completion of rollBack.
+ * Destination handler expansion (webform_submitted_data management)
+ *
+ * Deletes the orphaned data table data after completion of rollBack.
+ *
+ * DB tables:
+ * migrate_map_custom_orphaned_ws_data
+ *
  */
 class MigrateDestinationWebformSubmittedDataEOSS extends MigrateDestinationTable {
   public function postRollback() {

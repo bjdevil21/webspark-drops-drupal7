@@ -1,15 +1,9 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: bryan
- * Date: 3/20/19
- * Time: 8:38 AM
- */
-
 /** UPDATE
- * This class isn't really necessary since I'm building the file_usage stubs with all of the
- * information that is necessary.
+ * This class will never need to be called explicitly. Only the createStub method
+ * is being utilized (during the file_managed migration), and the resulting stubs
+ * have all of the data (meaning they're not really stubs at all).
  */
 
 class MigrateWebformFileUsageEOSS extends DrupalMigration  {

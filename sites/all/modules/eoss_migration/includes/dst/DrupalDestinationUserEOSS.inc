@@ -1,7 +1,14 @@
 <?php
 /**
-* We add support for UUIDs - just in case they're needed.
-*/
+ * Migrate API destination class for user entity migration
+ *
+ * Works on moving the user entities (vs. raw DB records, but the following
+ * DB tables are involved:
+ *
+ * - users
+ * - users_roles
+ *
+ */
 
 class DrupalDestinationUserEOSS extends DrupalDestinationUser {
   /**
