@@ -6,6 +6,7 @@
  * DB tables
  * - file_managed
  * - file_usage (stubs)
+ * - migrate_map_custom_files_dirs
  *
  * Manages the source side of the migration, including the query, preparing the source
  * and the destination versions of the data BEFORE the import. (Altering may occur
@@ -164,8 +165,8 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
                 MigrationBase::MESSAGE_INFORMATIONAL);
 
               // OPTIONAL: Generate the private version of the directory as well?
-              // When file_upload_security is run, this will allow for the
-              if (self::MIGRATE_FORCE_PRIVATE_FILES == 1) {
+              // Only run this check when the private directories aren't being forced already.
+              if (self::MIGRATE_FORCE_PRIVATE_FILES != 1) {
                 $this->createPrivateFolder($fileInfo, $dstFolder, $directory->singleDir);
               }
 
@@ -263,7 +264,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
         $src_uri_base = MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, TRUE);
         // Force all directory bases to private?
         $dst_uri_base = (self::MIGRATE_FORCE_PRIVATE_FILES == 1)
-          ? "private/webform/"
+          ? "webform/"
           : MigrateWebformFilesLibrary::isUriPrivate($uri_result->uri, TRUE);
 
         $src_pattern = '|^(p\w{5,6})\://' . $src_uri_base . '(.+)$|';
