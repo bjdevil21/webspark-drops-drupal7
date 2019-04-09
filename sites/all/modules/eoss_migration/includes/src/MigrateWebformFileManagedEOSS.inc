@@ -131,7 +131,7 @@ class MigrateWebformFileManagedEOSS extends DrupalMigration {
           $fileInfo->private = (self::MIGRATE_FORCE_PRIVATE_FILES == 1) ? 1 : $extra['private'];
           $extra['private'] = (self::MIGRATE_FORCE_PRIVATE_FILES == 1) ? 1 : $extra['private'];
 
-          // #1) Update each webform file component - QA
+      // #1) Update each webform file component - QA
           $extra['directory'] = $fileInfo->{$result->uuid};
           $extra = serialize($extra);
           Database::getConnection('default', 'default')

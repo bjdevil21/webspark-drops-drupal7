@@ -127,19 +127,14 @@ class MigrateWebformFileUsageEOSS extends DrupalMigration  {
       'type' => 'submission',
       'count' => 1,
     );
+
     // Create or update if exists already
-    $dest_id = db_insert('file_usage')
+    db_insert('file_usage')
       ->fields($fu)
       ->execute();
 
-    if ($dest_id) {
-//      MigrationBase::displayMessage(__METHOD__ . ' -- Stub with fid ' . $fu['fid'] . ' updated/inserted to file_usage.', 'status');
-      return array($fu['fid']);
-    }
-    else {
-      $migration->queueMessage(__METHOD__ . ' --dest_id-- ' . $dest_id . ' -- No file_usage record written.', MIGRATION::MESSAGE_WARNING);
-      return FALSE;
-    }
+    $migration->queueMessage('File ID ' . $fu['fid']. ' added to file_usage table as stub.', MIGRATION::MESSAGE_INFORMATIONAL);
+    return array($fu['fid']);
   }
 
   /**
