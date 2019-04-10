@@ -176,7 +176,7 @@ function asu_comrf_build_student_profile($student_info_raw) {
   $careers = $student_info_raw->careers;
 
   if (empty($careers)) {
-    drupal_goto("changingmajors/request/notice");
+    drupal_goto("request/notice");
     drupal_exit();
   }
 
@@ -197,8 +197,8 @@ function asu_comrf_build_student_profile($student_info_raw) {
   }
 
   // Send user to notice page if they don't have at least one MAJ plan type
-  if ($maj_plan_type_count == 0) {
-    drupal_goto("changingmajors/request/notice");
+  if ($plan_type_maj_count == 0) {
+    drupal_goto("request/notice");
     drupal_exit();
   }
 
