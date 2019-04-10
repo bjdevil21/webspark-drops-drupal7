@@ -1,0 +1,677 @@
+
+<?php
+
+/**
+ * Implements hook_block_info().
+ *
+ * @return array
+ */
+function asu_comrf_block_info() {
+  $blocks = array();
+  $blocks['asu_comrf_form_header'] = array(
+    'info' => t('Change of Major: form header'),
+    'status' => 1,
+    'region' => 'content',
+    'weight' => -50,
+    'visibility' => 1,
+    'pages' => "changingmajors/request",
+  );
+  $blocks['asu_comrf_degree_search'] = array(
+    'info' => t('Change of Major: Degree Search'),
+    'status' => 1,
+    'region' => 'content',
+    'weight' => -49,
+    'visibility' => 1,
+    'pages' => "changingmajors/request",
+  );
+  $blocks['asu_comrf_student_info'] = array(
+    'info' => t('Change of Major: student information'),
+    'status' => 1,
+    'region' => 'content',
+    'weight' => -48,
+    'visibility' => 1,
+    'pages' => "changingmajors/request",
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * @param string $delta
+ * @return array
+ */
+function asu_comrf_block_view($delta='') {
+  $block = array();
+
+  global $user;
+  $asurite_id = $user->name;
+
+  // Loading functions for block content
+  module_load_include('inc','asu_comrf','includes/asu_comrf.block');
+
+  switch($delta) {
+    case 'asu_comrf_form_header':
+      $block['subject'] = '';
+      $block['content'] = asu_comrf_form_header_BLOCK_CONTENT();
+      break;
+    case 'asu_comrf_degree_search':
+      $block['subject'] = '';
+      $block['content'] = asu_comrf_degree_search_BLOCK_CONTENT();
+      break;
+    case 'asu_comrf_student_info':
+      $block['subject'] = '';
+      $block['content'] = asu_comrf_student_info_BLOCK_CONTENT($asurite_id);
+      break;
+    default:
+      $block['subject'] = '';
+      $block['content'] = array();
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Implements hook_menu().
+ *
+ * @return array
+ */
+function asu_comrf_menu() {
+  $items = array();
+  $items['changingmajors/request'] = array(
+    'title' => 'Change of Major Request Form',
+    'description' => 'A request form to change your major.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asu_comrf_form'),
+    'access callback' => TRUE,
+  );
+  $items['changingmajors/request/confirmation'] = array(
+    'title' => 'Change of Major Request Form Confirmation',
+    'description' => 'A confirmation page for the Change of Major request form.',
+    'page callback' => 'asu_comrf_confirmation_page',
+    'access callback' => TRUE,
+    'file' => 'includes/asu_comrf.pages.inc',
+  );
+  $items['changingmajors/request/notice'] = array(
+    'title' => 'Change of Major Request Form Notice',
+    'description' => 'A notice page for the Change of Major request form.',
+    'page callback' => 'asu_comrf_notice_page',
+    'access callback' => TRUE,
+    'file' => 'includes/asu_comrf.pages.inc',
+  );
+  $items['admin/config/development/asu-comrf'] = array(
+    'title' => 'ASU Change of Major Request Form settings',
+    'description' => 'Settings page for asu_comrf module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asu_comrf_admin'),
+    'file' => 'includes/asu_comrf.admin.inc',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function asu_comrf_cron() {
+  // Loading helper functions
+  module_load_include('inc','asu_comrf','includes/asu_comrf.program_data_helpers');
+  module_load_include('inc','asu_comrf','includes/asu_comrf.retrieve_program_data');
+
+  $degree_search_env = variable_get('asu_comrf_degree_search_env', 'dev');
+
+  // For production, run only if school is in the off-season (May, June, July, August, December)
+  if (asu_comrf_is_off_season() && asu_comrf_at_least_one_week_has_passed() && $degree_search_env == 'prod') {
+    // Get the list of degree programs
+    $list_of_degrees = asu_comrf_get_degree_list_data();
+    // Process the list of degree programs for relevant information
+    $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
+    if ($successful_data_storage == TRUE) {
+      // Log successful degree programs pull and save attempt
+      watchdog('asu_comrf', 'Successfully pulled and saved an updated list of degrees from Degree Search.', array(), WATCHDOG_INFO);
+    } else {
+      // Log failed degree programs pull and save attempt
+      watchdog('asu_comrf', 'Failed to pull and save an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
+    }
+  }
+
+  // If Degree Search is set to dev, and its been at least one week since a data pull, perform one
+  if ($degree_search_env == 'dev') {
+    // Get the list of degree programs
+    $list_of_degrees = asu_comrf_get_degree_list_data();
+    // Process the list of degree programs for relevant information
+    $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
+    if ($successful_data_storage == TRUE) {
+      // Log successful degree programs pull and save attempt
+      watchdog('asu_comrf', '[DEV] Successfully pulled and saved an updated list of degrees from Degree Search.', array(), WATCHDOG_INFO);
+    } else {
+      // Log failed degree programs pull and save attempt
+      watchdog('asu_comrf', '[DEV] Failed to pull and save an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
+    }
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function asu_comrf_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'asu_comrf_sf_email':
+      $message['from'] = $params['from'];
+      $message['headers']['From'] = $message['from'];
+      $message['headers']['Sender'] = $message['from'];
+      $message['subject'] = $params['subject'];
+      $message['body'][] = $params['body'];
+      break;
+    default:
+      break;
+  }
+}
+
+/**
+ * Implements hook_form().
+ *
+ * @param $form
+ * @param $form_state
+ * @return mixed
+ */
+function asu_comrf_form($form, &$form_state) {
+
+  // Loading helper functions
+  module_load_include('inc','asu_comrf','includes/asu_comrf.render_program_data');
+  module_load_include('inc','asu_comrf','includes/asu_comrf.program_data_helpers');
+
+  // 'Which major would you like to change?'
+  $form['asu_comrf_major_to_change'] = array(
+    '#type' => 'radios',
+    '#title' => t('Which major would you like to change?'),
+    '#default_value' => NULL,
+    '#required' => TRUE,
+    '#options' => array(),
+  );
+
+  // Before loading 'Which major would you like to choose?' field, check to see if a 'acadplan' URL parameter exists to set the field default on page load (e.g. the student clicked the 'Change Major' button and is coming directly from Degree Search)
+  $asu_comrf_new_major_choice_default = isset($_GET['acadplan']) ? check_plain($_GET['acadplan']) : NULL;
+  if (isset($asu_comrf_new_major_choice_default)) {
+    $list_of_degrees_results = asu_comrf_get_current_program_list();
+    $asu_comrf_new_major_choice_default_key = array_search($asu_comrf_new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
+  }
+
+  // 'Which major would you like to choose?'
+  $form['asu_comrf_new_major_choice'] = array(
+    '#type' => 'select',
+    '#title' => t('Which major would you like to choose?'),
+    '#multiple' => false,
+    '#size' => 4,
+    '#options' => array(0 => 'No majors to display'),
+    '#required' => TRUE,
+    '#default_value' => isset($asu_comrf_new_major_choice_default_key) ? $asu_comrf_new_major_choice_default_key : NULL,
+    '#ajax' => array(
+      'callback' => 'asu_comrf_new_major_choice_ajax_callback',
+      'wrapper' => 'asu-comrf-new-major-choice-ajax-wrapper',
+      'method' => 'replace',
+      'effect' => 'fade',
+    ),
+  );
+
+  // 'Which campus do you want to attend?'
+  $form['asu_comrf_new_campus_choice'] = array(
+    '#type' => 'select',
+    '#title' => t('Which campus do you want to attend?'),
+    '#multiple' => false,
+    '#options' => array(0 => 'No campuses to display'),
+    '#required' => TRUE,
+    '#default_value' => NULL,
+    '#prefix' => "<div id='asu-comrf-new-campus-choice-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+
+  // 'Change of Major requirements'
+  $form['asu_comrf_com_requirements_text'] = array(
+    '#type' => 'item',
+    '#title' => t('Change of Major requirements:'),
+    '#markup' => '<p>Please choose a new major above to see the Change of Major requirements.</p>',
+    '#prefix' => "<div id='asu-comrf-com-requirements-text-ajax-wrapper' aria-live='polite'>",
+    '#suffix' => "</div>",
+  );
+
+  // 'Do you currently meet these requirements?'
+  $form['asu_comrf_requirements_check'] = array(
+    '#type' => 'radios',
+    '#title' => t('Do you currently meet these requirements?'),
+    '#options' => array(
+      'yes' => t('Yes'),
+      'no' => t('No'),
+      'idk' => t('I don\'t know'),
+    ),
+    '#required' => TRUE,
+    '#default_value' => 'yes',
+    '#prefix' => "<div id='asu-comrf-requirements-check-ajax-wrapper' aria-live='polite'>",
+    '#suffix' => "</div>",
+  );
+
+  // 'How sure are you that you would like to change this major?'
+  $form['asu_comrf_double_check'] = array(
+    '#type' => 'radios',
+    '#title' => t('How sure are you that you would like to change this major?'),
+    '#options' => array(
+      1 => t('I\'m sure'),
+      0 => t('I want to speak to someone first'),
+    ),
+    '#required' => TRUE,
+    '#default_value' => 1,
+    '#prefix' => "<div id='asu-comrf-double-check-ajax-wrapper' aria-live='polite'>",
+    '#suffix' => "</div>",
+  );
+
+  // 'At which phone number can you be reached?'
+  $form['asu_comrf_contact_phone_number'] = array(
+    '#type' => 'textfield',
+    '#title' => t('At which phone number can you be reached?'),
+    '#maxlength' => 30,
+    '#required' => TRUE,
+    '#prefix' => "<div id='asu-comrf-contact-phone-number-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+
+  // 'How did you hear about this new major?'
+  $form['asu_comrf_major_change_source'] = array(
+    '#type' => 'select',
+    '#title' => t('How did you hear about this new major?'),
+    '#multiple' => false,
+    '#required' => TRUE,
+    '#options' => array(),
+    '#default_value' => NULL,
+    '#prefix' => "<div id='asu-comrf-major-change-source-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+  $form['asu_comrf_major_change_source_other'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Please elaborate:'),
+    '#maxlength' => 256,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="asu_comrf_major_change_source"]' => array('value' => 8),
+      ),
+      'required' => array(
+        ':input[name="asu_comrf_major_change_source"]' => array('value' => 8),
+      ),
+    ),
+    '#prefix' => "<div id='asu-comrf-major-change-source-other-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+
+  // 'Why do you want to change your current major?'
+  $form['asu_comrf_why_change'] = array(
+    '#type' => 'select',
+    '#title' => t('Why do you want to change your current major?'),
+    '#multiple' => false,
+    '#required' => TRUE,
+    '#options' => array(),
+    '#default_value' => NULL,
+    '#prefix' => "<div id='asu-comrf-why-change-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+  $form['asu_comrf_why_change_other'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Please elaborate:'),
+    '#maxlength' => 256,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="asu_comrf_why_change"]' => array('value' => 7),
+      ),
+      'required' => array(
+        ':input[name="asu_comrf_why_change"]' => array('value' => 7),
+      ),
+    ),
+    '#prefix' => "<div id='asu-comrf-why-change-other-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+
+  // 'How do the classes I've already taken apply to this new major?' --> What If audit
+  $form['asu_comrf_what_if_audit_text'] = array(
+    '#title' => '<br>' . t('How do the classes I\'ve already taken apply to this new major?'),
+    '#description' => '<small><strong><i>' . t('Please note: ') . '</i></strong>' . t('A What If audit will be automatically run for you and will be available to view after submitting this form. Clicking this button will take you to a different page and your form data will be lost.') . '</small>',
+    '#type' => 'item',
+    '#markup' => '<strong><a href="https://webapp4-dev.asu.edu/uachieve/" class="btn btn-secondary">Run a manual What If audit</a></strong>',
+    '#prefix' => "<div id='asu-comrf-what-if-audit-text-ajax-wrapper' aria-live='polite'>",
+    '#suffix' => "</div>",
+  );
+
+  // Text for form footer
+  $form['asu_comrf_form_footer_text'] = array(
+    '#type' => 'item',
+    '#markup' => '<br><p><small><strong>Changing your major and/or campus may have an impact on your tuition and fees. Some programs charge differential or program specific tuition, which is in addition to the base tuition charged each semester you enroll. <br><br>Additionally, if you are a sponsored student, receive tuition benefits from a non-ASU entity or accept certain federal funds, changing your major may impact your college costs. <br><br>Please consult with the financial aid office for details and visit this website: <a href="https://students.asu.edu/tuition">https://students.asu.edu/tuition.</a></strong></small></p>',
+    '#prefix' => "<div id='asu-comrf-form-footer-text-ajax-wrapper'>",
+    '#suffix' => "</div>",
+  );
+
+  // Form submit button
+  $form['asu_comrf_submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit Request for Change of Major'),
+    '#prefix' => "<div id='asu-comrf-submit-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+
+  $form['asu_comrf_wpc_com_request_submit'] = array(
+    '#type' => 'hidden',
+    '#disabled' => TRUE,
+    '#prefix' => "<div id='asu-comrf-wpc-com-request-submit-ajax-wrapper'>",
+    '#suffix' => "</div>",
+    '#attributes' => array('aria-live' => array('polite')),
+  );
+
+  // Perform AJAX magic to update the form fields based on the user-selected option from 'Which major would you like to choose?'
+  if(isset($form_state['values']['asu_comrf_new_major_choice'])) {
+    // Get current degree programs list from database
+    $list_of_degrees_results = asu_comrf_get_current_program_list();
+    $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+    $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
+    $new_campus_choice_raw = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'] : array();
+    $new_com_requirements = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'] : '<div>There are no additional requirements for this major.</div>';
+    $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
+    $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
+    $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
+
+    // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
+    $program_owner = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr'] : NULL;
+
+    //if ($program_owner == 'W. P. Carey School of Business') {
+    if ($asu_comrf_new_major_choice_selected == 0) {
+      $form['asu_comrf_new_campus_choice']['#disabled'] = TRUE;
+      $form['asu_comrf_new_campus_choice']['#type'] = 'hidden';
+      $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
+      $form['asu_comrf_requirements_check']['#type'] = 'hidden';
+      $form['asu_comrf_double_check']['#disabled'] = TRUE;
+      $form['asu_comrf_double_check']['#type'] = 'hidden';
+      $form['asu_comrf_contact_phone_number']['#disabled'] = TRUE;
+      $form['asu_comrf_contact_phone_number']['#type'] = 'hidden';
+      $form['asu_comrf_major_change_source']['#disabled'] = TRUE;
+      $form['asu_comrf_major_change_source']['#type'] = 'hidden';
+      $form['asu_comrf_major_change_source_other']['#disabled'] = TRUE;
+      $form['asu_comrf_major_change_source_other']['#type'] = 'hidden';
+      $form['asu_comrf_why_change']['#disabled'] = TRUE;
+      $form['asu_comrf_why_change']['#type'] = 'hidden';
+      $form['asu_comrf_why_change_other']['#disabled'] = TRUE;
+      $form['asu_comrf_why_change_other']['#type'] = 'hidden';
+      $form['asu_comrf_what_if_audit_text']['#disabled'] = TRUE;
+      $form['asu_comrf_what_if_audit_text']['#type'] = 'hidden';
+      $form['asu_comrf_submit']['#disabled'] = TRUE;
+      $form['asu_comrf_submit']['#type'] = 'hidden';
+      // Redirect button for W.P. Carey
+      $form['asu_comrf_wpc_com_request_submit'] = array(
+        '#type' => 'submit',
+        '#disabled' => FALSE,
+        '#description' => t('Please use the button below to access the W.P. Carey School of Business Change of Major platform.'),
+        '#value' => t('Proceed to W.P. Carey\'s Advising SOS website'),
+        '#submit' => array('asu_comrf_wpc_com_request_submit'),
+      );
+    }
+  }
+
+  return $form;
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ */
+function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
+
+  if ($form_id == 'asu_comrf_form') {
+
+    // Get current logged in user
+    global $user;
+    $asurite_id = $user->name;
+
+    // Loading helper function
+    module_load_include('inc','asu_comrf','includes/asu_comrf.program_data_helpers');
+
+    // Get student information for the 'Which major would you like to change?' field if it exists
+    $student_info = asu_comrf_get_student_info($asurite_id);
+    $student_degrees = $student_info['degrees'];
+    if (empty($student_degrees)) {
+      drupal_goto('changingmajors/request/notice');
+      drupal_exit();
+    } else {
+      $form['asu_comrf_major_to_change']['#options'] = (array)$student_degrees;
+      $form['asu_comrf_major_to_change']['#default_value'] = 0;
+    }
+
+    // Get current degree programs list from database
+    $list_of_degrees_results = asu_comrf_get_current_program_list();
+    $list_of_degrees = array();
+
+    // Build array of options for list of all degrees -- FORMAT: TrnscrDescr, Degree (AcadPlan)
+    if ($list_of_degrees_results) {
+      for ($i = 0; $i < count($list_of_degrees_results); $i++) {
+        $prog_trnscr_descr = $list_of_degrees_results[$i]['TrnscrDescr'];
+        $prog_degree = $list_of_degrees_results[$i]['Degree'];
+        $prog_acad_plan = $list_of_degrees_results[$i]['AcadPlan'];
+        if (empty($prog_degree)) {
+          $degree_to_display = $prog_trnscr_descr . ' [' . $prog_acad_plan . ']';
+        } else {
+          $degree_to_display = $prog_trnscr_descr . ', ' . $prog_degree . ' [' . $prog_acad_plan . ']';
+        }
+        $list_of_degrees[$i] = $degree_to_display;
+      }
+    }
+    if (!empty($list_of_degrees)) {
+      $form['asu_comrf_new_major_choice']['#options'] = (array)$list_of_degrees;
+    }
+  }
+
+  // Set options for 'How did you hear about this new major?' field
+  $asu_comrf_major_change_source_options = array(
+    0 => 'Faculty Member',
+    1 => 'Friend',
+    2 => 'Mentor',
+    3 => 'Academic Advisor',
+    4 => 'me3 Quiz',
+    5 => 'Degree Search',
+    6 => 'Career and Professional Development Services',
+    7 => 'Major and Career Exploration Course',
+    8 => 'Other',
+  );
+  $form['asu_comrf_major_change_source']['#options'] = $asu_comrf_major_change_source_options;
+
+  // Set options for 'Why do you want to change your current major?' field
+  $asu_comrf_why_change_options = array(
+    0 => 'eAdvisor: Twice Off-Track',
+    1 => 'Current major no longer interests me',
+    2 => 'Current major too demanding',
+    3 => 'Limited job prospects for current major',
+    4 => 'Less time to graduation for new major',
+    5 => 'Decided on major',
+    6 => 'Prefer physical or online location of new major',
+    7 => 'Other',
+  );
+  $form['asu_comrf_why_change']['#options'] = $asu_comrf_why_change_options;
+}
+
+/**
+ * Implements hook_form_validate().
+ *
+ * @param $form
+ * @param $form_state
+ */
+function asu_comrf_form_validate($form, &$form_state) {
+  // Validate custom conditional fields -- VALIDATION MAY BREAK IF SELECT LIST OPTIONS ARE CHANGED (e.g. not using id == 8 or 7) -- change in module settings
+  if ($form_state['values']['asu_comrf_major_change_source'] == variable_get('asu_comrf_form_major_change_source_index', 8) && empty($form_state['values']['asu_comrf_major_change_source_other'])) {
+    form_set_error('asu_comrf_major_change_source_other', t('Please enter a value.'));
+  }
+  if ($form_state['values']['asu_comrf_why_change'] == variable_get('asu_comrf_form_why_change_index', 7) && empty($form_state['values']['asu_comrf_why_change_other'])) {
+    form_set_error('asu_comrf_why_change_other', t('Please enter a value.'));
+  }
+}
+
+/**
+ * Implements hook_form_submit().
+ *
+ * @param $form
+ * @param $form_state
+ */
+function asu_comrf_form_submit($form, &$form_state) {
+
+  //dpm($form_state);
+
+  global $user;
+  $asurite_id = $user->name;
+
+  // Loading helper functions
+  module_load_include('inc','asu_comrf','includes/asu_comrf.form_submission');
+  module_load_include('inc','asu_comrf','includes/asu_comrf.program_data_helpers');
+
+  // Get desired program plan
+  $new_major_choice_key = $form_state['values']['asu_comrf_new_major_choice'];
+  $list_of_degrees_results = asu_comrf_get_current_program_list();
+  $program_plan = $list_of_degrees_results[$new_major_choice_key]['AcadPlan'];
+
+  if (empty($program_plan)) {
+    $program_plan = 'BABUSBABA';
+  }
+
+  // Get emplid for What If audit
+  $student_info = asu_comrf_get_student_info($asurite_id);
+  $emplid = $student_info['emplid'];
+
+  // Check to see if What If audit is enabled or disabled
+  $what_if_audit_state = variable_get('asu_comrf_what_if_audit_api_state', 0);
+
+  if ($what_if_audit_state == 1) {
+    // Send request to start What If audit if enabled
+    $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $program_plan);
+    if (!$successful_what_if_audit_submission) {
+      drupal_set_message(t('WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.'), 'error');
+      watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.', array(), WATCHDOG_ERROR);
+    }
+  } else {
+    // If What If audit is disabled, still compute URL for reference and log it, but don't send the actual request
+    $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env', 'dev');
+    if ($asu_comrf_what_if_audit_api_env == 'dev') {
+      $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_dev');
+    } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
+      $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
+    }
+    $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $program_plan;
+    drupal_set_message('The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, 'info');
+    watchdog('asu_comrf', 'The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
+  }
+
+  // Retrieve SF email address from Peoplesoft
+  $salesforce_email = asu_comrf_get_salesforce_email($program_plan);
+  $mulesoft_env = variable_get('asu_comrf_change_major_api_student_env');
+
+  // Set dev data if production is not selected
+  if (empty($salesforce_email) && $mulesoft_env == 'dev') {
+    switch ($program_plan) {
+      case 'NUNURDBSN':
+        $salesforce_email = 'uat_sandbox@asu.edu';
+        break;
+      case 'FAMUSPMBM':
+        $salesforce_email = 'uat_sandbox2@asu.edu';
+        break;
+      case 'BABUSBABA':
+        $salesforce_email = 'uat_sandbox3@asu.edu';
+        break;
+      case 'ESAEROBSE':
+        $salesforce_email = 'gilardi@asu.edu';
+        break;
+      default:
+        $salesforce_email = 'gilardi@asu.edu';
+        break;
+    }
+  }
+  if (empty($salesforce_email)) {
+    drupal_set_message(t('WARNING: Your Change of Major form was not able to pull correct submission details from Peoplesoft. Your data may have been saved to the website\'s database, but has not been sent to Salesforce correctly.'), 'error');
+    watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to pull correct submission details from Peoplesoft. Your data may have been saved to the website\'s database, but has not been sent to Salesforce correctly.', array(), WATCHDOG_ERROR);
+  }
+
+  // Setup email to Salesforce
+  $email_from = $asurite_id . '@asu.edu';
+  $email_to = $salesforce_email;
+  if($email_to != NULL) {
+    $successful_salesforce_submission = asu_comrf_salesforce_submission($email_to, $email_from, $asurite_id, $form, $form_state);
+    if (!$successful_salesforce_submission) {
+      drupal_set_message(t('WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.'), 'error');
+      watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
+    }
+  } else {
+    drupal_set_message(t('WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.'), 'error');
+    watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
+  }
+
+  // Set key for submit state (normal vs WPC)
+  $submit_key = 'eAdvisor';
+
+  // Store data in database, or error if something in the process went wrong
+  $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
+  if ($data_stored_successfully) {
+    // After successful form submission, send user to the form's confirmation page.
+    drupal_goto('changingmajors/request/confirmation');
+  } else {
+    drupal_set_message(t('WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.'), 'error');
+    watchdog('asu_comrf', 'WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.', array(), WATCHDOG_ERROR);
+    drupal_goto('changingmajors/request/confirmation');
+  }
+
+}
+
+function asu_comrf_wpc_com_request_submit($form, &$form_state) {
+
+  // Get current user's ASURITE ID
+  global $user;
+  $asurite_id = $user->name;
+
+  // Set key for submit state (normal vs WPC)
+  $submit_key = 'WPC';
+
+  // Store data in database, or error if something in the process went wrong
+  $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
+  if ($data_stored_successfully) {
+    // After successful form submission, send user to the form's confirmation page.
+    drupal_set_message(t('Your Change of Major form data was saved in the website\'s database.'), 'info');
+    watchdog('asu_comrf', 'Your Change of Major form data was saved in the website\'s database.', array(), WATCHDOG_INFO);
+  } else {
+    drupal_set_message(t('WARNING: Your Change of Major form data was not saved in the website\'s database.'), 'error');
+    watchdog('asu_comrf', 'WARNING: Your Change of Major form data was not saved in the website\'s database.', array(), WATCHDOG_ERROR);
+  }
+
+  if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
+    // Get current degree programs list from database
+    $list_of_degrees_results = asu_comrf_get_current_program_list();
+    $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+    $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
+    $acad_plan = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'] : '';
+    $wpc_url_param = '?AcadPlan=' . $acad_plan;
+  }
+
+  // Determine destination URL environment for W.P. Carey
+  $wpc_env = variable_get('asu_comrf_wpc_com_env');
+
+  if ($wpc_env == 'dev') {
+    $wpc_base_url = variable_get('asu_comrf_wpc_com_url_dev');
+  } else if ($wpc_env == 'prod') {
+    $wpc_base_url = variable_get('asu_comrf_wpc_com_url_prod');
+  }
+
+  // Compose destination URL based on dev or prod base URL and the plancode sent as a parameter
+  $wpc_destination_url = 'https://' . $wpc_base_url . $wpc_url_param;
+
+  // Send user to W.P. Carey Change of Major form
+  drupal_goto($wpc_destination_url, array('external' => TRUE));
+
+}
