@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Implements hook_uninstall().
+ */
+function ajax_loader_uninstall(){
+  variable_del('ajax_loader_settings');
+}

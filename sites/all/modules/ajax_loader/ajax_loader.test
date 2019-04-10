@@ -1,0 +1,111 @@
+<?php
+
+class AjaxLoaderTestCase extends DrupalWebTestCase {
+
+  protected $user;
+  protected $permissions;
+
+  public static function getInfo() {
+    // Note: getInfo() strings are not translated with t().
+    return array(
+      'name' => 'AJAX Loader',
+      'description' => 'Ensure that ajax loaders work properly',
+      'group' => 'AJAX',
+    );
+  }
+
+  /**
+   * @inheritdoc.
+   */
+  public function setUp() {
+    parent::setUp(array('ajax_loader', 'ajax_loader_test'));
+    $this->permissions = array(
+      'administer ajax loader',
+    );
+
+    $this->user = $this->drupalCreateUser($this->permissions);
+  }
+
+  /**
+   * Test manager.
+   */
+  public function testManager() {
+    $this->assertFalse(ThrobberManager::isValidThrobber('ThrobberNotValid'), 'ThrobberNotValid is not valid throbber');
+    // Test all default throbbers.
+    $throbbers = ThrobberTypes::toArray();
+    foreach ($throbbers as $throbber => $label) {
+      $this->assertTrue(ThrobberManager::isValidThrobber($throbber), $throbber . ' is valid throbber');
+    }
+
+    // Test user definied throbbers (non exiting ones).
+    $custom_throbbers['new_throbber'] = array(
+      'class' => 'MyNewThrobber',
+    );
+    $custom_throbbers['another_throbber'] = array(
+      'class' => 'AnotherThrobber',
+    );
+
+    $this->assertEqual(count(ThrobberManager::processUserDefinedThrobbers($custom_throbbers)), 0, 'No valid custom throbbers');
+
+    // Now test a good one.
+    $custom_throbbers['test_throbber'] = array(
+      'class' => 'ThrobberTest',
+    );
+    $this->assertEqual(count(ThrobberManager::processUserDefinedThrobbers($custom_throbbers)), 1, 'One valid custom throbber');
+
+
+  }
+
+  /**
+   * Test all the things when settings are empty.
+   */
+  public function testEmptySettings() {
+    $this->drupalLogin($this->user);
+    // Set settings to empty array.
+    variable_set('ajax_loader_settings', array());
+    $this->drupalGet('ajax-loader/test');
+    // JS file should not be added.
+    $this->assertNoText('ajax-loader.js');
+    // CSS files should not be added.
+    $throbbers = ThrobberTypes::toArray();
+    foreach ($throbbers as $throbber_class => $label) {
+      $throbber = new $throbber_class();
+      /** @var ThrobberInterface $throbber */
+      $this->assertNoText($throbber->getCssFile());
+    }
+    $this->assertNoText('throbber-general.css');
+  }
+
+  /**
+   * Test all the things when settings are set.
+   */
+  public function testFilledOutSettings() {
+    $this->drupalLogin($this->user);
+    variable_set('ajax_loader_settings', array(
+      'throbber' => 'ThrobberChasingDots',
+      'custom_css' => NULL,
+      'hide_ajax_message' => 0,
+    ));
+    $this->drupalGet('ajax-loader/test');
+    // JS file should be added.
+    $this->assertRaw('ajax-loader.js');
+    // CSS should be added.
+    $throbber = new ThrobberChasingDots();
+    $this->assertRaw($throbber->getCssFile());
+    $this->assertRaw('throbber-general.css');
+
+    // Change throbber and test again.
+    variable_set('ajax_loader_settings', array(
+      'throbber' => 'ThrobberDoubleBounce',
+      'custom_css' => NULL,
+      'hide_ajax_message' => 0,
+    ));
+    $this->drupalGet('ajax-loader/test');
+    // JS file should be added.
+    $this->assertRaw('ajax-loader.js');
+    $this->assertNoText($throbber->getCssFile());
+    $this->assertRaw('throbber-general.css');
+
+  }
+
+}

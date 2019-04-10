@@ -1,0 +1,14 @@
+name = "Ajax loader Test"
+description = "Ajax loader test module"
+package = "User Interface"
+core = "7.x"
+hidden = TRUE
+
+files[] = ThrobberTest.php
+
+; Information added by Drupal.org packaging script on 2016-05-06
+version = "7.x-1.1"
+core = "7.x"
+project = "ajax_loader"
+datestamp = "1462514341"
+

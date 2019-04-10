@@ -1,0 +1,34 @@
+<?php
+
+
+/**
+ * Implements hook_menu().
+ */
+function ajax_loader_test_menu() {
+
+  $items['ajax-loader/test'] = array(
+    'title' => t('Ajax loader test'),
+    'page callback' => '_ajax_loader_test_page',
+    'access arguments' => array('administer ajax loader'),
+  );
+
+  return $items;
+}
+
+/**
+ * This page only exists for testing purposes.
+ */
+function _ajax_loader_test_page() {
+  drupal_add_library('system', 'drupal.ajax');
+  return array(
+    '#theme' => 'link',
+    '#text' => 'My link',
+    '#path' => url('/my/path'),
+    '#options' => array(
+      'html' => FALSE,
+      'attributes' => array(
+        'class' => array('use-ajax')
+      ),
+    ),
+  );
+}

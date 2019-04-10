@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * Implements hook_help().
+ */
+function ajax_loader_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#ajax_loader':
+      $output = file_get_contents(drupal_get_path('module', 'ajax_loader') . '/README.txt');
+      return module_exists('markdown') ? module_invoke('markdown', 'filter', 'process', 0, -1, $output) : '<pre>' . $output . '</pre>';
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ajax_loader_menu() {
+  $items['admin/config/user-interface/ajax-loader'] = array(
+    'title' => t('Ajax loader'),
+    'description' => t('Settings for ajax loader'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_ajax_loader_settings_form'),
+    'access arguments' => array('administer ajax loader'),
+    'file' => 'includes/settings.ajax_loader.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ajax_loader_permission() {
+  return array(
+    'administer ajax loader' => array(
+      'title' => t('Administer ajax loader'),
+      'description' => t('Perform administration tasks for ajax loader.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function ajax_loader_page_build(&$page) {
+  $settings = variable_get('ajax_loader_settings', array());
+
+  // Only add when settings are set and page is not an admin page.
+  if ($settings && ThrobberManager::isApplicable($settings)) {
+    $path = drupal_get_path('module', 'ajax_loader');
+    $page['page_bottom']['ajax_loader'] = array(
+      '#attached' => array(),
+    );
+    $attached = &$page['page_bottom']['ajax_loader']['#attached'];
+
+
+    $class = $settings['throbber'];
+    // Check if throbber is valid.
+    /** @var ThrobberInterface $throbber */
+    if ($throbber = ThrobberManager::isValidThrobber($class)) {
+      // Add JS.
+      $attached['js'] = array(
+        array(
+          'data' => array(
+            'ajaxThrobber' => array(
+              'markup' => $throbber->getMarkup(),
+              'hideAjaxMessage' => $settings['hide_ajax_message']
+            )
+          ),
+          'type' => 'setting',
+        ),
+        array(
+          'data' => $path . '/js/ajax-loader.js',
+          'type' => 'file',
+          'scope' => 'footer',
+        ),
+      );
+      // Add CSS.
+      $attached['css'] = array(
+        array(
+          'data' => $path . '/css/throbber-general.css',
+          'type' => 'file',
+        ),
+        array(
+          'data' => $throbber->getCssFile(),
+          'type' => 'file',
+        ),
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function ajax_loader_js_alter(&$javascript) {
+  // Only add throbber js file if ajax.js is included.
+  if (!isset($javascript['misc/ajax.js']) && isset($javascript['sites/all/modules/custom/ajax_loader/js/ajax-loader.js'])) {
+    unset($javascript['sites/all/modules/custom/ajax_loader/js/ajax-loader.js']);
+  }
+}
