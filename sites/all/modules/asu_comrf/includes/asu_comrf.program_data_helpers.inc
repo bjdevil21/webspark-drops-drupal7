@@ -142,15 +142,17 @@ function asu_comrf_get_student_info($asurite_id) {
   );
   $result = drupal_http_request($student_info_url, $request_options);
 
-  if ($result->error == 'Connection refused') {
-    $student_info['name'] = 'Sparky Sundevil';
-    $student_info['degrees'] = array(
-      'Accountancy',
-      'Business',
-      'Computer Science'
-    );
-    $student_info['emplid'] = '1202000000';
-    return $student_info;
+  if (isset($result->error)) {
+    if ($result->error == 'Connection refused') {
+      $student_info['name'] = 'Sparky Sundevil';
+      $student_info['degrees'] = array(
+        'Accountancy',
+        'Business',
+        'Computer Science'
+      );
+      $student_info['emplid'] = '1202000000';
+      return $student_info;
+    }
   }
   $student_info_raw = json_decode($result->data)->studentMajor;
   $student_info_raw = $student_info_raw[0];
