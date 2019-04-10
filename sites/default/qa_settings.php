@@ -220,7 +220,10 @@ $databases = array (
       'host' => 'mysqldbqa.asu.edu',
       'port' => '', 
       'driver' => 'mysql',
-      'prefix' => '', 
+      'prefix' => '',
+      'pdo' => array(
+        PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle',
+      ),
      ),  
    ),  
  );
