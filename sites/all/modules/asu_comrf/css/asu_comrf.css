@@ -4,7 +4,7 @@
 /* COM FORM HEADER */
 
 /* Hide Drupal-generated page title */
-.page-changingmajors-request #page-title {
+.page-request #page-title {
   display: none;
 }
 /* Add spacing and appropriate styling to custom COM form header */
@@ -29,17 +29,17 @@
 /* DEGREE SEARCH */
 
 /* Adds padding to the DS box and sets the correct background color */
-.page-changingmajors-request #advSearchSection {
+.page-request #advSearchSection {
   padding-top: 30px;
   padding-bottom: 30px;
   background-color: #f5f5f5;
 }
-.page-changingmajors-request #block-asu-comrf-asu-comrf-degree-search {
+.page-request #block-asu-comrf-asu-comrf-degree-search {
   position: absolute;
   width: 100%;
   left: 0;
 }
-.page-changingmajors-request div.col-md-5 {
+.page-request div.col-md-5 {
   padding-left: 3em;
 }
 .asu-comrf-full-width-ds-bar-offset {
@@ -59,8 +59,8 @@
   .asu-comrf-full-width-ds-bar-offset {
     height: 300px;
   }
-  .page-changingmajors-request div.col-md-2,
-  .page-changingmajors-request div.col-md-3 {
+  .page-request div.col-md-2,
+  .page-request div.col-md-3 {
     padding-left: 3em !important;
   }
 }
@@ -89,21 +89,21 @@
 /* COM FORM */
 
 /* Force the form fields to 100% width of the parent container */
-.page-changingmajors-request .form-select,
-.page-changingmajors-request .form-text {
+.page-request .form-select,
+.page-request .form-text {
   width: 100%;
 }
 /* Force Chosen select list to look more list standard select list */
-.page-changingmajors-request .chosen-container {
+.page-request .chosen-container {
   padding: 0;
   border: 0;
 }
-.page-changingmajors-request .chosen-container-single .chosen-single {
+.page-request .chosen-container-single .chosen-single {
   height: 31px;
 }
 /* Remove spacing above elements */
-.page-changingmajors-request a.btn-secondary,
-.page-changingmajors-request #edit-asu-comrf-com-requirements-text p{
+.page-request a.btn-secondary,
+.page-request #edit-asu-comrf-com-requirements-text p{
   margin-top: 0;
 }
 /* Change AJAX loading icon color for ASU brand and force standardized height of icon */

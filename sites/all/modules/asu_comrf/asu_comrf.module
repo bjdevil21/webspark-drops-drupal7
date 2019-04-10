@@ -14,7 +14,7 @@ function asu_comrf_block_info() {
     'region' => 'content',
     'weight' => -50,
     'visibility' => 1,
-    'pages' => "changingmajors/request",
+    'pages' => "request",
   );
   $blocks['asu_comrf_degree_search'] = array(
     'info' => t('Change of Major: Degree Search'),
@@ -22,7 +22,7 @@ function asu_comrf_block_info() {
     'region' => 'content',
     'weight' => -49,
     'visibility' => 1,
-    'pages' => "changingmajors/request",
+    'pages' => "request",
   );
   $blocks['asu_comrf_student_info'] = array(
     'info' => t('Change of Major: student information'),
@@ -30,7 +30,7 @@ function asu_comrf_block_info() {
     'region' => 'content',
     'weight' => -48,
     'visibility' => 1,
-    'pages' => "changingmajors/request",
+    'pages' => "request",
   );
   return $blocks;
 }
@@ -79,21 +79,21 @@ function asu_comrf_block_view($delta='') {
  */
 function asu_comrf_menu() {
   $items = array();
-  $items['changingmajors/request'] = array(
+  $items['request'] = array(
     'title' => 'Change of Major Request Form',
     'description' => 'A request form to change your major.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('asu_comrf_form'),
     'access callback' => TRUE,
   );
-  $items['changingmajors/request/confirmation'] = array(
+  $items['request/confirmation'] = array(
     'title' => 'Change of Major Request Form Confirmation',
     'description' => 'A confirmation page for the Change of Major request form.',
     'page callback' => 'asu_comrf_confirmation_page',
     'access callback' => TRUE,
     'file' => 'includes/asu_comrf.pages.inc',
   );
-  $items['changingmajors/request/notice'] = array(
+  $items['request/notice'] = array(
     'title' => 'Change of Major Request Form Notice',
     'description' => 'A notice page for the Change of Major request form.',
     'page callback' => 'asu_comrf_notice_page',
@@ -444,7 +444,7 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
     $student_info = asu_comrf_get_student_info($asurite_id);
     $student_degrees = $student_info['degrees'];
     if (empty($student_degrees)) {
-      drupal_goto('changingmajors/request/notice');
+      drupal_goto('request/notice');
       drupal_exit();
     } else {
       $form['asu_comrf_major_to_change']['#options'] = (array)$student_degrees;
@@ -621,11 +621,11 @@ function asu_comrf_form_submit($form, &$form_state) {
   $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
   if ($data_stored_successfully) {
     // After successful form submission, send user to the form's confirmation page.
-    drupal_goto('changingmajors/request/confirmation');
+    drupal_goto('request/confirmation');
   } else {
     drupal_set_message(t('WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.'), 'error');
     watchdog('asu_comrf', 'WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.', array(), WATCHDOG_ERROR);
-    drupal_goto('changingmajors/request/confirmation');
+    drupal_goto('request/confirmation');
   }
 
 }
