@@ -15631,7 +15631,7 @@ Other Professional Degree|Other Professional Degree',
 );
   $webforms['enter_now_student_shine_contest'] = array(
   'uid' => 31,
-  'title' => 'Enter Now|Student Shine Contest',
+  'title' => 'Enter Now | Student Shine Contest',
   'log' => '',
   'status' => 1,
   'comment' => 0,
