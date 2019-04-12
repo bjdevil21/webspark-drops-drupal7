@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * Create user IDs mapping table for skipped users. Will be used in eoss_migration's user
+ * import script in postImport, postRollback.
+ *
+ * Implements hook_schema().
+ */
+function eoss_migration_prep_schema() {
+  $schema['migrate_map_custom_skipped_users'] = array(
+    'description' => 'Skipped users mapping, including src and dst IDs.',
+    'fields' => array(
+      'uid' => array(
+        'description' => 'The DST UID of a skipped user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'src_uid' => array(
+        'description' => 'The SRC UID of a skipped user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'name' => array( // Only for DB reference. Won't be used during migration.
+        'description' => 'Usually ASURITE ID if a CAS user.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'hash' => array(
+        'description' => 'md5 hash for detecting changes to data in migration mapping table',
+        'type' => 'varchar',
+        'length' => 64,
+      ),
+    ),
+    'primary key' => array('src_uid', 'uid'),
+    'indexes' => array(
+      'uid_UNIQUE' => array('uid'),
+      'src_uid_UNIQUE' => array('src_uid'),
+      'name_UNIQUE' => array('name'),
+    ),
+  );
+
+  return $schema;
+}

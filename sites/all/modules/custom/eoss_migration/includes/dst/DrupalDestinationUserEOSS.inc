@@ -30,6 +30,31 @@ class DrupalDestinationUserEOSS extends DrupalDestinationUser {
   }
 
   /**
+   * Rolls back user IDs and hashes for skipped users
+   * @param $entity_id
+   */
+  public function prepareRollback($entity_id) {
+    // Delete extra added user role for deleted user
+    foreach ($entity_id as $new_uid) {
+      db_delete('users_roles')
+        ->condition('uid', $new_uid)
+        ->condition('rid', 5)
+        ->execute();
+    }
+    // Return entry to original status before any rollback actions are taken
+    $query = Database::getConnection('default', 'default')
+      ->update('drupaluser7migrationeoss')
+      ->fields(array(
+        'destid1' => NULL,
+        'needs_update' => 2,
+        'hash' => NULL,
+      ))
+      ->condition('destid1', $entity_id);
+    $query->execute();
+  }
+
+
+  /**
    * Rolls back role IDs for imported users (roles were not brought over in the user import).
    * @param $entity_id
    */
@@ -53,6 +78,14 @@ class DrupalDestinationUserEOSS extends DrupalDestinationUser {
     user_delete_multiple($uids);
     $this->completeRollback($uids);
     migrate_instrument_stop('user_delete_multiple');
+  }
+
+  /**
+   * Deletes all custom mapped IDs from custom table
+   */
+  protected function postRollback() {
+    db_delete('migrate_map_custom_skipped_users')
+      ->execute();
   }
 
 }
