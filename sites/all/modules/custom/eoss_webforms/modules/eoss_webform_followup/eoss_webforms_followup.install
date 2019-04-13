@@ -296,9 +296,9 @@ function eoss_webforms_followup_install() {
     $result = _eoss_webforms_followup_cid_import_pre_insert($result);
 
       // Prep work: Get destination NID for insertion
-    $subquery = db_select($nid_table, 'm')
-      ->fields('m', array('nid'))
-      ->condition('m.src_nid', $result->nid);
+    $subquery = db_select($nid_table, 'n')
+      ->fields('n', array('nid'))
+      ->condition('n.src_nid', $result->nid);
     $dst_nid = $subquery->execute()->fetchField(); // get first column data from single result
 
     // Main "stub" data inserted into cid_table. Still missing the new CID, but has everything else.
