@@ -101,24 +101,25 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
 
     if (count($query) > 0) {
       // Insert into custom mapping table for postImport() insertion into user mapping table
-      db_merge('migrate_map_custom_skipped_users', 'msu')
-        ->key(array(
-          'src_uid' => $row->uid,
-        ))
+      // @TODO - Add new UID later
+      db_insert('migrate_map_custom_skipped_users')
         ->fields(array(
           'src_uid' => $row->uid,
           'name' => $row->name,
           // hash taken from hash() in source.inc
           'hash' => md5(serialize($row)),
-        ));
-
+        ))
+        ->execute();
       // Log skip in messages table.
-      $message = t('Drupal user ID !name skipped because it already exists.',
+      $message = t('[SKIP-I] - Drupal user ID !name skipped because it already exists.',
         array(
           '!name' => $row->name,
         ));
       Migration::queueMessage($message, MigrationBase::MESSAGE_WARNING);
       return FALSE;
+    }
+    else {
+      Migration::displayMessage('[SUCCESS-I] - Creating user ID ' . $row->name, MigrationBase::MESSAGE_WARNING);
     }
   }
 
@@ -138,6 +139,7 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
       'rid' => 5,
     ));
     $query->execute();
+
   }
 
   /**
@@ -155,31 +157,55 @@ class DrupalUser7MigrationEOSS extends DrupalUser7Migration {
     $count = count($results);
 
     if ($count > 0) {
+
       $message = '[NOTICE-I] - ' . $count . ' skipped user IDs found. Attempting to update UID mapping tables...';
       Migration::queueMessage($message, MigrationBase::MESSAGE_NOTICE);
+
+      var_dump(__METHOD__);
+
       foreach ($results as $result) {
-        $query = Database::getConnection('default', 'default')
-          ->update('drupaluser7migrationeoss')
+
+        $sub_query = db_select('users', 'u')
+          ->fields('u', array('uid'))
+          ->condition('u.name', $result->name, 'LIKE');
+        $sub_result = $sub_query->execute()->fetchField();
+
+        db_update('migrate_map_drupaluser7migrationeoss')
           ->fields(array(
-            'destid1' => $result->uid,
+            'destid1' => $sub_result,
             'needs_update' => 0,
             'hash' => $result->hash,
           ))
-          ->condition('sourceid1', $result->uid);
-        $query->isNull('destid1');
-        $query->execute();
+          ->condition('sourceid1', $result->src_uid)
+          ->execute();
+
+        var_dump($result->src_uid);
+        var_dump($sub_result);
+        var_dump($result->name);
+        var_dump($result->hash);
+
         $message = t('Drupal user ID !uid (!name) mapped to old UID !src_uid.',
           array(
-            '!uid' => $result->uid,
+            '!uid' => $sub_result,
             '!name' => $result->name,
             '!src_uid' => $result->src_uid,
           ));
         Migration::queueMessage($message, MigrationBase::MESSAGE_NOTICE);
+        var_dump($message);
       }
     }
     else {
+      var_dump('ELSE');
       Migration::queueMessage("[WARNING-I] - No skipped user IDs recorded.", MigrationBase::MESSAGE_WARNING);
     }
+  }
+
+  /**
+   * Deletes all custom mapped IDs from custom table
+   */
+  protected function postRollback() {
+    db_delete('migrate_map_custom_skipped_users')
+      ->execute();
   }
 
 }
