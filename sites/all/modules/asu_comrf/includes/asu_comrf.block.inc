@@ -71,7 +71,7 @@ function asu_comrf_student_info_BLOCK_CONTENT($asurite_id) {
   // Decide how many undergraduate degrees the student is associated with
   // If only 1 degree, assign degree data to the list variable for output
   if (count($student_degrees) == 1) {
-    $student_degree = $student_degrees[0];
+    $student_degree = $student_degrees[0]['plan_name'];
     $student_degrees_list = (string)$student_degree;
   }
   // If more than 1 degree, iterate through degrees and assign degree data to the list variable for output

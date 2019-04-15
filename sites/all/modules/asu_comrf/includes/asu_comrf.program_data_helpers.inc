@@ -146,9 +146,9 @@ function asu_comrf_get_student_info($asurite_id) {
     if ($result->error == 'Connection refused') {
       $student_info['name'] = 'Sparky Sundevil';
       $student_info['degrees'] = array(
-        'Accountancy',
-        'Business',
-        'Computer Science'
+        'Accountancy, BS',
+        'Art (Painting), BFA',
+        'Computer Science, BS'
       );
       $student_info['emplid'] = '1202000000';
       return $student_info;
@@ -191,7 +191,9 @@ function asu_comrf_build_student_profile($student_info_raw) {
       foreach ($career->plans as $plan) {
         if ($plan->planType == 'MAJ') {
           $plan_name = $plan->transcriptDescription;
-          array_push($degree_programs, $plan_name);
+          $degree_type = $plan->degree;
+          array_push($degree_programs[$plan_type_maj_count]['plan_name'], $plan_name);
+          array_push($degree_programs[$plan_type_maj_count]['degree_type'], $degree_type);
           $plan_type_maj_count++;
         }
       }
