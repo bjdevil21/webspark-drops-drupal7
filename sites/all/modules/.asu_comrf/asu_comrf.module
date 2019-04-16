@@ -170,14 +170,6 @@ function asu_comrf_mail($key, &$message, $params) {
   }
 }
 
-//function asu_comrf_url_outbound_alter(&$path, &$options, $original_path) {
-//  // $options['external'] limits this to External URLs, i.e. cases when we want to send UTMs to outside services. This can be limited further if needed.
-//  if ($options['external'] === TRUE) {
-//    // If an external URL, add the 'target = _blank' attribute to the link
-//    $options['attributes']['target'] = '_blank';
-//  }
-//}
-
 /**
  * Implements hook_form().
  *
@@ -190,6 +182,9 @@ function asu_comrf_form($form, &$form_state) {
   // Loading helper functions
   module_load_include('inc','asu_comrf','includes/asu_comrf.render_program_data');
   module_load_include('inc','asu_comrf','includes/asu_comrf.program_data_helpers');
+
+  // Load list of current degrees
+  $list_of_degrees_results = asu_comrf_get_current_program_list();
 
   // 'Which major would you like to change?'
   $form['asu_comrf_major_to_change'] = array(
@@ -208,7 +203,7 @@ function asu_comrf_form($form, &$form_state) {
     '#size' => 4,
     '#options' => array(0 => 'No majors to display'),
     '#required' => TRUE,
-    //'#default_value' => isset($asu_comrf_new_major_choice_default_key) ? $asu_comrf_new_major_choice_default_key : NULL,
+    '#default_value' => NULL,
     '#ajax' => array(
       'callback' => 'asu_comrf_new_major_choice_ajax_callback',
       'wrapper' => 'asu-comrf-new-major-choice-ajax-wrapper',
@@ -372,6 +367,18 @@ function asu_comrf_form($form, &$form_state) {
     '#attributes' => array('aria-live' => array('polite')),
   );
 
+  // If an 'acadplan' URL parameter exists to set the field default on page load (e.g. the student clicked the 'Change Major' button and is coming directly from Degree Search), then make sure to auto-update the new campus choice and Change of Major requirements
+  $asu_comrf_new_major_choice_default = isset($_GET['acadplan']) ? check_plain($_GET['acadplan']) : NULL;
+  if (isset($asu_comrf_new_major_choice_default)) {
+    $asu_comrf_new_major_choice_default_key = array_search($asu_comrf_new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
+    $new_campus_choice_raw = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray'] : array();
+    $new_com_requirements = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor'] : '<div>There are no additional requirements for this major.</div>';
+    $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
+    $form['asu_comrf_new_major_choice']['#default_value'] = $asu_comrf_new_major_choice_default_key;
+    $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
+    $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
+  }
+
   // Perform AJAX magic to update the form fields based on the user-selected option from 'Which major would you like to choose?'
   if(isset($form_state['values']['asu_comrf_new_major_choice'])) {
     // Get current degree programs list from database
@@ -424,20 +431,6 @@ function asu_comrf_form($form, &$form_state) {
     }
   }
 
-  // Check to see if a default program is being sent as a URL parameter from Degree Search
-  $asu_comrf_new_major_choice_default = isset($_GET['acadplan']) ? check_plain($_GET['acadplan']) : NULL;
-  if (isset($asu_comrf_new_major_choice_default)) {
-    // If an 'acadplan' URL parameter exists to set the field default on page load (e.g. the student clicked the 'Change Major' button and is coming directly from Degree Search), then make sure to auto-update the new campus choice and Change of Major requirements
-    $list_of_degrees_results = asu_comrf_get_current_program_list();
-    $asu_comrf_new_major_choice_default_key = array_search($asu_comrf_new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
-    $new_campus_choice_raw = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray'] : array();
-    $new_com_requirements = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor'] : '<div>There are no additional requirements for this major.</div>';
-    $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
-    $form['asu_comrf_new_major_choice']['#default_value'] = $asu_comrf_new_major_choice_default_key;
-    $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
-    $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
-  }
-
   return $form;
 }
 
@@ -471,9 +464,9 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
         $plan_name = $degree['plan_name'];
         $degree_type = $degree['degree_type'];
         $degree_to_display = $plan_name . ', ' . $degree_type;
-        array_push($student_degrees_to_display, $degree_to_display);
+        $student_degrees_to_display = array_push($student_degrees_to_display, $degree_to_display);
       }
-      $form['asu_comrf_major_to_change']['#options'] = $student_degrees_to_display;
+      $form['asu_comrf_major_to_change']['#options'] = (array)$student_degrees_to_display;
       $form['asu_comrf_major_to_change']['#default_value'] = 0;
     }
 
@@ -497,7 +490,7 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
     }
     if (!empty($list_of_degrees)) {
       $form['asu_comrf_new_major_choice']['#options'] = (array)$list_of_degrees;
-      //$form['asu_comrf_new_major_choice']['#default_value'] = NULL;
+      $form['asu_comrf_new_major_choice']['#default_value'] = NULL;
     }
 
     // Set options for 'How did you hear about this new major?' field

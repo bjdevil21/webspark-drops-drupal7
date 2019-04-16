@@ -192,11 +192,8 @@ function asu_comrf_build_student_profile($student_info_raw) {
         if ($plan->planType == 'MAJ') {
           $plan_name = $plan->transcriptDescription;
           $degree_type = $plan->degree;
-          $current_program = array(
-            'plan_name' => $plan_name,
-            'degree_type' => $degree_type,
-          );
-          array_push($degree_programs, $current_program);
+          array_push($degree_programs[$plan_type_maj_count]['plan_name'], $plan_name);
+          array_push($degree_programs[$plan_type_maj_count]['degree_type'], $degree_type);
           $plan_type_maj_count++;
         }
       }

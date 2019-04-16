@@ -85,12 +85,12 @@ function asu_comrf_student_info_BLOCK_CONTENT($asurite_id) {
         $student_degrees_list = '';
       }
       if ($key == $last_degree_key) {
-        $student_degrees_list .= '& ' . $degree['plan_name'];
+        $student_degrees_list .= '& ' . $degree;
         break;
       } elseif ($key == $last_degree_key-1) {
-        $student_degrees_list .= $degree['plan_name'] . ' ';
+        $student_degrees_list .= $degree . ' ';
       } else {
-        $student_degrees_list .= $degree['plan_name'] . ', ';
+        $student_degrees_list .= $degree . ', ';
       }
     }
   }
