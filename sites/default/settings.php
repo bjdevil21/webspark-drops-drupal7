@@ -210,12 +210,13 @@
  *   );
  * @endcode
  */
+
 $databases = array(
   'default' => array(
     'default' => array(
-      'database' => 'ace',
-      'username' => 'ace_app',
-      'password' => '$D6BGwav',
+      'database' => 'changingmajors',
+      'username' => 'changingmajors_app',
+      'password' => 'Chan91ng#maj0r5',
       'host' => 'mysqldbdev.asu.edu',
       'port' => '',
       'driver' => 'mysql',

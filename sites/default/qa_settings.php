@@ -211,22 +211,22 @@
  * @endcode
  */
 
-$databases = array (
-  'default' => array (
-    'default' => array (
-      'database' => 'ace',
-      'username' => 'ace_app',
-      'password' => '$D6BGwav',
+$databases = array(
+  'default' => array(
+    'default' => array(
+      'database' => 'changingmajors',
+      'username' => 'changingmajors_app',
+      'password' => 'Chan91ng#maj0r5',
       'host' => 'mysqldbqa.asu.edu',
-      'port' => '', 
+      'port' => '',
       'driver' => 'mysql',
       'prefix' => '',
       'pdo' => array(
         PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle',
       ),
-     ),  
-   ),  
- );
+    ),
+  ),
+);
 
 /**
  * Access control for update.php script.

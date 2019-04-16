@@ -214,9 +214,9 @@
 $databases = array (
   'default' => array (
     'default' => array (
-      'database' => 'ace',
-      'username' => 'ace_app',
-      'password' => 'C|l@wYy*vDK%',
+      'database' => 'changingmajors',
+      'username' => 'changingmajors_app',
+      'password' => 'Chan91ng#maj0r5P9',
       'host' => 'drupdbprod.asu.edu',
       'port' => '', 
       'driver' => 'mysql',
