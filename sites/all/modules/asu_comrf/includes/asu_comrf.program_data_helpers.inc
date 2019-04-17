@@ -138,7 +138,6 @@ function asu_comrf_get_student_info($asurite_id) {
       'Authorization' => "Basic OWJlMmJkYmVmMzhkNDk4NDhlNzQ2OTVkMjA2Nzk4NDE6ODhmY0U4NjY5Yjk4NDhDOThlY0QyNThkYWQxNjE5ODQ=",
     ),
     'method' => 'GET',
-    'timeout' => 15,
   );
   $result = drupal_http_request($student_info_url, $request_options);
 

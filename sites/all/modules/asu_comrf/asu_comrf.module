@@ -578,12 +578,17 @@ function asu_comrf_form_submit($form, &$form_state) {
   $student_info = asu_comrf_get_student_info($asurite_id);
   $emplid = $student_info['emplid'];
 
+  // Get program info (dprog and SF email) for What If audit and Salesforce submission
+  $program_info = asu_comrf_get_program_info($program_plan);
+  $salesforce_email = $program_info['email'];
+  $dprog = $program_info['dprog'];
+
   // Check to see if What If audit is enabled or disabled
   $what_if_audit_state = variable_get('asu_comrf_what_if_audit_api_state', 0);
 
   if ($what_if_audit_state == 1) {
     // Send request to start What If audit if enabled
-    $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $program_plan);
+    $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $dprog);
     if (!$successful_what_if_audit_submission) {
       drupal_set_message(t('WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.'), 'error');
       watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.', array(), WATCHDOG_ERROR);
@@ -596,13 +601,12 @@ function asu_comrf_form_submit($form, &$form_state) {
     } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
       $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
     }
-    $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $program_plan;
+    $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $dprog;
     drupal_set_message('The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, 'info');
     watchdog('asu_comrf', 'The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
   }
 
-  // Retrieve SF email address from Peoplesoft
-  $salesforce_email = asu_comrf_get_salesforce_email($program_plan);
+  // Check MuleSoft API state
   $mulesoft_env = variable_get('asu_comrf_change_major_api_student_env');
 
   // Set dev data if production is not selected

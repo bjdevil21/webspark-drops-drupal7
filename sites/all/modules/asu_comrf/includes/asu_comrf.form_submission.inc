@@ -8,56 +8,14 @@
 
 
 /**
- * Start running a What If audit based on student data.
- *
- * @param $emplid
- * @param $dprog
- * @return bool
- */
-function asu_comrf_start_what_if_audit($emplid, $program_plan) {
-  // Send data to start automatic WIA
-  // JIRA DARS-599 -- Sample URL: https://webapp4-dev.asu.edu/asudars7/rest/UserInfoService/whatif/1205472303&ESBMEBSE
-  // Determine if dev or prod settings will be used
-  $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env');
-  if ($asu_comrf_what_if_audit_api_env == 'dev') {
-    $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_dev');
-  } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
-    $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
-  }
-
-  $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $program_plan;
-  $request_options = array(
-    'headers' => array(),
-    'method' => 'GET',
-    'timeout' => 15,
-  );
-
-  // Execute call for What If audit and store results in a variable
-  $result = drupal_http_request($what_if_audit_url, $request_options);
-  $data = $result->data;
-
-  // Do conversion magic to get the returned What If audit response code into object form instead of XML
-  $xml = simplexml_load_string($data);
-  $xml_data = $xml->ERROR->CODE;
-  $json = json_encode($xml_data);
-  $what_if_audit_response_obj = json_decode($json);
-  $obj_index = 0;
-  $what_if_audit_response_obj_code = $what_if_audit_response_obj->$obj_index;
-
-  if ($what_if_audit_response_obj_code == 400) {
-    return FALSE;
-  } else if ($what_if_audit_response_obj_code == 200) {
-    return TRUE;
-  }
-}
-
-/**
- * Returns email from Peoplesoft for Salesforce data submission
+ * Gets DPROG and associated email for Salesforce based on a plancode via MuleSoft API
  *
  * @param $program_plan
- * @return string
+ * @return array
  */
-function asu_comrf_get_salesforce_email($program_plan) {
+function asu_comrf_get_program_info($program_plan) {
+  $program_info = array();
+
   // Determine if dev or prod settings will be used
   $asu_comrf_change_major_api_email_env = variable_get('asu_comrf_change_major_api_email_env');
   if ($asu_comrf_change_major_api_email_env == 'dev') {
@@ -73,19 +31,73 @@ function asu_comrf_get_salesforce_email($program_plan) {
       'Authorization' => "Basic OWJlMmJkYmVmMzhkNDk4NDhlNzQ2OTVkMjA2Nzk4NDE6ODhmY0U4NjY5Yjk4NDhDOThlY0QyNThkYWQxNjE5ODQ=",
     ),
     'method' => 'GET',
-    'timeout' => 15,
   );
   $result = drupal_http_request($peoplesoft_data_url, $request_options);
   if (!empty($result)) {
     $program_info_raw = json_decode($result->data)->changeMajor;
-    if (isset($program_info_raw->email)) {
-      $salesforce_email = $program_info_raw->email;
+    if (isset($program_info_raw)) {
+      $program_info['email'] = $program_info_raw->email;
+      $program_info['dprog'] = $program_info_raw->dprog;
+    } else {
+      $program_info['email'] == 'testing123@asu.edu';
+      $program_info['dprog'] == 'BA ACC BS';
     }
   } else {
-    $salesforce_email = '';
+    $program_info['email'] == 'testing123@asu.edu';
+    $program_info['dprog'] == 'BA ACC BS';
   }
 
-  return $salesforce_email;
+  return $program_info;
+}
+
+/**
+ * Start running a What If audit based on student data.
+ *
+ * @param $emplid
+ * @param $dprog
+ * @return bool
+ */
+function asu_comrf_start_what_if_audit($emplid, $dprog) {
+  // Send data to start automatic WIA
+  // JIRA DARS-599 -- Sample URL: 'https://webapp4-dev.asu.edu/asudars7/rest/UserInfoService/whatif/1205472303&ES BME BSE'
+  // Determine if dev or prod settings will be used
+  $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env');
+  if ($asu_comrf_what_if_audit_api_env == 'dev') {
+    $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_dev');
+  } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
+    $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
+  }
+
+  $dprog = str_replace(' ', '%20', $dprog);
+
+  $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $dprog;
+  $request_options = array(
+    'method' => 'GET',
+  );
+
+  watchdog('asu_comrf', 'The intended What If audit URL is: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
+
+  // Execute call for What If audit and store results in a variable
+  $result = drupal_http_request($what_if_audit_url, $request_options);
+  $data = $result->data;
+
+  // Do conversion magic to get the returned What If audit response code into object form instead of XML
+  $xml = simplexml_load_string($data);
+  $xml_data = $xml->ERROR->CODE;
+  $json = json_encode($xml_data);
+  $what_if_audit_response_obj = json_decode($json);
+  $obj_index = 0;
+  $what_if_audit_response_obj_code = $what_if_audit_response_obj->$obj_index;
+
+  watchdog('asu_comrf', 'The What If audit returned the following result code: ' . $what_if_audit_response_obj_code, array(), WATCHDOG_INFO);
+
+  if ($what_if_audit_response_obj_code == 400) {
+    return FALSE;
+  } else if ($what_if_audit_response_obj_code == 200) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 /**
@@ -100,7 +112,7 @@ function asu_comrf_get_salesforce_email($program_plan) {
  */
 function asu_comrf_salesforce_submission($email_to, $email_from, $asurite_id, $form, &$form_state) {
 
-  $asurite_id_title = 'Request from: ';
+  //$asurite_id_title = 'Request from: ';
 
   $major_to_change_key = $form_state['values']['asu_comrf_major_to_change'];
   $major_to_change = $form_state['complete form']['asu_comrf_major_to_change']['#options'][$major_to_change_key];
@@ -114,8 +126,8 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $asurite_id, $f
   $new_campus_choice = $form_state['complete form']['asu_comrf_new_campus_choice']['#options'][$new_campus_choice_key];
   $new_campus_choice_title = $form_state['complete form']['asu_comrf_new_campus_choice']['#title'];
 
-  $com_requirements_text = $form_state['complete form']['asu_comrf_com_requirements_text']['#markup'];
-  $com_requirements_text_title = $form_state['complete form']['asu_comrf_com_requirements_text']['#title'];
+  //$com_requirements_text = $form_state['complete form']['asu_comrf_com_requirements_text']['#markup'];
+  //$com_requirements_text_title = $form_state['complete form']['asu_comrf_com_requirements_text']['#title'];
 
   $requirements_check_key = $form_state['values']['asu_comrf_requirements_check'];
   $requirements_check = $form_state['complete form']['asu_comrf_requirements_check']['#options'][$requirements_check_key];
@@ -138,11 +150,9 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $asurite_id, $f
   $why_change_title = $form_state['complete form']['asu_comrf_why_change']['#title'];
   $why_change_other = isset($form_state['values']['asu_comrf_why_change_other']) ? $form_state['values']['asu_comrf_why_change_other'] : NULL;
 
-  $html_for_body = '<p><strong>' . $asurite_id_title . '</strong><br>' . $asurite_id . '</p><br><br>' .
-                   '<p><strong>' . $major_to_change_title . '</strong><br>' . $major_to_change . '</p><br><br>' .
+  $html_for_body = '<p><strong>' . $major_to_change_title . '</strong><br>' . $major_to_change . '</p><br><br>' .
                    '<p><strong>' . $new_major_choice_title . '</strong><br>' . $new_major_choice . '</p><br><br>' .
                    '<p><strong>' . $new_campus_choice_title . '</strong><br>' . $new_campus_choice . '</p><br><br>' .
-                   '<p><strong>' . $com_requirements_text_title . '</strong><br>' . $com_requirements_text . '</p><br><br>' .
                    '<p><strong>' . $requirements_check_title . '</strong><br>' . $requirements_check . '</p><br><br>' .
                    '<p><strong>' . $double_check_title . '</strong><br>' . $double_check . '</p><br><br>' .
                    '<p><strong>' . $contact_phone_number_title . '</strong><br>' . $contact_phone_number . '</p><br><br>';
