@@ -578,6 +578,9 @@ function asu_comrf_form_submit($form, &$form_state) {
   $student_info = asu_comrf_get_student_info($asurite_id);
   $emplid = $student_info['emplid'];
 
+  // Add ASURITE ID to student information
+  $student_info['asurite'] = $asurite_id;
+
   // Get program info (dprog and SF email) for What If audit and Salesforce submission
   $program_info = asu_comrf_get_program_info($program_plan);
   $salesforce_email = $program_info['email'];
@@ -638,7 +641,7 @@ function asu_comrf_form_submit($form, &$form_state) {
   $email_from = $asurite_id . '@asu.edu';
   $email_to = $salesforce_email;
   if($email_to != NULL) {
-    $successful_salesforce_submission = asu_comrf_salesforce_submission($email_to, $email_from, $asurite_id, $form, $form_state);
+    $successful_salesforce_submission = asu_comrf_salesforce_submission($email_to, $email_from, $student_info, $form_state);
     if (!$successful_salesforce_submission) {
       drupal_set_message(t('WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.'), 'error');
       watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);

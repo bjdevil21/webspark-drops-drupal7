@@ -105,14 +105,18 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
  *
  * @param $email_to
  * @param $email_from
- * @param $asurite_id
- * @param $form
+ * @param $student_info
  * @param $form_state
  * @return bool
  */
-function asu_comrf_salesforce_submission($email_to, $email_from, $asurite_id, $form, &$form_state) {
+function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, &$form_state) {
 
   //$asurite_id_title = 'Request from: ';
+  //$asurite_id = $student_info['asurite'];
+
+  $student_info_title = 'Request from: ';
+  $student_info_name = $student_info['name'];
+  $student_info_emplid = $student_info['emplid'];
 
   $major_to_change_key = $form_state['values']['asu_comrf_major_to_change'];
   $major_to_change = $form_state['complete form']['asu_comrf_major_to_change']['#options'][$major_to_change_key];
@@ -150,7 +154,8 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $asurite_id, $f
   $why_change_title = $form_state['complete form']['asu_comrf_why_change']['#title'];
   $why_change_other = isset($form_state['values']['asu_comrf_why_change_other']) ? $form_state['values']['asu_comrf_why_change_other'] : NULL;
 
-  $html_for_body = '<p><strong>' . $major_to_change_title . '</strong><br>' . $major_to_change . '</p><br><br>' .
+  $html_for_body = '<p><strong>' . $student_info_title . '</strong><br>' . $student_info_name . ' (' . $student_info_emplid . ')' . '</p><br><br>' .
+                   '<p><strong>' . $major_to_change_title . '</strong><br>' . $major_to_change . '</p><br><br>' .
                    '<p><strong>' . $new_major_choice_title . '</strong><br>' . $new_major_choice . '</p><br><br>' .
                    '<p><strong>' . $new_campus_choice_title . '</strong><br>' . $new_campus_choice . '</p><br><br>' .
                    '<p><strong>' . $requirements_check_title . '</strong><br>' . $requirements_check . '</p><br><br>' .
