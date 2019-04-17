@@ -170,13 +170,15 @@ function asu_comrf_mail($key, &$message, $params) {
   }
 }
 
-//function asu_comrf_url_outbound_alter(&$path, &$options, $original_path) {
-//  // $options['external'] limits this to External URLs, i.e. cases when we want to send UTMs to outside services. This can be limited further if needed.
-//  if ($options['external'] === TRUE) {
-//    // If an external URL, add the 'target = _blank' attribute to the link
-//    $options['attributes']['target'] = '_blank';
-//  }
-//}
+/**
+ * Implements hook_views_api().
+ */
+function asu_comrf_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'asu_comrf') . '/includes/views',
+  );
+}
 
 /**
  * Implements hook_form().
