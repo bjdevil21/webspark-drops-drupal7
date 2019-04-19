@@ -626,17 +626,16 @@ function asu_comrf_form_submit($form, &$form_state) {
       case 'BABUSBABA':
         $salesforce_email = 'uat_sandbox3@asu.edu';
         break;
-      case 'ESAEROBSE':
-        $salesforce_email = 'gilardi@asu.edu';
-        break;
       default:
-        $salesforce_email = 'gilardi@asu.edu';
+        $salesforce_email = 'webconsulting@asu.edu';
         break;
     }
   }
   if (empty($salesforce_email)) {
-    drupal_set_message(t('WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but has not been sent to Salesforce correctly.'), 'error');
-    watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but has not been sent to Salesforce correctly.', array(), WATCHDOG_ERROR);
+    // Default if there is no SF email provided and we are in production
+    $salesforce_email = 'eadvisor@asu.edu';
+    //drupal_set_message(t('WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but has not been sent to Salesforce correctly.'), 'error');
+    watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but may not have sent to Salesforce correctly.', array(), WATCHDOG_ERROR);
   }
 
   // Setup email to Salesforce
