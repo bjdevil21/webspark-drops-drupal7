@@ -12757,7 +12757,7 @@ no|No',
   'body' => array(
     'und' => array(
       0 => array(
-        'value' => '<p>It is expected that the community ambassador will serve as a leader in the community and as such is expected to actively build relationships with other students in their community, serving as a mentor, resource referral, and role-model to others.</p><p><strong>In addition to filling out the form below, you MUST apply on-line through student employment at&nbsp;<a href="/ocss/ambassador-application">https://eoss.asu.edu/ocss/ambassador-application</a>. Reference Job ID: #50056BR.</strong>&nbsp;<strong>Applications will be accepted through March 29, 2019. The start date for this position will be in August 2019.&nbsp;</strong></p><p><strong>Qualifications</strong></p><ul><li>Currently and actively enrolled at ASU</li><li>Completed at least two semesters at ASU</li><li>Ability to connect to a wide range of students</li><li>Must be in good standing with Student Rights &amp; Responsibilities</li><li>Reside at 12Fifty5, 922 Place, Blvd 1900, Gateway, Green Leaf Tempe Station, Rise on Apache, Sterling 920 Terrace, The Cottages, The District, The Hyve, Union Tempe, University House, Vertex, Villas on Apache or West 6 for the 2019-2020 academic year.</li></ul><p><strong>Community Ambassador Duties</strong></p><ul><li>Support student success by referring and connecting students to campus resources.&nbsp;</li><li>Promote community and sense of belonging within the off campus living communities by engaging with students individually and in groups.</li><li>Provide ASU connections to off campus communities by engaging, collaborating and communicating with apartment management.&nbsp;</li><li>Plan, organize and implement programs that support student success.&nbsp;</li><li>Organize, facilitate and document weekly staff meetings and training\'s.&nbsp;</li><li>Ability to work 10-15 hours per week.&nbsp;</li><li>Maintain a library of ASU resources for students</li></ul>',
+        'value' => '<p>It is expected that the community ambassador will serve as a leader in the community and as such is expected to actively build relationships with other students in their community, serving as a mentor, resource referral, and role-model to others.</p><p><strong>In addition to filling out the form below, you MUST apply on-line through student employment at&nbsp;<a href="/ocss/ambassador-application">https://eoss.asu.edu/ocss/ambassador-application</a>. Reference Job ID: #51205BR. The start date for this position will be in August 2019. For more information, questions or clarifications contact <a href=""mailto:LaurenMcGuire@asu.edu">LaurenMcGuire@asu.edu</strong>a>.</strong></p><p><strong>Qualifications</strong></p><ul><li>Currently and actively enrolled at ASU</li><li>Completed at least two semesters at ASU</li><li>Ability to connect to a wide range of students</li><li>Must be in good standing with Student Rights &amp; Responsibilities</li><li>Reside at 12Fifty5, 922 Place, Blvd 1900, Gateway, Green Leaf Tempe Station, Rise on Apache, Sterling 920 Terrace, The Cottages, The District, The Hyve, Union Tempe, University House, Vertex, Villas on Apache or West 6 for the 2019-2020 academic year.</li></ul><p><strong>Community Ambassador Duties</strong></p><ul><li>Support student success by referring and connecting students to campus resources.&nbsp;</li><li>Promote community and sense of belonging within the off campus living communities by engaging with students individually and in groups.</li><li>Provide ASU connections to off campus communities by engaging, collaborating and communicating with apartment management.&nbsp;</li><li>Plan, organize and implement programs that support student success.&nbsp;</li><li>Organize, facilitate and document weekly staff meetings and training\'s.&nbsp;</li><li>Ability to work 10-15 hours per week.&nbsp;</li><li>Maintain a library of ASU resources for students</li></ul>',
         'summary' => '',
         'format' => 'filtered_html',
       ),
@@ -46675,12 +46675,7 @@ Other|Other',
         'type' => 'select',
         'value' => '',
         'extra' => array(
-          'items' => 'Feb2|Saturday, February 2nd, 9:30 a.m.-4 p.m. (West)
-Feb9|Saturday, February 9th, 9:30 a.m.-4 p.m. (Tempe)
-Mar16|Saturday, March 16th, 9:30 a.m.-4 p.m. (Downtown)
-Apr13|Saturday, April 13th, 9:30 a.m.-4 p.m. (Tempe)
-notify|Please notify me of upcoming SDSN training as soon as they are scheduled!
-',
+          'items' => 'notify|Please notify me of upcoming SDSN training as soon as they are scheduled!',
           'multiple' => 0,
           'title_display' => 'before',
           'description_above' => 0,
@@ -49354,25 +49349,6 @@ notify|Please notify me of upcoming SDSN training as soon as they are scheduled!
         ),
       ),
       1 => array(
-        'email' => 'ddzheng@asu.edu',
-        'subject' => 'default',
-        'from_name' => 'default',
-        'from_address' => 'default',
-        'template' => 'default',
-        'excluded_components' => array(),
-        'html' => 0,
-        'attachments' => 0,
-        'extra' => FALSE,
-        'exclude_empty' => 0,
-        'status' => 1,
-        'components_machine_names' => array(
-          'email' => FALSE,
-          'subject' => FALSE,
-          'from_name' => FALSE,
-          'from_address' => FALSE,
-        ),
-      ),
-      2 => array(
         'email' => 'rbeltra7@asu.edu',
         'subject' => 'default',
         'from_name' => 'default',
@@ -49391,7 +49367,7 @@ notify|Please notify me of upcoming SDSN training as soon as they are scheduled!
           'from_address' => FALSE,
         ),
       ),
-      3 => array(
+      2 => array(
         'email' => 'arose9@asu.edu',
         'subject' => 'default',
         'from_name' => 'default',
@@ -49410,7 +49386,7 @@ notify|Please notify me of upcoming SDSN training as soon as they are scheduled!
           'from_address' => FALSE,
         ),
       ),
-      4 => array(
+      3 => array(
         'email' => 'wbenson1@asu.edu',
         'subject' => 'default',
         'from_name' => 'default',
