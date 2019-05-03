@@ -210,13 +210,13 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
   $major_to_change = $form_state['complete form']['asu_comrf_major_to_change']['#options'][$major_to_change_key];
   $new_major_choice_key = $form_state['values']['asu_comrf_new_major_choice'];
   $new_major_choice = $form_state['complete form']['asu_comrf_new_major_choice']['#options'][$new_major_choice_key];
+  $new_campus_choice_key = $form_state['values']['asu_comrf_new_campus_choice'];
+  $new_campus_choice = $form_state['complete form']['asu_comrf_new_campus_choice']['#options'][$new_campus_choice_key];
   $com_requirements_text = $form_state['complete form']['asu_comrf_com_requirements_text']['#markup'];
 
   // Decide whether the form should be submitted as a normal submission, or a WPC redirect submission
   switch ($submit_key) {
     case 'eAdvisor':
-      $new_campus_choice_key = $form_state['values']['asu_comrf_new_campus_choice'];
-      $new_campus_choice = $form_state['complete form']['asu_comrf_new_campus_choice']['#options'][$new_campus_choice_key];
       $requirements_check_key = $form_state['values']['asu_comrf_requirements_check'];
       $requirements_check = $form_state['complete form']['asu_comrf_requirements_check']['#options'][$requirements_check_key];
       $double_check_key = $form_state['values']['asu_comrf_double_check'];
@@ -258,7 +258,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
             'asurite_id' => $asurite_id,
             'major_to_change' => $major_to_change,
             'new_major_choice' => $new_major_choice,
-            'new_campus_choice' => $submit_key,
+            'new_campus_choice' => $new_campus_choice,
             'com_requirements_text' => $com_requirements_text,
             'requirements_check' => $submit_key,
             'double_check' => $submit_key,

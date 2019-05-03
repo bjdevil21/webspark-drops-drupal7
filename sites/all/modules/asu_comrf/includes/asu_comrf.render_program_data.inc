@@ -5,6 +5,7 @@
  *
  * @param $form
  * @param $form_state
+ * @return array
  */
 function asu_comrf_new_major_choice_ajax_callback($form, &$form_state) {
   return array(

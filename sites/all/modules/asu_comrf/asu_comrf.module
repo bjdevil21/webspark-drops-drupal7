@@ -344,7 +344,7 @@ function asu_comrf_form($form, &$form_state) {
     '#title' => '<br>' . t('How do the classes I\'ve already taken apply to this new major?'),
     //'#description' => '<small><strong><i>' . t('Please note: ') . '</i></strong>' . t('A What If audit will be automatically run for you and will be available to view after submitting this form. Clicking this button will take you to a different page and your form data will be lost.') . '</small>',
     '#type' => 'item',
-    '#markup' => '<strong><a href="https://webapp4-qa.asu.edu/uachieve/" class="btn btn-secondary">Run a What If audit</a></strong>',
+    '#markup' => '<strong><a href="https://webapp4.asu.edu/uachieve/" class="btn btn-secondary">Run a What If audit</a></strong>',
     '#prefix' => "<div id='asu-comrf-what-if-audit-text-ajax-wrapper' aria-live='polite'>",
     '#suffix' => "</div>",
   );
@@ -380,11 +380,20 @@ function asu_comrf_form($form, &$form_state) {
     $list_of_degrees_results = asu_comrf_get_current_program_list();
     $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
     $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
-    $new_campus_choice_raw = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'] : array();
-    $new_com_requirements = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'] : '<div>There are no additional requirements for this major.</div>';
+    $new_campus_choice_raw = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'] : array();
+    $new_com_requirements = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'] : '';
     $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
-    $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
+
+    // If the new Change of Major requirements are NULL or empty, disable the COM text field and check; else, display the markup for the requirements
+    if ($new_com_requirements == NULL || $new_com_requirements == '') {
+      $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
+      $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
+      $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
+      $form['asu_comrf_requirements_check']['#type'] = 'hidden';
+    } else {
+      $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
+    }
 
     $wpc_com_state = variable_get('asu_comrf_wpc_com_state', 0);
 
@@ -393,9 +402,9 @@ function asu_comrf_form($form, &$form_state) {
       $program_owner = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr'] : NULL;
 
       if ($program_owner == 'W. P. Carey School of Business') {
-        //if ($asu_comrf_new_major_choice_selected == 0) {
-        $form['asu_comrf_new_campus_choice']['#disabled'] = TRUE;
-        $form['asu_comrf_new_campus_choice']['#type'] = 'hidden';
+        watchdog('asu_comrf', 'The student selected a program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
+        $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
+        $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
         $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
         $form['asu_comrf_requirements_check']['#type'] = 'hidden';
         $form['asu_comrf_double_check']['#disabled'] = TRUE;
@@ -412,16 +421,8 @@ function asu_comrf_form($form, &$form_state) {
         $form['asu_comrf_why_change_other']['#type'] = 'hidden';
         $form['asu_comrf_what_if_audit_text']['#disabled'] = TRUE;
         $form['asu_comrf_what_if_audit_text']['#type'] = 'hidden';
-        $form['asu_comrf_submit']['#disabled'] = TRUE;
-        $form['asu_comrf_submit']['#type'] = 'hidden';
-        // Redirect button for W.P. Carey
-        $form['asu_comrf_wpc_com_request_submit'] = array(
-          '#type' => 'submit',
-          '#disabled' => FALSE,
-          '#description' => t('Please use the button below to access the W.P. Carey School of Business Change of Major platform.'),
-          '#value' => t('Proceed to W.P. Carey\'s Advising SOS website'),
-          '#submit' => array('asu_comrf_wpc_com_request_submit'),
-        );
+        // Form submit button for WPC
+        $form['asu_comrf_submit']['#value'] = t('Proceed to W.P. Carey\'s Advising SOS website');
       }
     }
   }
@@ -432,12 +433,21 @@ function asu_comrf_form($form, &$form_state) {
     // If an 'acadplan' URL parameter exists to set the field default on page load (e.g. the student clicked the 'Change Major' button and is coming directly from Degree Search), then make sure to auto-update the new campus choice and Change of Major requirements
     $list_of_degrees_results = asu_comrf_get_current_program_list();
     $asu_comrf_new_major_choice_default_key = array_search($asu_comrf_new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
-    $new_campus_choice_raw = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray'] : array();
-    $new_com_requirements = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor'] : '<div>There are no additional requirements for this major.</div>';
+    $new_campus_choice_raw = isset($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray'] : array();
+    $new_com_requirements = isset($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor'] : '';
     $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_major_choice']['#default_value'] = $asu_comrf_new_major_choice_default_key;
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
-    $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
+
+    // If the new Change of Major requirements are NULL or empty, disable the COM text field and check; otherwise, display the markup for the requirements
+    if ($new_com_requirements == NULL || $new_com_requirements == '') {
+      $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
+      $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
+      $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
+      $form['asu_comrf_requirements_check']['#type'] = 'hidden';
+    } else {
+      $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
+    }
   }
 
   return $form;
@@ -569,147 +579,143 @@ function asu_comrf_form_submit($form, &$form_state) {
 
   // Get desired program plan
   $new_major_choice_key = $form_state['values']['asu_comrf_new_major_choice'];
+  $new_campus_choice_key = $form_state['values']['asu_comrf_new_campus_choice'];
   $list_of_degrees_results = asu_comrf_get_current_program_list();
   $program_plan = $list_of_degrees_results[$new_major_choice_key]['AcadPlan'];
 
-  if (empty($program_plan)) {
-    $program_plan = 'BABUSBABA';
-  }
+  // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
+  $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+  $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
+  $program_owner = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr'] : NULL;
 
-  // Get emplid for What If audit
-  $student_info = asu_comrf_get_student_info($asurite_id);
-  $emplid = $student_info['emplid'];
+  if ($program_owner == 'W. P. Carey School of Business') {
 
-  // Add ASURITE ID to student information
-  $student_info['asurite'] = $asurite_id;
+    // Set key for submit state (normal vs WPC)
+    $submit_key = 'WPC';
 
-  // Get program info (dprog and SF email) for What If audit and Salesforce submission
-  $program_info = asu_comrf_get_program_info($program_plan);
-  $salesforce_email = $program_info['email'];
-  $dprog = $program_info['dprog'];
-
-  // Check to see if What If audit is enabled or disabled
-  $what_if_audit_state = variable_get('asu_comrf_what_if_audit_api_state', 0);
-
-  if ($what_if_audit_state == 1) {
-    // Send request to start What If audit if enabled
-    $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $dprog);
-    if (!$successful_what_if_audit_submission) {
-      drupal_set_message(t('WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.'), 'error');
-      watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.', array(), WATCHDOG_ERROR);
+    // Store data in database, or error if something in the process went wrong
+    $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
+    if ($data_stored_successfully) {
+      // After successful form submission, send user to the form's confirmation page.
+      watchdog('asu_comrf', 'Your WPC Change of Major form data was saved in the website\'s database.', array(), WATCHDOG_INFO);
+    } else {
+      watchdog('asu_comrf', 'WARNING: Your WPC Change of Major form data was not saved in the website\'s database.', array(), WATCHDOG_ERROR);
     }
-  } else {
-    // If What If audit is disabled, still compute URL for reference and log it, but don't send the actual request
-    $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env', 'dev');
-    if ($asu_comrf_what_if_audit_api_env == 'dev') {
-      $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_dev');
-    } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
-      $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
+
+    if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
+      $asu_comrf_new_major_choice_selected_raw = isset($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+      $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
+      $acad_plan = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'] : '';
+      $campus_code = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key]) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key] : array();
+      $wpc_url_param = '&acadplan=' . $acad_plan . '&campus=' . $campus_code;
     }
-    $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $dprog;
-    drupal_set_message('The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, 'info');
-    watchdog('asu_comrf', 'The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
-  }
 
-  // Check MuleSoft API state
-  $mulesoft_env = variable_get('asu_comrf_change_major_api_student_env');
+    // Determine destination URL environment for W.P. Carey
+    $wpc_env = variable_get('asu_comrf_wpc_com_env');
 
-  // Set dev data if production is not selected
-  if (empty($salesforce_email) && $mulesoft_env == 'dev') {
-    switch ($program_plan) {
-      case 'NUNURDBSN':
-        $salesforce_email = 'uat_sandbox@asu.edu';
-        break;
-      case 'FAMUSPMBM':
-        $salesforce_email = 'uat_sandbox2@asu.edu';
-        break;
-      case 'BABUSBABA':
-        $salesforce_email = 'uat_sandbox3@asu.edu';
-        break;
-      default:
-        $salesforce_email = 'webconsulting@asu.edu';
-        break;
+    if ($wpc_env == 'dev') {
+      $wpc_base_url = variable_get('asu_comrf_wpc_com_url_dev');
+    } else if ($wpc_env == 'prod') {
+      $wpc_base_url = variable_get('asu_comrf_wpc_com_url_prod');
     }
-  }
-  if (empty($salesforce_email)) {
-    // Default if there is no SF email provided and we are in production
-    $salesforce_email = 'eadvisor@asu.edu';
-    //drupal_set_message(t('WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but has not been sent to Salesforce correctly.'), 'error');
-    watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but may not have sent to Salesforce correctly.', array(), WATCHDOG_ERROR);
-  }
 
-  // Setup email to Salesforce
-  $email_from = $asurite_id . '@asu.edu';
-  $email_to = $salesforce_email;
-  if($email_to != NULL) {
-    $successful_salesforce_submission = asu_comrf_salesforce_submission($email_to, $email_from, $student_info, $form_state);
-    if (!$successful_salesforce_submission) {
-      drupal_set_message(t('WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.'), 'error');
+    // Compose destination URL based on dev or prod base URL and the plancode sent as a parameter
+    $wpc_destination_url = 'https://' . $wpc_base_url . $wpc_url_param;
+
+    watchdog('asu_comrf', 'The destination URL for WPC is ' . $wpc_destination_url, array(), WATCHDOG_INFO);
+
+    // Send user to W.P. Carey Change of Major form
+    drupal_goto($wpc_destination_url, array('external' => TRUE));
+
+  } else { // Not a WPC program plan
+
+    if (empty($program_plan)) {
+      $program_plan = 'BABUSBABA';
+    }
+
+    // Get emplid for What If audit
+    $student_info = asu_comrf_get_student_info($asurite_id);
+    $emplid = $student_info['emplid'];
+
+    // Add ASURITE ID to student information
+    $student_info['asurite'] = $asurite_id;
+
+    // Get program info (dprog and SF email) for What If audit and Salesforce submission
+    $program_info = asu_comrf_get_program_info($program_plan);
+    $salesforce_email = $program_info['email'];
+    $dprog = $program_info['dprog'];
+
+    // Check to see if What If audit is enabled or disabled
+    $what_if_audit_state = variable_get('asu_comrf_what_if_audit_api_state', 0);
+
+    if ($what_if_audit_state == 1) {
+      // Send request to start What If audit if enabled
+      $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $dprog);
+      if (!$successful_what_if_audit_submission) {
+        watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.', array(), WATCHDOG_ERROR);
+      }
+    } else {
+      // If What If audit is disabled, still compute URL for reference and log it, but don't send the actual request
+      $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env', 'dev');
+      if ($asu_comrf_what_if_audit_api_env == 'dev') {
+        $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_dev');
+      } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
+        $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
+      }
+      $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $dprog;
+      watchdog('asu_comrf', 'The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
+    }
+
+    // Check MuleSoft API state
+    $mulesoft_env = variable_get('asu_comrf_change_major_api_student_env');
+
+    // Set dev data if production is not selected
+    if (empty($salesforce_email) && $mulesoft_env == 'dev') {
+      switch ($program_plan) {
+        case 'NUNURDBSN':
+          $salesforce_email = 'uat_sandbox@asu.edu';
+          break;
+        case 'FAMUSPMBM':
+          $salesforce_email = 'uat_sandbox2@asu.edu';
+          break;
+        case 'BABUSBABA':
+          $salesforce_email = 'uat_sandbox3@asu.edu';
+          break;
+        default:
+          $salesforce_email = 'webconsulting@asu.edu';
+          break;
+      }
+    }
+    if (empty($salesforce_email)) {
+      // Default if there is no SF email provided and we are in production
+      $salesforce_email = 'eadvisor@asu.edu';
+      watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but may not have sent to Salesforce correctly.', array(), WATCHDOG_ERROR);
+    }
+
+    // Setup email to Salesforce
+    $email_from = $asurite_id . '@asu.edu';
+    $email_to = $salesforce_email;
+    if($email_to != NULL) {
+      $successful_salesforce_submission = asu_comrf_salesforce_submission($email_to, $email_from, $student_info, $form_state);
+      if (!$successful_salesforce_submission) {
+        watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
+      }
+    } else {
       watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
     }
-  } else {
-    drupal_set_message(t('WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.'), 'error');
-    watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
+
+    // Set key for submit state (normal vs WPC)
+    $submit_key = 'eAdvisor';
+
+    // Store data in database, or error if something in the process went wrong
+    $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
+    if ($data_stored_successfully) {
+      // After successful form submission, send user to the form's confirmation page.
+      drupal_goto('request/confirmation');
+    } else {
+      watchdog('asu_comrf', 'WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.', array(), WATCHDOG_ERROR);
+      drupal_goto('request/confirmation');
+    }
   }
-
-  // Set key for submit state (normal vs WPC)
-  $submit_key = 'eAdvisor';
-
-  // Store data in database, or error if something in the process went wrong
-  $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
-  if ($data_stored_successfully) {
-    // After successful form submission, send user to the form's confirmation page.
-    drupal_goto('request/confirmation');
-  } else {
-    drupal_set_message(t('WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.'), 'error');
-    watchdog('asu_comrf', 'WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.', array(), WATCHDOG_ERROR);
-    drupal_goto('request/confirmation');
-  }
-
-}
-
-function asu_comrf_wpc_com_request_submit($form, &$form_state) {
-
-  // Get current user's ASURITE ID
-  global $user;
-  $asurite_id = $user->name;
-
-  // Set key for submit state (normal vs WPC)
-  $submit_key = 'WPC';
-
-  // Store data in database, or error if something in the process went wrong
-  $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
-  if ($data_stored_successfully) {
-    // After successful form submission, send user to the form's confirmation page.
-    drupal_set_message(t('Your Change of Major form data was saved in the website\'s database.'), 'info');
-    watchdog('asu_comrf', 'Your Change of Major form data was saved in the website\'s database.', array(), WATCHDOG_INFO);
-  } else {
-    drupal_set_message(t('WARNING: Your Change of Major form data was not saved in the website\'s database.'), 'error');
-    watchdog('asu_comrf', 'WARNING: Your Change of Major form data was not saved in the website\'s database.', array(), WATCHDOG_ERROR);
-  }
-
-  if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
-    // Get current degree programs list from database
-    $list_of_degrees_results = asu_comrf_get_current_program_list();
-    $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
-    $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
-    $acad_plan = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'] : '';
-    $wpc_url_param = '?AcadPlan=' . $acad_plan;
-  }
-
-  // Determine destination URL environment for W.P. Carey
-  $wpc_env = variable_get('asu_comrf_wpc_com_env');
-
-  if ($wpc_env == 'dev') {
-    $wpc_base_url = variable_get('asu_comrf_wpc_com_url_dev');
-  } else if ($wpc_env == 'prod') {
-    $wpc_base_url = variable_get('asu_comrf_wpc_com_url_prod');
-  }
-
-  // Compose destination URL based on dev or prod base URL and the plancode sent as a parameter
-  $wpc_destination_url = 'https://' . $wpc_base_url . $wpc_url_param;
-
-  // Send user to W.P. Carey Change of Major form
-  drupal_goto($wpc_destination_url, array('external' => TRUE));
 
 }
