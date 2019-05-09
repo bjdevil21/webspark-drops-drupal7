@@ -448,6 +448,39 @@ function asu_comrf_form($form, &$form_state) {
     } else {
       $form['asu_comrf_com_requirements_text']['#markup'] = $new_com_requirements;
     }
+
+    $wpc_com_state = variable_get('asu_comrf_wpc_com_state', 0);
+
+    if ($wpc_com_state == 1) {
+      // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
+      $asu_comrf_new_major_choice_default_key = array_search($asu_comrf_new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
+      $program_owner = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['DiplomaDescr']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['DiplomaDescr'] : NULL;
+
+      if ($program_owner == 'W. P. Carey School of Business') {
+        watchdog('asu_comrf', 'The student selected a program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
+        $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
+        $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
+        $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
+        $form['asu_comrf_requirements_check']['#type'] = 'hidden';
+        $form['asu_comrf_double_check']['#disabled'] = TRUE;
+        $form['asu_comrf_double_check']['#type'] = 'hidden';
+        $form['asu_comrf_contact_phone_number']['#disabled'] = TRUE;
+        $form['asu_comrf_contact_phone_number']['#type'] = 'hidden';
+        $form['asu_comrf_major_change_source']['#disabled'] = TRUE;
+        $form['asu_comrf_major_change_source']['#type'] = 'hidden';
+        $form['asu_comrf_major_change_source_other']['#disabled'] = TRUE;
+        $form['asu_comrf_major_change_source_other']['#type'] = 'hidden';
+        $form['asu_comrf_why_change']['#disabled'] = TRUE;
+        $form['asu_comrf_why_change']['#type'] = 'hidden';
+        $form['asu_comrf_why_change_other']['#disabled'] = TRUE;
+        $form['asu_comrf_why_change_other']['#type'] = 'hidden';
+        $form['asu_comrf_what_if_audit_text']['#disabled'] = TRUE;
+        $form['asu_comrf_what_if_audit_text']['#type'] = 'hidden';
+        // Form submit button for WPC
+        $form['asu_comrf_submit']['#value'] = t('Proceed to W.P. Carey\'s Advising SOS website');
+      }
+    }
+
   }
 
   return $form;
