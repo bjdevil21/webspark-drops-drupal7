@@ -285,6 +285,7 @@ function eoss_webforms_followup_install() {
 
   /** Populate custom CID mappings table */
 
+  // Grab ALL components from eoss-migrate -- ~1500...
   $src_query = Database::getConnection('default',  'eossMigrate')
     ->select('webform_component', 'wc')
     ->fields('wc', array('nid', 'cid', 'form_key', 'machine_name'))
