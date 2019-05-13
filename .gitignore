@@ -78,3 +78,4 @@ webspark**.bash
 sites/default/settings.local.php
 profiles/openasu/modules/panopoly_test/tests/bin
 profiles/openasu/modules/panopoly_test/tests/vendor
+webgrin*
