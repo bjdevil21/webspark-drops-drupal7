@@ -1516,7 +1516,7 @@ WY|Wyoming
         'machine_name' => '_leadership_scholarship_program_application-candidate_information',
         'page_num' => 1,
       ),
-      '_leadership_scholarship_program_application-first_name_2' => array(
+      '_leadership_scholarship_program_application-first_name' => array(
         'form_key' => 'first_name',
         'name' => 'First Name',
         'type' => 'textfield',
@@ -1539,11 +1539,11 @@ WY|Wyoming
         ),
         'required' => 1,
         'weight' => 1,
-        'machine_name' => '_leadership_scholarship_program_application-first_name_2',
+        'machine_name' => '_leadership_scholarship_program_application-first_name',
         'page_num' => 1,
         'parent_machine_name' => '_leadership_scholarship_program_application-candidate_information',
       ),
-      '_leadership_scholarship_program_application-last_name_2' => array(
+      '_leadership_scholarship_program_application-last_name' => array(
         'form_key' => 'last_name',
         'name' => 'Last Name',
         'type' => 'textfield',
@@ -1566,7 +1566,7 @@ WY|Wyoming
         ),
         'required' => 1,
         'weight' => 2,
-        'machine_name' => '_leadership_scholarship_program_application-last_name_2',
+        'machine_name' => '_leadership_scholarship_program_application-last_name',
         'page_num' => 1,
         'parent_machine_name' => '_leadership_scholarship_program_application-candidate_information',
       ),
@@ -1597,7 +1597,7 @@ WY|Wyoming
         'page_num' => 1,
         'parent_machine_name' => '_leadership_scholarship_program_application-candidate_information',
       ),
-      '_leadership_scholarship_program_application-city_2' => array(
+      '_leadership_scholarship_program_application-city' => array(
         'form_key' => 'city',
         'name' => 'City',
         'type' => 'textfield',
@@ -1856,7 +1856,7 @@ WY|Wyoming
         'page_num' => 1,
         'parent_machine_name' => '_leadership_scholarship_program_application-high_school_information',
       ),
-      '_leadership_scholarship_program_application-city' => array(
+      '_leadership_scholarship_program_application-city_2' => array(
         'form_key' => 'city',
         'name' => 'City',
         'type' => 'textfield',
@@ -1879,7 +1879,7 @@ WY|Wyoming
         ),
         'required' => 1,
         'weight' => 15,
-        'machine_name' => '_leadership_scholarship_program_application-city',
+        'machine_name' => '_leadership_scholarship_program_application-city_2',
         'page_num' => 1,
         'parent_machine_name' => '_leadership_scholarship_program_application-high_school_information',
       ),
@@ -1955,7 +1955,7 @@ WY|Wyoming
         'machine_name' => '_leadership_scholarship_program_application-nominating_counselor_information',
         'page_num' => 1,
       ),
-      '_leadership_scholarship_program_application-first_name' => array(
+      '_leadership_scholarship_program_application-first_name_2' => array(
         'form_key' => 'first_name',
         'name' => 'First Name',
         'type' => 'textfield',
@@ -1978,11 +1978,11 @@ WY|Wyoming
         ),
         'required' => 1,
         'weight' => 3,
-        'machine_name' => '_leadership_scholarship_program_application-first_name',
+        'machine_name' => '_leadership_scholarship_program_application-first_name_2',
         'page_num' => 1,
         'parent_machine_name' => '_leadership_scholarship_program_application-nominating_counselor_information',
       ),
-      '_leadership_scholarship_program_application-last_name' => array(
+      '_leadership_scholarship_program_application-last_name_2' => array(
         'form_key' => 'last_name',
         'name' => 'Last Name',
         'type' => 'textfield',
@@ -2005,7 +2005,7 @@ WY|Wyoming
         ),
         'required' => 1,
         'weight' => 4,
-        'machine_name' => '_leadership_scholarship_program_application-last_name',
+        'machine_name' => '_leadership_scholarship_program_application-last_name_2',
         'page_num' => 1,
         'parent_machine_name' => '_leadership_scholarship_program_application-nominating_counselor_information',
       ),
