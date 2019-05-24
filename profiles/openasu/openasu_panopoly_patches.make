@@ -1,3 +1,6 @@
+core = 7.x
+api = 2
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PANOPOLY PROJECT PATCHES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,7 +67,11 @@ projects[media][patch][679] = patches/webspark-679_fix-HTML-encoded-macros-20282
 ; WEBSPARK-1404
 projects[views][type] = module
 projects[views][subdir] = contrib
+projects[views][version] = 3.21
 projects[views][patch][] = https://www.drupal.org/files/issues/2018-06-28/2885660-13.patch
 projects[views][patch][] = https://www.drupal.org/files/issues/2019-03-13/2977851-views-php72-count-8.patch
 projects[views][patch][] = https://www.drupal.org/files/issues/views-exposed-sorts-2037469-26.patch
 projects[views][patch][] = patches/webspark-1404_set-views-handler-filter-maxlength-to-null.patch
+
+; WEBSPARK-1507
+projects[panopoly_theme][patch][] = https://www.drupal.org/files/issues/accordion-style-id-fix.2777847.8.patch

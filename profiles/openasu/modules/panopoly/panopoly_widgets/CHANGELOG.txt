@@ -1,3 +1,15 @@
+7.x-1.67, 2019-05-09
+-------------------
+- Allow Spotlight links to be up to 255 characters.
+
+7.x-1.66, 2019-04-18
+-------------------
+- Security update for TableField module (tablefield-7.x-3.4).
+
+7.x-1.65, 2019-03-27
+-------------------
+- No changes since last release.
+
 7.x-1.64, 2019-03-20
 -------------------
 - No changes since last release.
