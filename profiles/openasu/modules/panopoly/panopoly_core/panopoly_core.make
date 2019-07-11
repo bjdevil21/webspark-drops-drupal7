@@ -5,7 +5,7 @@ core = 7.x
 
 ; Panels and Chaos Tools Magic
 
-projects[ctools][version] = 1.14
+projects[ctools][version] = 1.15
 projects[ctools][subdir] = contrib
 projects[ctools][patch][1000146] = https://www.drupal.org/files/issues/2018-03-26/views_panes-more_link_text-1000146-28.patch
 
@@ -22,9 +22,8 @@ projects[panelizer][subdir] = contrib
 projects[panelizer][patch][1549608] = https://www.drupal.org/files/issues/panelizer-n1549608-26.patch
 projects[panelizer][patch][2788851] = https://www.drupal.org/files/issues/panelizer-administer-panelizer-2788851-2.patch
 
-projects[fieldable_panels_panes][version] = 1.11
+projects[fieldable_panels_panes][version] = 1.13
 projects[fieldable_panels_panes][subdir] = contrib
-projects[fieldable_panels_panes][patch][2826205] = https://www.drupal.org/files/issues/fieldable_panels_panes-n2826205-39.patch
 
 projects[pm_existing_pages][version] = 1.4
 projects[pm_existing_pages][subdir] = contrib
@@ -34,11 +33,11 @@ projects[fape][subdir] = contrib
 
 ; Views Magic
 
-projects[views][version] = 3.20
+projects[views][version] = 3.22
 projects[views][subdir] = contrib
 projects[views][patch][2037469] = https://www.drupal.org/files/issues/views-exposed-sorts-2037469-26.patch
 projects[views][patch][2885660] = https://www.drupal.org/files/issues/2018-06-28/2885660-13.patch
-projects[views][patch][2977851] = https://www.drupal.org/files/issues/2018-06-06/2977851-views-php72-count-2.patch
+projects[views][patch][2977851] = https://www.drupal.org/files/issues/2019-03-13/2977851-views-php72-count-8.patch
 
 projects[views_autocomplete_filters][version] = 1.2
 projects[views_autocomplete_filters][subdir] = contrib
@@ -77,9 +76,9 @@ projects[entityreference][subdir] = contrib
 projects[field_group][version] = 1.6
 projects[field_group][subdir] = contrib
 
-projects[link][version] = 1.4
+projects[link][version] = 1.6
 projects[link][subdir] = contrib
-projects[link][patch][2666912] = https://www.drupal.org/files/issues/revert-url-validation-2666912.patch
+projects[link][patch][2666912] = https://www.drupal.org/files/issues/2019-01-24/link-revert_url_validation-2666912-7.x-1.5.patch
 
 ; Harness the Power of Features and Apps with Default Content
 
@@ -87,9 +86,8 @@ projects[apps][version] = 1.1
 projects[apps][subdir] = contrib
 projects[apps][patch][2945929] = https://www.drupal.org/files/issues/apps-php7-compat-2945929.patch
 
-projects[features][version] = 2.10
+projects[features][version] = 2.11
 projects[features][subdir] = contrib
-projects[features][patch][2931464] = "https://www.drupal.org/files/issues/features-create_function-is-deprecated-2931464-5.patch"
 
 projects[strongarm][version] = 2.0
 projects[strongarm][subdir] = contrib
@@ -119,7 +117,7 @@ projects[jquery_update][version] = 2.7
 projects[jquery_update][subdir] = contrib
 
 ; Recommended Modules
-projects[devel][version] = 1.6
+projects[devel][version] = 1.7
 projects[devel][subdir] = contrib
 
 projects[distro_update][version] = 1.0-beta4
@@ -128,5 +126,5 @@ projects[distro_update][subdir] = contrib
 projects[features_override][version] = 2.0-rc3
 projects[features_override][subdir] = contrib
 
-projects[uuid][version] = 1.2
+projects[uuid][version] = 1.3
 projects[uuid][subdir] = contrib

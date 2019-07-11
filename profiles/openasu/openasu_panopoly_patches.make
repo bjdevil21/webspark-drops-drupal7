@@ -1,3 +1,6 @@
+core = 7.x
+api = 2
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PANOPOLY PROJECT PATCHES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -15,6 +18,7 @@ projects[fieldable_panels_panes][subdir] = contrib
 projects[fieldable_panels_panes][version] = 1.11
 projects[fieldable_panels_panes][sha256] = db07832725054a264dfe536ac264f06032a9f816bf716bb89bc86667db5d7fa2
 projects[fieldable_panels_panes][patch][2826205] = https://www.drupal.org/files/issues/fieldable_panels_panes-n2826205-39.patch
+projects[fieldable_panels_panes][patch][2848997] = https://www.drupal.org/files/issues/2018-12-10/2848997-cant-access-admin-too-many-redirects.patch
 ; Webspark - Fixes undefined index: bundle error - Will go into v1.12
 projects[fieldable_panels_panes][patch][2825835] = patches/ws-1257_fpp-errors-after-bad-deletion_2825835.patch
 
@@ -59,3 +63,13 @@ projects[media][version] = 2.21
 projects[media][subdir] = contrib
 ; WEBSPARK-679 - WYSIWYG + Media module issues
 projects[media][patch][679] = patches/webspark-679_fix-HTML-encoded-macros-2028253-10.patch
+
+; WEBSPARK-1404
+projects[views][type] = module
+projects[views][subdir] = contrib
+projects[views][version] = 3.23
+projects[views][patch][] = https://www.drupal.org/files/issues/views-exposed-sorts-2037469-26.patch
+projects[views][patch][] = patches/webspark-1404_set-views-handler-filter-maxlength-to-null.patch
+
+; WEBSPARK-1507
+projects[panopoly_theme][patch][] = https://www.drupal.org/files/issues/accordion-style-id-fix.2777847.8.patch

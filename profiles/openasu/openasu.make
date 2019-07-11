@@ -1,72 +1,72 @@
-api = 2
 core = 7.x
+api = 2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Drupal Core
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 projects[drupal][type] = core
-projects[drupal][version] = 7.63
+projects[drupal][version] = 7.67
 ; Drupal Core Patches
 ;projects[drupal][patch][1334818] = https://drupal.org/files/issues/D7-install-profile-ajax-1334818-8.patch
+projects[drupal][patch][1803048] = patches/ws-1514_array-flip-error-travis-ci-tests_1803048.patch
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; The Panopoly Foundation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-projects[panopoly_core][version] = 1.60
+projects[panopoly_core][version] = 1.70
 projects[panopoly_core][subdir] = panopoly
 
-projects[panopoly_images][version] = 1.60
+projects[panopoly_images][version] = 1.70
 projects[panopoly_images][subdir] = panopoly
 
-projects[panopoly_theme][version] = 1.60
+projects[panopoly_theme][version] = 1.70
 projects[panopoly_theme][subdir] = panopoly
 
-projects[panopoly_magic][version] = 1.60
+projects[panopoly_magic][version] = 1.70
 projects[panopoly_magic][subdir] = panopoly
 ; Validation error with reusable FPPs. Updated in 1.52; Custom patch different from drupal.org/node/2813395
 projects[panopoly_magic][patch][2813395] = patches/ws-1236_title-cant-reuse-error_2813395.patch
 
-projects[panopoly_widgets][version] = 1.60
+projects[panopoly_widgets][version] = 1.70
 projects[panopoly_widgets][subdir] = panopoly
 
-projects[panopoly_admin][version] = 1.60
+projects[panopoly_admin][version] = 1.70
 projects[panopoly_admin][subdir] = panopoly
 
-projects[panopoly_users][version] = 1.60
+projects[panopoly_users][version] = 1.70
 projects[panopoly_users][subdir] = panopoly
 
 ; The Panopoly Toolset
-projects[panopoly_pages][version] = 1.60
+projects[panopoly_pages][version] = 1.70
 projects[panopoly_pages][subdir] = panopoly
 
-projects[panopoly_wysiwyg][version] = 1.60
+projects[panopoly_wysiwyg][version] = 1.70
 projects[panopoly_wysiwyg][subdir] = panopoly
 
-projects[panopoly_search][version] = 1.60
+projects[panopoly_search][version] = 1.70
 projects[panopoly_search][subdir] = panopoly
 ; Fixes DB update dependency ordering
 ; projects[panopoly_search][patch][2766677] = patches/panopoly-search-update-dependency-2766677-1.patch
 
-projects[panopoly_test][version] = 1.60
+projects[panopoly_test][version] = 1.70
 projects[panopoly_test][subdir] = panopoly
-
+; ASU custom tests and modifications
 projects[panopoly_test][patch][137] = patches/webspark-847_panopoly-test-137-update-v-1.46.patch
 projects[panopoly_test][patch][1370] = patches/webspark-847_behat_common.patch
 projects[panopoly_test][patch][142] = patches/webspark-944_add-init-config-tests-panopoly-test.patch
 projects[panopoly_test][patch][143] = patches/webspark-1066-panopoly-test-v146.patch
-; moved custom tests to webspark_test custom module
-;projects[panopoly_test][patch][1403] = patches/webspark-1066-panopoly-webspark-add-custom-tests-v143.patch
 
 ; ASU-specific, Webspark-agnostic modules (/custom directory contents)
+
 ;projects[asu_drupal_modules][type] = module
 ;projects[asu_drupal_modules][directory_name] = custom
 ;projects[asu_drupal_modules][download][revision] = 7e86f7fed3a06597335c7ca8850e95cb9f56c373
 ;projects[asu_drupal_modules][download][url] = https://github.com/ASU/asu-drupal-modules.git
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ASU Module Prerequisites
+; ASU Module Prerequisites -- Webspark
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Latest Better Watchdog UI
@@ -86,7 +86,7 @@ projects[feeds][type] = module
 projects[feeds][subdir] = contrib
 projects[feeds][download][type] = "git"
 projects[feeds][download][branch] = "7.x-2.x"
-projects[feeds][download][url] = "https://git.drupal.org/project/feeds.git"
+projects[feeds][download][url] = "https://git.drupalcode.org/project/feeds.git"
 projects[feeds][download][revision] = "2ae6421979af46752c2697759567d85b5a79c9e1"
 
 projects[feeds_xpathparser][version] = 1.1
@@ -105,24 +105,29 @@ projects[references][type] = module
 projects[references][subdir] = contrib
 projects[references][download][type] = "git"
 projects[references][download][branch] = "7.x-2.x"
-projects[references][download][url] = "https://git.drupal.org/project/references.git"
+projects[references][download][url] = "https://git.drupalcode.org/project/references.git"
 projects[references][download][revision] = "a7ad6b794f72dd4e669706b64bd8d6f1612cc0b4"
 
-projects[smtp][version] = 1.7
 projects[smtp][subdir] = contrib
 projects[smtp][type] = module
+projects[smtp][download][type] = "git"
+projects[smtp][download][branch] = "7.x-1.x"
+projects[smtp][download][url] = "https://git.drupalcode.org/project/smtp.git"
+projects[smtp][download][revision] = "47f4114b1e6d357708b6ffcade01241a11c41ef1"
+; https://www.drupal.org/project/webform/issues/2966816
+projects[smtp][patch][] = https://www.drupal.org/files/issues/2018-11-13/smtp-filepath_uri-2966816-27-D7_0.patch
+
 
 projects[viewfield][version] = 2.0
 projects[viewfield][type] = module
 projects[viewfield][subdir] = contrib
 
-; Don't update to v4.17 until https://www.drupal.org/project/webform/issues/2966816 is worked out
-projects[webform][version] = 4.16
+projects[webform][version] = 4.19
 projects[webform][type] = module
 projects[webform][subdir] = contrib
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ASU Module prerequisites - Webspark Webstandards Components - contrib
+; ASU Module prerequisites - Webspark Web Standards components - contrib
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 projects[backgroundfield][version] = 1.5
@@ -149,9 +154,12 @@ projects[entity_view_mode][version] = 1.0-rc1
 projects[entity_view_mode][type] = module
 projects[entity_view_mode][subdir] = contrib
 
-projects[field_collection][version] = 1.0-beta11
+; field_collection latest dev verion as of 06/25/2019
 projects[field_collection][type] = module
 projects[field_collection][subdir] = contrib
+projects[field_collection][download][branch] = "7.x-1.x"
+projects[field_collection][download][url] = "https://git.drupalcode.org/project/field_collection.git"
+projects[field_collection][download][revision] = "5f127681fcada4df97ce2903e65e1e4c52cc0dcd"
 
 projects[flexslider][version] = 2.0-rc2
 projects[flexslider][type] = module
@@ -166,6 +174,10 @@ projects[fontawesome][subdir] = contrib
 projects[google_appliance][version] = 1.14
 projects[google_appliance][type] = module
 projects[google_appliance][subdir] = contrib
+
+projects[google_cse][version] = 2.5
+projects[google_cse][type] = module
+projects[google_cse][subdir] = contrib
 
 projects[maxlength][version] = 3.2-beta2
 projects[maxlength][type] = module
@@ -184,7 +196,7 @@ projects[quicktabs][type] = module
 projects[quicktabs][subdir] = contrib
 projects[quicktabs][download][type] = "git"
 projects[quicktabs][download][branch] = "7.x-3.x"
-projects[quicktabs][download][url] = "http://git.drupal.org/project/quicktabs.git"
+projects[quicktabs][download][url] = "http://git.drupalcode.org/project/quicktabs.git"
 projects[quicktabs][download][revision] = "758de4cc4995149a2de1d566b4209ec343581d27"
 
 ; Added for ASU Dir module
@@ -197,12 +209,12 @@ projects[special_menu_items][version] = 2.0
 projects[special_menu_items][subdir] = contrib
 projects[special_menu_items][type] = module
 
-
+; TB Megamenu
 projects[tb_megamenu][type] = module
 projects[tb_megamenu][subdir] = contrib
 projects[tb_megamenu][download][branch] = "7.x-1.x"
-projects[tb_megamenu][download][url] = "http://git.drupal.org/project/tb_megamenu.git"
-projects[tb_megamenu][downloads][revision] = "dd9469f608002256657da56bf71128d542d25243"
+projects[tb_megamenu][download][url] = "https://git.drupalcode.org/project/tb_megamenu.git"
+projects[tb_megamenu][download][revision] = "dd9469f608002256657da56bf71128d542d25243"
 ;; TODO - PATCH the CSS for tb_megamenu
 projects[tb_megamenu][patch][] = patches/webspark-919_tb-megamenu_fix-breakpoints.patch
 
@@ -210,7 +222,7 @@ projects[tb_megamenu][patch][] = patches/webspark-1007-redux-tb_megamenu-tab_acc
 projects[tb_megamenu][patch][] = patches/webspark-1018_tb-megamenu_removing-mobile-button-for-ADA_7.x.patch
 ; added patches/ path to 1304 path - rknesbit
 projects[tb_megamenu][patch][] = patches/webspark-1086_tb-megamenu_fix-undefined-index_2571547-23.patch
-projects[tb_megamenu][patch][] = patches/webspark-1379-AND-webspark-1304-tb_megamenu-classes-missing-AND-update-data-col-sizes.patch
+projects[tb_megamenu][patch][] = patches/webspark-1379-AND-webspark-1304-tb_megamenu-classes-missing-AND-update-data-col-sizes-v1.64.patch
 
 ; UUID Features Integration
 ;projects[uuid_features][version] = 1.0-alpha4
@@ -219,7 +231,7 @@ projects[uuid_features][type] = module
 projects[uuid_features][subdir] = contrib
 projects[uuid_features][download][type] = "git"
 projects[uuid_features][download][branch] = "7.x-1.x"
-projects[uuid_features][download][url] = "http://git.drupal.org/project/uuid_features.git"
+projects[uuid_features][download][url] = "https://git.drupalcode.org/project/uuid_features.git"
 projects[uuid_features][download][revision] = "63a676b0243838a1624a758a373aaca9444cce06"
 
 projects[video_embed_field][version] = 2.0-beta11
@@ -244,7 +256,7 @@ projects[views_bootstrap][subdir] = contrib
 ; ASU News + Events dependencies
 projects[addtocal][version] = 1.0
 projects[addtocal][type] = module
-projects[addtocal]subdir] = contrib
+projects[addtocal][subdir] = contrib
 
 projects[feeds_tamper][version] = 1.2
 projects[feeds_tamper][type] = module
@@ -266,9 +278,10 @@ projects[views_data_export][version] = 3.2
 projects[views_data_export][type] = module
 projects[views_data_export][subdir] = contrib
 
-projects[mimemail][version] = 1.0-beta4
+projects[mimemail][version] = 1.1
 projects[mimemail][type] = module
 projects[mimemail][subdir] = contrib
+projects[mimemail][patch][2947006] = https://www.drupal.org/files/issues/2018-05-28/mimemail-support_php_72-2947006-4.patch
 
 projects[honeypot][version] = 1.22
 projects[honeypot][type] = module
@@ -278,6 +291,10 @@ projects[honeypot][subdir] = contrib
 projects[mailsystem][version] = 2.34
 projects[mailsystem][type] = module
 projects[mailsystem][subdir] = contrib
+
+projects[feeds_crawler][version] = 1.0-beta2
+projects[feeds_crawler][type] = module
+projects[feeds_crawler][subdir] = contrib
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Bootstrap and Theme Frameworks - Moved to Webspark repo (see WEBSPARK-366)
@@ -298,6 +315,7 @@ projects[kalatheme][patch][] = patches/webspark-565-add-views-tpl-to-kalatheme.p
 projects[kalatheme][patch][] = patches/nojira-20150812-kalatheme-spelling-fix.patch
 projects[kalatheme][patch][] = patches/nojira-20150812-kalatheme-admin-spelling-fix.patch
 projects[kalatheme][patch][] = patches/nojira-20160715-kalatheme_fix-missing-index.patch
+projects[kalatheme][patch][] = patches/webspark-1225-kalatheme-undefined-index-fix.patch
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ASU Module prerequisites - Webstandards additions - Libraries
@@ -307,19 +325,19 @@ libraries[ajax_solr][download][type] = get
 libraries[ajax_solr][download][url] = https://github.com/evolvingweb/ajax-solr/archive/master.zip
 libraries[ajax_solr][directory_name] = ajax_solr
 libraries[ajax_solr][destination] = libraries
-libraries[ajax_solr][download][sha256] = d79493f28c47e8d5871d938d7146ab701f8666b785f50e00d9ab29e3a79f4376
+libraries[ajax_solr][download][sha256] = 5445d07305f99719e1cb9f277aaf0c3315728b0ea34df98f6990b45870007183
 
 ; 1 of 2 - CAS
 libraries[CAS][download][type] = get
-libraries[CAS][download][url] = https://github.com/Jasig/phpCAS/archive/1.3.5.zip
-libraries[CAS][download][subtree] = phpCAS-1.3.5/source
+libraries[CAS][download][url] = https://github.com/Jasig/phpCAS/archive/1.3.6.zip
+libraries[CAS][download][subtree] = phpCAS-1.3.6/source
 libraries[CAS][directory_name] = CAS/source
-;libraries[CAS][download][sha256] = c8c73945c3503991d19e2a1f7f14b51c293dd2ed9ebae974450a85da03ca3eee
+;libraries[CAS][download][sha256] = 97d3ae33445c42d20c4933c888724247b21f0a4282b0e5b2cf9b7b08410d1c59
 ; 2 of 2
 libraries[CAS_2][download][type] = file
-libraries[CAS_2][download][url] = https://raw.githubusercontent.com/Jasig/phpCAS/1.3.5/CAS.php
+libraries[CAS_2][download][url] = https://raw.githubusercontent.com/Jasig/phpCAS/1.3.6/CAS.php
 libraries[CAS_2][directory_name] = CAS
-;libraries[CAS_2][download][sha256] = 74a3eeed33e84d927884a2cf01ab10c33cc445e891c6d773996ffb19cf841d23
+;libraries[CAS_2][download][sha256] = c21352f1cef5fa8622f71637c7bfc8328aac4d15d34ad914859c2e725109d397
 
 libraries[chosen][download][type] = get
 libraries[chosen][download][url] = https://github.com/harvesthq/chosen/releases/download/v1.1.0/chosen_v1.1.0.zip

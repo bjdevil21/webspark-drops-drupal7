@@ -96,13 +96,25 @@ function tablefield_permission() {
  *   The field delta to load.
  */
 function tablefield_export_csv($entity_type, $entity_id, $field_name, $langcode, $delta) {
-  $filename = sprintf('%s_%s_%s_%s_%s.csv', $entity_type, $entity_id, $field_name, $langcode, $delta);
-  $uri = 'temporary://' . $filename;
+  // Ensure this is a tablefield.
+  $field_info = field_info_field($field_name);
+  if (!$field_info || $field_info['type'] != 'tablefield') {
+    return drupal_not_found();
+  }
 
   // Attempt to load the entity.
-  $ids = array($entity_id);
-  $entity = entity_load($entity_type, $ids);
-  $entity = array_pop($entity);
+  $entities = entity_load($entity_type, array($entity_id));
+  if (empty($entities)) return MENU_NOT_FOUND;
+  $entity = reset($entities);
+
+  // Ensure the user has access to view this field on this entity.
+  if (!_tablefield_entity_access('view', $entity_type, $entity) ||
+      !field_access('view', $field_info, $entity_type, $entity)) {
+    return MENU_ACCESS_DENIED;
+  }
+
+  $filename = sprintf('%s_%s_%s_%s_%s.csv', $entity_type, $entity_id, $field_name, $langcode, $delta);
+  $uri = 'temporary://' . $filename;
 
   // Ensure that the data is available and that we can load a
   // temporary file to stream the data.
@@ -141,6 +153,36 @@ function tablefield_export_csv($entity_type, $entity_id, $field_name, $langcode,
   drupal_add_http_header('Status', '500 Internal Server Error');
   print t('Error generating CSV.');
   drupal_exit();
+}
+
+/**
+ * Helper function: A sort-of copy of entity_access() from entity API.
+ * @todo Remove if entity_acess() ends up in core.
+ */
+function _tablefield_entity_access($op, $entity_type, $entity = NULL, $account = NULL) {
+  $info = entity_get_info($entity_type);
+  // Use entity API access callbacks if provided.
+  if (isset($info[$entity_type]['access callback'])) {
+    $access_callback = $info[$entity_type]['access callback'];
+    return $access_callback($op, $entity, $account, $entity_type);
+  }
+  // Fall back to core entity access callbacks if EntityAPI is not available.
+  elseif ($entity_type == 'node') {
+    return node_access($op, $entity, $account);
+  }
+  elseif ($entity_type == 'user') {
+    return user_view_access($entity);
+  }
+  elseif ($entity_type == 'taxonomy_term') {
+    if (user_access('administer taxonomy', $account)) {
+      return TRUE;
+    }
+    if (user_access('access content', $account)) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 /**
@@ -183,17 +225,57 @@ function tablefield_item_property_info() {
     'getter callback' => 'tablefield_get_table_value',
   );
 
+  $properties['value'] = array(
+    'type' => 'text',
+    'label' => t('The value column of the table.'),
+    'computed' => TRUE,
+    'getter callback' => 'tablefield_value_array_get',
+    // @todo: can we support setting via an array submitted from REST?
+    // 'setter callback' => 'tablefield_value_array_set',
+  );
+
   return $properties;
+}
+
+/**
+ *
+ */
+function tablefield_tablefield_to_array($trat) {
+  // Translate tablefield to associative array.
+  $ttrans = array();
+  $rowkey = 0;
+  foreach ($trat as $rowix => $rowvals) {
+    foreach ($rowvals as $ix => $val) {
+      $ttrans[$rowkey][] = $val;
+    }
+    $rowkey++;
+  }
+  return $ttrans;
+}
+
+/**
+ * Get the value property in formatted array.
+ */
+function tablefield_value_array_get($data, array $options, $name, $type, $info) {
+
+  if (isset($data['tabledata']['tabledata'])) {
+    $data['value'] = tablefield_tablefield_to_array($data['tabledata']['tabledata']);
+  }
+  elseif (isset($data['tablefield']['tabledata'])) {
+    $data['value'] = tablefield_tablefield_to_array($data['tablefield']['tabledata']);
+  }
+  return $data['value'];
 }
 
 /**
  * Get the property just as it is set in the data. Search API indexing addition.
  */
 function tablefield_get_table_value($data, array $options, $name, $type, $info) {
-  if (isset($data['tabledata'])) {
+
+  if (isset($data['tabledata']['tabledata'])) {
     $data['value'] = '';
 
-    foreach ($data['tabledata'] as $rows) {
+    foreach ($data['tabledata']['tabledata'] as $rows) {
       $data['value'] .= implode(" ", $rows) . " ";
     }
   }
@@ -601,7 +683,7 @@ function tablefield_field_formatter_settings_summary($field, $instance, $view_mo
           'title' => t('Manage user permissions'),
         ),
       ));
-      $summary[] = t('Show link to export table data as CSV depending on !permission: %tr', array('%tr' => ($settings['hide_cols_skip_head']) ? t('Yes') : t('No'), '!permission' => $permission));
+      $summary[] = t('Show link to export table data as CSV depending on !permission: %tr', array('%tr' => ($settings['export_csv']) ? t('Yes') : t('No'), '!permission' => $permission));
   }
   return implode('<br />', $summary);;
 }
@@ -756,6 +838,7 @@ function tablefield_field_formatter_settings_form($field, $instance, $view_mode,
       );
       $element['hide_cols_skip_head'] = array(
         '#title' => t('Hide empty columns ignoring column header'),
+        '#description' => t('This will remove the table field completely if all columns are empty including the field label.'),
         '#type' => 'checkbox',
         '#default_value' => $settings['hide_cols_skip_head'],
       );
@@ -778,11 +861,6 @@ function tablefield_field_formatter_settings_form($field, $instance, $view_mode,
         '#title' => t('Hide empty columns'),
         '#type' => 'checkbox',
         '#default_value' => $settings['hide_empty_cols'],
-      );
-      $element['hide_cols_skip_head'] = array(
-        '#title' => t('Hide empty columns ignoring column header'),
-        '#type' => 'checkbox',
-        '#default_value' => $settings['hide_cols_skip_head'],
       );
       $permission = l(t('permission'), 'admin/people/permissions', array(
         'fragment' => 'module-tablefield',
@@ -1041,7 +1119,7 @@ function tablefield_field_formatter_view($entity_type, $entity, $field, $instanc
           drupal_alter('tablefield_output', $markup, $context);
           $element[0] = array(
           // See http://php.net/manual/en/json.constants.php#119565.
-            '#markup' => $markup,
+            '#markup' => check_plain($markup),
           );
         }
         break;
@@ -1121,30 +1199,35 @@ function tablefield_field_formatter_view($entity_type, $entity, $field, $instanc
               }
             }
 
-            $header = $noheader ? NULL : $header_data;
+            $header = $noheader ? [] : $header_data;
             $entity_info = entity_get_info($entity_type);
             $entity_id = !empty($entity_info['entity keys']['id']) ? $entity->{$entity_info['entity keys']['id']} : NULL;
 
             // Remove the first row from the tabledata.
-            array_shift($tabledata);
-            // Theme the table for display.
-            $element[$delta] = array(
-              '#theme' => 'tablefield_view',
-              '#caption' => $caption,
-              '#header_orientation' => isset($settings['header_orientation']) ? $settings['header_orientation'] : 'Horizontal',
-              '#sticky' => isset($settings['sticky_header']) ? $settings['sticky_header'] : NULL,
-              '#striping' => isset($settings['striping']) ? $settings['striping'] : NULL,
-              '#sortable' => isset($settings['sortable']) ? $settings['sortable'] : NULL,
-              '#header' => $header,
-              '#rows' => $tabledata,
-              '#delta' => $delta,
-              '#export' => isset($settings['export_csv']) ? $settings['export_csv'] : NULL,
-              '#entity_type' => $entity_type,
-              '#entity_id' => $entity_id,
-              '#field_name' => $field['field_name'],
-              '#langcode' => $langcode,
-              '#formatter' => $formatter,
-            );
+            if ((empty($settings['hide_header']) && $header_data) || $settings['hide_header']) {
+              array_shift($tabledata);
+            }
+            // Theme the table for display, but only if we have printable
+            // table data.
+            if (!$settings['hide_cols_skip_head'] || $tabledata || $header) {
+              $element[$delta] = array(
+                '#theme' => 'tablefield_view',
+                '#caption' => $caption,
+                '#header_orientation' => isset($settings['header_orientation']) ? $settings['header_orientation'] : 'Horizontal',
+                '#sticky' => isset($settings['sticky_header']) ? $settings['sticky_header'] : NULL,
+                '#striping' => isset($settings['striping']) ? $settings['striping'] : NULL,
+                '#sortable' => isset($settings['sortable']) ? $settings['sortable'] : NULL,
+                '#header' => $header,
+                '#rows' => $tabledata,
+                '#delta' => $delta,
+                '#export' => isset($settings['export_csv']) ? $settings['export_csv'] : NULL,
+                '#entity_type' => $entity_type,
+                '#entity_id' => $entity_id,
+                '#field_name' => $field['field_name'],
+                '#langcode' => $langcode,
+                '#formatter' => $formatter,
+              );
+            }
           }
         }
     }
@@ -1236,6 +1319,8 @@ function tablefield_field_widget_form(&$form, &$form_state, $field, $instance, $
       // Importing CSV data.
       tablefield_import_csv($form, $form_state, $langcode, $import_id, $tablefield_parents);
       $default_value = drupal_array_get_nested_value($form_state['input'], $tablefield_parents);
+      $identifier = implode('--', $tablefield_parents);
+      $form_state['_tablefield_imported_values'][$identifier] = $default_value;
     }
     elseif ($form_state['triggering_element']['#name'] == $pasted_id) {
       // Importing pasted data.
@@ -1438,13 +1523,22 @@ function tablefield_field_widget_form(&$form, &$form_state, $field, $instance, $
     '#type' => 'textfield',
     '#title' => t('Table description'),
     '#default_value' => '',
-    '#description' => t('This brief caption will be associated with the table and will help Assitive Technology, like screen readers, better describe the content within.'),
+    '#description' => t('This brief caption will be associated with the table and will help Assistive Technology, like screen readers, better describe the content within.'),
   );
-  if (isset($items[$delta]['value'])) {
+
+  // Could be the Paragraphs module.
+  if (isset($items[$delta]['tablefield'])) {
+    $raw = $items[$delta]['tablefield'];
+  }
+  elseif (isset($items[$delta]['value'])) {
     $raw = unserialize($items[$delta]['value']);
-    if (isset($raw['caption'])) {
-      $element['tablefield']['caption']['#default_value'] = check_plain($raw['caption']);
-    }
+  }
+  // If still nothing then get the instance default, but only for delta 0.
+  elseif ($delta === 0 && isset($instance['default_value'][0]['tablefield'])) {
+    $raw = $instance['default_value'][0]['tablefield'];
+  }
+  if (isset($raw['caption'])) {
+    $element['tablefield']['caption']['#default_value'] = check_plain($raw['caption']);
   }
 
   // If the user doesn't have rebuild perms, we pass along the data as a value.
@@ -1610,7 +1704,104 @@ function tablefield_field_widget_form(&$form, &$form_state, $field, $instance, $
     }
   }
 
+  $form['element']['#element_validate'][] = 'tablefield_field_widget_form_validate';
+
   return $element;
+}
+
+ /**
+ * Validation callback.
+ *
+ * If the POST request exceeds the server's limit of max_input_vars, the tablefield
+ * values that were computed by a CSV import will be directly get set by the
+ * CSV table, bypassing the form submission step, and also any changes that the
+ * user made on browser.
+ *
+ * @param $form
+ * @param $form_state
+ * @param $element
+ */
+function tablefield_field_widget_form_validate(&$form, &$form_state, &$element) {
+  if (tablefield_post_exceeds_max_input_vars()) {
+    // Check if the values have been imported from a CSV file. If so, original
+    // values still exist in $form_state['_tablefield_imported_values'].
+    $values_from_csv = FALSE;
+    if (isset($form_state['_tablefield_imported_values'])) {
+      $values_from_csv = $form_state['_tablefield_imported_values'];
+    }
+
+    if ($values_from_csv) {
+      // Each key is one of the fields multiple values
+      $elements = array_keys($values_from_csv);
+      foreach ($elements as $key) {
+        $table_values = $values_from_csv[$key];
+        // Reconstruct in the same form as the array is passed in $form_state.
+        $table_values_format = array();
+        $i_row = 0;
+        foreach ($table_values as $row) {
+          $i_col = 0;
+          foreach ($row as $cell) {
+            $table_values_format['cell_' . $i_row . '_' . $i_col] = $cell;
+            $i_col++;
+          }
+          $i_row++;
+        }
+
+        $keys = explode('--', $key);
+        tablefield_replace_csv_values($form_state['values'], $keys, $table_values_format);
+        $message_warning = t('This table is too large to be safely edited. The original CSV values are stored. Please import a new CSV file to make changes to this table.');
+        drupal_set_message($message_warning, 'warning');
+      }
+    }
+    else {
+      $message_error = t('This table is too large to be safely edited. To assure that no data is lost, please import a new CSV file to make changes to this table.');
+      drupal_set_message($message_error, 'error');
+    }
+  }
+}
+
+/**
+ * Helper function that uses recursion to replace table field values from
+ * $form_state['values'] with the values that were saved right after the csv
+ * upload.
+ *
+ * The function is used if the size of the table is so large, that on the form
+ * submission the max_input_vars is exceeded.
+ *
+ * @param array $destination
+ *   It should only contain the $form_state['values'].
+ *
+ * @param array $keys
+ *   Array with the nested keys of the field's location into $form_state['values'].
+ *
+ * @param array $value
+ *   The table to be placed.
+ */
+function tablefield_replace_csv_values(array &$destination, array &$keys, array $value) {
+  $cur_key = array_shift($keys);
+  if (!isset($destination[$cur_key])) {
+    return;
+  }
+
+  if (!empty($keys)) {
+    tablefield_replace_csv_values( $destination[$cur_key], $keys, $value);
+    return;
+  }
+
+  foreach ($value as $key => $value2) {
+    $destination[$cur_key][$key] = $value2;
+  }
+}
+
+/**
+ * Implements hook_custom_theme().
+ */
+function tablefield_custom_theme() {
+  // Ensure that if this is a valid POST request that we use the same theme
+  // used by the referring form.
+  if (isset($_POST['form_build_id']) && path_is_admin($_GET['q'])) {
+    return variable_get('admin_theme');
+  }
 }
 
 /**
@@ -1857,9 +2048,10 @@ function tablefield_theme() {
 function theme_tablefield_view($variables) {
   $id = $variables['entity_type'] . '-' . $variables['entity_id'] . '-' . $variables['field_name'] . '-' . $variables['delta'];
   $sortable = $variables['sortable'] ? 'tablesorter' : NULL;
+  $cols_class = isset($variables['header']) ? 'tablefield-columns-' . count($variables['header']) : NULL;
   $attributes = array(
     'id' => 'tablefield-' . $id,
-    'class' => array('tablefield', $sortable),
+    'class' => array('tablefield', $sortable, $cols_class),
   );
 
   // Apply scope property to headers for accessibility.
@@ -1985,7 +2177,7 @@ function tablefield_trim($tabledata, $ignore_head = FALSE) {
  *   Whether ignoring header or not.
  */
 function tablefield_rtrim_cols($tabledata, $ignore_head = FALSE) {
-  $row_num = count($tabledata);
+  $row_num = !empty($tabledata) ? count($tabledata) : 0;
 
   if (!$row_num) {
     return $tabledata;
@@ -2064,7 +2256,7 @@ function tablefield_hide_rows($tabledata, $ignore_head = FALSE) {
  *   Whether ignoring header or not.
  */
 function tablefield_hide_cols($tabledata, $ignore_head = FALSE) {
-  $row_num = count($tabledata);
+  $row_num = !empty($tabledata) ? count($tabledata) : 0;
 
   if (!$row_num) {
     return $tabledata;
@@ -2100,21 +2292,19 @@ function tablefield_multiple_field_remove_button_field_widgets_alter(&$fieldwidg
  * Avoid empty tables on multivalue fields with default header values.
  */
 function tablefield_form_alter(&$form, &$form_state, $form_id) {
-  $instances = field_info_instances();
-  $field_names = array();
-  foreach ($instances as $entity_type => $entities) {
-    foreach ($entities as $bundle => $fields) {
-      foreach ($fields as $field_name => $instance) {
-        if ($instance['widget']['type'] === 'tablefield') {
-          $field_info = field_info_field($field_name);
-          if (empty($field_info['field_name'])) {
-            return;
-          }
-          if (isset($form[$field_info['field_name']]) && $field_info['cardinality'] != 1) {
-            $field_language = $form[$field_info['field_name']]['#language'];
-            $max_delta = $form[$field_info['field_name']][$field_language]['#max_delta'];
-            unset($form[$field_name][$field_language][$max_delta]);
-          }
+  if (empty($form_state['field'])) {
+    return;
+  }
+
+  foreach (element_children($form_state['field']) as $field_name) {
+    foreach ($form_state['field'][$field_name] as $lang => $value) {
+      if (isset($value['instance']) && $value['instance']['widget']['type'] === 'tablefield' && $value['field']['cardinality'] != 1) {
+        $key_exists = FALSE;
+        $max_delta = $form[$field_name][$lang]['#max_delta'];
+        $parents = array_merge($value['array_parents'], array($field_name, $lang));
+        $element = &drupal_array_get_nested_value($form, $parents, $key_exists);
+        if ($key_exists && isset($element[$max_delta])) {
+          unset($element[$max_delta]);
         }
       }
     }
@@ -2227,7 +2417,7 @@ function theme_tablefield($variables) {
     $header = array();
   }
   // Add sticky headers, if applicable.
-  if (count($header) && $sticky) {
+  if (!empty($header) && $sticky) {
     drupal_add_js('misc/tableheader.js');
     // Add 'sticky-enabled' class to the table to identify it for JS.
     // This is needed to target tables constructed by this function.
@@ -2241,7 +2431,7 @@ function theme_tablefield($variables) {
   }
 
   // Format the table columns:
-  if (count($colgroups)) {
+  if (!empty($colgroups)) {
     foreach ($colgroups as $number => $colgroup) {
       $attributes = array();
 
@@ -2261,7 +2451,7 @@ function theme_tablefield($variables) {
       }
 
       // Build colgroup.
-      if (is_array($cols) && count($cols)) {
+      if (is_array($cols) && !empty($cols)) {
         $output .= ' <colgroup' . drupal_attributes($attributes) . '>';
         $i = 0;
         foreach ($cols as $col) {
@@ -2276,7 +2466,7 @@ function theme_tablefield($variables) {
   }
 
   // Add the 'empty' row message if available.
-  if (!count($rows) && $empty) {
+  if (empty($rows) && $empty) {
     $header_count = 0;
     foreach ($header as $header_cell) {
       if (is_array($header_cell)) {
@@ -2296,25 +2486,25 @@ function theme_tablefield($variables) {
   }
 
   // Format the table header:
-  if (count($header)) {
+  if (!empty($header)) {
     $ts = tablesort_init($header);
     // HTML requires that the thead tag has tr tags in it followed by tbody
     // tags. Using ternary operator to check and see if we have any rows.
-    $output .= (count($rows) ? ' <thead' . $tooltip . '><tr>' : ' <tr>');
+    $output .= !empty($rows) ? ' <thead' . $tooltip . '><tr>' : ' <tr>';
     foreach ($header as $cell) {
       $cell = tablesort_header($cell, $header, $ts);
       $output .= _theme_table_cell($cell, TRUE);
     }
     // Using ternary operator to close the tags based on whether or not there
     // are rows.
-    $output .= (count($rows) ? " </tr></thead>\n" : "</tr>\n");
+    $output .= !empty($rows) ? " </tr></thead>\n" : "</tr>\n";
   }
   else {
     $ts = array();
   }
 
   // Format the table rows:
-  if (count($rows)) {
+  if (!empty($rows)) {
     $output .= "<tbody>\n";
     $flip = array('even' => 'odd', 'odd' => 'even');
     $class = 'even';
@@ -2333,7 +2523,7 @@ function theme_tablefield($variables) {
         $cells = $row;
         $attributes = array();
       }
-      if (count($cells)) {
+      if (!empty($cells)) {
         // Add odd/even class.
         if (!$no_striping) {
           $class = $flip[$class];
@@ -2382,4 +2572,17 @@ function array_to_xml($data, &$xml_data) {
       $xml_data->addChild("$key", htmlspecialchars("$value"));
     }
   }
+}
+
+/**
+ * Helper function, that checks if the POST request contains more input variables
+ * than the max_input_vars configuration on the server.
+ *
+ * @return bool
+ */
+function tablefield_post_exceeds_max_input_vars() {
+  $posted_vars = count($_POST, COUNT_RECURSIVE);
+  $max_input_vars = get_cfg_var('max_input_vars');
+
+  return ($posted_vars > $max_input_vars) ? TRUE : FALSE;
 }
