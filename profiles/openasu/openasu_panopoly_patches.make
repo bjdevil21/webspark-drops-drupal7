@@ -73,3 +73,9 @@ projects[views][patch][] = patches/webspark-1404_set-views-handler-filter-maxlen
 
 ; WEBSPARK-1507
 projects[panopoly_theme][patch][] = https://www.drupal.org/files/issues/accordion-style-id-fix.2777847.8.patch
+
+; WEBSPARk-1517
+projects[entity][type] = module
+projects[entity][subdir] = contrib
+projects[entity][version] = 1.9
+projects[entity][patch][] = https://www.drupal.org/files/issues/warning_array_flip-1803048-16.patch
