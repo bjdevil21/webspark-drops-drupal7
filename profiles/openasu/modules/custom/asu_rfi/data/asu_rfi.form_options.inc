@@ -34,7 +34,8 @@ function asu_rfi_get_options_data($name, $installing = FALSE) {
   }
 
   // Do DB upsert if values are returned from JSON feed...
-  if (count($result)) {
+  // PHP 7.2+ means count no longer works as a NULL/empty checker. is_array added...
+  if (is_array($result) && count($result)) {
     $cntry_cnt = 0;
     foreach ($result as $datum) {
       $datum_key = (!empty($datum->{$config['datum_key']})) ? check_plain($datum->{$config['datum_key']}) : 'EMPTY';
