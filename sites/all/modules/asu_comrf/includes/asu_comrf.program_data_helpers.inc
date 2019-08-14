@@ -181,14 +181,14 @@ function asu_comrf_build_student_profile($student_info_raw) {
     drupal_exit();
   }
 
-  // Initialize variable to count number of MAJ plan types for a given student
-  $plan_type_maj_count = 0;
+  // Initialize variable to count number of MAJ or PRE plan types for a given student
+  $plan_type_program_count = 0;
 
   // Only display undergraduate majors
   foreach ($careers as $career) {
     if ($career->career == 'UGRD') {
       foreach ($career->plans as $plan) {
-        if ($plan->planType == 'MAJ') {
+        if ($plan->planType == 'MAJ' || $plan->planType == 'PRE') {
           $plan_name = $plan->transcriptDescription;
           $degree_type = $plan->degree;
           $current_program = array(
@@ -196,14 +196,14 @@ function asu_comrf_build_student_profile($student_info_raw) {
             'degree_type' => $degree_type,
           );
           array_push($degree_programs, $current_program);
-          $plan_type_maj_count++;
+          $plan_type_program_count++;
         }
       }
     }
   }
 
-  // Send user to notice page if they don't have at least one MAJ plan type
-  if ($plan_type_maj_count == 0) {
+  // Send user to notice page if they don't have at least one MAJ or PRE plan type
+  if ($plan_type_program_count == 0) {
     drupal_goto("request/notice");
     drupal_exit();
   }
