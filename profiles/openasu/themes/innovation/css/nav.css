@@ -507,7 +507,8 @@ ul.quicktabs-tabs.quicktabs-style-asu-web-standards li a {
 	border-bottom-right-radius: 0.25em;
 	border: 1px solid #ccc;
 }
-.item-list.item-list-pager .pager .pager-current {
+.item-list.item-list-pager .pager .pager-current,
+#media-browser-tabset .item-list.item-list-pager .pager .pager-current {
 	border: 1px solid #8C1D40;
 	padding: 5px 14px;
 	background-color: #8C1D40;
