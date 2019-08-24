@@ -111,9 +111,6 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
  */
 function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, &$form_state) {
 
-  //$asurite_id_title = 'Request from: ';
-  //$asurite_id = $student_info['asurite'];
-
   $student_info_title = 'Request from: ';
   $student_info_name = $student_info['name'];
   $student_info_emplid = $student_info['emplid'];
@@ -126,12 +123,18 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, 
   $new_major_choice = $form_state['complete form']['asu_comrf_new_major_choice']['#options'][$new_major_choice_key];
   $new_major_choice_title = $form_state['complete form']['asu_comrf_new_major_choice']['#title'];
 
+  // If subplan is selected and submitted
+  $new_subplan_choice_key = 'none';
+  if (isset($form_state['values']['asu_comrf_new_subplan_choice'])
+    && !empty($form_state['values']['asu_comrf_new_subplan_choice'])) {
+    $new_subplan_choice_key = $form_state['values']['asu_comrf_new_subplan_choice'];
+    $new_subplan_choice = $form_state['complete form']['asu_comrf_new_subplan_choice']['#options'][$new_subplan_choice_key];
+    $new_subplan_choice_title = $form_state['complete form']['asu_comrf_new_subplan_choice']['#title'];
+  }
+
   $new_campus_choice_key = $form_state['values']['asu_comrf_new_campus_choice'];
   $new_campus_choice = $form_state['complete form']['asu_comrf_new_campus_choice']['#options'][$new_campus_choice_key];
   $new_campus_choice_title = $form_state['complete form']['asu_comrf_new_campus_choice']['#title'];
-
-  //$com_requirements_text = $form_state['complete form']['asu_comrf_com_requirements_text']['#markup'];
-  //$com_requirements_text_title = $form_state['complete form']['asu_comrf_com_requirements_text']['#title'];
 
   $requirements_check_key = $form_state['values']['asu_comrf_requirements_check'];
   $requirements_check = $form_state['complete form']['asu_comrf_requirements_check']['#options'][$requirements_check_key];
@@ -156,8 +159,13 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, 
 
   $html_for_body = '<p><strong>' . $student_info_title . '</strong><br>' . $student_info_name . ' (' . $student_info_emplid . ')' . '</p><br><br>' .
                    '<p><strong>' . $major_to_change_title . '</strong><br>' . $major_to_change . '</p><br><br>' .
-                   '<p><strong>' . $new_major_choice_title . '</strong><br>' . $new_major_choice . '</p><br><br>' .
-                   '<p><strong>' . $new_campus_choice_title . '</strong><br>' . $new_campus_choice . '</p><br><br>' .
+                   '<p><strong>' . $new_major_choice_title . '</strong><br>' . $new_major_choice . '</p><br><br>';
+
+  if ($new_subplan_choice_key !== 'none') {
+    $html_for_body .= '<p><strong>' . $new_subplan_choice_title . '</strong><br>' . $new_subplan_choice . '</p><br><br>';
+  }
+
+  $html_for_body .= '<p><strong>' . $new_campus_choice_title . '</strong><br>' . $new_campus_choice . '</p><br><br>' .
                    '<p><strong>' . $requirements_check_title . '</strong><br>' . $requirements_check . '</p><br><br>' .
                    '<p><strong>' . $double_check_title . '</strong><br>' . $double_check . '</p><br><br>' .
                    '<p><strong>' . $contact_phone_number_title . '</strong><br>' . $contact_phone_number . '</p><br><br>';
@@ -214,6 +222,14 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
   $new_campus_choice = $form_state['complete form']['asu_comrf_new_campus_choice']['#options'][$new_campus_choice_key];
   $com_requirements_text = $form_state['complete form']['asu_comrf_com_requirements_text']['#markup'];
 
+  // If subplan is selected and submitted
+  $new_subplan_choice = "";
+  if (isset($form_state['values']['asu_comrf_new_subplan_choice'])
+    && !empty($form_state['values']['asu_comrf_new_subplan_choice'])) {
+    $new_subplan_choice_key = $form_state['values']['asu_comrf_new_subplan_choice'];
+    $new_subplan_choice = $form_state['complete form']['asu_comrf_new_subplan_choice']['#options'][$new_subplan_choice_key];
+  }
+
   // Decide whether the form should be submitted as a normal submission, or a WPC redirect submission
   switch ($submit_key) {
     case 'eAdvisor':
@@ -246,6 +262,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
             'why_change' => $why_change,
             'why_change_other' => $why_change_other,
             'timestamp' => date('U'),
+            'new_subplan' => $new_subplan_choice,
           ))
           ->execute();
       }
@@ -268,6 +285,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
             'why_change' => $submit_key,
             'why_change_other' => $submit_key,
             'timestamp' => date('U'),
+            'new_subplan' => $new_subplan_choice,
           ))
           ->execute();
       }

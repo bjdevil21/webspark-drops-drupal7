@@ -256,3 +256,18 @@ function asu_comrf_uninstall() {
     ->condition('name', 'asu_comrf_%', 'LIKE')
     ->execute();
 }
+
+/**
+ * Implements hook_update_N().
+ * + Add subplan field to asu_comrf_form_submission table
+ */
+function asu_comrf_update_7000(&$sandbox) {
+  $column = array(
+    'type' => 'varchar',
+    'description' => "New subplan selected (optional)",
+    'length' => 64,
+    'not null' => FALSE,
+    'default' => '',
+  );
+  db_add_field('asu_comrf_form_submission', 'new_subplan_choice', $column);
+}
