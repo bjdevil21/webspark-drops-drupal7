@@ -267,7 +267,7 @@ function asu_comrf_update_7000(&$sandbox) {
     'description' => "New subplan selected (optional)",
     'length' => 64,
     'not null' => FALSE,
-    'default' => '',
+    'default' => 0,
   );
   db_add_field('asu_comrf_form_submission', 'new_subplan_choice', $column);
 }
