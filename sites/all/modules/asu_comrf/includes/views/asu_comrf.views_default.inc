@@ -202,6 +202,11 @@ function asu_comrf_views_default_views() {
   $handler->display->display_options['fields']['timestamp']['field'] = 'timestamp';
   $handler->display->display_options['fields']['timestamp']['date_format'] = 'short';
   $handler->display->display_options['fields']['timestamp']['second_date_format'] = 'panopoly_time';
+  /* Field: ASU Change of Major Request Form: New subplan choice (optional) */
+  $handler->display->display_options['fields']['new_subplan_choice']['id'] = 'new_subplan_choice';
+  $handler->display->display_options['fields']['new_subplan_choice']['table'] = 'asu_comrf_form_submission';
+  $handler->display->display_options['fields']['new_subplan_choice']['field'] = 'new_subplan_choice';
+  $handler->display->display_options['fields']['new_subplan_choice']['label'] = 'New Subplan choice (optional)';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
