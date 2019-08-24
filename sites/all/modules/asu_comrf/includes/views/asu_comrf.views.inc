@@ -76,6 +76,22 @@ function asu_comrf_views_data() {
     ),
   );
 
+  // new_major_choice
+  $data['asu_comrf_form_submission']['new_subplan_choice'] = array(
+    'title' => t('New subplan choice (optional)'),
+    'help' => t('A new subplan choice is required only in specific cases.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
   // new_campus_choice
   $data['asu_comrf_form_submission']['new_campus_choice'] = array(
     'title' => t('New campus choice'),
