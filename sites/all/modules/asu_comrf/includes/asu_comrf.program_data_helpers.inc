@@ -56,6 +56,7 @@ function asu_comrf_at_least_one_week_has_passed() {
 
   // Returns TRUE if last cron was run more than a week ago
   return $check_val;
+  //return TRUE;
 }
 
 /**
@@ -98,6 +99,7 @@ function asu_comrf_get_next_term_code() {
     case '11':
     case '12':
       $term_identifier = '1';
+      $current_year += 1;
       break;
     default:
       break;
@@ -105,6 +107,8 @@ function asu_comrf_get_next_term_code() {
 
   // Build term code
   $next_term = $current_millennium . $current_year . $term_identifier;
+
+  dpm($next_term, __FUNCTION__ . ' - next_term');
 
   return $next_term;
 }

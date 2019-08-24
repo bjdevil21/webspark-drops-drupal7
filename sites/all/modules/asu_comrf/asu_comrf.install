@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Implements hook_schema()
+ */
 function asu_comrf_schema() {
   $schema['asu_comrf_degree_list'] = array(
     'description' => 'The table for ASU Change of Major Request Form module to store a list of degree programs.',
@@ -128,6 +131,9 @@ function asu_comrf_schema() {
   return $schema;
 }
 
+/**
+ * Implements hook_install()
+ */
 function asu_comrf_install() {
 
   $asu_comrf_form_header_block_markup = '<h2 class="asu-comrf-header-title">Change of Major Request Form</h2>' .
@@ -203,12 +209,15 @@ function asu_comrf_install() {
   variable_set('asu_comrf_degree_search_url_prod', 'webapp4.asu.edu/programs/XmlRpcServer');
   variable_set('asu_comrf_degree_search_service_method', 'findAllDegreesWithLessFields');
   variable_set('asu_comrf_degree_search_block_markup', $asu_comrf_degree_search_block_markup);
+
   variable_set('asu_comrf_degree_search_result_acad_plan_index', 0);
   variable_set('asu_comrf_degree_search_result_degree_index', 1);
   variable_set('asu_comrf_degree_search_result_trnscr_descr_index', 4);
   variable_set('asu_comrf_degree_search_result_change_major_index', 3);
-  variable_set('asu_comrf_degree_search_result_campus_string_array_index', 6);
+  variable_set('asu_comrf_degree_search_result_campus_string_array_index', 7);
   variable_set('asu_comrf_degree_search_result_diploma_descr_index', 5);
+  variable_set('asu_comrf_degree_search_result_subplans_array_result_index', 6);
+
   variable_set('asu_comrf_change_major_api_student_env', 'dev');
   variable_set('asu_comrf_change_major_api_student_url_dev', 'esb-qa.asu.edu/api/v1/change-major/student-major');
   variable_set('asu_comrf_change_major_api_student_url_prod', 'esb.asu.edu/api/v1/change-major/student-major');
@@ -229,49 +238,21 @@ function asu_comrf_install() {
   variable_set('asu_comrf_wpc_com_url_prod','wpcarey.asu.edu/sos');
 }
 
+/**
+ * Implements hook_uninstall().
+ */
 function asu_comrf_uninstall() {
-  // Delete the module's DB tables if they exist
-  if (db_table_exists('asu_comrf_degree_list')) {
-    db_delete('asu_comrf_degree_list')->execute();
+  // Delete tables
+  $tables = array('asu_comrf_degree_list', 'asu_comrf_form_submission');
+  foreach ($tables as $table) {
+    if (db_table_exists($table)) {
+      Database::getConnection()
+        ->schema()
+        ->dropTable($table);
+    }
   }
-  if (db_table_exists('asu_comrf_form_submission')) {
-    db_delete('asu_comrf_form_submission')->execute();
-  }
-  // Delete the module's custom variables
-  variable_del('asu_comrf_check_time');
-  variable_del('asu_comrf_module_state');
-  variable_del('asu_comrf_mulesoft_api_app_name');
-  variable_del('asu_comrf_mulesoft_api_client_id');
-  variable_del('asu_comrf_mulesoft_api_client_secret');
-  variable_del('asu_comrf_form_header_block_markup');
-  variable_del('asu_comrf_student_info_block_env');
-  variable_del('asu_comrf_degree_search_env');
-  variable_del('asu_comrf_degree_search_url_dev');
-  variable_del('asu_comrf_degree_search_url_prod');
-  variable_del('asu_comrf_degree_search_service_method');
-  variable_del('asu_comrf_degree_search_block_markup');
-  variable_del('asu_comrf_degree_search_result_acad_plan_index');
-  variable_del('asu_comrf_degree_search_result_degree_index');
-  variable_del('asu_comrf_degree_search_result_trnscr_descr_index');
-  variable_del('asu_comrf_degree_search_result_change_major_index');
-  variable_del('asu_comrf_degree_search_result_campus_string_array_index');
-  variable_del('asu_comrf_degree_search_result_diploma_descr_index');
-  variable_del('asu_comrf_change_major_api_student_env');
-  variable_del('asu_comrf_change_major_api_student_url_dev');
-  variable_del('asu_comrf_change_major_api_student_url_prod');
-  variable_del('asu_comrf_change_major_api_email_env');
-  variable_del('asu_comrf_change_major_api_email_url_dev');
-  variable_del('asu_comrf_change_major_api_email_url_prod');
-  variable_del('asu_comrf_what_if_audit_api_state');
-  variable_del('asu_comrf_what_if_audit_api_env');
-  variable_del('asu_comrf_what_if_audit_api_url_dev');
-  variable_del('asu_comrf_what_if_audit_api_url_prod');
-  variable_del('asu_comrf_form_confirmation_text_markup');
-  variable_del('asu_comrf_form_notice_text_markup');
-  variable_del('asu_comrf_form_major_change_source_index');
-  variable_del('asu_comrf_form_why_change_index');
-  variable_del('asu_comrf_wpc_com_state', 0);
-  variable_del('asu_comrf_wpc_com_env', 'dev');
-  variable_del('asu_comrf_wpc_com_url_dev', '');
-  variable_del('asu_comrf_wpc_com_url_prod','');
+  // Delete variables
+  db_delete('variable')
+    ->condition('name', 'asu_comrf_%', 'LIKE')
+    ->execute();
 }

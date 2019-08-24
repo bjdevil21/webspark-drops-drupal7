@@ -123,19 +123,20 @@ function asu_comrf_cron() {
   $degree_search_env = variable_get('asu_comrf_degree_search_env', 'dev');
 
   // For production, run only if school is in the off-season (May, June, July, August, December)
-  if (asu_comrf_is_off_season() && asu_comrf_at_least_one_week_has_passed() && $degree_search_env == 'prod') {
+//  if (asu_comrf_is_off_season() && asu_comrf_at_least_one_week_has_passed() && $degree_search_env == 'prod') {
     // Get the list of degree programs
     $list_of_degrees = asu_comrf_get_degree_list_data();
+    $no_of_degrees = (is_array($list_of_degrees)) ? count($list_of_degrees) : 0;
     // Process the list of degree programs for relevant information
     $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
     if ($successful_data_storage == TRUE) {
       // Log successful degree programs pull and save attempt
-      watchdog('asu_comrf', 'Successfully pulled and saved an updated list of degrees from Degree Search.', array(), WATCHDOG_INFO);
+      watchdog('asu_comrf', 'Successfully pulled and saved an updated list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
     } else {
       // Log failed degree programs pull and save attempt
       watchdog('asu_comrf', 'Failed to pull and save an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
     }
-  }
+//  }
 
   // If Degree Search is set to dev, and its been at least one week since a data pull, perform one
   if ($degree_search_env == 'dev') {
@@ -218,6 +219,19 @@ function asu_comrf_form($form, &$form_state) {
       'effect' => 'fade',
     ),
   );
+
+  // 'If needed, which subplan would you like to choose?'
+  $form['asu_comrf_new_subplan_choice'] = array(
+    '#type' => 'select',
+    '#title' => t('Which subplan would you like to choose?'),
+    '#multiple' => false,
+    '#size' => 1,
+    '#options' => array(0 => 'No Subplans to display'),
+    '#required' => FALSE,
+    '#prefix' => '<div id="asu-comrf-new-subplan-choice-ajax-wrapper">',
+    '#suffix' => '</div>',
+  );
+
 
   // 'Which campus do you want to attend?'
   $form['asu_comrf_new_campus_choice'] = array(
@@ -375,7 +389,7 @@ function asu_comrf_form($form, &$form_state) {
   );
 
   // Perform AJAX magic to update the form fields based on the user-selected option from 'Which major would you like to choose?'
-  if(isset($form_state['values']['asu_comrf_new_major_choice'])) {
+  if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
     // Get current degree programs list from database
     $list_of_degrees_results = asu_comrf_get_current_program_list();
     $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
@@ -385,7 +399,23 @@ function asu_comrf_form($form, &$form_state) {
     $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
-    // If the new Change of Major requirements are NULL or empty, disable the COM text field and check; else, display the markup for the requirements
+    // If they must choose a subplan, populate that form field and set field to required
+    $list_of_subplans = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'] : array();
+    $new_subplan_options = array();
+    if (!empty($list_of_subplans)) {
+      foreach($list_of_subplans as $sub => $plan) {
+        $new_subplan_options[$plan->name] = $plan->value;
+      }
+      $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
+      $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
+    }
+    else { // No subplans are available, so don't make any changes
+      $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'Again no subplans to display');
+      $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
+    }
+
+    // If the new Change of Major requirements are NULL or empty, disable the COM text field and check;
+    // Else, display the markup for the requirements
     if ($new_com_requirements == NULL || $new_com_requirements == '') {
       $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
       $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';

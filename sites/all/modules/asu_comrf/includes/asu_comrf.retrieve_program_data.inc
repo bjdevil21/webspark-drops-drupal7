@@ -21,6 +21,11 @@ function asu_comrf_get_degree_list_data() {
 
   // Compose XML call
   $asu_comrf_degree_search_service_method = variable_get('asu_comrf_degree_search_service_method', 'findAllDegreesWithLessFields');
+
+  //DEBUG in PROD
+  $url = 'https://webapp4-qa.asu.edu/programs/XmlRpcServer';
+  //$asu_comrf_degree_search_service_method = 'findAllDegrees';
+
   $xml_service_method = 'eAdvisorDSFind.' . $asu_comrf_degree_search_service_method;
   $xml_next_term_code = asu_comrf_get_next_term_code(); // Get next term code
   $xml_degree_set = 'undergrad'; // Only return undergraduate programs
@@ -61,13 +66,14 @@ function asu_comrf_get_degree_list_data() {
   $programs_list_obj = json_decode($json);
   $programs_list_obj_value = $programs_list_obj->value;
 
-  // Define order/index of fields from Degree Search call (this can change)
+  // Define order/index of fields from Degree Search call (this can and will change)
   $acad_plan_result_index = variable_get('asu_comrf_degree_search_result_acad_plan_index', 0); // 0 = First returned field on Degree Search call
   $degree_name_result_index = variable_get('asu_comrf_degree_search_result_degree_index', 1);
-  $trnscr_descr_result_index = variable_get('asu_comrf_degree_search_result_trnscr_descr_index', 4);
-  $diploma_descr_result_index = variable_get('asu_comrf_degree_search_result_diploma_descr_index', 6); // 6 = Last returned field on Degree Search call
   $change_major_result_index = variable_get('asu_comrf_degree_search_result_change_major_index', 3);
-  $campus_string_array_result_index = variable_get('asu_comrf_degree_search_result_campus_string_array_index', 5);
+  $trnscr_descr_result_index = variable_get('asu_comrf_degree_search_result_trnscr_descr_index', 4);
+  $diploma_descr_result_index = variable_get('asu_comrf_degree_search_result_diploma_descr_index', 5);
+  $subplans_array_result_index = variable_get('asu_comrf_degree_search_result_subplans_array_result_index', 6);
+  $campus_string_array_result_index = variable_get('asu_comrf_degree_search_result_campus_string_array_index', 7);
 
   // Initialize the array for the list of degree programs
   $list_of_degrees = array();
@@ -75,6 +81,7 @@ function asu_comrf_get_degree_list_data() {
   // Parse the data for desired information
   foreach($programs_list_obj_value as $degree_key => $struct) {
     $degree_program = $programs_list_obj->value[$degree_key]->struct->member;
+    $test_number = 1;
     foreach($degree_program as $key => $value) {
       $acad_plan_name = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->name;
       $acad_plan_value = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->value;
@@ -91,6 +98,16 @@ function asu_comrf_get_degree_list_data() {
       $campus_string_array_value = array();
       $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array->data->value;
 
+      $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
+      $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
+
+        // DEBUG
+      if (!is_null($subplans_value) && $test_number == 1) {
+        $test_number++;
+        watchdog('asu_comrf', var_dump($acad_plan_value) . "" . var_dump($subplans_value), array(), WATCHDOG_INFO);
+      }
+
+      // Campus array
       if (is_array($campus_string_array_value_raw)) {
         foreach($campus_string_array_value_raw as $key2 => $value2) {
           $campus_string_array_value[$key2] = $value2;
@@ -98,19 +115,22 @@ function asu_comrf_get_degree_list_data() {
       } else {
         $campus_string_array_value[0] = $campus_string_array_value_raw;
       }
-
+      // Combining values into single array
       $list_of_degrees[$degree_key][$acad_plan_name] = $acad_plan_value;
       $list_of_degrees[$degree_key][$degree_name] = $degree_value;
       $list_of_degrees[$degree_key][$trnscr_descr_name] = $trnscr_descr_value;
       $list_of_degrees[$degree_key][$diploma_descr_name] = $diploma_descr_value;
       $list_of_degrees[$degree_key][$change_major_name] = $change_major_value;
       $list_of_degrees[$degree_key][$campus_string_array_name] = $campus_string_array_value;
+      $list_of_degrees[$degree_key][$subplans_name] = $subplans_value;
     }
-
   }
 
   // Sort the degree program list by the TrnscrDescr value
   usort($list_of_degrees, 'asu_comrf_sort_degree_list_by_trnscr_descr');
+
+  // DEBUG
+  // watchdog('asu_comrf', var_dump($list_of_degrees), array(), WATCHDOG_INFO);
 
   return $list_of_degrees;
 }

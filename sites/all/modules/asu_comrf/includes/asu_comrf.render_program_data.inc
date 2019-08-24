@@ -11,6 +11,7 @@ function asu_comrf_new_major_choice_ajax_callback($form, &$form_state) {
   return array(
     '#type' => 'ajax',
     '#commands' => array(
+      ajax_command_replace("#asu-comrf-new-subplan-choice-ajax-wrapper", render($form['asu_comrf_new_subplan_choice'])),
       ajax_command_replace("#asu-comrf-new-campus-choice-ajax-wrapper", render($form['asu_comrf_new_campus_choice'])),
       ajax_command_replace("#asu-comrf-com-requirements-text-ajax-wrapper", render($form['asu_comrf_com_requirements_text'])),
       ajax_command_replace("#asu-comrf-requirements-check-ajax-wrapper", render($form['asu_comrf_requirements_check'])),

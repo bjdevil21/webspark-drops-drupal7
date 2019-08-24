@@ -197,17 +197,29 @@ function asu_comrf_admin() {
     '#required' => TRUE,
     '#default_value' => variable_get('asu_comrf_degree_search_result_change_major_index', 3),
   );
-  $form['asu_comrf_degree_search']['asu_comrf_degree_search_result_campus_string_array_index'] = array(
+  $form['asu_comrf_degree_search']['asu_comrf_degree_search_result_trnscr_descr_index'] = array(
     '#type' => 'textfield',
-    '#title' => t('Degree Search service call: \'CampusStringArray\' field result index'),
+    '#title' => t('Degree Search service call: \'TrnscrDescr\' field result index'),
     '#required' => TRUE,
-    '#default_value' => variable_get('asu_comrf_degree_search_result_campus_string_array_index', 6),
+    '#default_value' => variable_get('asu_comrf_degree_search_result_trnscr_descr_index', 4),
   );
   $form['asu_comrf_degree_search']['asu_comrf_degree_search_result_diploma_descr_index'] = array(
     '#type' => 'textfield',
     '#title' => t('Degree Search service call: \'DiplomaDescr\' field result index'),
     '#required' => TRUE,
     '#default_value' => variable_get('asu_comrf_degree_search_result_diploma_descr_index', 5),
+  );
+  $form['asu_comrf_degree_search']['asu_comrf_degree_search_result_subplans_array_result_index'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Degree Search service call: \'MajormapSubplans\' field result index'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('asu_comrf_degree_search_result_subplans_array_result_index', 6),
+  );
+  $form['asu_comrf_degree_search']['asu_comrf_degree_search_result_campus_string_array_index'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Degree Search service call: \'CampusStringArray\' field result index'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('asu_comrf_degree_search_result_campus_string_array_index', 7),
   );
   $form['asu_comrf_degree_search']['asu_comrf_degree_search_block_markup'] = array(
     '#type' => 'textarea',
