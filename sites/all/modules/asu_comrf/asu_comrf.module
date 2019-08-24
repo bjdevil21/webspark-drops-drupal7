@@ -221,6 +221,16 @@ function asu_comrf_form($form, &$form_state) {
   );
 
   // 'If needed, which subplan would you like to choose?'
+  $subplan_css = '<style type="text/css">#asu-comrf-new-subplan-choice-ajax-wrapper { display: none; } </style>';
+
+  $form['asu_comrf_new_subplan_css'] = array(
+    '#type' => 'item',
+    '#markup' => $subplan_css,
+    '#prefix' => '<div id="asu-comrf-new-subplan-css-ajax-wrapper">',
+    '#suffix' => '</div>',
+  );
+
+  // 'If needed, which subplan would you like to choose?'
   $form['asu_comrf_new_subplan_choice'] = array(
     '#type' => 'select',
     '#title' => t('Which subplan would you like to choose?'),
@@ -403,14 +413,19 @@ function asu_comrf_form($form, &$form_state) {
     $list_of_subplans = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'] : array();
     $new_subplan_options = array();
     if (!empty($list_of_subplans)) {
-      foreach($list_of_subplans as $sub => $plan) {
-        $new_subplan_options[$plan->name] = $plan->value;
+      if (is_object($list_of_subplans)) { // Only one subplan object
+        $new_subplan_options[$list_of_subplans->name] = $list_of_subplans->value;
+      }
+      else { // two or more subplans objects are wrapped by an array
+        foreach($list_of_subplans as $sub => $plan) {
+          $new_subplan_options[$plan->name] = $plan->value;
+        }
       }
       $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
       $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
     }
     else { // No subplans are available, so don't make any changes
-      $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'Again no subplans to display');
+      $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
       $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
     }
 
