@@ -25,3 +25,16 @@ function asu_comrf_notice_page() {
     '#markup' => $markup,
   );
 }
+
+/**
+ * Technical error page callback for COM form.
+ *
+ * @return array
+ */
+function asu_comrf_error_page($error) {
+  // Define markup for error page and return the markup
+  $markup = "<div>We're sorry, but there was an issue loading your information to generate the Change of major form. Please try again later.</div>";
+  return array(
+    '#markup' => $markup,
+  );
+}

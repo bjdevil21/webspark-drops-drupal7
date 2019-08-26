@@ -90,14 +90,21 @@ function asu_comrf_menu() {
     'title' => 'Change of Major Request Form Confirmation',
     'description' => 'A confirmation page for the Change of Major request form.',
     'page callback' => 'asu_comrf_confirmation_page',
-    'access callback' => TRUE,
+    'access arguments' => user_is_logged_in(),
     'file' => 'includes/asu_comrf.pages.inc',
   );
   $items['request/notice'] = array(
-    'title' => 'Change of Major Request Form Notice',
+    'title' => 'Change of Major Request form - Notice',
     'description' => 'A notice page for the Change of Major request form.',
     'page callback' => 'asu_comrf_notice_page',
-    'access callback' => TRUE,
+    'access arguments' => user_is_logged_in(),
+    'file' => 'includes/asu_comrf.pages.inc',
+  );
+  $items['request/error'] = array(
+    'title' => 'Change of Major Request form - Error',
+    'description' => 'An error page for the Change of Major request form.',
+    'page callback' => 'asu_comrf_error_page',
+    'access arguments' => user_is_logged_in(),
     'file' => 'includes/asu_comrf.pages.inc',
   );
   $items['admin/config/development/asu-comrf'] = array(
@@ -679,39 +686,38 @@ function asu_comrf_form_submit($form, &$form_state) {
     $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
     if ($data_stored_successfully) {
       // After successful form submission, send user to the form's confirmation page.
-      watchdog('asu_comrf', 'Your WPC Change of Major form data was saved in the website\'s database.', array(), WATCHDOG_INFO);
+      watchdog('asu_comrf', 'Truncated WPC Change of Major form data for ID ' . $asurite_id . ' saved.',
+        array(), WATCHDOG_INFO);
     } else {
-      watchdog('asu_comrf', 'WARNING: Your WPC Change of Major form data was not saved in the website\'s database.', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'WPC Change of Major form data for ID ' . $asurite_id . ' was not saved before being passed on.',
+        array(), WATCHDOG_ERROR);
     }
 
     if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
-      $asu_comrf_new_major_choice_selected_raw = isset($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+      $asu_comrf_new_major_choice_selected_raw = isset($form_state['values']['asu_comrf_new_major_choice'])
+        ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
       $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
-      $acad_plan = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'] : '';
-      $campus_code = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key]) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key] : array();
+      $acad_plan = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'])
+        ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'] : '';
+      $campus_code = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key])
+        ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key] : array();
       $wpc_url_param = '&acadplan=' . $acad_plan . '&campus=' . $campus_code;
     }
 
     // Determine destination URL environment for W.P. Carey
-    $wpc_env = variable_get('asu_comrf_wpc_com_env');
-
-    if ($wpc_env == 'dev') {
-      $wpc_base_url = variable_get('asu_comrf_wpc_com_url_dev');
-    } else if ($wpc_env == 'prod') {
-      $wpc_base_url = variable_get('asu_comrf_wpc_com_url_prod');
-    }
+    $wpc_env = 'asu_comrf_wpc_com_url_' . variable_get('asu_comrf_wpc_com_env');
+    $wpc_base_url = variable_get($wpc_env);
 
     // Compose destination URL based on dev or prod base URL and the plancode sent as a parameter
     $wpc_destination_url = 'https://' . $wpc_base_url . $wpc_url_param;
 
-    watchdog('asu_comrf', 'The destination URL for WPC is ' . $wpc_destination_url, array(), WATCHDOG_INFO);
-
     // Send user to W.P. Carey Change of Major form
+    watchdog('asu_comrf', 'Redirecting WPC request to ' . $wpc_destination_url, array(), WATCHDOG_INFO);
     drupal_goto($wpc_destination_url, array('external' => TRUE));
 
   } else { // Not a WPC program plan
 
-    if (empty($program_plan)) { // Why is this set??
+    if (empty($program_plan)) { // Backup default major (BS in Accounting) if none is set by Mulesoft call.
       $program_plan = 'BABUSBABA';
     }
 
@@ -754,14 +760,14 @@ function asu_comrf_form_submit($form, &$form_state) {
     // Set dev data if production is not selected
     if (empty($salesforce_email) && $mulesoft_env == 'dev') {
       switch ($program_plan) {
-        case 'NUNURDBSN':
-          $salesforce_email = 'uat_sandbox@asu.edu';
+        case 'LASPABA':
+          $salesforce_email = 'qa_sandbox@asu.edu';
           break;
-        case 'FAMUSPMBM':
-          $salesforce_email = 'uat_sandbox2@asu.edu';
+        case 'NHSPTSPPBS':
+          $salesforce_email = 'qa_sandbox2@asu.edu';
           break;
-        case 'BABUSBABA':
-          $salesforce_email = 'uat_sandbox3@asu.edu';
+        case 'ASACMTEXPL':
+          $salesforce_email = 'qa_sandbox3@asu.edu';
           break;
         default:
           $salesforce_email = 'webconsulting@asu.edu';
@@ -795,7 +801,7 @@ function asu_comrf_form_submit($form, &$form_state) {
       // After successful form submission, send user to the form's confirmation page.
       drupal_goto('request/confirmation');
     } else {
-      watchdog('asu_comrf', 'WARNING: Your Change of Major form data was not saved in the website\'s database. Your data may have been sent to the appropriate recipients, but will not be saved on this site for future reference.', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'WARNING: Your data may have been sent to the appropriate recipients, but the Change of Major form data was not saved in this database. ', array(), WATCHDOG_ERROR);
       drupal_goto('request/confirmation');
     }
   }

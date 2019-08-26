@@ -120,22 +120,14 @@ function asu_comrf_get_next_term_code() {
  */
 function asu_comrf_get_student_info($asurite_id) {
 
-  //$asurite_id = 'gecruz';
-
-  // Set client ID and secret
+  // Set Mulesoft client ID and secret
   $client_id = variable_get('asu_comrf_mulesoft_api_client_id');
   $client_secret = variable_get('asu_comrf_mulesoft_api_client_secret');
   $api_env = variable_get('asu_comrf_change_major_api_student_env');
+  $student_info_base_url = 'https://' . $client_id . ':' . $client_secret . '@' . variable_get('asu_comrf_change_major_api_student_url_' . $api_env);
+  $student_info_url = $student_info_base_url . '?id=' . $asurite_id;
 
-  if ($api_env == 'dev') {
-    $student_info_base_url = 'https://' . $client_id . ':' . $client_secret . '@' . variable_get('asu_comrf_change_major_api_student_url_dev');
-    $student_info_url = $student_info_base_url . '?id=' . $asurite_id;
-  } else if ($api_env == 'prod') {
-    $student_info_base_url = 'https://' . $client_id . ':' . $client_secret . '@' . variable_get('asu_comrf_change_major_api_student_url_prod');
-    $student_info_url = $student_info_base_url . '?id=' . $asurite_id;
-  }
-
-  watchdog('asu_comrf', 'The student_info_url for ' . $asurite_id . ' is ' . $student_info_url, array(), WATCHDOG_INFO);
+  watchdog('asu_comrf', 'Mulesoft call URL for ASURITE ID ' . $asurite_id . ': ' . $student_info_url, array(), WATCHDOG_INFO);
 
   $request_options = array(
     'headers' => array(
@@ -143,20 +135,20 @@ function asu_comrf_get_student_info($asurite_id) {
     ),
     'method' => 'GET',
   );
+
   $result = drupal_http_request($student_info_url, $request_options);
 
-  if (isset($result->error)) {
-    if ($result->error == 'Connection refused') {
-      $student_info['name'] = 'Sparky Sundevil';
-      $student_info['degrees'] = array(
-        'Accountancy, BS',
-        'Art (Painting), BFA',
-        'Computer Science, BS'
-      );
-      $student_info['emplid'] = '1202000000';
-      return $student_info;
-    }
+  watchdog('asu_comrf', 'Mulesoft call for ID ' . $asurite_id . ' code ' . $result->code, array(), WATCHDOG_INFO);
+
+  if (($result->code > 0) && ($result->code < 125) || (isset($result->error))) {
+    watchdog('asu_comrf', 'Mulesoft call for ASURITE ID ' . $asurite_id . ' failed with system error ' . $result->code
+      . '. Check Mulesoft API to see if it is working.', array(), WATCHDOG_ERROR);
+    // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for key
+    // to error codes.
+    drupal_goto("request/error");
+    drupal_exit();
   }
+
   $student_info_raw = json_decode($result->data)->studentMajor;
   $student_info_raw = $student_info_raw[0];
   $student_info = asu_comrf_build_student_profile($student_info_raw);
