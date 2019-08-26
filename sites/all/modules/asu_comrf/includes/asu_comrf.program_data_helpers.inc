@@ -140,12 +140,19 @@ function asu_comrf_get_student_info($asurite_id) {
 
   watchdog('asu_comrf', 'Mulesoft call for ID ' . $asurite_id . ' code ' . $result->code, array(), WATCHDOG_INFO);
 
-  if (($result->code > 0) && ($result->code < 125) || (isset($result->error))) {
+  if (($result->code > 0) && ($result->code < 125)) {
     watchdog('asu_comrf', 'Mulesoft call for ASURITE ID ' . $asurite_id . ' failed with system error ' . $result->code
       . '. Check Mulesoft API to see if it is working.', array(), WATCHDOG_ERROR);
     // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for key
     // to error codes.
     drupal_goto("request/error");
+    drupal_exit();
+  } elseif (isset($result->error)) {
+    watchdog('asu_comrf', 'Mulesoft call for ASURITE ID ' . $asurite_id . ' not working. Returns ' . check_plain($result->error),
+      array(), WATCHDOG_ERROR);
+    // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for key
+    // to error codes.
+    drupal_goto("request/notice");
     drupal_exit();
   }
 

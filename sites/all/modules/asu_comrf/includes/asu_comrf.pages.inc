@@ -31,9 +31,10 @@ function asu_comrf_notice_page() {
  *
  * @return array
  */
-function asu_comrf_error_page($error) {
+function asu_comrf_error_page() {
   // Define markup for error page and return the markup
-  $markup = "<div>We're sorry, but there was an issue loading your information to generate the Change of major form. Please try again later.</div>";
+  $title = "<h2 class=\"asu-comrf-header-title\">Change of Major Request Form - Error</h2>";
+  $markup = $title . "\n<div>We're sorry, but there was an issue loading your information to generate the Change of major form. Please try again later.</div>";
   return array(
     '#markup' => $markup,
   );
