@@ -90,21 +90,21 @@ function asu_comrf_menu() {
     'title' => 'Change of Major Request Form Confirmation',
     'description' => 'A confirmation page for the Change of Major request form.',
     'page callback' => 'asu_comrf_confirmation_page',
-    'access arguments' => user_is_logged_in(),
+    'access callback' => 'user_is_logged_in',
     'file' => 'includes/asu_comrf.pages.inc',
   );
   $items['request/notice'] = array(
     'title' => 'Change of Major Request form - Notice',
     'description' => 'A notice page for the Change of Major request form.',
     'page callback' => 'asu_comrf_notice_page',
-    'access arguments' => user_is_logged_in(),
+    'access callback' => 'user_is_logged_in',
     'file' => 'includes/asu_comrf.pages.inc',
   );
   $items['request/error'] = array(
     'title' => 'Change of Major Request form - Error',
     'description' => 'An error page for the Change of Major request form.',
     'page callback' => 'asu_comrf_error_page',
-    'access arguments' => user_is_logged_in(),
+    'access callback' => 'user_is_logged_in',
     'file' => 'includes/asu_comrf.pages.inc',
   );
   $items['admin/config/development/asu-comrf'] = array(
