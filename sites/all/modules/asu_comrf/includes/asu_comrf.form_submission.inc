@@ -262,7 +262,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
             'why_change' => $why_change,
             'why_change_other' => $why_change_other,
             'timestamp' => date('U'),
-            'new_subplan' => $new_subplan_choice,
+            'new_subplan_choice' => $new_subplan_choice,
           ))
           ->execute();
       }
@@ -285,7 +285,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
             'why_change' => $submit_key,
             'why_change_other' => $submit_key,
             'timestamp' => date('U'),
-            'new_subplan' => $new_subplan_choice,
+            'new_subplan_choice' => $new_subplan_choice,
           ))
           ->execute();
       }
