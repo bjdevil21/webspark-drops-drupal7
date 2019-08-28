@@ -130,7 +130,7 @@ function asu_comrf_cron() {
   $degree_search_env = variable_get('asu_comrf_degree_search_env', 'dev');
 
   // For production, run only if school is in the off-season (May, June, July, August, December)
-//  if (asu_comrf_is_off_season() && asu_comrf_at_least_one_week_has_passed() && $degree_search_env == 'prod') {
+  if (asu_comrf_is_off_season() && asu_comrf_at_least_one_week_has_passed() && $degree_search_env == 'prod') {
     // Get the list of degree programs
     $list_of_degrees = asu_comrf_get_degree_list_data();
     $no_of_degrees = (is_array($list_of_degrees)) ? count($list_of_degrees) : 0;
@@ -143,7 +143,7 @@ function asu_comrf_cron() {
       // Log failed degree programs pull and save attempt
       watchdog('asu_comrf', 'Failed to pull and save an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
     }
-//  }
+  }
 
   // If Degree Search is set to dev, and its been at least one week since a data pull, perform one
   if ($degree_search_env == 'dev') {

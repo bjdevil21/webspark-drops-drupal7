@@ -56,7 +56,6 @@ function asu_comrf_at_least_one_week_has_passed() {
 
   // Returns TRUE if last cron was run more than a week ago
   return $check_val;
-  //return TRUE;
 }
 
 /**
@@ -108,8 +107,6 @@ function asu_comrf_get_next_term_code() {
   // Build term code
   $next_term = $current_millennium . $current_year . $term_identifier;
 
-  dpm($next_term, __FUNCTION__ . ' - next_term');
-
   return $next_term;
 }
 
@@ -124,14 +121,17 @@ function asu_comrf_get_student_info($asurite_id) {
   $client_id = variable_get('asu_comrf_mulesoft_api_client_id');
   $client_secret = variable_get('asu_comrf_mulesoft_api_client_secret');
   $api_env = variable_get('asu_comrf_change_major_api_student_env');
-  $student_info_base_url = 'https://' . $client_id . ':' . $client_secret . '@' . variable_get('asu_comrf_change_major_api_student_url_' . $api_env);
+  $api_url = variable_get('asu_comrf_change_major_api_student_url_' . $api_env);
+  $student_info_base_url = 'https://' . $client_id . ':' . $client_secret . '@' . $api_url;
   $student_info_url = $student_info_base_url . '?id=' . $asurite_id;
 
-  watchdog('asu_comrf', 'Mulesoft call URL for ASURITE ID ' . $asurite_id . ': ' . $student_info_url, array(), WATCHDOG_INFO);
+  watchdog('asu_comrf', 'Mulesoft call URL for ASURITE ID (sans app_ID:key)' . $asurite_id . ': ' . $api_url, array(), WATCHDOG_INFO);
+
+  $asu_comrf_ms_auth = variable_get('asu_comrf_change_major_api_email_env', '');
 
   $request_options = array(
     'headers' => array(
-      'Authorization' => "Basic OWJlMmJkYmVmMzhkNDk4NDhlNzQ2OTVkMjA2Nzk4NDE6ODhmY0U4NjY5Yjk4NDhDOThlY0QyNThkYWQxNjE5ODQ=",
+      'Authorization' => $asu_comrf_ms_auth,
     ),
     'method' => 'GET',
   );
@@ -140,18 +140,15 @@ function asu_comrf_get_student_info($asurite_id) {
 
   watchdog('asu_comrf', 'Mulesoft call for ID ' . $asurite_id . ' code ' . $result->code, array(), WATCHDOG_INFO);
 
+  // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for error codes.
   if (($result->code > 0) && ($result->code < 125)) {
     watchdog('asu_comrf', 'Mulesoft call for ASURITE ID ' . $asurite_id . ' failed with system error ' . $result->code
       . '. Check Mulesoft API to see if it is working.', array(), WATCHDOG_ERROR);
-    // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for key
-    // to error codes.
     drupal_goto("request/error");
     drupal_exit();
   } elseif (isset($result->error)) {
     watchdog('asu_comrf', 'Mulesoft call for ASURITE ID ' . $asurite_id . ' not working. Returns ' . check_plain($result->error),
       array(), WATCHDOG_ERROR);
-    // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for key
-    // to error codes.
     drupal_goto("request/notice");
     drupal_exit();
   }

@@ -16,19 +16,20 @@
 function asu_comrf_get_program_info($program_plan) {
   $program_info = array();
 
-  // Determine if dev or prod settings will be used
-  $asu_comrf_change_major_api_email_env = variable_get('asu_comrf_change_major_api_email_env');
-  if ($asu_comrf_change_major_api_email_env == 'dev') {
-    $peoplesoft_data_base_url = 'https://' . variable_get('asu_comrf_mulesoft_api_client_id') . ':' . variable_get('asu_comrf_mulesoft_api_client_secret') . '@' . variable_get('asu_comrf_change_major_api_email_url_dev');
-  } else if ($asu_comrf_change_major_api_email_env == 'prod') {
-    $peoplesoft_data_base_url = 'https://' . variable_get('asu_comrf_mulesoft_api_client_id') . ':' . variable_get('asu_comrf_mulesoft_api_client_secret') . '@' . variable_get('asu_comrf_change_major_api_email_url_prod');
+  // Determine if dev or prod settings will be used and build URL
+  $api_email_env = variable_get('asu_comrf_change_major_api_email_env', 'dev');
+  $api_email_url = 'asu_comrf_change_major_api_email_url_' . $api_email_env;
+  $asu_comrf_ms_auth = variable_get('asu_comrf_change_major_api_email_env', '');
+
+  if (!empty($asu_comrf_change_major_api_email_env)) {
+    $peoplesoft_data_base_url = 'https://' . variable_get('asu_comrf_mulesoft_api_client_id') . ':' . variable_get('asu_comrf_mulesoft_api_client_secret') . '@' . variable_get($api_email_url);
   }
 
   // Get email for Salesforce from PeopleSoft
   $peoplesoft_data_url = $peoplesoft_data_base_url . '?plancode=' . $program_plan;
   $request_options = array(
     'headers' => array(
-      'Authorization' => "Basic OWJlMmJkYmVmMzhkNDk4NDhlNzQ2OTVkMjA2Nzk4NDE6ODhmY0U4NjY5Yjk4NDhDOThlY0QyNThkYWQxNjE5ODQ=",
+      'Authorization' => $asu_comrf_ms_auth,
     ),
     'method' => 'GET',
   );
@@ -39,14 +40,13 @@ function asu_comrf_get_program_info($program_plan) {
       $program_info['email'] = $program_info_raw->email;
       $program_info['dprog'] = $program_info_raw->dprog;
     } else {
-      $program_info['email'] == 'testing123@asu.edu';
+      $program_info['email'] == 'PSNoMail@asu.edu';
       $program_info['dprog'] == 'BA ACC BS';
     }
   } else {
-    $program_info['email'] == 'testing123@asu.edu';
+    $program_info['email'] == 'PSNoMail@asu.edu';
     $program_info['dprog'] == 'BA ACC BS';
   }
-
   return $program_info;
 }
 
