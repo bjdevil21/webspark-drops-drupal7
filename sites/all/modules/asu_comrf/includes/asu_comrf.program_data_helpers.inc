@@ -125,8 +125,6 @@ function asu_comrf_get_student_info($asurite_id) {
   $student_info_base_url = 'https://' . $client_id . ':' . $client_secret . '@' . $api_url;
   $student_info_url = $student_info_base_url . '?id=' . $asurite_id;
 
-  watchdog('asu_comrf', 'Mulesoft call URL for ASURITE ID (sans app_ID:key)' . $asurite_id . ': ' . $api_url, array(), WATCHDOG_INFO);
-
   $asu_comrf_ms_auth = variable_get('asu_comrf_change_major_api_email_env', '');
 
   $request_options = array(
@@ -138,16 +136,19 @@ function asu_comrf_get_student_info($asurite_id) {
 
   $result = drupal_http_request($student_info_url, $request_options);
 
-  watchdog('asu_comrf', 'Mulesoft call for ID ' . $asurite_id . ' code ' . $result->code, array(), WATCHDOG_INFO);
+  if ($result->code <> 200) {
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call URL (sans app_ID:key) for ASURITE ID ' . $asurite_id . ': ' . $api_url, array(), WATCHDOG_DEBUG);
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call return code ' . $result->code, array(), WATCHDOG_ERROR);
+  }
 
   // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for error codes.
   if (($result->code > 0) && ($result->code < 125)) {
-    watchdog('asu_comrf', 'Mulesoft call for ASURITE ID ' . $asurite_id . ' failed with system error ' . $result->code
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for ASURITE ID ' . $asurite_id . ' failed with system error ' . $result->code
       . '. Check Mulesoft API to see if it is working.', array(), WATCHDOG_ERROR);
     drupal_goto("request/error");
     drupal_exit();
   } elseif (isset($result->error)) {
-    watchdog('asu_comrf', 'Mulesoft call for ASURITE ID ' . $asurite_id . ' not working. Returns ' . check_plain($result->error),
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for ASURITE ID ' . $asurite_id . ' not working. Returns error ' . check_plain($result->error),
       array(), WATCHDOG_ERROR);
     drupal_goto("request/notice");
     drupal_exit();

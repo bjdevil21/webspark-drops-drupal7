@@ -18,11 +18,11 @@ function asu_comrf_get_program_info($program_plan) {
 
   // Determine if dev or prod settings will be used and build URL
   $api_email_env = variable_get('asu_comrf_change_major_api_email_env', 'dev');
-  $api_email_url = 'asu_comrf_change_major_api_email_url_' . $api_email_env;
-  $asu_comrf_ms_auth = variable_get('asu_comrf_change_major_api_email_env', '');
+  $api_email_url = variable_get('asu_comrf_change_major_api_email_url_' . $api_email_env);
+  $asu_comrf_ms_auth = variable_get('asu_comrf_ms_auth', '');
 
-  if (!empty($asu_comrf_change_major_api_email_env)) {
-    $peoplesoft_data_base_url = 'https://' . variable_get('asu_comrf_mulesoft_api_client_id') . ':' . variable_get('asu_comrf_mulesoft_api_client_secret') . '@' . variable_get($api_email_url);
+  if (!empty($api_email_url) && !empty($asu_comrf_ms_auth)) {
+    $peoplesoft_data_base_url = 'https://' . variable_get('asu_comrf_mulesoft_api_client_id') . ':' . variable_get('asu_comrf_mulesoft_api_client_secret') . '@' . $api_email_url;
   }
 
   // Get email for Salesforce from PeopleSoft
@@ -33,19 +33,39 @@ function asu_comrf_get_program_info($program_plan) {
     ),
     'method' => 'GET',
   );
+
+//  watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft URL: ' . $peoplesoft_data_url, array(), WATCHDOG_INFO);
+
   $result = drupal_http_request($peoplesoft_data_url, $request_options);
+
+  // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for error codes.
+  if (($result->code > 0) && ($result->code < 125)) {
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for program plan ' . $program_plan . ' failed with system error ' . $result->code
+      . '. Check Mulesoft API to see if it is working.', array(), WATCHDOG_ERROR);
+    drupal_goto("request/error");
+    drupal_exit();
+  } elseif (isset($result->error)) {
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for program plan ' . $program_plan . ' not working. Returns error ' . check_plain($result->error),
+      array(), WATCHDOG_ERROR);
+    drupal_goto("request/notice");
+    drupal_exit();
+  }
+
   if (!empty($result)) {
     $program_info_raw = json_decode($result->data)->changeMajor;
     if (isset($program_info_raw)) {
       $program_info['email'] = $program_info_raw->email;
       $program_info['dprog'] = $program_info_raw->dprog;
+      //watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft response', array(), WATCHDOG_INFO);
     } else {
       $program_info['email'] == 'PSNoMail@asu.edu';
       $program_info['dprog'] == 'BA ACC BS';
+      watchdog('asu_comrf', 'Mulesoft response program_info_raw empty from ' . $peoplesoft_data_url . '. Using default BA ACC BS.', array(), WATCHDOG_ERROR);
     }
   } else {
     $program_info['email'] == 'PSNoMail@asu.edu';
     $program_info['dprog'] == 'BA ACC BS';
+    watchdog('asu_comrf', 'Mulesoft response was empty from ' . $peoplesoft_data_url . '. Using default BA ACC BS.', array(), WATCHDOG_ERROR);
   }
   return $program_info;
 }
@@ -130,6 +150,9 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, 
     $new_subplan_choice_key = $form_state['values']['asu_comrf_new_subplan_choice'];
     $new_subplan_choice = $form_state['complete form']['asu_comrf_new_subplan_choice']['#options'][$new_subplan_choice_key];
     $new_subplan_choice_title = $form_state['complete form']['asu_comrf_new_subplan_choice']['#title'];
+  }
+  else {
+    $new_subplan_choice_key = 'none';
   }
 
   $new_campus_choice_key = $form_state['values']['asu_comrf_new_campus_choice'];
@@ -229,6 +252,9 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
     $new_subplan_choice_key = $form_state['values']['asu_comrf_new_subplan_choice'];
     $new_subplan_choice = $form_state['complete form']['asu_comrf_new_subplan_choice']['#options'][$new_subplan_choice_key];
   }
+  else { // set to default value of 0
+    $new_subplan_choice_key = $new_subplan_choice = 0;
+  }
 
   // Decide whether the form should be submitted as a normal submission, or a WPC redirect submission
   switch ($submit_key) {
@@ -262,7 +288,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
             'why_change' => $why_change,
             'why_change_other' => $why_change_other,
             'timestamp' => date('U'),
-            'new_subplan_choice' => $new_subplan_choice,
+            'new_subplan_choice' => $new_subplan_choice_key,
           ))
           ->execute();
       }
@@ -285,7 +311,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
             'why_change' => $submit_key,
             'why_change_other' => $submit_key,
             'timestamp' => date('U'),
-            'new_subplan_choice' => $new_subplan_choice,
+            'new_subplan_choice' => $new_subplan_choice_key,
           ))
           ->execute();
       }

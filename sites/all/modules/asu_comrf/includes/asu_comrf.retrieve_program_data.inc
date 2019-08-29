@@ -13,18 +13,10 @@ function asu_comrf_get_degree_list_data() {
 
   // Get environment specific URLs
   $asu_comrf_degree_search_env = variable_get('asu_comrf_degree_search_env');
-  if ($asu_comrf_degree_search_env == 'dev') {
-    $url = 'https://' . variable_get('asu_comrf_degree_search_url_dev');
-  } else if ($asu_comrf_degree_search_env == 'prod') {
-    $url = 'https://' . variable_get('asu_comrf_degree_search_url_prod');
-  }
+  $url = 'https://' . variable_get('asu_comrf_degree_search_url_' . $asu_comrf_degree_search_env);
 
   // Compose XML call
   $asu_comrf_degree_search_service_method = variable_get('asu_comrf_degree_search_service_method', 'findAllDegreesWithLessFields');
-
-  //DEBUG in PROD
-  $url = 'https://webapp4-qa.asu.edu/programs/XmlRpcServer';
-  //$asu_comrf_degree_search_service_method = 'findAllDegrees';
 
   $xml_service_method = 'eAdvisorDSFind.' . $asu_comrf_degree_search_service_method;
   $xml_next_term_code = asu_comrf_get_next_term_code(); // Get next term code
@@ -80,8 +72,9 @@ function asu_comrf_get_degree_list_data() {
 
   // Parse the data for desired information
   foreach($programs_list_obj_value as $degree_key => $struct) {
+
     $degree_program = $programs_list_obj->value[$degree_key]->struct->member;
-    $test_number = 1;
+    $test_run = 1;
     foreach($degree_program as $key => $value) {
       $acad_plan_name = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->name;
       $acad_plan_value = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->value;
@@ -96,15 +89,20 @@ function asu_comrf_get_degree_list_data() {
 
       $campus_string_array_name = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->name;
       $campus_string_array_value = array();
+
+
+      $tmp = $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array;
+
+      if ($test_run == 1) {
+        $test_run++;
+        var_dump($tmp);
+      }
       $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array->data->value;
 
-      $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
-      $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
 
-        // DEBUG
-      if (!is_null($subplans_value) && $test_number == 1) {
-        $test_number++;
-        watchdog('asu_comrf', var_dump($acad_plan_value) . "" . var_dump($subplans_value), array(), WATCHDOG_INFO);
+      $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
+      if (!empty($subplans_name)) {
+        $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
       }
 
       // Campus array

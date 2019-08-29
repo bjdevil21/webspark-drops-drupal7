@@ -789,7 +789,7 @@ function asu_comrf_form_submit($form, &$form_state) {
         watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
       }
     } else {
-      watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'WARNING: Data was saved to this database, but was not sent onto Salesforce.', array(), WATCHDOG_WARNING);
     }
 
     // Set key for submit state (normal vs WPC)
@@ -801,7 +801,7 @@ function asu_comrf_form_submit($form, &$form_state) {
       // After successful form submission, send user to the form's confirmation page.
       drupal_goto('request/confirmation');
     } else {
-      watchdog('asu_comrf', 'WARNING: Your data may have been sent to the appropriate recipients, but the Change of Major form data was not saved in this database. ', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'WARNING: Data may have been sent to recipients, but the Change of Major form data was not saved in this database.', array(), WATCHDOG_ERROR);
       drupal_goto('request/confirmation');
     }
   }
