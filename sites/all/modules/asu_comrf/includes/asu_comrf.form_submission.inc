@@ -109,7 +109,7 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
   $obj_index = 0;
   $what_if_audit_response_obj_code = $what_if_audit_response_obj->$obj_index;
 
-  watchdog('asu_comrf', 'The What If audit returned the following result code: ' . $what_if_audit_response_obj_code, array(), WATCHDOG_INFO);
+  watchdog('asu_comrf', __FUNCTION__ . ' - EmplID ' . $emplid . ' What If audit result code: ' . $what_if_audit_response_obj_code, array(), WATCHDOG_INFO);
 
   if ($what_if_audit_response_obj_code == 400) {
     return FALSE;
@@ -144,7 +144,7 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, 
   $new_major_choice_title = $form_state['complete form']['asu_comrf_new_major_choice']['#title'];
 
   // If subplan is selected and submitted
-  $new_subplan_choice_key = 'none';
+
   if (isset($form_state['values']['asu_comrf_new_subplan_choice'])
     && !empty($form_state['values']['asu_comrf_new_subplan_choice'])) {
     $new_subplan_choice_key = $form_state['values']['asu_comrf_new_subplan_choice'];
