@@ -74,53 +74,51 @@ function asu_comrf_get_degree_list_data() {
   foreach($programs_list_obj_value as $degree_key => $struct) {
 
     $degree_program = $programs_list_obj->value[$degree_key]->struct->member;
-    $test_run = 1;
+    $loop_run = 1;
     foreach($degree_program as $key => $value) {
-      $acad_plan_name = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->name;
-      $acad_plan_value = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->value;
-      $degree_name = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->name;
-      $degree_value = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->value;
-      $trnscr_descr_name = $programs_list_obj->value[$degree_key]->struct->member[$trnscr_descr_result_index]->name;
-      $trnscr_descr_value = $programs_list_obj->value[$degree_key]->struct->member[$trnscr_descr_result_index]->value;
-      $diploma_descr_name = $programs_list_obj->value[$degree_key]->struct->member[$diploma_descr_result_index]->name;
-      $diploma_descr_value = $programs_list_obj->value[$degree_key]->struct->member[$diploma_descr_result_index]->value;
-      $change_major_name = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->name;
-      $change_major_value = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->value;
+      if ($loop_run === 1) {
+        $acad_plan_name = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->name;
+        $acad_plan_value = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->value;
+        $degree_name = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->name;
+        $degree_value = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->value;
+        $trnscr_descr_name = $programs_list_obj->value[$degree_key]->struct->member[$trnscr_descr_result_index]->name;
+        $trnscr_descr_value = $programs_list_obj->value[$degree_key]->struct->member[$trnscr_descr_result_index]->value;
+        $diploma_descr_name = $programs_list_obj->value[$degree_key]->struct->member[$diploma_descr_result_index]->name;
+        $diploma_descr_value = $programs_list_obj->value[$degree_key]->struct->member[$diploma_descr_result_index]->value;
+        $change_major_name = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->name;
+        $change_major_value = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->value;
 
-      $campus_string_array_name = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->name;
-      $campus_string_array_value = array();
+        $campus_string_array_name = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->name;
+        $campus_string_array_value = array();
+        $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array->data->value;
 
-
-      $tmp = $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array;
-
-      if ($test_run == 1) {
-        $test_run++;
-        var_dump($tmp);
-      }
-      $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array->data->value;
-
-
-      $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
-      if (!empty($subplans_name)) {
-        $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
-      }
-
-      // Campus array
-      if (is_array($campus_string_array_value_raw)) {
-        foreach($campus_string_array_value_raw as $key2 => $value2) {
-          $campus_string_array_value[$key2] = $value2;
+        // Check only if not empty
+        $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
+        $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct;
+        if (!empty($subplans_value)) {
+          $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
         }
-      } else {
-        $campus_string_array_value[0] = $campus_string_array_value_raw;
+
+        // Campus array
+        if (is_array($campus_string_array_value_raw)) {
+          foreach ($campus_string_array_value_raw as $key2 => $value2) {
+            $campus_string_array_value[$key2] = $value2;
+          }
+        }
+        else {
+          $campus_string_array_value[0] = $campus_string_array_value_raw;
+        }
+        // Combining values into single array
+        $list_of_degrees[$degree_key][$acad_plan_name] = $acad_plan_value;
+        $list_of_degrees[$degree_key][$degree_name] = $degree_value;
+        $list_of_degrees[$degree_key][$trnscr_descr_name] = $trnscr_descr_value;
+        $list_of_degrees[$degree_key][$diploma_descr_name] = $diploma_descr_value;
+        $list_of_degrees[$degree_key][$change_major_name] = $change_major_value;
+        $list_of_degrees[$degree_key][$campus_string_array_name] = $campus_string_array_value;
+        $list_of_degrees[$degree_key][$subplans_name] = $subplans_value;
+
+        $loop_run++; // only iterate once
       }
-      // Combining values into single array
-      $list_of_degrees[$degree_key][$acad_plan_name] = $acad_plan_value;
-      $list_of_degrees[$degree_key][$degree_name] = $degree_value;
-      $list_of_degrees[$degree_key][$trnscr_descr_name] = $trnscr_descr_value;
-      $list_of_degrees[$degree_key][$diploma_descr_name] = $diploma_descr_value;
-      $list_of_degrees[$degree_key][$change_major_name] = $change_major_value;
-      $list_of_degrees[$degree_key][$campus_string_array_name] = $campus_string_array_value;
-      $list_of_degrees[$degree_key][$subplans_name] = $subplans_value;
     }
   }
 
