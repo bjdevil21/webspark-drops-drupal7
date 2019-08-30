@@ -1,0 +1,4 @@
+name = EOSS Registry Rebuild Library
+description = "Temp location for registry rebuild scripts"
+version = 7.x-1.0
+core = 7.x
