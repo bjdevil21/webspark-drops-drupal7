@@ -125,11 +125,11 @@ function asu_comrf_get_student_info($asurite_id) {
   $student_info_base_url = 'https://' . $client_id . ':' . $client_secret . '@' . $api_url;
   $student_info_url = $student_info_base_url . '?id=' . $asurite_id;
 
-  $asu_comrf_ms_auth = variable_get('asu_comrf_change_major_api_email_env', '');
+  $mulesoft_auth = variable_get('asu_comrf_change_major_api_email_env', '');
 
   $request_options = array(
     'headers' => array(
-      'Authorization' => $asu_comrf_ms_auth,
+      'Authorization' => $mulesoft_auth,
     ),
     'method' => 'GET',
   );

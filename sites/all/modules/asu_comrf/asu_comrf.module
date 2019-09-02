@@ -219,7 +219,7 @@ function asu_comrf_form($form, &$form_state) {
     '#size' => 4,
     '#options' => array(0 => 'No majors to display'),
     '#required' => TRUE,
-    //'#default_value' => isset($asu_comrf_new_major_choice_default_key) ? $asu_comrf_new_major_choice_default_key : NULL,
+    //'#default_value' => isset($new_major_choice_default_key) ? $new_major_choice_default_key : NULL,
     '#ajax' => array(
       'callback' => 'asu_comrf_new_major_choice_ajax_callback',
       'wrapper' => 'asu-comrf-new-major-choice-ajax-wrapper',
@@ -408,23 +408,23 @@ function asu_comrf_form($form, &$form_state) {
   if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
     // Get current degree programs list from database
     $list_of_degrees_results = asu_comrf_get_current_program_list();
-    $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice'])
+    $new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice'])
       ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
-    $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
-    $new_campus_choice_raw = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'])
-      ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'] : array();
-    $new_com_requirements = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'])
-      ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'] : '';
+    $new_major_choice_selected = intval($new_major_choice_selected_raw);
+    $new_campus_choice_raw = isset($list_of_degrees_results[$new_major_choice_selected]['CampusStringArray'])
+      ? $list_of_degrees_results[$new_major_choice_selected]['CampusStringArray'] : array();
+    $new_com_requirements = isset($list_of_degrees_results[$new_major_choice_selected]['ChangeMajor'])
+      ? $list_of_degrees_results[$new_major_choice_selected]['ChangeMajor'] : '';
     $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
     // If they must choose a subplan, populate that form field and set field to required
 
-    $list_of_subplans = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'])
-      ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'] : array();
+    $list_of_subplans = isset($list_of_degrees_results[$new_major_choice_selected]['MajormapSubplans'])
+      ? $list_of_degrees_results[$new_major_choice_selected]['MajormapSubplans'] : array();
 
     // DEBUG
-    $tmp = $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'];
+    $tmp = $list_of_degrees_results[$new_major_choice_selected]['AcadPlan'];
     watchdog('asu_com', __FUNCTION__ . ' - ' . $tmp, array(), WATCHDOG_DEBUG);
     $tmp = serialize($list_of_subplans);
     watchdog('asu_com', 'list of subplans: ' . $tmp, array(), WATCHDOG_DEBUG);
@@ -446,7 +446,7 @@ function asu_comrf_form($form, &$form_state) {
 
     if ($wpc_com_state == 1) {
       // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
-      $program_owner = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr'] : NULL;
+      $program_owner = !empty($list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'] : NULL;
 
       if ($program_owner == 'W. P. Carey School of Business') {
         watchdog('asu_comrf', 'The student selected a program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
@@ -477,20 +477,20 @@ function asu_comrf_form($form, &$form_state) {
   }
 
   // Check to see if a default program is being sent as a URL parameter from Degree Search
-  $asu_comrf_new_major_choice_default = isset($_GET['acadplan']) ? check_plain($_GET['acadplan']) : NULL;
-  if (isset($asu_comrf_new_major_choice_default)) {
+  $new_major_choice_default = isset($_GET['acadplan']) ? check_plain($_GET['acadplan']) : NULL;
+  if (isset($new_major_choice_default)) {
     // If an 'acadplan' URL parameter exists to set the field default on page load
     // (e.g. the student clicked the 'Change Major' button and is coming directly from Degree Search),
     // then make sure to auto-update the new campus choice and Change of Major requirements
     $list_of_degrees_results = asu_comrf_get_current_program_list();
-    $asu_comrf_new_major_choice_default_key = array_search($asu_comrf_new_major_choice_default,
+    $new_major_choice_default_key = array_search($new_major_choice_default,
       array_column($list_of_degrees_results, 'AcadPlan'));
-    $new_campus_choice_raw = isset($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray'])
-      ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['CampusStringArray'] : array();
-    $new_com_requirements = isset($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor'])
-      ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['ChangeMajor'] : '';
+    $new_campus_choice_raw = isset($list_of_degrees_results[$new_major_choice_default_key]['CampusStringArray'])
+      ? $list_of_degrees_results[$new_major_choice_default_key]['CampusStringArray'] : array();
+    $new_com_requirements = isset($list_of_degrees_results[$new_major_choice_default_key]['ChangeMajor'])
+      ? $list_of_degrees_results[$new_major_choice_default_key]['ChangeMajor'] : '';
     $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
-    $form['asu_comrf_new_major_choice']['#default_value'] = $asu_comrf_new_major_choice_default_key;
+    $form['asu_comrf_new_major_choice']['#default_value'] = $new_major_choice_default_key;
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
     // Put in subplan check to populate initial form as well when necessary.
@@ -510,8 +510,8 @@ function asu_comrf_form($form, &$form_state) {
 
     if ($wpc_com_state == 1) {
       // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
-      $asu_comrf_new_major_choice_default_key = array_search($asu_comrf_new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
-      $program_owner = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['DiplomaDescr']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_default_key]['DiplomaDescr'] : NULL;
+      $new_major_choice_default_key = array_search($new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
+      $program_owner = !empty($list_of_degrees_results[$new_major_choice_default_key]['DiplomaDescr']) ? $list_of_degrees_results[$new_major_choice_default_key]['DiplomaDescr'] : NULL;
 
       if ($program_owner == 'W. P. Carey School of Business') {
         watchdog('asu_comrf', 'The student selected a program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
@@ -606,7 +606,7 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // Set options for 'How did you hear about this new major?' field
-    $asu_comrf_major_change_source_options = array(
+    $major_change_source_options = array(
       0 => 'Faculty Member',
       1 => 'Friend',
       2 => 'Mentor',
@@ -617,11 +617,11 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
       7 => 'Major and Career Exploration Course',
       8 => 'Other',
     );
-    $form['asu_comrf_major_change_source']['#options'] = $asu_comrf_major_change_source_options;
+    $form['asu_comrf_major_change_source']['#options'] = $major_change_source_options;
     $form['asu_comrf_major_change_source']['#default_value'] = NULL;
 
     // Set options for 'Why do you want to change your current major?' field
-    $asu_comrf_why_change_options = array(
+    $why_change_options = array(
       0 => 'eAdvisor: Twice Off-Track',
       1 => 'Current major no longer interests me',
       2 => 'Current major too demanding',
@@ -631,7 +631,7 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
       6 => 'Prefer physical or online location of new major',
       7 => 'Other',
     );
-    $form['asu_comrf_why_change']['#options'] = $asu_comrf_why_change_options;
+    $form['asu_comrf_why_change']['#options'] = $why_change_options;
     $form['asu_comrf_why_change']['#default_value'] = NULL;
 
   }
@@ -677,9 +677,9 @@ function asu_comrf_form_submit($form, &$form_state) {
   $program_plan = $list_of_degrees_results[$new_major_choice_key]['AcadPlan'];
 
   // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
-  $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
-  $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
-  $program_owner = !empty($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['DiplomaDescr'] : NULL;
+  $new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+  $new_major_choice_selected = intval($new_major_choice_selected_raw);
+  $program_owner = !empty($list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'] : NULL;
 
   if ($program_owner == 'W. P. Carey School of Business') {
 
@@ -698,13 +698,13 @@ function asu_comrf_form_submit($form, &$form_state) {
     }
 
     if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
-      $asu_comrf_new_major_choice_selected_raw = isset($form_state['values']['asu_comrf_new_major_choice'])
+      $new_major_choice_selected_raw = isset($form_state['values']['asu_comrf_new_major_choice'])
         ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
-      $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
-      $acad_plan = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'])
-        ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'] : '';
-      $campus_code = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key])
-        ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key] : array();
+      $new_major_choice_selected = intval($new_major_choice_selected_raw);
+      $acad_plan = isset($list_of_degrees_results[$new_major_choice_selected]['AcadPlan'])
+        ? $list_of_degrees_results[$new_major_choice_selected]['AcadPlan'] : '';
+      $campus_code = isset($list_of_degrees_results[$new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key])
+        ? $list_of_degrees_results[$new_major_choice_selected]['CampusStringArray'][$new_campus_choice_key] : array();
       $wpc_url_param = '&acadplan=' . $acad_plan . '&campus=' . $campus_code;
     }
 
@@ -748,9 +748,9 @@ function asu_comrf_form_submit($form, &$form_state) {
       }
     } else {
       // If What If audit is disabled, still compute URL for reference and log it, but don't send the actual request
-      $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env', 'dev');
+      $what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env', 'dev');
       $what_if_audit_url = 'https://'
-        . variable_get('asu_comrf_what_if_audit_api_url_' . $asu_comrf_what_if_audit_api_env)
+        . variable_get('asu_comrf_what_if_audit_api_url_' . $what_if_audit_api_env)
         . $emplid . '&' . $dprog;
       watchdog('asu_comrf', 'The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
     }

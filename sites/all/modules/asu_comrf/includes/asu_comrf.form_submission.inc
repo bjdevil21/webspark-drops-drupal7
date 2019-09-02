@@ -19,9 +19,9 @@ function asu_comrf_get_program_info($program_plan) {
   // Determine if dev or prod settings will be used and build URL
   $api_email_env = variable_get('asu_comrf_change_major_api_email_env', 'dev');
   $api_email_url = variable_get('asu_comrf_change_major_api_email_url_' . $api_email_env);
-  $asu_comrf_ms_auth = variable_get('asu_comrf_ms_auth', '');
+  $mulesoft_auth = variable_get('asu_comrf_ms_auth', '');
 
-  if (!empty($api_email_url) && !empty($asu_comrf_ms_auth)) {
+  if (!empty($api_email_url) && !empty($mulesoft_auth)) {
     $peoplesoft_data_base_url = 'https://' . variable_get('asu_comrf_mulesoft_api_client_id') . ':' . variable_get('asu_comrf_mulesoft_api_client_secret') . '@' . $api_email_url;
   }
 
@@ -29,7 +29,7 @@ function asu_comrf_get_program_info($program_plan) {
   $peoplesoft_data_url = $peoplesoft_data_base_url . '?plancode=' . $program_plan;
   $request_options = array(
     'headers' => array(
-      'Authorization' => $asu_comrf_ms_auth,
+      'Authorization' => $mulesoft_auth,
     ),
     'method' => 'GET',
   );
@@ -81,8 +81,8 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
   // Send data to start automatic WIA
   // JIRA DARS-599 -- Sample URL: 'https://webapp4-dev.asu.edu/asudars7/rest/UserInfoService/whatif/1205472303&ES BME BSE'
   // Determine if dev or prod settings will be used
-  $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env');
-  $what_if_audit_base_url = variable_get('asu_comrf_what_if_audit_api_url_' . $asu_comrf_what_if_audit_api_env);
+  $what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env');
+  $what_if_audit_base_url = variable_get('asu_comrf_what_if_audit_api_url_' . $what_if_audit_api_env);
 
   $dprog = str_replace(' ', '%20', $dprog);
 

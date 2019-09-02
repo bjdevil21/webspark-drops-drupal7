@@ -136,10 +136,10 @@ function asu_comrf_schema() {
  */
 function asu_comrf_install() {
 
-  $asu_comrf_form_header_block_markup = '<h2 class="asu-comrf-header-title">Change of Major Request Form</h2>' .
+  $form_header_block_markup = '<h2 class="asu-comrf-header-title">Change of Major Request Form</h2>' .
                                         '<div class="asu-comrf-header-text">Please search for the new major you would like to change to with Degree Search below.</div>';
 
-  $asu_comrf_degree_search_block_markup = '<section id="advSearchSection" class="section section-top mobile-no-display" aria-label="Advanced search section">' .
+  $degree_search_block_markup = '<section id="advSearchSection" class="section section-top mobile-no-display" aria-label="Advanced search section">' .
                                             '<div class="container">' .
                                               '<div class="row row-2 beast-triple-column">' .
                                                 '<form id="advSearchForm" name="advSearchForm" target="_top" action="https://webapp4.asu.edu/programs/advancedsearch" method="post">' .
@@ -185,14 +185,14 @@ function asu_comrf_install() {
                                             '</div>' .
                                           '</section>';
 
-  $asu_comrf_form_confirmation_text_markup = '<h2 class="com-page-info com-page-title com-confirmation-page-title">Your Change of Major Request Form has been submitted.</h2>' .
+  $form_confirmation_text_markup = '<h2 class="com-page-info com-page-title com-confirmation-page-title">Your Change of Major Request Form has been submitted.</h2>' .
                                              '<div class="com-page-info com-page-text com-confirmation-page-text">' .
                                                '<p>You will receive a confirmation email with your case number shortly. Once you do, you will be able to track this case in the <a href="https://webapp4.asu.edu/myasu/student/servicecenter">Service Center</a> on My ASU.</p>' .
                                                '<p><a href="https://webapp4-dev.asu.edu/uachieve/">Click here to see your ‘What if Audit.’</a> A ‘What if Audit’ is a Degree Audit Report illustrating how your completed courses apply towards your new major/degree. However, please know that the college and major you may be changing to will review your credits and may need to update your final graduation degree audit.</p>' .
                                                '<p>You will be contacted by a representative of the major/college you wish to change to within two business days, who may want to schedule an advising appointment. Please check back to this case for additional instructions.</p>' .
                                              '</div>';
 
-  $asu_comrf_form_notice_text_markup = '<h2 class="com-page-info com-page-title com-notice-page-title">We are unable to process your request using this form.</h2>' .
+  $form_notice_text_markup = '<h2 class="com-page-info com-page-title com-notice-page-title">We are unable to process your request using this form.</h2>' .
                                        '<div class="com-page-info com-page-text com-notice-page-text">' .
                                          '<p>Please be advised that only degree-seeking, undergraduate students can use this form. You may not be eligible to change your major using this form. If you are a graduate student or new to ASU, please go <a href="https://students.asu.edu/changingmajors">here</a> for information on changing your major.</p>' .
                                          '<p>To check eligibility requirements for this form, or if you believe you should have access to it, please contact your academic advisor.</p>' .
@@ -202,13 +202,13 @@ function asu_comrf_install() {
   variable_set('asu_comrf_mulesoft_api_app_name', 'esb_change_major_app_dev');
   variable_set('asu_comrf_mulesoft_api_client_id', '');
   variable_set('asu_comrf_mulesoft_api_client_secret', '');
-  variable_set('asu_comrf_form_header_block_markup', $asu_comrf_form_header_block_markup);
+  variable_set('asu_comrf_form_header_block_markup', $form_header_block_markup);
   variable_set('asu_comrf_student_info_block_env', 'dev');
   variable_set('asu_comrf_degree_search_env', 'dev');
   variable_set('asu_comrf_degree_search_url_dev', 'webapp4-qa.asu.edu/programs/XmlRpcServer');
   variable_set('asu_comrf_degree_search_url_prod', 'webapp4.asu.edu/programs/XmlRpcServer');
   variable_set('asu_comrf_degree_search_service_method', 'findAllDegreesWithLessFields');
-  variable_set('asu_comrf_degree_search_block_markup', $asu_comrf_degree_search_block_markup);
+  variable_set('asu_comrf_degree_search_block_markup', $degree_search_block_markup);
 
   variable_set('asu_comrf_degree_search_result_acad_plan_index', 0);
   variable_set('asu_comrf_degree_search_result_degree_index', 1);
@@ -228,8 +228,8 @@ function asu_comrf_install() {
   variable_set('asu_comrf_what_if_audit_api_env', 'dev');
   variable_set('asu_comrf_what_if_audit_api_url_dev', 'webapp4-qa.asu.edu/asudars7/rest/UserInfoService/whatif/');
   variable_set('asu_comrf_what_if_audit_api_url_prod', 'webapp4.asu.edu/asudars7/rest/UserInfoService/whatif/');
-  variable_set('asu_comrf_form_confirmation_text_markup', $asu_comrf_form_confirmation_text_markup);
-  variable_set('asu_comrf_form_notice_text_markup', $asu_comrf_form_notice_text_markup);
+  variable_set('asu_comrf_form_confirmation_text_markup', $form_confirmation_text_markup);
+  variable_set('asu_comrf_form_notice_text_markup', $form_notice_text_markup);
   variable_set('asu_comrf_form_major_change_source_index', 8);
   variable_set('asu_comrf_form_why_change_index', 7);
   variable_set('asu_comrf_wpc_com_state', 0);

@@ -12,13 +12,13 @@ function asu_comrf_get_degree_list_data() {
   module_load_include('inc','asu_comrf','includes/asu_comrf.program_data_helpers');
 
   // Get environment specific URLs
-  $asu_comrf_degree_search_env = variable_get('asu_comrf_degree_search_env');
-  $url = 'https://' . variable_get('asu_comrf_degree_search_url_' . $asu_comrf_degree_search_env);
+  $degree_search_env = variable_get('asu_comrf_degree_search_env');
+  $url = 'https://' . variable_get('asu_comrf_degree_search_url_' . $degree_search_env);
 
   // Compose XML call
-  $asu_comrf_degree_search_service_method = variable_get('asu_comrf_degree_search_service_method', 'findAllDegreesWithLessFields');
+  $degree_search_service_method = variable_get('asu_comrf_degree_search_service_method', 'findAllDegreesWithLessFields');
 
-  $xml_service_method = 'eAdvisorDSFind.' . $asu_comrf_degree_search_service_method;
+  $xml_service_method = 'eAdvisorDSFind.' . $degree_search_service_method;
   $xml_next_term_code = asu_comrf_get_next_term_code(); // Get next term code
   $xml_degree_set = 'undergrad'; // Only return undergraduate programs
   $xml_include_certs = 0; // Don't include minors or certs
