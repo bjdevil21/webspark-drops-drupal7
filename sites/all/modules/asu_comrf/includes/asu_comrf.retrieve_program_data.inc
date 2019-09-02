@@ -168,11 +168,9 @@ function asu_comrf_store_degree_list($list_of_degrees) {
       ))
       ->execute();
   }
-
   // If inserting data was successful, set check variable to true
   if ($stored_data !== NULL) {
     $data_stored_successfully = TRUE;
   }
-
   return $data_stored_successfully;
 }

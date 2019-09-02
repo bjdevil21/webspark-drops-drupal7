@@ -337,10 +337,14 @@ function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
     }
     $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
     $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
+    $subplan_display = 'block';
   }
   else { // No subplans are available, so don't make any changes
     $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
     $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
+    $subplan_display = 'none';
     watchdog('asu_com', __FUNCTION__ . ' - list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
   }
+  // Subplan CSS toggle
+  $form['asu_comrf_new_subplan_css']['#markup'] = '<style type="text/css">#asu-comrf-new-subplan-choice-ajax-wrapper { display: ' . $subplan_display . '; } </style>';
 }

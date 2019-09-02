@@ -229,14 +229,6 @@ function asu_comrf_form($form, &$form_state) {
   );
 
   // (OPTIONAL) 'Which subplan would you like to choose?'
-  $subplan_css = '<style type="text/css">#asu-comrf-new-subplan-choice-ajax-wrapper { display: none; } </style>';
-
-  $form['asu_comrf_new_subplan_css'] = array(
-    '#type' => 'item',
-    '#markup' => $subplan_css,
-    '#prefix' => '<div id="asu-comrf-new-subplan-css-ajax-wrapper">',
-    '#suffix' => '</div>',
-  );
   $form['asu_comrf_new_subplan_choice'] = array(
     '#type' => 'select',
     '#title' => t('Which subplan would you like to choose?'),
@@ -245,6 +237,14 @@ function asu_comrf_form($form, &$form_state) {
     '#options' => array(0 => 'No Subplans to display'),
     '#required' => FALSE,
     '#prefix' => '<div id="asu-comrf-new-subplan-choice-ajax-wrapper">',
+    '#suffix' => '</div>',
+  );
+
+  $subplan_css = '<style type="text/css">#asu-comrf-new-subplan-choice-ajax-wrapper { display: none; } </style>';
+  $form['asu_comrf_new_subplan_css'] = array(
+    '#type' => 'item',
+    '#markup' => $subplan_css,
+    '#prefix' => '<div id="asu-comrf-new-subplan-css-ajax-wrapper">',
     '#suffix' => '</div>',
   );
 
@@ -482,7 +482,8 @@ function asu_comrf_form($form, &$form_state) {
   if (isset($new_major_choice_default)) {
     // If an 'acadplan' URL parameter exists to set the field default on page load
     // (e.g. the student clicked the 'Change Major' button and is coming directly from Degree Search),
-    // then make sure to auto-update the new campus choice and Change of Major requirements
+    // then make sure to auto-update the new campus choice, Change of Major requirements,
+    // and subplans list.
     $list_of_degrees_results = asu_comrf_get_current_program_list();
     $new_major_choice_default_key = array_search($new_major_choice_default,
       array_column($list_of_degrees_results, 'AcadPlan'));
@@ -494,13 +495,13 @@ function asu_comrf_form($form, &$form_state) {
     $form['asu_comrf_new_major_choice']['#default_value'] = $new_major_choice_default_key;
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
-    // Put in subplan check to populate initial form as well when necessary.
-
+    // Again - Subplans?
     $list_of_subplans = isset($list_of_degrees_results[$new_major_choice_default_key]['MajormapSubplans'])
       ? $list_of_degrees_results[$new_major_choice_default_key]['MajormapSubplans'] : array();
     _asu_comrf_render_subplans_list($list_of_subplans, $form);
 
-    // If the new Change of Major requirements are NULL or empty, disable the COM text field and check; otherwise, display the markup for the requirements
+    // If the new Change of Major requirements are NULL or empty, disable the COM text field and check;
+    // Otherwise, display the markup for the requirements
     if ($new_com_requirements == NULL || $new_com_requirements == '') {
       $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
       $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
@@ -665,8 +666,6 @@ function asu_comrf_form_validate($form, &$form_state) {
  */
 function asu_comrf_form_submit($form, &$form_state) {
 
-  //dpm($form_state);
-
   global $user;
   $asurite_id = $user->name;
 
@@ -720,7 +719,6 @@ function asu_comrf_form_submit($form, &$form_state) {
     $wpc_destination_url = 'https://' . $wpc_base_url . $wpc_url_param;
 
     // Send user to W.P. Carey Change of Major form
-    watchdog('asu_comrf', 'Redirecting WPC request to ' . $wpc_destination_url, array(), WATCHDOG_INFO);
     drupal_goto($wpc_destination_url, array('external' => TRUE));
 
   } else { // Not a WPC program plan
