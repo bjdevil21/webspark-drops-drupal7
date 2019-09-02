@@ -79,6 +79,9 @@ function asu_comrf_get_degree_list_data() {
       if ($loop_run === 1) {
         $acad_plan_name = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->name;
         $acad_plan_value = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->value;
+
+        watchdog('asu_com', 'acad_plan_value: ' . $acad_plan_value, array(), WATCHDOG_DEBUG);
+
         $degree_name = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->name;
         $degree_value = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->value;
         $trnscr_descr_name = $programs_list_obj->value[$degree_key]->struct->member[$trnscr_descr_result_index]->name;
@@ -91,11 +94,13 @@ function asu_comrf_get_degree_list_data() {
         $campus_string_array_name = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->name;
         $campus_string_array_value = array();
         $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array->data->value;
-
+        watchdog('asu_com', 'campus_string_array_value_raw: ' . serialize($campus_string_array_value_raw), array(), WATCHDOG_DEBUG);
         // Check only if not empty
         $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
         $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct;
-        if (!empty($subplans_value)) {
+
+        if (!($subplans_value == new stdClass())) { // has object properties
+          watchdog('asu_com', 'subplans_value: ' . serialize($subplans_value), array(), WATCHDOG_DEBUG);
           $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
         }
 

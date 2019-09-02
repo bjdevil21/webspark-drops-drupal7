@@ -82,11 +82,7 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
   // JIRA DARS-599 -- Sample URL: 'https://webapp4-dev.asu.edu/asudars7/rest/UserInfoService/whatif/1205472303&ES BME BSE'
   // Determine if dev or prod settings will be used
   $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env');
-  if ($asu_comrf_what_if_audit_api_env == 'dev') {
-    $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_dev');
-  } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
-    $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
-  }
+  $what_if_audit_base_url = variable_get('asu_comrf_what_if_audit_api_url_' . $asu_comrf_what_if_audit_api_env);
 
   $dprog = str_replace(' ', '%20', $dprog);
 
@@ -144,7 +140,6 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, 
   $new_major_choice_title = $form_state['complete form']['asu_comrf_new_major_choice']['#title'];
 
   // If subplan is selected and submitted
-
   if (isset($form_state['values']['asu_comrf_new_subplan_choice'])
     && !empty($form_state['values']['asu_comrf_new_subplan_choice'])) {
     $new_subplan_choice_key = $form_state['values']['asu_comrf_new_subplan_choice'];

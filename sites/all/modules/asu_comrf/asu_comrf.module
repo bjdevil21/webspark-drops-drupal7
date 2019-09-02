@@ -138,10 +138,10 @@ function asu_comrf_cron() {
     $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
     if ($successful_data_storage == TRUE) {
       // Log successful degree programs pull and save attempt
-      watchdog('asu_comrf', 'Successfully pulled and saved an updated list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
+      watchdog('asu_comrf', 'Successfully pulled and saved a list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
     } else {
       // Log failed degree programs pull and save attempt
-      watchdog('asu_comrf', 'Failed to pull and save an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
+      watchdog('asu_comrf', 'Failed to pull an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
     }
   }
 
@@ -149,14 +149,15 @@ function asu_comrf_cron() {
   if ($degree_search_env == 'dev') {
     // Get the list of degree programs
     $list_of_degrees = asu_comrf_get_degree_list_data();
+    $no_of_degrees = (is_array($list_of_degrees)) ? count($list_of_degrees) : 0;
     // Process the list of degree programs for relevant information
     $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
     if ($successful_data_storage == TRUE) {
       // Log successful degree programs pull and save attempt
-      watchdog('asu_comrf', '[DEV] Successfully pulled and saved an updated list of degrees from Degree Search.', array(), WATCHDOG_INFO);
+      watchdog('asu_comrf', '[DEV] Successfully pulled and saved a list of  ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
     } else {
       // Log failed degree programs pull and save attempt
-      watchdog('asu_comrf', '[DEV] Failed to pull and save an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
+      watchdog('asu_comrf', '[DEV] Failed to pull an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
     }
   }
 }
@@ -227,7 +228,7 @@ function asu_comrf_form($form, &$form_state) {
     ),
   );
 
-  // 'If needed, which subplan would you like to choose?'
+  // (OPTIONAL) 'Which subplan would you like to choose?'
   $subplan_css = '<style type="text/css">#asu-comrf-new-subplan-choice-ajax-wrapper { display: none; } </style>';
 
   $form['asu_comrf_new_subplan_css'] = array(
@@ -236,8 +237,6 @@ function asu_comrf_form($form, &$form_state) {
     '#prefix' => '<div id="asu-comrf-new-subplan-css-ajax-wrapper">',
     '#suffix' => '</div>',
   );
-
-  // 'If needed, which subplan would you like to choose?'
   $form['asu_comrf_new_subplan_choice'] = array(
     '#type' => 'select',
     '#title' => t('Which subplan would you like to choose?'),
@@ -248,7 +247,6 @@ function asu_comrf_form($form, &$form_state) {
     '#prefix' => '<div id="asu-comrf-new-subplan-choice-ajax-wrapper">',
     '#suffix' => '</div>',
   );
-
 
   // 'Which campus do you want to attend?'
   $form['asu_comrf_new_campus_choice'] = array(
@@ -418,15 +416,29 @@ function asu_comrf_form($form, &$form_state) {
 
     // If they must choose a subplan, populate that form field and set field to required
     $list_of_subplans = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'] : array();
+
+//    watchdog('asu_com', 'list of subplans: ' . serialize($list_of_subplans), array(), WATCHDOG_DEBUG);
+    $tmp = $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'];
+    watchdog('asu_com', __FUNCTION__ . ' - ' . $tmp, array(), WATCHDOG_DEBUG);
+
     $new_subplan_options = array();
-    if (!empty($list_of_subplans)) {
+
+    $tmp = serialize($list_of_subplans);
+    watchdog('asu_com', 'list of subplans: ' . $tmp, array(), WATCHDOG_DEBUG);
+
+    //
+    if ((is_object($list_of_subplans) && !empty($list_of_subplans->name)) ||
+        (is_array($list_of_subplans) && isset($list_of_subplans[0]))) {
+
       if (is_object($list_of_subplans)) { // Only one subplan object
         $new_subplan_options[$list_of_subplans->name] = $list_of_subplans->value;
+        watchdog('asu_com', __FUNCTION__ . ' is_object', array(), WATCHDOG_DEBUG);
       }
       else { // two or more subplans objects are wrapped by an array
         foreach($list_of_subplans as $sub => $plan) {
           $new_subplan_options[$plan->name] = $plan->value;
         }
+        watchdog('asu_com', __FUNCTION__ . ' is_array', array(), WATCHDOG_DEBUG);
       }
       $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
       $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
@@ -434,6 +446,7 @@ function asu_comrf_form($form, &$form_state) {
     else { // No subplans are available, so don't make any changes
       $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
       $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
+      watchdog('asu_com', __FUNCTION__ . 'list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
     }
 
     // If the new Change of Major requirements are NULL or empty, disable the COM text field and check;
@@ -492,6 +505,10 @@ function asu_comrf_form($form, &$form_state) {
     $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_major_choice']['#default_value'] = $asu_comrf_new_major_choice_default_key;
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
+
+
+    // @TODO - Put in subplan check to populate initial list on load.
+
 
     // If the new Change of Major requirements are NULL or empty, disable the COM text field and check; otherwise, display the markup for the requirements
     if ($new_com_requirements == NULL || $new_com_requirements == '') {
@@ -564,6 +581,7 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
     $student_info = asu_comrf_get_student_info($asurite_id);
     $student_degrees = $student_info['degrees'];
     $student_degrees_to_display = array();
+    // If not student, redirect to error/notice page.
     if (empty($student_degrees)) {
       drupal_goto('request/notice');
       drupal_exit();
@@ -705,7 +723,7 @@ function asu_comrf_form_submit($form, &$form_state) {
     }
 
     // Determine destination URL environment for W.P. Carey
-    $wpc_env = 'asu_comrf_wpc_com_url_' . variable_get('asu_comrf_wpc_com_env');
+    $wpc_env = 'asu_comrf_wpc_com_url_' . variable_get('asu_comrf_wpc_com_env', 'dev'); // defaults to dev ENV
     $wpc_base_url = variable_get($wpc_env);
 
     // Compose destination URL based on dev or prod base URL and the plancode sent as a parameter
@@ -745,12 +763,9 @@ function asu_comrf_form_submit($form, &$form_state) {
     } else {
       // If What If audit is disabled, still compute URL for reference and log it, but don't send the actual request
       $asu_comrf_what_if_audit_api_env = variable_get('asu_comrf_what_if_audit_api_env', 'dev');
-      if ($asu_comrf_what_if_audit_api_env == 'dev') {
-        $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_dev');
-      } else if ($asu_comrf_what_if_audit_api_env == 'prod') {
-        $what_if_audit_base_url = 'https://' . variable_get('asu_comrf_what_if_audit_api_url_prod');
-      }
-      $what_if_audit_url = $what_if_audit_base_url . $emplid . '&' . $dprog;
+      $what_if_audit_url = 'https://'
+        . variable_get('asu_comrf_what_if_audit_api_url_' . $asu_comrf_what_if_audit_api_env)
+        . $emplid . '&' . $dprog;
       watchdog('asu_comrf', 'The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
     }
 
@@ -805,5 +820,4 @@ function asu_comrf_form_submit($form, &$form_state) {
       drupal_goto('request/confirmation');
     }
   }
-
 }
