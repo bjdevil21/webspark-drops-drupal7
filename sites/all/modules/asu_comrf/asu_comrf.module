@@ -403,51 +403,33 @@ function asu_comrf_form($form, &$form_state) {
     '#attributes' => array('aria-live' => array('polite')),
   );
 
-  // Perform AJAX magic to update the form fields based on the user-selected option from 'Which major would you like to choose?'
+  // Perform AJAX magic to update the form fields based on the user-selected option from
+  // 'Which major would you like to choose?'
   if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
     // Get current degree programs list from database
     $list_of_degrees_results = asu_comrf_get_current_program_list();
-    $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+    $asu_comrf_new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice'])
+      ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
     $asu_comrf_new_major_choice_selected = intval($asu_comrf_new_major_choice_selected_raw);
-    $new_campus_choice_raw = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'] : array();
-    $new_com_requirements = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'] : '';
+    $new_campus_choice_raw = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'])
+      ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['CampusStringArray'] : array();
+    $new_com_requirements = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'])
+      ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['ChangeMajor'] : '';
     $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
     // If they must choose a subplan, populate that form field and set field to required
-    $list_of_subplans = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans']) ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'] : array();
 
-//    watchdog('asu_com', 'list of subplans: ' . serialize($list_of_subplans), array(), WATCHDOG_DEBUG);
+    $list_of_subplans = isset($list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'])
+      ? $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['MajormapSubplans'] : array();
+
+    // DEBUG
     $tmp = $list_of_degrees_results[$asu_comrf_new_major_choice_selected]['AcadPlan'];
     watchdog('asu_com', __FUNCTION__ . ' - ' . $tmp, array(), WATCHDOG_DEBUG);
-
-    $new_subplan_options = array();
-
     $tmp = serialize($list_of_subplans);
     watchdog('asu_com', 'list of subplans: ' . $tmp, array(), WATCHDOG_DEBUG);
 
-    //
-    if ((is_object($list_of_subplans) && !empty($list_of_subplans->name)) ||
-        (is_array($list_of_subplans) && isset($list_of_subplans[0]))) {
-
-      if (is_object($list_of_subplans)) { // Only one subplan object
-        $new_subplan_options[$list_of_subplans->name] = $list_of_subplans->value;
-        watchdog('asu_com', __FUNCTION__ . ' is_object', array(), WATCHDOG_DEBUG);
-      }
-      else { // two or more subplans objects are wrapped by an array
-        foreach($list_of_subplans as $sub => $plan) {
-          $new_subplan_options[$plan->name] = $plan->value;
-        }
-        watchdog('asu_com', __FUNCTION__ . ' is_array', array(), WATCHDOG_DEBUG);
-      }
-      $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
-      $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
-    }
-    else { // No subplans are available, so don't make any changes
-      $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
-      $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
-      watchdog('asu_com', __FUNCTION__ . 'list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
-    }
+    _asu_comrf_subplans($list_of_subplans, $form);
 
     // If the new Change of Major requirements are NULL or empty, disable the COM text field and check;
     // Else, display the markup for the requirements
@@ -495,6 +477,7 @@ function asu_comrf_form($form, &$form_state) {
   }
 
   // Check to see if a default program is being sent as a URL parameter from Degree Search
+  // - and check for subplan
   $asu_comrf_new_major_choice_default = isset($_GET['acadplan']) ? check_plain($_GET['acadplan']) : NULL;
   if (isset($asu_comrf_new_major_choice_default)) {
     // If an 'acadplan' URL parameter exists to set the field default on page load (e.g. the student clicked the 'Change Major' button and is coming directly from Degree Search), then make sure to auto-update the new campus choice and Change of Major requirements
@@ -506,9 +489,8 @@ function asu_comrf_form($form, &$form_state) {
     $form['asu_comrf_new_major_choice']['#default_value'] = $asu_comrf_new_major_choice_default_key;
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
-
-    // @TODO - Put in subplan check to populate initial list on load.
-
+    // Put in subplan check to populate initial form as well when necessary.
+    _asu_comrf_subplans($list_of_subplans, $form);
 
     // If the new Change of Major requirements are NULL or empty, disable the COM text field and check; otherwise, display the markup for the requirements
     if ($new_com_requirements == NULL || $new_com_requirements == '') {

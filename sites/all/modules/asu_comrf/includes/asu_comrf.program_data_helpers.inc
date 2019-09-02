@@ -308,3 +308,36 @@ function asu_comrf_translate_campus_code_options($new_campus_choice_raw) {
   }
   return $new_campus_choice;
 }
+
+/**
+ * Helper function - Get all subplans for an academic plan,
+ * and alter the form and form_state variables
+ */
+function _asu_comrf_subplans($list_of_subplans, &$form) {
+
+  $new_subplan_options = array();
+
+  // Does subplan actually exist (in a non-empty object for one option
+  // or array for two or more options)?
+  if ((is_object($list_of_subplans) && !empty($list_of_subplans->name)) ||
+    (is_array($list_of_subplans) && isset($list_of_subplans[0]))) {
+
+    if (is_object($list_of_subplans)) { // Only one subplan object
+      $new_subplan_options[$list_of_subplans->name] = $list_of_subplans->value;
+      watchdog('asu_com', __FUNCTION__ . ' is_object', array(), WATCHDOG_DEBUG);
+    }
+    else { // two or more subplans objects are wrapped by an array
+      foreach($list_of_subplans as $sub => $plan) {
+        $new_subplan_options[$plan->name] = $plan->value;
+      }
+      watchdog('asu_com', __FUNCTION__ . ' is_array', array(), WATCHDOG_DEBUG);
+    }
+    $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
+    $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
+  }
+  else { // No subplans are available, so don't make any changes
+    $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
+    $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
+    watchdog('asu_com', __FUNCTION__ . 'list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
+  }
+}
