@@ -138,10 +138,10 @@ function asu_comrf_cron() {
     $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
     if ($successful_data_storage == TRUE) {
       // Log successful degree programs pull and save attempt
-      watchdog('asu_comrf', 'Successfully pulled and saved a list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
+      watchdog('asu_comrf', 'Successfully pulled and saved list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
     } else {
       // Log failed degree programs pull and save attempt
-      watchdog('asu_comrf', 'Failed to pull an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
+      watchdog('asu_comrf', 'Failed to pull updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
     }
   }
 
@@ -371,7 +371,6 @@ function asu_comrf_form($form, &$form_state) {
   // 'How do the classes I've already taken apply to this new major?' --> What If audit
   $form['asu_comrf_what_if_audit_text'] = array(
     '#title' => '<br>' . t('How do the classes I\'ve already taken apply to this new major?'),
-    //'#description' => '<small><strong><i>' . t('Please note: ') . '</i></strong>' . t('A What If audit will be automatically run for you and will be available to view after submitting this form. Clicking this button will take you to a different page and your form data will be lost.') . '</small>',
     '#type' => 'item',
     '#markup' => '<strong><a href="https://webapp4.asu.edu/uachieve/" class="btn btn-secondary">Run a What If audit</a></strong>',
     '#prefix' => "<div id='asu-comrf-what-if-audit-text-ajax-wrapper' aria-live='polite'>",
@@ -403,7 +402,7 @@ function asu_comrf_form($form, &$form_state) {
     '#attributes' => array('aria-live' => array('polite')),
   );
 
-  // Perform AJAX magic to update the form fields based on the user-selected option from
+  // Perform AJAX magic to update the form fields based on the user-selected option of
   // 'Which major would you like to choose?'
   if (isset($form_state['values']['asu_comrf_new_major_choice'])) {
     // Get current degree programs list from database
@@ -425,9 +424,9 @@ function asu_comrf_form($form, &$form_state) {
 
     // DEBUG
     $tmp = $list_of_degrees_results[$new_major_choice_selected]['AcadPlan'];
-    watchdog('asu_com', __FUNCTION__ . ' - ' . $tmp, array(), WATCHDOG_DEBUG);
+    watchdog('asu_comrf', __FUNCTION__ . ' - ' . $tmp, array(), WATCHDOG_DEBUG);
     $tmp = serialize($list_of_subplans);
-    watchdog('asu_com', 'list of subplans: ' . $tmp, array(), WATCHDOG_DEBUG);
+    watchdog('asu_comrf', 'list of subplans: ' . $tmp, array(), WATCHDOG_DEBUG);
 
     // Get subplans
     _asu_comrf_render_subplans_list($list_of_subplans, $form);
@@ -446,11 +445,12 @@ function asu_comrf_form($form, &$form_state) {
     $wpc_com_state = variable_get('asu_comrf_wpc_com_state', 0);
 
     if ($wpc_com_state == 1) {
-      // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
-      $program_owner = !empty($list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'] : NULL;
+      // If WPCarey, customize the form
+      $program_owner = !empty($list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'])
+        ? $list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'] : NULL;
 
       if ($program_owner == 'W. P. Carey School of Business') {
-        watchdog('asu_comrf', 'The student selected a program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
+        watchdog('asu_comrf', 'Selected program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
         $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
         $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
         $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
@@ -515,8 +515,10 @@ function asu_comrf_form($form, &$form_state) {
 
     if ($wpc_com_state == 1) {
       // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
-      $new_major_choice_default_key = array_search($new_major_choice_default, array_column($list_of_degrees_results, 'AcadPlan'));
-      $program_owner = !empty($list_of_degrees_results[$new_major_choice_default_key]['DiplomaDescr']) ? $list_of_degrees_results[$new_major_choice_default_key]['DiplomaDescr'] : NULL;
+      $new_major_choice_default_key = array_search($new_major_choice_default,
+        array_column($list_of_degrees_results, 'AcadPlan'));
+      $program_owner = !empty($list_of_degrees_results[$new_major_choice_default_key]['DiplomaDescr'])
+        ? $list_of_degrees_results[$new_major_choice_default_key]['DiplomaDescr'] : NULL;
 
       if ($program_owner == 'W. P. Carey School of Business') {
         watchdog('asu_comrf', 'The student selected a program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
@@ -649,11 +651,14 @@ function asu_comrf_form_alter(&$form, &$form_state, $form_id) {
  * @param $form_state
  */
 function asu_comrf_form_validate($form, &$form_state) {
-  // Validate custom conditional fields -- VALIDATION MAY BREAK IF SELECT LIST OPTIONS ARE CHANGED (e.g. not using id == 8 or 7) -- change in module settings
-  if ($form_state['values']['asu_comrf_major_change_source'] == variable_get('asu_comrf_form_major_change_source_index', 8) && empty($form_state['values']['asu_comrf_major_change_source_other'])) {
+  // Validate custom conditional fields -- VALIDATION MAY BREAK IF SELECT LIST OPTIONS ARE CHANGED
+  // (e.g. not using id == 8 or 7) -- change in module settings
+  if ($form_state['values']['asu_comrf_major_change_source'] == variable_get('asu_comrf_form_major_change_source_index', 8)
+    && empty($form_state['values']['asu_comrf_major_change_source_other'])) {
     form_set_error('asu_comrf_major_change_source_other', t('Please tell us how you heard about this new major.'));
   }
-  if ($form_state['values']['asu_comrf_why_change'] == variable_get('asu_comrf_form_why_change_index', 7) && empty($form_state['values']['asu_comrf_why_change_other'])) {
+  if ($form_state['values']['asu_comrf_why_change'] == variable_get('asu_comrf_form_why_change_index', 7)
+    && empty($form_state['values']['asu_comrf_why_change_other'])) {
     form_set_error('asu_comrf_why_change_other', t('Please tell us why you want to change your current major.'));
   }
 }
@@ -680,9 +685,11 @@ function asu_comrf_form_submit($form, &$form_state) {
   $program_plan = $list_of_degrees_results[$new_major_choice_key]['AcadPlan'];
 
   // Get program owner (i.e. 'W. P. Carey School of Business') and customize the form if it is WPC
-  $new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice']) ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
+  $new_major_choice_selected_raw = !empty($form_state['values']['asu_comrf_new_major_choice'])
+    ? $form_state['values']['asu_comrf_new_major_choice'] : NULL;
   $new_major_choice_selected = intval($new_major_choice_selected_raw);
-  $program_owner = !empty($list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr']) ? $list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'] : NULL;
+  $program_owner = !empty($list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'])
+    ? $list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'] : NULL;
 
   if ($program_owner == 'W. P. Carey School of Business') {
 
@@ -696,7 +703,8 @@ function asu_comrf_form_submit($form, &$form_state) {
       watchdog('asu_comrf', 'Truncated WPC Change of Major form data for ID ' . $asurite_id . ' saved.',
         array(), WATCHDOG_INFO);
     } else {
-      watchdog('asu_comrf', 'WPC Change of Major form data for ID ' . $asurite_id . ' was not saved before being passed on.',
+      watchdog('asu_comrf', 'WPC Change of Major form data for ID ' . $asurite_id
+        . ' was not saved before being passed onto WPCarey.',
         array(), WATCHDOG_ERROR);
     }
 
@@ -723,7 +731,8 @@ function asu_comrf_form_submit($form, &$form_state) {
 
   } else { // Not a WPC program plan
 
-    if (empty($program_plan)) { // Backup default major (BS in Accounting) if none is set by Mulesoft call.
+    if (empty($program_plan)) { // Backup default major (BS in Accounting) if none
+      // is set for the upcoming Mulesoft call.
       $program_plan = 'BABUSBABA';
     }
 
@@ -746,7 +755,7 @@ function asu_comrf_form_submit($form, &$form_state) {
       // Send request to start What If audit if enabled
       $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $dprog);
       if (!$successful_what_if_audit_submission) {
-        watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to automatically start a What If audit after submission. Your data may have been saved to the website\'s database and sent to Salesforce, but a What If audit has not been run automatically.', array(), WATCHDOG_ERROR);
+        watchdog('asu_comrf', 'Form was not able to start a What If audit. Nonetheless, data may have been saved in Drupal and sent to Salesforce.', array(), WATCHDOG_ERROR);
       }
     } else {
       // If What If audit is disabled, still compute URL for reference and log it, but don't send the actual request
@@ -754,7 +763,7 @@ function asu_comrf_form_submit($form, &$form_state) {
       $what_if_audit_url = 'https://'
         . variable_get('asu_comrf_what_if_audit_api_url_' . $what_if_audit_api_env)
         . $emplid . '&' . $dprog;
-      watchdog('asu_comrf', 'The What If audit feature is currently disabled, however, here is the intended endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
+      watchdog('asu_comrf', 'The What If audit feature is currently disabled. Endpoint URL: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
     }
 
     // Check MuleSoft API state
@@ -778,7 +787,7 @@ function asu_comrf_form_submit($form, &$form_state) {
       }
     }
     if (empty($salesforce_email)) {
-      // Default if there is no SF email provided and we are in production
+      // Default if there is no SF email provided and the dev rules haven't been applied (i.e. in prod)
       $salesforce_email = 'eadvisor@asu.edu';
       watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but may not have sent to Salesforce correctly.', array(), WATCHDOG_ERROR);
     }

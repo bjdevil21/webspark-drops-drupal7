@@ -9,8 +9,6 @@
  */
 function asu_comrf_is_off_season() {
   // Helper function to only allow query of all degree programs during academic off-seasons (summer, winter break)
-  // if (month == 12 && day == 20-31) || (month == 5 && day == 10-31) || (month == 6-7) || (month == 8 && day == 1-15)
-  //$current_day = date('j');
   $current_month = date('n');
 
   // Current months (by month digit) that are considered off-season
@@ -31,7 +29,8 @@ function asu_comrf_is_off_season() {
 /**
  * Determines if at least one week has passed since the last check time.
  *
- * Returns TRUE if at least one week has passed, and returns FALSE if one week has not passed since the last recorded check.
+ * Returns TRUE if at least one week has passed, and returns FALSE if one week has not
+ * passed since the last recorded check.
  *
  * @return bool
  */
@@ -71,7 +70,8 @@ function asu_comrf_get_next_term_code() {
   // '7' = fall
   // '9' = winter
   // '4' = summer
-  // '5' = summer session 2 (no longer used, but it might show up if we're pulling old enough data--we should probably just merge 5 with 4)
+  // '5' = summer session 2 (no longer used, but it might show up if we're pulling old enough data
+  //     -- we should probably just merge 5 with 4)
 
   // Set date-based variables
   $current_millennium = '2';
@@ -137,11 +137,13 @@ function asu_comrf_get_student_info($asurite_id) {
   $result = drupal_http_request($student_info_url, $request_options);
 
   if ($result->code <> 200) {
-    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call URL (sans app_ID:key) for ASURITE ID ' . $asurite_id . ': ' . $api_url, array(), WATCHDOG_DEBUG);
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call URL (sans app_ID:key) for ASURITE ID '
+      . $asurite_id . ': ' . $api_url, array(), WATCHDOG_DEBUG);
     watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call return code ' . $result->code, array(), WATCHDOG_ERROR);
   }
 
-  // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for error codes.
+  // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html
+  // for error codes list.
   if (($result->code > 0) && ($result->code < 125)) {
     watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for ASURITE ID ' . $asurite_id . ' failed with system error ' . $result->code
       . '. Check Mulesoft API to see if it is working.', array(), WATCHDOG_ERROR);
@@ -227,7 +229,8 @@ function asu_comrf_get_current_program_list() {
   $list_of_degrees_results_s = $list_of_degrees_results_array_s[0]->degree_programs;
   $list_of_degrees_results = unserialize($list_of_degrees_results_s);
 
-  // Check for malformed data returned from Degree Search (e.g. 'Degree' field is empty, therefore it defaults to an object, which causes errors down the line)
+  // Check for malformed data returned from Degree Search (e.g. 'Degree' field is empty,
+  // therefore it defaults to an object, which causes errors down the line)
   if ($list_of_degrees_results) {
     for ($i = 0; $i < count($list_of_degrees_results); $i++) {
       if (is_object($list_of_degrees_results[$i]['TrnscrDescr'])) {
@@ -327,13 +330,13 @@ function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
 
     if (is_object($list_of_subplans)) { // Only one subplan object
       $new_subplan_options[$list_of_subplans->name] = $list_of_subplans->value;
-      watchdog('asu_com', __FUNCTION__ . ' is_object', array(), WATCHDOG_DEBUG);
+      watchdog('asu_comrf', __FUNCTION__ . ' is_object', array(), WATCHDOG_DEBUG);
     }
     else { // two or more subplans objects are wrapped by an array
       foreach($list_of_subplans as $sub => $plan) {
         $new_subplan_options[$plan->name] = $plan->value;
       }
-      watchdog('asu_com', __FUNCTION__ . ' is_array', array(), WATCHDOG_DEBUG);
+      watchdog('asu_comrf', __FUNCTION__ . ' is_array', array(), WATCHDOG_DEBUG);
     }
     $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
     $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
@@ -343,7 +346,7 @@ function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
     $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
     $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
     $subplan_display = 'none';
-    watchdog('asu_com', __FUNCTION__ . ' - list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
+    watchdog('asu_comrf', __FUNCTION__ . ' - list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
   }
   // Subplan CSS toggle
   $form['asu_comrf_new_subplan_css']['#markup'] = '<style type="text/css">#asu-comrf-new-subplan-choice-ajax-wrapper { display: ' . $subplan_display . '; } </style>';

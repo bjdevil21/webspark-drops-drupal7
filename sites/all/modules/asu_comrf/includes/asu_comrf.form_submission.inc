@@ -34,18 +34,19 @@ function asu_comrf_get_program_info($program_plan) {
     'method' => 'GET',
   );
 
-//  watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft URL: ' . $peoplesoft_data_url, array(), WATCHDOG_INFO);
-
   $result = drupal_http_request($peoplesoft_data_url, $request_options);
 
-  // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html for error codes.
+  // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html
+  // for error codes.
   if (($result->code > 0) && ($result->code < 125)) {
-    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for program plan ' . $program_plan . ' failed with system error ' . $result->code
-      . '. Check Mulesoft API to see if it is working.', array(), WATCHDOG_ERROR);
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for program plan ' . $program_plan
+      . ' failed with system error ' . $result->code . '. Check Mulesoft API to see if it is working.',
+      array(), WATCHDOG_ERROR);
     drupal_goto("request/error");
     drupal_exit();
   } elseif (isset($result->error)) {
-    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for program plan ' . $program_plan . ' not working. Returns error ' . check_plain($result->error),
+    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call for program plan ' . $program_plan
+      . ' not working. Returns error ' . check_plain($result->error),
       array(), WATCHDOG_ERROR);
     drupal_goto("request/notice");
     drupal_exit();
@@ -56,16 +57,17 @@ function asu_comrf_get_program_info($program_plan) {
     if (isset($program_info_raw)) {
       $program_info['email'] = $program_info_raw->email;
       $program_info['dprog'] = $program_info_raw->dprog;
-      //watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft response', array(), WATCHDOG_INFO);
     } else {
       $program_info['email'] == 'PSNoMail@asu.edu';
       $program_info['dprog'] == 'BA ACC BS';
-      watchdog('asu_comrf', 'Mulesoft response program_info_raw empty from ' . $peoplesoft_data_url . '. Using default BA ACC BS.', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'Mulesoft response program_info_raw empty from ' . $peoplesoft_data_url
+        . '. Using default BA ACC BS.', array(), WATCHDOG_ERROR);
     }
   } else {
     $program_info['email'] == 'PSNoMail@asu.edu';
     $program_info['dprog'] == 'BA ACC BS';
-    watchdog('asu_comrf', 'Mulesoft response was empty from ' . $peoplesoft_data_url . '. Using default BA ACC BS.', array(), WATCHDOG_ERROR);
+    watchdog('asu_comrf', 'Mulesoft response was empty from ' . $peoplesoft_data_url
+      . '. Using default BA ACC BS.', array(), WATCHDOG_ERROR);
   }
   return $program_info;
 }
@@ -97,7 +99,8 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
   $result = drupal_http_request($what_if_audit_url, $request_options);
   $data = $result->data;
 
-  // Do conversion magic to get the returned What If audit response code into object form instead of XML
+  // Do conversion magic to get the returned What If audit response code into object
+  // form instead of XML
   $xml = simplexml_load_string($data);
   $xml_data = $xml->ERROR->CODE;
   $json = json_encode($xml_data);
@@ -105,7 +108,8 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
   $obj_index = 0;
   $what_if_audit_response_obj_code = $what_if_audit_response_obj->$obj_index;
 
-  watchdog('asu_comrf', __FUNCTION__ . ' - EmplID ' . $emplid . ' What If audit result code: ' . $what_if_audit_response_obj_code, array(), WATCHDOG_INFO);
+  watchdog('asu_comrf', __FUNCTION__ . ' - EmplID ' . $emplid . ' What If audit result code: '
+    . $what_if_audit_response_obj_code, array(), WATCHDOG_INFO);
 
   if ($what_if_audit_response_obj_code == 400) {
     return FALSE;
@@ -251,7 +255,7 @@ function asu_comrf_save_form_data($asurite_id, &$form_state, $submit_key) {
     $new_subplan_choice_key = $new_subplan_choice = 0;
   }
 
-  // Decide whether the form should be submitted as a normal submission, or a WPC redirect submission
+  // Form submitted as a normal submission or WPC redirect submission?
   switch ($submit_key) {
     case 'eAdvisor':
       $requirements_check_key = $form_state['values']['asu_comrf_requirements_check'];

@@ -10,7 +10,8 @@ function asu_comrf_form_header_BLOCK_CONTENT() {
   $block = array();
 
   // Create $block_content variable with the COM form header and accompanying text
-  $block_content = variable_get('asu_comrf_form_header_block_markup', '<div>There was an issue loading the Change of Major form header block content.</div>');
+  $block_content = variable_get('asu_comrf_form_header_block_markup',
+    '<div>There was an issue loading the Change of Major form header block content.</div>');
 
   // Define the block to return, injecting $block_content into the markup
   $block = array(
@@ -35,7 +36,8 @@ function asu_comrf_degree_search_BLOCK_CONTENT() {
   $block = array();
 
   // Create $block_content variable with the limited Degree Search bar markup
-  $block_content = variable_get('asu_comrf_degree_search_block_markup', '<div>There was an issue loading the Change of Major Degree Search block content.</div>');
+  $block_content = variable_get('asu_comrf_degree_search_block_markup',
+    '<div>There was an issue loading the Change of Major Degree Search block content.</div>');
 
   // Define the block to return, injecting $block_content into the markup
   $block = array(
