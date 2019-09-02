@@ -429,9 +429,10 @@ function asu_comrf_form($form, &$form_state) {
     $tmp = serialize($list_of_subplans);
     watchdog('asu_com', 'list of subplans: ' . $tmp, array(), WATCHDOG_DEBUG);
 
+    // Get subplans
     _asu_comrf_render_subplans_list($list_of_subplans, $form);
 
-    // If the new Change of Major requirements are NULL or empty, disable the COM text field and check;
+    // If requirements are NULL or empty, disable the COM text field and check;
     // Else, display the markup for the requirements
     if ($new_com_requirements == NULL || $new_com_requirements == '') {
       $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
@@ -494,7 +495,10 @@ function asu_comrf_form($form, &$form_state) {
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
     // Put in subplan check to populate initial form as well when necessary.
-    _asu_comrf_subplans($list_of_subplans, $form);
+
+    $list_of_subplans = isset($list_of_degrees_results[$new_major_choice_default_key]['MajormapSubplans'])
+      ? $list_of_degrees_results[$new_major_choice_default_key]['MajormapSubplans'] : array();
+    _asu_comrf_render_subplans_list($list_of_subplans, $form);
 
     // If the new Change of Major requirements are NULL or empty, disable the COM text field and check; otherwise, display the markup for the requirements
     if ($new_com_requirements == NULL || $new_com_requirements == '') {

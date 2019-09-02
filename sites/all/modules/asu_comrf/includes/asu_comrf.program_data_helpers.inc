@@ -312,6 +312,9 @@ function asu_comrf_translate_campus_code_options($new_campus_choice_raw) {
 /**
  * Helper function - Get all subplans for an academic plan,
  * and alter the form and form_state variables
+ *
+ * @param $list_of_subplans (mixed) - Returned list of subplans for a given acadPlan code.
+ * @param $form (array) - Contains CofM $form settings for Drupal API
  */
 function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
 

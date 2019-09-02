@@ -109,7 +109,7 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
 
   if ($what_if_audit_response_obj_code == 400) {
     return FALSE;
-  } else if ($what_if_audit_response_obj_code == 200) {
+  } elseif ($what_if_audit_response_obj_code == 200) {
     return TRUE;
   } else {
     return FALSE;
