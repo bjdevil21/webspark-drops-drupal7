@@ -313,7 +313,7 @@ function asu_comrf_translate_campus_code_options($new_campus_choice_raw) {
  * Helper function - Get all subplans for an academic plan,
  * and alter the form and form_state variables
  */
-function _asu_comrf_subplans($list_of_subplans, &$form) {
+function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
 
   $new_subplan_options = array();
 
@@ -338,6 +338,6 @@ function _asu_comrf_subplans($list_of_subplans, &$form) {
   else { // No subplans are available, so don't make any changes
     $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
     $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
-    watchdog('asu_com', __FUNCTION__ . 'list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
+    watchdog('asu_com', __FUNCTION__ . ' - list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
   }
 }
