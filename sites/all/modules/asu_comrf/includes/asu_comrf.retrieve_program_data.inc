@@ -76,11 +76,11 @@ function asu_comrf_get_degree_list_data() {
     $degree_program = $programs_list_obj->value[$degree_key]->struct->member;
     $loop_run = 1;
     foreach($degree_program as $key => $value) {
-      if ($loop_run === 1) {
+      if ($loop_run === 1) { // This runs for every field (at least a dozen times).
         $acad_plan_name = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->name;
         $acad_plan_value = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->value;
 
-        watchdog('asu_comrf', 'acad_plan_value: ' . $acad_plan_value, array(), WATCHDOG_DEBUG);
+        //watchdog('asu_comrf', 'acad_plan_value: ' . $acad_plan_value, array(), WATCHDOG_DEBUG);
 
         $degree_name = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->name;
         $degree_value = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->value;
@@ -90,17 +90,23 @@ function asu_comrf_get_degree_list_data() {
         $diploma_descr_value = $programs_list_obj->value[$degree_key]->struct->member[$diploma_descr_result_index]->value;
         $change_major_name = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->name;
         $change_major_value = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->value;
+        // If a NON-DEGREE entry in the feed, filter that major out based on ChangeMajor value
+        if ($change_major_value === 'NO-DEGREE') {
+          break 1;
+        }
 
         $campus_string_array_name = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->name;
         $campus_string_array_value = array();
         $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array->data->value;
-        watchdog('asu_comrf', 'campus_string_array_value_raw: ' . serialize($campus_string_array_value_raw), array(), WATCHDOG_DEBUG);
+
+        //watchdog('asu_comrf', 'campus_string_array_value_raw: ' . serialize($campus_string_array_value_raw), array(), WATCHDOG_DEBUG);
+
         // Check only if not empty
         $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
         $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct;
 
         if (!($subplans_value == new stdClass())) { // has object properties
-          watchdog('asu_comrf', 'subplans_value: ' . serialize($subplans_value), array(), WATCHDOG_DEBUG);
+          //watchdog('asu_comrf', 'subplans_value: ' . serialize($subplans_value), array(), WATCHDOG_DEBUG);
           $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
         }
 
@@ -130,7 +136,6 @@ function asu_comrf_get_degree_list_data() {
   // Sort the degree program list by the TrnscrDescr value
   usort($list_of_degrees, 'asu_comrf_sort_degree_list_by_trnscr_descr');
 
-  // DEBUG
   // watchdog('asu_comrf', var_dump($list_of_degrees), array(), WATCHDOG_INFO);
 
   return $list_of_degrees;
