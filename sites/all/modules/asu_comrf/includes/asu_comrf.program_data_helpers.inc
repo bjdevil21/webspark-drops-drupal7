@@ -1,32 +1,6 @@
 <?php
 
 /**
- * Determines when ASU is off-season.
- *
- * Returns TRUE if off-season, and returns FALSE if not off-season.
- *
- * @return bool
- */
-function asu_comrf_is_off_season() {
-  // Helper function to only allow query of all degree programs during academic off-seasons (summer, winter break)
-  $current_month = date('n');
-
-  // Current months (by month digit) that are considered off-season
-  switch($current_month) {
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '12':
-      return TRUE;
-    default:
-      break;
-  }
-
-  return FALSE;
-}
-
-/**
  * Determines if at least one week has passed since the last check time.
  *
  * Returns TRUE if at least one week has passed, and returns FALSE if one week has not
@@ -34,20 +8,26 @@ function asu_comrf_is_off_season() {
  *
  * @return bool
  */
-function asu_comrf_at_least_one_week_has_passed() {
-  // Defines integer constant, which is amount of seconds in a week
+function _asu_comrf_cron_period_check() {
+  // Number of seconds in a day
+  define('DAY_IN_SECONDS', 86400);
   define('WEEK_IN_SECONDS', 604800);
 
   // Creates a temporary variable that verifies time line
   $check_val = FALSE;
 
   // Gets difference between time stamp of last cron check and current time stamp
-  $time_lapse = time() - variable_get('asu_comrf_check_time', WEEK_IN_SECONDS);
+  $time_lapse = time() - variable_get('asu_comrf_check_time', DAY_IN_SECONDS);
 
-  // 1) Compares time stamp to check if last cron run was a week ago
-  // 2) Set to TRUE if it has been over a week
-  if ($time_lapse >= WEEK_IN_SECONDS) {
-    $check_val = TRUE;
+  // 1) Was last cron run more than 24 hours ago
+  if ($time_lapse >= DAY_IN_SECONDS) {
+    // 2) And is it before 7AM local time (AZ/PHX) or hasn't run in a week?
+    $tz_obj = new DateTimeZone('America/Phoenix');
+    $today = new DateTime("now", $tz_obj);
+    $current_hour = (int) $today->format('H');
+    if ($current_hour < 7 || $time_lapse > WEEK_IN_SECONDS) {
+      $check_val = TRUE;
+    }
   }
 
   // Sets new timestamp as global variable
@@ -62,7 +42,7 @@ function asu_comrf_at_least_one_week_has_passed() {
  *
  * @return string
  */
-function asu_comrf_get_next_term_code() {
+function _asu_comrf_get_next_term_code() {
   // The first digit of '2' indicates that the year is at least 2000 ('0' was 19XX)
   // The second and third digits give you the rest of the year (so '213X' is 2013)
   // The fourth digit is semester.
@@ -254,7 +234,7 @@ function asu_comrf_get_current_program_list() {
  * @param $new_campus_choice_raw
  * @return array
  */
-function asu_comrf_translate_campus_code_options($new_campus_choice_raw) {
+function _asu_comrf_translate_campus_code_options($new_campus_choice_raw) {
   // Initialize campus choice array to return
   $new_campus_choice = array();
   // Translate campus codes to human-readable names

@@ -129,13 +129,15 @@ function asu_comrf_cron() {
 
   $degree_search_env = variable_get('asu_comrf_degree_search_env', 'dev');
 
-  // For production, run only if school is in the off-season (May, June, July, August, December)
-  if (asu_comrf_is_off_season() && asu_comrf_at_least_one_week_has_passed() && $degree_search_env == 'prod') {
+  // For production, run only if
+  // 1) School is in the off-season (May, June, July, August, December)
+  // 2) At least 24 hours since its last run.
+  if (_asu_comrf_cron_period_check() && $degree_search_env == 'prod') {
     // Get the list of degree programs
-    $list_of_degrees = asu_comrf_get_degree_list_data();
+    $list_of_degrees = _asu_comrf_get_degree_list_data();
     $no_of_degrees = (is_array($list_of_degrees)) ? count($list_of_degrees) : 0;
     // Process the list of degree programs for relevant information
-    $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
+    $successful_data_storage = _asu_comrf_store_degree_list($list_of_degrees);
     if ($successful_data_storage == TRUE) {
       // Log successful degree programs pull and save attempt
       watchdog('asu_comrf', 'Successfully pulled and saved list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
@@ -148,10 +150,10 @@ function asu_comrf_cron() {
   // If Degree Search is set to dev, and its been at least one week since a data pull, perform one
   if ($degree_search_env == 'dev') {
     // Get the list of degree programs
-    $list_of_degrees = asu_comrf_get_degree_list_data();
+    $list_of_degrees = _asu_comrf_get_degree_list_data();
     $no_of_degrees = (is_array($list_of_degrees)) ? count($list_of_degrees) : 0;
     // Process the list of degree programs for relevant information
-    $successful_data_storage = asu_comrf_store_degree_list($list_of_degrees);
+    $successful_data_storage = _asu_comrf_store_degree_list($list_of_degrees);
     if ($successful_data_storage == TRUE) {
       // Log successful degree programs pull and save attempt
       watchdog('asu_comrf', 'Successfully pulled and saved a list of  ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
@@ -416,7 +418,7 @@ function asu_comrf_form($form, &$form_state) {
     $tmpChangeMajor = $list_of_degrees_results[$new_major_choice_selected]['ChangeMajor'];
     $new_com_requirements = (isset($tmpChangeMajor) && !($tmpChangeMajor == new stdClass()))
       ? $tmpChangeMajor : '';
-    $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
+    $new_campus_choice = _asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 
     // If they must choose a subplan, populate that form field and set field to required
@@ -495,7 +497,7 @@ function asu_comrf_form($form, &$form_state) {
     $tmpChangeMajor = $list_of_degrees_results[$new_major_choice_selected]['ChangeMajor'];
     $new_com_requirements = (isset($tmpChangeMajor) && !($tmpChangeMajor == new stdClass()))
       ? $tmpChangeMajor : '';
-    $new_campus_choice = asu_comrf_translate_campus_code_options($new_campus_choice_raw);
+    $new_campus_choice = _asu_comrf_translate_campus_code_options($new_campus_choice_raw);
     $form['asu_comrf_new_major_choice']['#default_value'] = $new_major_choice_default_key;
     $form['asu_comrf_new_campus_choice']['#options'] = $new_campus_choice;
 

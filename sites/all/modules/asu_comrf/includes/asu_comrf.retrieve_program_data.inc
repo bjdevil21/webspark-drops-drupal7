@@ -6,7 +6,7 @@
  * @return array
  *
  */
-function asu_comrf_get_degree_list_data() {
+function _asu_comrf_get_degree_list_data() {
 
   // Loading helper function
   module_load_include('inc','asu_comrf','includes/asu_comrf.program_data_helpers');
@@ -19,7 +19,7 @@ function asu_comrf_get_degree_list_data() {
   $degree_search_service_method = variable_get('asu_comrf_degree_search_service_method', 'findAllDegreesWithLessFields');
 
   $xml_service_method = 'eAdvisorDSFind.' . $degree_search_service_method;
-  $xml_next_term_code = asu_comrf_get_next_term_code(); // Get next term code
+  $xml_next_term_code = _asu_comrf_get_next_term_code(); // Get next term code
   $xml_degree_set = 'undergrad'; // Only return undergraduate programs
   $xml_include_certs = 0; // Don't include minors or certs
   $xml_to_send = '<?xml version="1.0"?>'.
@@ -80,8 +80,6 @@ function asu_comrf_get_degree_list_data() {
         $acad_plan_name = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->name;
         $acad_plan_value = $programs_list_obj->value[$degree_key]->struct->member[$acad_plan_result_index]->value;
 
-        //watchdog('asu_comrf', 'acad_plan_value: ' . $acad_plan_value, array(), WATCHDOG_DEBUG);
-
         $degree_name = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->name;
         $degree_value = $programs_list_obj->value[$degree_key]->struct->member[$degree_name_result_index]->value;
         $trnscr_descr_name = $programs_list_obj->value[$degree_key]->struct->member[$trnscr_descr_result_index]->name;
@@ -90,7 +88,8 @@ function asu_comrf_get_degree_list_data() {
         $diploma_descr_value = $programs_list_obj->value[$degree_key]->struct->member[$diploma_descr_result_index]->value;
         $change_major_name = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->name;
         $change_major_value = $programs_list_obj->value[$degree_key]->struct->member[$change_major_result_index]->value;
-        // If a NON-DEGREE entry in the feed, filter that major out based on ChangeMajor value
+
+        // Skip non-degree majors (JIRA CMP2-36)
         if ($change_major_value === 'NO-DEGREE') {
           break 1;
         }
@@ -99,14 +98,11 @@ function asu_comrf_get_degree_list_data() {
         $campus_string_array_value = array();
         $campus_string_array_value_raw = $programs_list_obj->value[$degree_key]->struct->member[$campus_string_array_result_index]->value->array->data->value;
 
-        //watchdog('asu_comrf', 'campus_string_array_value_raw: ' . serialize($campus_string_array_value_raw), array(), WATCHDOG_DEBUG);
-
         // Check only if not empty
         $subplans_name = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->name;
         $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct;
 
         if (!($subplans_value == new stdClass())) { // has object properties
-          //watchdog('asu_comrf', 'subplans_value: ' . serialize($subplans_value), array(), WATCHDOG_DEBUG);
           $subplans_value = $programs_list_obj->value[$degree_key]->struct->member[$subplans_array_result_index]->value->struct->member;
         }
 
@@ -134,7 +130,7 @@ function asu_comrf_get_degree_list_data() {
   }
 
   // Sort the degree program list by the TrnscrDescr value
-  usort($list_of_degrees, 'asu_comrf_sort_degree_list_by_trnscr_descr');
+  usort($list_of_degrees, '_asu_comrf_sort_degree_list_by_trnscr_descr');
 
   // watchdog('asu_comrf', var_dump($list_of_degrees), array(), WATCHDOG_INFO);
 
@@ -148,7 +144,7 @@ function asu_comrf_get_degree_list_data() {
  * @param $b
  * @return int
  */
-function asu_comrf_sort_degree_list_by_trnscr_descr($a, $b) {
+function _asu_comrf_sort_degree_list_by_trnscr_descr($a, $b) {
   return strcmp($a["TrnscrDescr"], $b["TrnscrDescr"]);
 }
 
@@ -158,7 +154,7 @@ function asu_comrf_sort_degree_list_by_trnscr_descr($a, $b) {
  * @param $list_of_degrees
  * @return bool
  */
-function asu_comrf_store_degree_list($list_of_degrees) {
+function _asu_comrf_store_degree_list($list_of_degrees) {
   // Initialize check variables
   $data_stored_successfully = FALSE;
   $stored_data = '';
@@ -173,9 +169,24 @@ function asu_comrf_store_degree_list($list_of_degrees) {
       ))
       ->execute();
   }
-  // If inserting data was successful, set check variable to true
+  // If inserting data was successful:
+  // 1) set check variable to true
+  // 2) Delete data sets older than 30 days if more than 10 records are in the DB.
   if ($stored_data !== NULL) {
     $data_stored_successfully = TRUE;
+    // Count number of rows (list_of_majors entries)
+    $results = db_select('asu_comrf_degree_list')->fields(NULL, array('timestamp'))->countQuery()->execute()->fetchField();
+    if ($results > 10) {
+      $cutoff_date = date('U', strtotime('-30 days'));
+      db_delete('asu_comrf_degree_list')
+        ->condition('timestamp', $cutoff_date, '<=')
+        ->execute();
+    }
   }
+  else {
+    watchdog('asu_comrf', 'The degree list could not be stored when cron last ran. Check out ' . __FUNCTION__
+      . '.', array(), WATCHDOG_ERROR);
+  }
+
   return $data_stored_successfully;
 }
