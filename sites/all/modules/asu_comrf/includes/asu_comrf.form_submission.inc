@@ -59,7 +59,7 @@ function asu_comrf_get_program_info($program_plan) {
       $program_info['dprog'] = $program_info_raw->dprog;
     } else {
       $program_info['email'] == 'PSNoMail@asu.edu';
-      $program_info['dprog'] == 'BA ACC BS';
+      $program_info['dprog'] == 'BA ACC BS'; // Default degree program?
       watchdog('asu_comrf', 'Mulesoft response program_info_raw empty from ' . $peoplesoft_data_url
         . '. Using default BA ACC BS.', array(), WATCHDOG_ERROR);
     }
@@ -92,8 +92,6 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
   $request_options = array(
     'method' => 'GET',
   );
-
-  watchdog('asu_comrf', 'The intended What If audit URL is: ' . $what_if_audit_url, array(), WATCHDOG_INFO);
 
   // Execute call for What If audit and store results in a variable
   $result = drupal_http_request($what_if_audit_url, $request_options);

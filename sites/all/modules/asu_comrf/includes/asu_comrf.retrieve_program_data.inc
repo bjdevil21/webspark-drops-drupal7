@@ -132,8 +132,6 @@ function _asu_comrf_get_degree_list_data() {
   // Sort the degree program list by the TrnscrDescr value
   usort($list_of_degrees, '_asu_comrf_sort_degree_list_by_trnscr_descr');
 
-  // watchdog('asu_comrf', var_dump($list_of_degrees), array(), WATCHDOG_INFO);
-
   return $list_of_degrees;
 }
 
@@ -181,11 +179,13 @@ function _asu_comrf_store_degree_list($list_of_degrees) {
       db_delete('asu_comrf_degree_list')
         ->condition('timestamp', $cutoff_date, '<=')
         ->execute();
+      watchdog('asu_comrf', 'The degree list could not be stored when cron last ran. Check out ' . __FUNCTION__
+        . '.', array(), WATCHDOG_ERROR);
     }
   }
   else {
-    watchdog('asu_comrf', 'The degree list could not be stored when cron last ran. Check out ' . __FUNCTION__
-      . '.', array(), WATCHDOG_ERROR);
+    watchdog('asu_comrf', 'Degree lists stored more than 30 days have been deleted.' . __FUNCTION__
+      . '.', array(), WATCHDOG_NOTICE);
   }
 
   return $data_stored_successfully;

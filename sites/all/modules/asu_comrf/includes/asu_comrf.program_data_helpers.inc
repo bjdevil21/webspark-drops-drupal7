@@ -118,8 +118,7 @@ function asu_comrf_get_student_info($asurite_id) {
 
   if ($result->code <> 200) {
     watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call URL (sans app_ID:key) for ASURITE ID '
-      . $asurite_id . ': ' . $api_url, array(), WATCHDOG_DEBUG);
-    watchdog('asu_comrf', __FUNCTION__ . ' - Mulesoft call return code ' . $result->code, array(), WATCHDOG_ERROR);
+      . $asurite_id . ': ' . $api_url  . ' - Mulesoft call return code ' . $result->code, array(), WATCHDOG_DEBUG);
   }
 
   // See https://www-numi.fnal.gov/offline_software/srt_public_context/WebDocs/Errors/unix_system_errors.html
@@ -300,7 +299,6 @@ function _asu_comrf_translate_campus_code_options($new_campus_choice_raw) {
  * @param $form (array) - Contains CofM $form settings for Drupal API
  */
 function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
-
   $new_subplan_options = array();
 
   // Does subplan actually exist (in a non-empty object for one option
@@ -310,13 +308,11 @@ function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
 
     if (is_object($list_of_subplans)) { // Only one subplan object
       $new_subplan_options[$list_of_subplans->name] = $list_of_subplans->value;
-      watchdog('asu_comrf', __FUNCTION__ . ' is_object', array(), WATCHDOG_DEBUG);
     }
     else { // two or more subplans objects are wrapped by an array
       foreach($list_of_subplans as $sub => $plan) {
         $new_subplan_options[$plan->name] = $plan->value;
       }
-      watchdog('asu_comrf', __FUNCTION__ . ' is_array', array(), WATCHDOG_DEBUG);
     }
     $form['asu_comrf_new_subplan_choice']['#options'] = $new_subplan_options;
     $form['asu_comrf_new_subplan_choice']['#required'] = TRUE;
@@ -326,7 +322,6 @@ function _asu_comrf_render_subplans_list($list_of_subplans, &$form) {
     $form['asu_comrf_new_subplan_choice']['#options'] = array(0 => 'No subplans available');
     $form['asu_comrf_new_subplan_choice']['#required'] = FALSE;
     $subplan_display = 'none';
-    watchdog('asu_comrf', __FUNCTION__ . ' - list of subplans is EMPTY', array(), WATCHDOG_DEBUG);
   }
   // Subplan CSS toggle
   $form['asu_comrf_new_subplan_css']['#markup'] = '<style type="text/css">#asu-comrf-new-subplan-choice-ajax-wrapper { display: ' . $subplan_display . '; } </style>';

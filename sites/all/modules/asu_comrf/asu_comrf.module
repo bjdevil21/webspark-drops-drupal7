@@ -140,10 +140,10 @@ function asu_comrf_cron() {
     $successful_data_storage = _asu_comrf_store_degree_list($list_of_degrees);
     if ($successful_data_storage == TRUE) {
       // Log successful degree programs pull and save attempt
-      watchdog('asu_comrf', 'Successfully pulled and saved list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
+      watchdog('asu_comrf', __FUNCTION__ . ' - Successfully pulled and saved list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
     } else {
       // Log failed degree programs pull and save attempt
-      watchdog('asu_comrf', 'Failed to pull updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
+      watchdog('asu_comrf', __FUNCTION__ . ' - Failed to generate and store updated list of degrees from Degree Search web service.', array(), WATCHDOG_ALERT);
     }
   }
 
@@ -159,7 +159,7 @@ function asu_comrf_cron() {
       watchdog('asu_comrf', 'Successfully pulled and saved a list of  ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
     } else {
       // Log failed degree programs pull and save attempt
-      watchdog('asu_comrf', 'Failed to pull an updated list of degrees from Degree Search.', array(), WATCHDOG_ALERT);
+      watchdog('asu_comrf', __FUNCTION__ . ' - Failed to generate and store updated list of degrees from Degree Search web service.', array(), WATCHDOG_ALERT);
     }
   }
 }
@@ -426,13 +426,7 @@ function asu_comrf_form($form, &$form_state) {
     $list_of_subplans = isset($list_of_degrees_results[$new_major_choice_selected]['MajormapSubplans'])
       ? $list_of_degrees_results[$new_major_choice_selected]['MajormapSubplans'] : array();
 
-    // DEBUG
-    $tmp = $list_of_degrees_results[$new_major_choice_selected]['AcadPlan'];
-    watchdog('asu_comrf', __FUNCTION__ . ' - ' . $tmp, array(), WATCHDOG_DEBUG);
-    $tmp = serialize($list_of_subplans);
-    watchdog('asu_comrf', 'list of subplans: ' . $tmp, array(), WATCHDOG_DEBUG);
-
-    // Get subplans
+    // Check for subplans and pull them in if necessary
     _asu_comrf_render_subplans_list($list_of_subplans, $form);
 
     // If requirements are NULL or empty, disable the COM text field and check;
@@ -454,7 +448,6 @@ function asu_comrf_form($form, &$form_state) {
         ? $list_of_degrees_results[$new_major_choice_selected]['DiplomaDescr'] : NULL;
 
       if ($program_owner == 'W. P. Carey School of Business') {
-        watchdog('asu_comrf', 'Selected program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
         $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
         $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
         $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
@@ -527,7 +520,6 @@ function asu_comrf_form($form, &$form_state) {
         ? $list_of_degrees_results[$new_major_choice_default_key]['DiplomaDescr'] : NULL;
 
       if ($program_owner == 'W. P. Carey School of Business') {
-        watchdog('asu_comrf', 'The student selected a program plan owned by ' . $program_owner, array(), WATCHDOG_INFO);
         $form['asu_comrf_com_requirements_text']['#disabled'] = TRUE;
         $form['asu_comrf_com_requirements_text']['#type'] = 'hidden';
         $form['asu_comrf_requirements_check']['#disabled'] = TRUE;
@@ -706,11 +698,11 @@ function asu_comrf_form_submit($form, &$form_state) {
     $data_stored_successfully = asu_comrf_save_form_data($asurite_id, $form_state, $submit_key);
     if ($data_stored_successfully) {
       // After successful form submission, send user to the form's confirmation page.
-      watchdog('asu_comrf', 'Truncated WPC Change of Major form data for ID ' . $asurite_id . ' saved.',
+      watchdog('asu_comrf', 'Truncated WPC Change of Major form data for ASURITE ID ' . $asurite_id . ' saved.',
         array(), WATCHDOG_INFO);
     } else {
-      watchdog('asu_comrf', 'WPC Change of Major form data for ID ' . $asurite_id
-        . ' was not saved before being passed onto WPCarey.',
+      watchdog('asu_comrf', 'WPC Change of Major form data for ASURITE ID ' . $asurite_id
+        . ' was not saved in the Drupal DB before being passed onto WPCarey.',
         array(), WATCHDOG_ERROR);
     }
 
@@ -737,8 +729,8 @@ function asu_comrf_form_submit($form, &$form_state) {
 
   } else { // Not a WPC program plan
 
-    if (empty($program_plan)) { // Backup default major (BS in Accounting) if none
-      // is set for the upcoming Mulesoft call.
+    if (empty($program_plan)) {
+      // Backstop/default major (BS in Accounting) if none is set for the upcoming Mulesoft call.
       $program_plan = 'BABUSBABA';
     }
 
@@ -761,7 +753,8 @@ function asu_comrf_form_submit($form, &$form_state) {
       // Send request to start What If audit if enabled
       $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $dprog);
       if (!$successful_what_if_audit_submission) {
-        watchdog('asu_comrf', 'Form was not able to start a What If audit. Nonetheless, data may have been saved in Drupal and sent to Salesforce.', array(), WATCHDOG_ERROR);
+        watchdog('asu_comrf', 'Form was not able to start a What If audit. Nonetheless, data may have been saved 
+        in Drupal and sent to Salesforce.', array(), WATCHDOG_ERROR);
       }
     } else {
       // If What If audit is disabled, still compute URL for reference and log it, but don't send the actual request
@@ -795,7 +788,10 @@ function asu_comrf_form_submit($form, &$form_state) {
     if (empty($salesforce_email)) {
       // Default if there is no SF email provided and the dev rules haven't been applied (i.e. in prod)
       $salesforce_email = 'eadvisor@asu.edu';
-      watchdog('asu_comrf', 'WARNING: Your Change of Major form was not able to pull correct submission details from PeopleSoft. Your data may have been saved to the website\'s database, but may not have sent to Salesforce correctly.', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'The Change of Major form was not able to pull correct ' .
+      'submission details from PeopleSoft for ASURITE ID ' . $asurite_id
+        . '. Data may have been saved to the Drupal DB, but may not have sent to '
+        . ' Salesforce correctly.', array(), WATCHDOG_ERROR);
     }
 
     // Setup email to Salesforce
@@ -804,10 +800,11 @@ function asu_comrf_form_submit($form, &$form_state) {
     if($email_to != NULL) {
       $successful_salesforce_submission = asu_comrf_salesforce_submission($email_to, $email_from, $student_info, $form_state);
       if (!$successful_salesforce_submission) {
-        watchdog('asu_comrf', 'WARNING: Your Change of Major form data did not successfully send to Salesforce. Your data may have been saved to the website\'s database, but has not been sent to Salesforce.', array(), WATCHDOG_ERROR);
+        watchdog('asu_comrf', 'The Change of Major form data for ASURITE ID ' . $asurite_id
+          . ' did not successfully send to Salesforce. Their data may have been saved to the Drupal DB.', array(), WATCHDOG_ERROR);
       }
     } else {
-      watchdog('asu_comrf', 'WARNING: Data was saved to this database, but was not sent onto Salesforce.', array(), WATCHDOG_WARNING);
+      watchdog('asu_comrf', 'WARNING: Data for ASURITE ID ' . $asurite_id . ' was saved to this database, but was not sent onto Salesforce.', array(), WATCHDOG_ERROR);
     }
 
     // Set key for submit state (normal vs WPC)
@@ -819,7 +816,8 @@ function asu_comrf_form_submit($form, &$form_state) {
       // After successful form submission, send user to the form's confirmation page.
       drupal_goto('request/confirmation');
     } else {
-      watchdog('asu_comrf', 'WARNING: Data may have been sent to recipients, but the Change of Major form data was not saved in this database.', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'Data for ASURITE ID ' . $asurite_id . ' may have been sent to recipients, '
+      . 'but the Change of Major form data was not saved in the Drupal DB.', array(), WATCHDOG_ERROR);
       drupal_goto('request/confirmation');
     }
   }
