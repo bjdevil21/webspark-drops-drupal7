@@ -106,10 +106,8 @@ function asu_comrf_start_what_if_audit($emplid, $dprog) {
   $obj_index = 0;
   $what_if_audit_response_obj_code = $what_if_audit_response_obj->$obj_index;
 
-  watchdog('asu_comrf', __FUNCTION__ . ' - EmplID ' . $emplid . ' What If audit result code: '
-    . $what_if_audit_response_obj_code, array(), WATCHDOG_INFO);
-
   if ($what_if_audit_response_obj_code == 400) {
+    watchdog('asu_comrf', __FUNCTION__ . ' - EmplID ' . $emplid . ' What If audit result code: ' . $what_if_audit_response_obj_code, array(), WATCHDOG_ERROR);
     return FALSE;
   } elseif ($what_if_audit_response_obj_code == 200) {
     return TRUE;
@@ -214,8 +212,10 @@ function asu_comrf_salesforce_submission($email_to, $email_from, $student_info, 
   $sf_email = drupal_mail('asu_comrf', 'asu_comrf_sf_email', $email_to, language_default(), $email_params);
 
   if ($sf_email['result']) {
+    watchdog('asu_comrf', __FUNCTION__ . ' - SUCCESS - SF email from ' . $email_from . ' was successfully sent.', array(), WATCHDOG_INFO);
     return TRUE;
   } else {
+    watchdog('asu_comrf', __FUNCTION__ . ' - SF email from ' . $email_from . ' did not return a result. Sending may have failed.', array(), WATCHDOG_WARNING);
     return FALSE;
   }
 }

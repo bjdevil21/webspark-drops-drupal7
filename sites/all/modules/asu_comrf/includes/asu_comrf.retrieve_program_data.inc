@@ -179,13 +179,12 @@ function _asu_comrf_store_degree_list($list_of_degrees) {
       db_delete('asu_comrf_degree_list')
         ->condition('timestamp', $cutoff_date, '<=')
         ->execute();
-      watchdog('asu_comrf', 'The degree list could not be stored when cron last ran. Check out ' . __FUNCTION__
-        . '.', array(), WATCHDOG_ERROR);
+      watchdog('asu_comrf', 'Degree lists stored more than 30 days have been deleted.' . __FUNCTION__
+        . '.', array(), WATCHDOG_NOTICE);
     }
-  }
-  else {
-    watchdog('asu_comrf', 'Degree lists stored more than 30 days have been deleted.' . __FUNCTION__
-      . '.', array(), WATCHDOG_NOTICE);
+  } else {
+    watchdog('asu_comrf', 'The degree list could not be stored when cron last ran. Check out ' . __FUNCTION__
+      . '.', array(), WATCHDOG_ERROR);
   }
 
   return $data_stored_successfully;

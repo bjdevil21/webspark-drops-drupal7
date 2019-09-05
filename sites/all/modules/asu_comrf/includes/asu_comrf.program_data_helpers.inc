@@ -3,9 +3,10 @@
 /**
  * Determines if at least one week has passed since the last check time.
  *
- * Returns TRUE if at least one week has passed, and returns FALSE if one week has not
- * passed since the last recorded check.
- *
+ * Returns TRUE if 24 hours has passed since last cron run AND
+ * 1) It is before 7AM AZ standard time, OR
+ * 2) A week has passed without running.
+ * Else: Returns FALSE
  * @return bool
  */
 function _asu_comrf_cron_period_check() {
@@ -29,7 +30,6 @@ function _asu_comrf_cron_period_check() {
       $check_val = TRUE;
     }
   }
-
   // Sets new timestamp as global variable
   variable_set('asu_comrf_check_time', time());
 

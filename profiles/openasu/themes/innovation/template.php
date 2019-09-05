@@ -392,10 +392,6 @@ function innovation_form_element(&$variables) {
     }
   }
 
-  // DEBUG
-  //$tmp = serialize($element['#children']);
-  //watchdog('asu_comrf', __FUNCTION__ . ' - #children - ' . $tmp, array(), WATCHDOG_DEBUG);
-
   switch ($element['#title_display']) {
     case 'before':
     case 'invisible':

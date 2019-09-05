@@ -221,7 +221,8 @@ function asu_comrf_form($form, &$form_state) {
     '#size' => 4,
     '#options' => array(0 => 'No majors to display'),
     '#required' => TRUE,
-    //'#default_value' => isset($new_major_choice_default_key) ? $new_major_choice_default_key : NULL,
+    '#prefix' => '<div id="asu-comrf-new-major-choice-ajax-wrapper">',
+    '#suffix' => '</div>',
     '#ajax' => array(
       'callback' => 'asu_comrf_new_major_choice_ajax_callback',
       'wrapper' => 'asu-comrf-new-major-choice-ajax-wrapper',
