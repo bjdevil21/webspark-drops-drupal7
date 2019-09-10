@@ -12,8 +12,8 @@ include_once 'webspark_callout.features.inc';
 function websoark_callout_entity_info_alter(&$entity_info) {
   // Webspark callout Widget.
   $entity_info['fieldable_panels_pane']['bundles']['callout'] = array(
-    'label' => t('Add ASU callout'),
-    'description' => t('Add a 1170 x 380 px callout to the top row'),
+    'label' => t('Add ASU Content callout'),
+    'description' => t('Add a content callout in any 100% wide region of a page'),
     'pane category' => t('Custom'),
     'pane top level' => TRUE,
     'pane icon' => drupal_get_path('module', 'webspark_callout') . '/images/icon_callout.png',

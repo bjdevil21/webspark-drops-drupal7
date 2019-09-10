@@ -1,5 +1,5 @@
 name = Webspark Callout
-description = "Adds the option to create and insert an ASU-standards compliant, content callout as an FPP"
+description = "Adds the option to create and insert an ASU-standards compliant, content callout as a Fieldable Panel Pane"
 core = 7.x
 package = ASU Webspark
 version = 7.x-1.0
@@ -13,7 +13,6 @@ dependencies[] = fieldable_panels_panes
 dependencies[] = image
 dependencies[] = link
 dependencies[] = maxlength
-; WEBSPARK-462 - install profile issue
 dependencies[] = panopoly_widgets
 dependencies[] = strongarm
 dependencies[] = text
