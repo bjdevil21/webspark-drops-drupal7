@@ -188,7 +188,7 @@ function asu_comrf_install() {
   $form_confirmation_text_markup = '<h2 class="com-page-info com-page-title com-confirmation-page-title">Your Change of Major Request Form has been submitted.</h2>' .
                                              '<div class="com-page-info com-page-text com-confirmation-page-text">' .
                                                '<p>You will receive a confirmation email with your case number shortly. Once you do, you will be able to track this case in the <a href="https://webapp4.asu.edu/myasu/student/servicecenter">Service Center</a> on My ASU.</p>' .
-                                               '<p><a href="https://webapp4-dev.asu.edu/uachieve/">Click here to see your ‘What if Audit.’</a> A ‘What if Audit’ is a Degree Audit Report illustrating how your completed courses apply towards your new major/degree. However, please know that the college and major you may be changing to will review your credits and may need to update your final graduation degree audit.</p>' .
+                                               '<p><a href="https://webapp4.asu.edu/uachieve/">Click here to see your ‘What if Audit.’</a> A ‘What if Audit’ is a Degree Audit Report illustrating how your completed courses apply towards your new major/degree. However, please know that the college and major you may be changing to will review your credits and may need to update your final graduation degree audit.</p>' .
                                                '<p>You will be contacted by a representative of the major/college you wish to change to within two business days, who may want to schedule an advising appointment. Please check back to this case for additional instructions.</p>' .
                                              '</div>';
 
