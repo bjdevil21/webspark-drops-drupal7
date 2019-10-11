@@ -232,6 +232,17 @@ Carousel + Flex Slider CSS
   margin-bottom: 24px;
 }
 
+/* Accessibility fix for JAWS - WEBSPARK-1563 */
+@keyframes flexfpp {
+    from { visibility: visible; }
+    to { visibility: hidden; }
+}
+.flexslider-ws .slides > li:not(.flex-active-slide) {
+    visibility: hidden;
+    animation-name: flexfpp;
+    animation-duration: 0.6s;
+}
+
 /** MEDIA RULES
 --------------------------------*/
 
