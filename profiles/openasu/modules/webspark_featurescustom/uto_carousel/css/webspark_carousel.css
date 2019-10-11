@@ -233,14 +233,23 @@ Carousel + Flex Slider CSS
 }
 
 /* Accessibility fix for JAWS - WEBSPARK-1563 */
-@keyframes flexfpp {
+@keyframes flexoff {
     from { visibility: visible; }
     to { visibility: hidden; }
 }
+@keyframes flexon {
+    from { visibility: hidden; }
+    to { visibility: visible; }
+}
 .flexslider-ws .slides > li:not(.flex-active-slide) {
     visibility: hidden;
-    animation-name: flexfpp;
+    animation-name: flexoff;
     animation-duration: 0.6s;
+}
+.flexslider-ws .slides > .flex-active-slide {
+    visibility: visible;
+    animation-name: flexon;
+    animation-duration: 0.2s;
 }
 
 /** MEDIA RULES
