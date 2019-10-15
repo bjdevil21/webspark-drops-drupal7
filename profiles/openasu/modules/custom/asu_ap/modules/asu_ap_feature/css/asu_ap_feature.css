@@ -8,7 +8,8 @@
 
 .asu-ap-rewritten-fields {
   overflow: hidden;
-  padding-left: 1em;
+  padding: 1em 0;
+  clear: both;
 }
 
 .view-asu-ap-view table > tbody > tr > td {
@@ -222,26 +223,31 @@ a.ttCourse {
 /** @Media rules
 ----------------------------------- */
 
-@media (min-width: 992px) and (max-width: 1200px) {
-  .view-asu-ap-view .view-content .views-field.views-field-field-degree-image img {
-    width: 13.25rem;
-    height: 9.5rem;
-  }
-}
-
-@media (min-width: 767px) and (max-width: 992px) {
+@media (min-width: 767px) and (max-width: 931px) {
   .view-asu-ap-view .view-content .views-field.views-field-field-degree-image {
-    width: 50%;
+    max-width: 50%;
   }
 }
 
 @media (max-width: 767px) {
   .view-asu-ap-view .view-content .views-field.views-field-field-degree-image {
     float: none;
+    max-width: 50%;
+  }
+
+  .views-field.views-field-field-asu-ap .asu-ap-rewritten-fields {
+    overflow: visible;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-asu-ap-view .view-content .views-field.views-field-field-degree-image {
+    max-width: 100%;
   }
 
   .asu-ap-major-title {
-    margin-top: 1.5em;
+    margin-top: 0.5em;
   }
 
   .views-field.views-field-field-asu-ap .asu-ap-rewritten-fields {
@@ -260,10 +266,6 @@ a.ttCourse {
     float: left;
   }
 
-  .node-type-asu-ap .asu-degree-banner-image img {
-    min-height: 14.875rem;
-  }
-
   .node-type-asu-ap h1#page-title {
     font-size: 3.75em;
   }
@@ -272,9 +274,5 @@ a.ttCourse {
 @media (min-width: 992px) {
   .node-type-asu-ap .col-md-4 {
     width: 33.33333%;
-  }
-
-  .node-type-asu-ap .asu-degree-banner-image img {
-    min-height: 12.5rem;
   }
 }
