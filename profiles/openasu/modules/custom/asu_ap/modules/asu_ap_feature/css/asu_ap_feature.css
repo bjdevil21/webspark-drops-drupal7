@@ -8,7 +8,7 @@
 
 .asu-ap-rewritten-fields {
   overflow: hidden;
-  padding: 1em 0;
+  padding: 1rem 0;
   clear: both;
 }
 
@@ -17,18 +17,18 @@
 }
 
 .asu-ap-major-title {
-  font-size: 1.25em;
+  font-size: 1.25rem;
   color: #8C1D40;
 }
 
 .asu-ap-field-title {
   font-weight: bold;
   float: left;
-  padding-right: 0.3125em;
+  padding-right: 0.3125rem;
 }
 
 .view-asu-ap-view .row, .view-asu-ap .col.col-lg-6 {
-  margin-bottom: 1.5em;
+  margin-bottom: 1.5rem;
 }
 
 /**
@@ -41,7 +41,7 @@
 
 .asu-ap-grey-section {
   background: #f1f1f1;
-  padding: 3em 0;
+  padding: 3rem 0;
 }
 
 .asu-ap-grey-section a {
@@ -49,15 +49,15 @@
 }
 
 .space-bot-md {
-  margin-bottom: 1.5em;
+  margin-bottom: 1.5rem;
 }
 
 .space-bot-lg {
-  margin-bottom: 2.25em;
+  margin-bottom: 2.25rem;
 }
 
 .node-type-asu-ap p {
-  margin: 0 0 1.5em;
+  margin: 0 0 1.5rem;
   font-weight: 200;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .node-type-asu-ap .container .field-name-body, .asu-ap-short-description {
-  font-size: 1.25em;
+  font-size: 1.25rem;
 }
 
 .node-type-asu-ap .asu-degree-banner-image img {
@@ -74,11 +74,11 @@
 }
 
 .space-top-xl {
-  margin-top: 3em;
+  margin-top: 3rem;
 }
 
 .space-bot-xl {
-  margin-bottom: 3em;
+  margin-bottom: 3rem;
 }
 
 .node-type-asu-ap a.btn.btn-lg, .node-type-asu-ap .btn.btn-lg {
@@ -95,10 +95,10 @@
 .node-type-asu-ap #page-title {
   color: white;
   font-size: 3.125em;
-  margin-bottom: 0.625em;
+  margin-bottom: 0.625rem;
   line-height: 1;
   font-weight: 900;
-  text-shadow: 0 0 0.3125em rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.5);
 }
 
 .node-type-asu-ap .space-bot-md {
@@ -106,15 +106,15 @@
 }
 
 .asu-ap-short-description > p:first-child {
-  margin-bottom: 0.625em;
+  margin-bottom: 0.625rem;
 }
 
 .asu-ap-read-more {
-  margin-bottom: 1.5em;
+  margin-bottom: 1.5rem;
 }
 
 .view-asu-ap-view .view-header .btn-group {
-  padding: 1em 0 2em 0;
+  padding: 1rem 0 2rem 0;
 }
 
 .view-asu-ap-view .table > thead > tr > th {
@@ -122,7 +122,7 @@
 }
 
 #asu-ap-node-form .fieldset-wrapper > * {
-  margin-bottom: 1.5em;
+  margin-bottom: 1.5rem;
 }
 
 .node-type-asu-ap .pane-menu-tree {
@@ -137,7 +137,7 @@
 .node-type-asu-ap .pane-menu-tree a {
   position: relative;
   display: block;
-  padding: 0.625em 0.3125em;
+  padding: 0.625rem 0.3125rem;
   margin-bottom: -20px;
   font-weight: normal;
   background-color: white;
@@ -147,51 +147,39 @@
   border-left: 0;
 }
 
-i.fa.fa-location-arrow {
-  font-size: 1.5em;
-  position: relative;
-  bottom: 0.5em;
-  margin-right: -10px;
-}
-
-i.fa.fa-star {
-  font-size: 1.5em;
-  position: relative;
-  bottom: 0.5em;
-  margin-right: -10px;
-}
-
+i.fa.fa-location-arrow,
+i.fa.fa-star,
 i.fa.fa-retweet {
-  font-size: 1.5em;
+  font-size: 1.5rem;
   position: relative;
-  bottom: 0.5em;
+  bottom: 0.5rem;
   margin-right: -10px;
 }
 
 span.asu-ap-program-flag {
-  font-size: 1.25em;
+  font-size: 1.25rem;
   font-weight: normal;
   vertical-align: middle;
-  padding-right: 0.3125em;
+  padding-right: 0.3125rem;
 }
 
 /* [NEW] PROGRAM REQUIREMENTS FIELD */
 .mm_section_note, .mm_notes {
-  margin-top: 1.875em;
+  margin-top: 1.875rem;
 }
 
 .mm_section_note_row, .mm_section_note_R {
-  margin-top: 0.625em;
-  margin-bottom: 0.3125em;
+  margin-top: 0.625rem;
+  margin-bottom: 0.3125rem;
 }
 
 .mm_req_cat, .mm_req {
-  margin-top: 0.625em;
+  margin-top: 0.625rem;
   font-weight: 700;
 }
 
 .mm_reqUnderCat {
-  margin: 0.625em 0.625em 0.625em 0;
+  margin: 0.625rem 0.625rem 0.625rem 0;
 }
 
 a.ttCourse {
@@ -209,7 +197,7 @@ a.ttCourse {
 
 .asu-degrees-example-careers-small {
   font-size: 75%;
-  margin: 0 0 1.5em 0 !important;
+  margin: 0 0 1.5rem 0 !important;
 }
 
 /* Degree page breadcrumb styling */
@@ -247,7 +235,7 @@ a.ttCourse {
   }
 
   .asu-ap-major-title {
-    margin-top: 0.5em;
+    margin-top: 0.5rem;
   }
 
   .views-field.views-field-field-asu-ap .asu-ap-rewritten-fields {
@@ -258,7 +246,7 @@ a.ttCourse {
 
 @media (min-width: 768px) {
   .node-type-asu-ap .field-name-body {
-    font-size: 1.5em;
+    font-size: 1.5rem;
   }
 
   .node-type-asu-ap .col-sm-6 {
@@ -267,7 +255,7 @@ a.ttCourse {
   }
 
   .node-type-asu-ap h1#page-title {
-    font-size: 3.75em;
+    font-size: 3.75rem;
   }
 }
 
