@@ -1,3 +1,132 @@
+Webspark 1.70.1 (College Station), 2019-09-04
+---------------------------------------------
+- Drupal core
+
+  * Seven (seven) - Removed calls to IE-specific CSS files that were filling logs of sites with subthemes
+  * System (system) - Made arrows in fieldsets labels clickable to open/close fieldsets
+  * Update (update) - Added warning and explanation to Webspark's internal updates page for Pantheon-specific users to alleviate confusion about what to update in Webspark caused by the Pantheon Dashboard's incorrect list of "Available Updates"
+
+- Webspark core
+
+  * Webspark (openasu) - v1.70.1 - Set the Drush default version used by Pantheon hosted sites to 8.x
+
+- Web standards components in Webspark
+
+  * Innovation theme (innovation) - v1.14,
+  * Webspark Megamenu (webspark_megamenu) - v1.11,
+  * Webspark Mega Footer (mega_footer) - v1.11,
+  * ASU Academic Programs (asu_ap) - v2.5
+  * ASU Feeds (DEPRECATED) (asu_feeds) - v1.1
+    * Updated gold color to match ASU Gold (#FFC627) and its :hover state counterpart (#FFD45D).
+  * ASU Enhanced Maps (asu_maps_enhanced) - v1.5
+    * Updated endpoint URL for pulling in maps data
+    * Added Behat tests for automated testing
+  * ASU iSearch (asu_isearch) - v1.13
+    * Fixed grammar error in postdoctoral title
+    * Scoped down jQuery UI-altering CSS to only affect asu_isearch output
+  * ASU Request for Info (asu_rfi) - v1.15
+    * Refactored code for form dropdown with pre-populated options (states, countries, semester dates)
+    * Updated incorrect file permissions for PHP files
+  * ASU Spotlight (asu_spotlight) - v1.9
+    * Reduced rendering time when creating an ASU spotlight
+  * In-Page Editor (panels_ipe) - (patches)
+    * Improved labeling and help text given when selecting widgets
+    * Re-ordered widgets alphabetically, with ASU-themed widgets grouped at the top
+    * Changed icon color for ASU-created widgets from black to maroon to differentiate them from their Panopoly counterparts
+    * Updated icon for ASU title banner widget
+    * Added icon for ASU carousel widget
+  * Innovation (innovation) - v1.14
+    * Fixed multiple theming bugs only visible in the administrative areas of the site to allow its usage as an administration theme in place of Webspark Seven (if desired).
+    * Added page title back to <title> tag to 1) readd the title to a browser's rendering of the page title in the top bar, and 2) to improve accessibility
+    * Added Innovation theme setting (at /admin/appearance/settings/innovation) to choose whether to make social media icons in the ASU mega footer open in a new window/tab (off by default)
+    * Added standardized, ASU web standards styling to Views-generated pagers
+    * Fixed ASU global footer CSS to allow for blocks to render properly beneath it (for administrative purposes only).
+    * Improved content layout for web page printouts
+    * Improved readability of Devel module's dpm() output
+  * Webspark Carousel (uto_carousel) - v1.11
+    * Changed file browsing widget to Media module
+    * Turned off carousel randomization by default
+    * Cleaned out code no longer in use
+    * Fixed the URL for the field list page link that's displayed in the module information page
+  * Webspark Mega Footer (mega_footer) - v1.11
+    * Changed the footer's maroon on black links to white to improve visibility
+    * Increased the unit description size to 255 characters
+    * Removed Google+ social media icon
+    * Improved content layout for web page printouts
+
+- Contrib module updates
+
+  - Managed by Panopoly
+
+  * Entity (entity_api) - v1.9+patch
+    * Patched for PHP 7.2+ compatibility issues
+
+  - Managed by Webspark
+
+    * Easy Breadcrumb (easy_breadcrumb) - v2.17 (CRITICAL SECURITY UPDATE)
+    * Fieldable Panels Panes (fieldable_panels_panes) - v2.13
+    * LDAP module suite (ldap_*) - v2.5
+    * Mail System (mailsystem) - v2.35
+    * Views (views) - v3.23+patch
+      * Resolved PHP error in a Views plugin that was created by the last update to v3.23 (see https://www.drupal.org/project/views/issues/3054091).
+    * Webform (webform) - v4.19+patch
+      * Added CSS class "form-control" back to name and email webform components for theming fixes (see https://www.drupal.org/project/webform/issues/3072080).
+      * Empty components now hidden in email receipts sent upon webform submission
+
+- Contrib library updates
+
+  - Managed by Panopoly
+
+    * TinyMCE (tinymce) - v3.5.11 + patch
+      * Added the corrent left/right margins on WYSIWYG-inserted images and tables.
+      * Notes:
+        * This change will apply to new elements/images.
+        * It will not automatically apply to existing elements in current pages, however. Existing pages need to either be opened to edit and then resaved, or programmatically updated by some user-generated, customized Drupal code for their site (not included).
+
+
+Webspark 1.70 (Texas), 2019-07-12
+---------------------------------
+- Webspark core
+
+  * Panopoly - v1.70
+    * Multiple Panopoly releases (1.68-1.70) rolled into one update; Includes updates to contrib modules. 
+      See https://www.drupal.org/project/panopoly/releases/7.x-1.70 for more info.
+
+- Web standards components in webspark
+
+  * ASU Local iSearch Directory (asu_isearch) - v1.12
+    * Fixed bug where local rank weight for an affiliation couldn't be removed using the node edit form
+    * Added error handling to better detect field_collection-related failures
+    * Fixed bug where absolute URLs imported from iSearch were being rewritten
+  * ASU Directory Integration Reinvented (asu_dir) - v1.10.1
+    * Added helpful description for the 'Use local iSearch view' option in the ASU Directory panel configs
+  * ASU Webspark Carousel (uto_carousel) - v1.8
+    * Fixed bug where field settings summary was being returned as array instead of string
+    * Added flexslider dependency
+  * Webspark Test (webspark_test) - v1.1
+    * Added feature steps to mock the asu_isearch directory import source
+    * Added scenario to asu_directory_import.feature which tests that both profile nodes and affiliation 
+      field_collections are created, updated, and loaded correctly
+    * Updated behat.travis.yml config so that Chromedriver starts with a fullscreen window
+
+- Contrib module updates
+
+  - Managed by Webspark
+
+    * Views (views) - v3.23
+    * Webform (webform) - v4.19
+    * SMTP (smtp) - v1.7+patch (https://www.drupal.org/project/smtp/issues/2979682)
+  
+  - Managed by Panopoly
+
+    * Chaos Tool Suite (ctools) - v1.15
+    * Universally Unique Identifier (uuid) - v1.3
+    * Devel (devel) - v1.7
+    * Search API (search_api) - v1.26
+    * Tablefield (tablefield) - v3.5
+    * Media: Youtube (media_youtube) - v3.8
+
+
 Webspark 1.67 (Iowa), 2019-05-20
 --------------------------------
 - Webspark core

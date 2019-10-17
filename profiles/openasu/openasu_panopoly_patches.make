@@ -13,15 +13,6 @@ api = 2
 
 ; panopoly_core.make
 
-projects[fieldable_panels_panes][type] = module
-projects[fieldable_panels_panes][subdir] = contrib
-projects[fieldable_panels_panes][version] = 1.11
-projects[fieldable_panels_panes][sha256] = db07832725054a264dfe536ac264f06032a9f816bf716bb89bc86667db5d7fa2
-projects[fieldable_panels_panes][patch][2826205] = https://www.drupal.org/files/issues/fieldable_panels_panes-n2826205-39.patch
-projects[fieldable_panels_panes][patch][2848997] = https://www.drupal.org/files/issues/2018-12-10/2848997-cant-access-admin-too-many-redirects.patch
-; Webspark - Fixes undefined index: bundle error - Will go into v1.12
-projects[fieldable_panels_panes][patch][2825835] = patches/ws-1257_fpp-errors-after-bad-deletion_2825835.patch
-
 projects[panelizer][version] = 3.4
 projects[panelizer][subdir] = contrib
 projects[panelizer][patch][1549608] = https://www.drupal.org/files/issues/panelizer-n1549608-26.patch
@@ -45,6 +36,12 @@ projects[jquery_update][subdir] = contrib
 projects[jquery_update][patch][1251] = patches/ws-1251_jquery-update_downgradeto-1.12.2.patch
 ; @TODO -- Add patch for lowering jQuery_update's jQuery 1.12 trueversion to 1.12.2.
 
+; Module filter theming changes
+; Remove this if https://www.drupal.org/project/module_filter/issues/3075908 is ever adopted.
+projects[module_filter][version] = 2.2
+projects[module_filter][subdir] = contrib
+projects[module_filter][patch][3075908] = https://www.drupal.org/files/issues/2019-08-19/module_filter-top_filter_theming_changes.patch
+
 ; panopoly_theme.make
 
 projects[radix_layouts][type] = module
@@ -67,11 +64,22 @@ projects[media][patch][679] = patches/webspark-679_fix-HTML-encoded-macros-20282
 ; WEBSPARK-1404
 projects[views][type] = module
 projects[views][subdir] = contrib
-projects[views][version] = 3.21
-projects[views][patch][] = https://www.drupal.org/files/issues/2018-06-28/2885660-13.patch
-projects[views][patch][] = https://www.drupal.org/files/issues/2019-03-13/2977851-views-php72-count-8.patch
+projects[views][version] = 3.23
 projects[views][patch][] = https://www.drupal.org/files/issues/views-exposed-sorts-2037469-26.patch
 projects[views][patch][] = patches/webspark-1404_set-views-handler-filter-maxlength-to-null.patch
+projects[views][patch][] = https://www.drupal.org/files/issues/2019-06-01/n3054091-14-hard.patch
 
 ; WEBSPARK-1507
 projects[panopoly_theme][patch][] = https://www.drupal.org/files/issues/accordion-style-id-fix.2777847.8.patch
+
+; WEBSPARK-819
+; Overrides drupal-org.make from project ID: panopoly
+; Patches MUST be applied in this order.
+;; Panopoly
+libraries[tinymce][download][type] = get
+libraries[tinymce][download][url] = http://download.moxiecode.com/tinymce/tinymce_3.5.11.zip
+libraries[tinymce][patch][1561882] = http://drupal.org/files/1561882-cirkuit-theme-tinymce-3.5.8.patch
+libraries[tinymce][patch][2876031] = https://www.drupal.org/files/issues/tinymce-chrome58-fix-2876031-5.patch
+;; WEBSPARK-819 patches
+libraries[tinymce][patch][2876032] = https://raw.githubusercontent.com/ASU/asu-drupal-modules/master/patches/ws-819_img-padding-TinyMCE.patch
+libraries[tinymce][patch][2876033] = https://raw.githubusercontent.com/ASU/asu-drupal-modules/master/patches/ws-819_img-padding-TinyMCE_min.patch
