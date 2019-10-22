@@ -1,89 +1,26 @@
 <?php
 
 /**
- * Settings function to improve future-proofing.
- *
- * Example usage:
- * $degreeMappings = asu_rfi_get_degree_mappings_pages();
- * $degreeContentType = $degreeMappings['content_type'];
+ * Keeping for legacy support
  */
 function asu_rfi_get_degree_mappings_grad_post() {
-  // Swap out mapping values based on module enabled.
-  // ASU AP takes priority, but default is to ASU
-  // Degrees (deprecated);
-  if (module_exists('asu_ap')) {
-    $map = array(
-      // Content Type
-      'content_type' => 'asu_ap',
-      // Tables
-      'table_asu_academic_plan' => 'field_data_field_asu_ap_acad_plan',
-      'table_asu_academic_program' => 'field_data_field_asu_ap_acad_prog',
-      'table_asu_degree_awarded' => 'field_data_field_asu_ap_awarded',
-      'table_asu_degree_program' => 'field_data_field_asu_ap_program',
-      'table_asu_diploma_description' => 'field_data_field_asu_ap_diploma_desc',
-      // Fields
-      'field_academic_plan' => 'field_asu_ap_acad_plan',
-      'field_academic_plan_value' => 'field_asu_ap_acad_plan_value',
-      'field_academic_program' => 'field_asu_ap_acad_prog',
-      'field_academic_program_value' => 'field_asu_ap_acad_prog_value',
-      'field_degree_awarded' => 'field_asu_ap_awarded',
-      'field_degree_awarded_value' => 'field_asu_ap_awarded_value',
-      'field_degree_campus' => 'field_asu_ap_campus',
-      'field_degree_program' => 'field_asu_ap_program',
-      'field_degree_program_value' => 'field_asu_ap_program_value',
-      'field_diploma_description' => 'field_asu_ap_diploma_desc',
-      'field_diploma_description_value' => 'field_asu_ap_diploma_desc_value',
-    );
-  } else { // asu_degrees
-    $map = array(
-      // Content Type
-      'content_type' => 'asu_degree',
-      // Tables
-      'table_asu_academic_plan' => 'field_data_field_asu_academic_plan',
-      'table_asu_academic_program' => 'field_data_field_asu_academic_program',
-      'table_asu_degree_awarded' => 'field_data_field_asu_degree_awarded',
-      'table_asu_degree_program' => 'field_data_field_asu_degree_program',
-      'table_asu_diploma_description' => 'field_data_field_asu_diploma_description',
-      // Fields
-      'field_academic_plan' => 'field_asu_academic_plan',
-      'field_academic_plan_value' => 'field_asu_academic_plan_value',
-      'field_academic_program' => 'field_asu_academic_program',
-      'field_academic_program_value' => 'field_asu_academic_program_value',
-      'field_degree_awarded' => 'field_asu_degree_awarded',
-      'field_degree_awarded_value' => 'field_asu_degree_awarded_value',
-      'field_degree_campus' => 'field_asu_degree_campus',
-      'field_degree_program' => 'field_asu_degree_program',
-      'field_degree_program_value' => 'field_asu_degree_program_value',
-      'field_diploma_description' => 'field_asu_diploma_description',
-      'field_diploma_description_value' => 'field_asu_diploma_description_value',
-    );
-  }
-  return $map;
+  return _asu_rfi_get_degree_mappings();
 }
 
-function asu_rfi_grad_post($data)
-{
-
-  $degreeMappings = asu_rfi_get_degree_mappings_grad_post();
-
+function asu_rfi_grad_post($data) {
+  $degreeMappings = _asu_rfi_get_degree_mappings();
   $nodeid = $data['submission_nodeid'];
-
   $node = node_load($nodeid);
-
   $nodeArr = array(
     $node->field_rfi_program['und'][0]['value'] => $node->field_rfi_program_name['und'][0]['value']
   );
-  $availableCampuses = asu_rfi_query_codes($nodeArr);
+  $availableCampuses = _asu_rfi_query_codes($nodeArr);
 
   $node_wrapper = entity_metadata_wrapper('node', $node);
-  if ($node_wrapper->field_rfi_submission_status->value() == "Incomplete") {
-
-    $node_wrapper->field_rfi_submission_status->set('Pending');
-
-  } else if ($node_wrapper->field_rfi_submission_status->value() == "Pending") {
-
+  if ($node_wrapper->field_rfi_submission_status->value() == "Pending") {
     $node_wrapper->field_rfi_submission_status->set('Action Required');
-
+  } elseif ($node_wrapper->field_rfi_submission_status->value() == "Incomplete") {
+    $node_wrapper->field_rfi_submission_status->set('Pending');
   }
 
   $domain = isset($data['domain']) ? $data['domain'] : $_SERVER['HTTP_HOST'];
@@ -104,7 +41,6 @@ function asu_rfi_grad_post($data)
   } else {
     $mobile = '';
   }
-
 
   //date of birth
   if (isset($data['birthdate'])) {
@@ -284,7 +220,7 @@ function asu_rfi_grad_post($data)
     $message = explode(':', $response);
   }
 
-  //Get the response from Salesforce. If the submission is not successfull, update the previous submission status to Incomplete
+  //Get the response from Salesforce. If the submission is not successful, update the previous submission status to Incomplete
   if (($info['http_code'] == 400) || ($info['http_code'] == 500)) {
     //update error message
     $node_wrapper->field_rfi_error_message->set($message[1]);
@@ -295,7 +231,7 @@ function asu_rfi_grad_post($data)
     $node_wrapper->field_rfi_submission_status->set('SF_Complete');
     $node_wrapper->field_rfi_error_message->set('');
     $node_wrapper->save();
-    //if succesfully to post to SF, the set "last_failure_SF_posting" variable to current time
+    //if successfully to post to SF, the set "last_failure_SF_posting" variable to current time
     variable_set('last_success_SF_posting', time());
   }
 

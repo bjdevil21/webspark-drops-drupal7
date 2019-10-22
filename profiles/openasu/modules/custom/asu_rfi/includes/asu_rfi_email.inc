@@ -1,10 +1,4 @@
-<?php
-// $Id: asu_rfi.pages.inc
-
-/**
- * @file
- * Request info form generation using form API
- */
+<?php /** @noinspection SpellCheckingInspection */
 
 /**
  * @param string $prog_plan The program code selected by the user in the RFI form
@@ -12,42 +6,28 @@
  * @param string $humanName The name of the form requester
  * @return boolean Email generation success status
  */
-function asu_rfi_undergrad_email($prog_plan, $e_email, $humanName)
-{
+function asu_rfi_undergrad_email($prog_plan, $e_email, $humanName) {
   if (!isset($e_email)) {
     watchdog('asu_rfi', 'An undergraduate RFI form attempted to send an email without an destination address.');
     return false;
   }
-
   if (!empty($prog_plan)) {
     $data = xmlrpc('https://webapp4.asu.edu/programs/XmlRpcServer', array('eAdvisorDSFind.findDegreeByAcadPlanMapArray' => array($prog_plan)));
-
     foreach ($data as $ball_arr) {
       $name = $ball_arr["Descr100"];
       $degree = $ball_arr["Degree"];
       $desc = $ball_arr["DescrlongExtns"];
+      $description = (isset($desc)) ? "<strong><i> Program description</strong> </i><br />" . $desc : '';
 
       if (isset($name) && strstr($name, ', ')) {
         list($degree_name_before_comma, $degree_name_after_comma) = explode(", ", $name);
         $name = $degree_name_before_comma;
       }
-
-      if (isset($desc)) {
-        $description = "<strong><i> Program description</strong> </i><br />" . $desc;
-      }
-
     }
   }
-
-  if (!isset($description)) {
-    $description = '';
-  }
-
-  if (isset($name) && isset($degree)) {
-    $degree_search_link = "<a href='https://webapp4.asu.edu/programs/t5/majorinfo/ASU00/" . $prog_plan . "/undergrad/false'><h3>" . $name . ", " . $degree . "</h3></a>";
-  } else {
-    $degree_search_link = '';
-  }
+    $degree_search_link = (isset($name) && isset($degree))
+      ? "<a href='https://webapp4.asu.edu/programs/t5/majorinfo/ASU00/" . $prog_plan . "/undergrad/false'><h3>" . $name . ", " . $degree . "</h3></a>"
+      : '';
 
   $message_start = " <p>" . $humanName . ",</p>";
   $message_middle = " <p> Thank you for your interest in pursuing a degree at <a href='https://www.asu.edu'>Arizona State University</a>. U.S. News & World Report ranks ASU the #1 most innovative school in the country, ahead of Stanford and MIT. From engaging in meaningful, innovative research and entrepreneurial projects to collaborating with classmates and faculty, you will be elevating your career when you enroll in undergraduate studies at ASU. </p>
@@ -76,48 +56,11 @@ function asu_rfi_undergrad_email($prog_plan, $e_email, $humanName)
 
   $params['body'] = $message_start . $message_middle . $message_end . $description . $helpfulResources . $footer;
 
-  //Get email configuration variable values from the rfi admin settings page
-  $from_email = variable_get('asu_rfi_from_email_field');
-  if (!empty($from_email)) {
-    $from = $from_email;
-  } else {
-    $from = 'asurecruitment@asu.edu';
-  }
-
-  $subject = variable_get('asu_rfi_email_subject_field');
-  if (!empty($subject)) {
-    $params['subject'] = $subject;
-  } else {
-    $params['subject'] = 'Your requested ASU degree information.';
-  }
-
+  // Try sending the email
   try {
-    // send the mail to the user
-    $my_module = 'mimemail';
-    $my_mail_token = '';
-    $MimeMailSystem = drupal_mail_system($my_module, $my_mail_token);
-    $message = array(
-      'module' => 'mimemail',
-      'id' => $my_module . '_' . $my_mail_token,
-      'from' => $from,
-      'key' => '',
-      'subject' => $params['subject'],
-      'body' => array($params['body']),
-      'to' => $e_email,
-      'headers' => array(
-        'From' => $from,
-        'Sender' => $from,
-        'Return-Path' => $from,
-        'Content-Type' => 'text/html; charset=UTF-8;',
-        'to' => $e_email
-      ),
-    );
-
-    $message = $MimeMailSystem->format($message);
-
-    $result = $MimeMailSystem->mail($message);
+    $result = _asu_rfi_send_form_email($e_email, $params);
   } catch (Exception $e) {
-    watchdog('asu_rfi', 'An undergraduate form failed to send to generate an email: ' . $e->getMessage());
+    watchdog('asu_rfi', 'An undergraduate form failed to send an email: ' . $e->getMessage(), array(), WATCHDOG_WARNING);
   }
 
   if (isset($result)) {
@@ -128,19 +71,20 @@ function asu_rfi_undergrad_email($prog_plan, $e_email, $humanName)
 
 }
 
-
 /**
  * @param string $prog_plan The program code selected by the user in the RFI form
  * @param string $e_email The email address entered by the user
  * @param string $humanName The name of the form requester
  * @return boolean Email generation success status
  */
-function asu_rfi_grad_email($prog_plan, $e_email, $humanName)
-{
-  if (!isset($e_email)) {
+function asu_rfi_grad_email($prog_plan, $e_email, $humanName) {
+  // No email address, no email being sent
+  if (empty($e_email)) {
     watchdog('asu_rfi', 'An undergraduate RFI form attempted to send an email without an destination address.');
     return false;
   }
+  // Get program data from plan code
+  $description = '';
   if (!empty($prog_plan)) {
     $data = xmlrpc('https://webapp4.asu.edu/programs/XmlRpcServer', array('eAdvisorDSFind.findDegreeByAcadPlanMapArray' => array($prog_plan)));
 
@@ -148,28 +92,17 @@ function asu_rfi_grad_email($prog_plan, $e_email, $humanName)
       $name = $ball_arr["Descr100"];
       $degree = $ball_arr["Degree"];
       $desc = $ball_arr["DescrlongExtns"];
-
+      $description = (isset($desc))? "<strong><i> Program description</strong> </i><br />" . $desc : '';
       if (isset($name)) {
         list($degree_name_before_comma, $degree_name_after_comma) = explode(", ", $name);
         $name = $degree_name_before_comma;
       }
-
-      if (isset($desc)) {
-        $description = "<strong><i> Program description</strong> </i><br />" . $desc;
-      }
-
     }
   }
 
-  if (!isset($description)) {
-    $description = '';
-  }
-
-  if (isset($name) && isset($degree)) {
-    $degree_search_link = "<a href='https://webapp4.asu.edu/programs/t5/majorinfo/ASU00/" . $prog_plan . "/graduate/false'><h3>" . $name . ", " . $degree . "</h3></a>";
-  } else {
-    $degree_search_link = '';
-  }
+  $degree_search_link = (isset($name) && isset($degree))
+    ? "<a href='https://webapp4.asu.edu/programs/t5/majorinfo/ASU00/" . $prog_plan . "/graduate/false'><h3>" . $name . ", " . $degree . "</h3></a>"
+    : '';
 
   $message_start = " <p>" . $humanName . ",</p>";
   $message_middle = " <p> Thank you for your interest in pursuing an advanced degree at <a href='https://students.asu.edu/graduate'>Arizona State University</a>. U.S. News & World Report ranks ASU the #1 most innovative school in the country, ahead of Stanford and MIT. From engaging in meaningful, innovative research and entrepreneurial projects to collaborating with classmates and faculty, you will be elevating your career when you enroll in graduate studies at ASU. </p>
@@ -191,56 +124,17 @@ function asu_rfi_grad_email($prog_plan, $e_email, $humanName)
                             <a href='https://www.asu.edu/tour/'>Take a tour</a>
                         </p>";
 
-
   $footer = "<br /><div style='color:grey;'>This message sent by <a href = 'mailto:asurecruitment@asu.edu' >asurecruitment@asu.edu</a> is the result of your request for more information on the ASU website.
   By providing your email address, you gave Arizona State University permission to send this email.
   Please add <a href = 'mailto:asurecruitment@asu.edu' >asurecruitment@asu.edu</a> to your address book or safe sender list. Arizona State University, Undergraduate Admissions, PO Box 870112, Tempe, AZ 85287-0112.</div>";
 
   $params['body'] = $message_start . $message_middle . $message_end . $description . $helpfulResources . $footer;
 
-  //Get email configuration varible values from the rfi admin settings page
-  $from_email = variable_get('asu_rfi_from_email_field');
-  if (!empty($from_email)) {
-    $from = $from_email;
-  } else {
-    $from = 'asurecruitment@asu.edu';
-  }
-
-  $subject = variable_get('asu_rfi_email_subject_field');
-  if (!empty($subject)) {
-    $params['subject'] = $subject;
-  } else {
-    $params['subject'] = 'Your requested ASU degree information.';
-  }
-
-
+  // Send the mail to the user
   try {
-    // send the mail to the user
-    $my_module = 'mimemail';
-    $my_mail_token = '';
-    $MimeMailSystem = drupal_mail_system($my_module, $my_mail_token);
-    $message = array(
-      'module' => 'mimemail',
-      'id' => $my_module . '_' . $my_mail_token,
-      'from' => $from,
-      'key' => '',
-      'subject' => $params['subject'],
-      'body' => array($params['body']),
-      'to' => $e_email,
-      'headers' => array(
-        'From' => $from,
-        'Sender' => $from,
-        'Return-Path' => $from,
-        'Content-Type' => 'text/html; charset=UTF-8;',
-        'to' => $e_email
-      ),
-    );
-
-    $message = $MimeMailSystem->format($message);
-
-    $result = $MimeMailSystem->mail($message);
+    $result = _asu_rfi_send_form_email($e_email, $params);
   } catch (Exception $e) {
-    watchdog('asu_rfi', 'A graduate form failed to send to generate an email: ' . $e->getMessage());
+    watchdog('asu_rfi', 'A graduate form failed to send an email: ' . $e->getMessage());
   }
 
   if (isset($result)) {
@@ -251,21 +145,61 @@ function asu_rfi_grad_email($prog_plan, $e_email, $humanName)
 
 }
 
-//function to to get career summary data
 /**
+ * Generate and send the email
+ *
+ * @param $e_email
+ * @param $params
+ * @param string $my_module
+ * @param string $my_mail_token
+ * @return mixed
+ */
+function _asu_rfi_send_form_email($e_email, $params, $my_module = 'mimemail', $my_mail_token = '') {
+
+  // Get email configuration varible values from the rfi admin settings page
+  $from_email = variable_get('asu_rfi_from_email_field');
+  $from = (!empty($from_email)) ? $from_email : 'asurecruitment@asu.edu';
+  $subject = variable_get('asu_rfi_email_subject_field');
+  $params['subject'] = (!empty($subject)) ? $subject : 'Your requested ASU degree information.';
+
+  // send the mail to the user
+  try {
+    $MimeMailSystem = drupal_mail_system($my_module, $my_mail_token);
+  } catch (Exception $e) {
+    watchdog('asu_rfi', 'An RFI form failed to generate an email via drupal_mail_system(): ' . $e->getMessage(), array(), WATCHDOG_WARNING);
+  }
+  $message = array(
+    'module' => $my_module,
+    'id' => $my_module . '_' . $my_mail_token,
+    'from' => $from,
+    'key' => '',
+    'subject' => $params['subject'],
+    'body' => array($params['body']),
+    'to' => $e_email,
+    'headers' => array(
+      'From' => $from,
+      'Sender' => $from,
+      'Return-Path' => $from,
+      'Content-Type' => 'text/html; charset=UTF-8;',
+      'to' => $e_email
+    ),
+  );
+  $message = $MimeMailSystem->format($message);
+  $result = $MimeMailSystem->mail($message);
+  return $result;
+}
+
+/**
+ * Get career summary data
+ *
  * @param $data
  * @return array|string
  */
-function asu_rfi_career($data)
-{
+function asu_rfi_career($data) {
   foreach ($data as $var_arr) {
-
     foreach ($var_arr["careerData"] as $career_summary) {
-
       $careerdata_title = $career_summary["careerDataOnetTitle"];
-
       $growth = $career_summary["careerDataGrowth"];
-
       $median = $career_summary["careerDataSalary"];
 
       if (!empty($growth)) {
@@ -275,7 +209,7 @@ function asu_rfi_career($data)
         $growth = "";
       }
       if (empty($median)) {
-        $median = "not available";
+        $median = "N/A";
       }
       $career_option[] = "<tr><td>" . $careerdata_title . "&nbsp;&nbsp;&nbsp;&nbsp;</td><td>" . $growth . "</td><td>" . $median . "</td></tr>";
     }

@@ -25,19 +25,18 @@ drupal_add_css(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css', 'fil
  * Settings function to improve future-proofing.
  *
  * Example usage:
- * $degreeMappings = asu_rfi_get_degree_mappings_pages();
+ * $degreeMappings = _asu_rfi_get_degree_mappings_pages();
  * $degreeContentType = $degreeMappings['content_type'];
  */
 function asu_rfi_get_degree_mappings_pages() {
-  return asu_rfi_get_degree_mappings();
+  return _asu_rfi_get_degree_mappings();
 }
 
 /**
  * Implementation of hook_form().
  */
 
-function asu_rfi_form($delta)
-{
+function asu_rfi_form($delta) {
   return drupal_get_form('asu_rfi_form_data');
   // Add no-store in Cache-Control.
   drupal_add_http_header(
@@ -47,18 +46,16 @@ function asu_rfi_form($delta)
   );
   // Hack for Safari
   drupal_add_js('jQuery(window).unload(function(){});', array('type' => 'inline'));
-
 }
 
 /**
  * Implements hook_form_data().
  */
-function asu_rfi_form_data($form, &$form_state)
-{
+function asu_rfi_form_data($form, &$form_state) {
   $degreeMappings = asu_rfi_get_degree_mappings_pages();
   $domain = $_SERVER['HTTP_HOST'];
 
-  //Clear all data when browser back button is clicked
+  // Clear all data when browser back button is clicked
   session_set_cookie_params(0);
   // Add no-store in Cache-Control to clear all data when browser back button is clicked
   drupal_add_http_header(
@@ -69,7 +66,7 @@ function asu_rfi_form_data($form, &$form_state)
   // Hack for Safari
   drupal_add_js('jQuery(window).unload(function(){});', array('type' => 'inline'));
 
-  // Add js to gather enterpriseclientid from GA to add to payload for
+  // Add js to gather enterprise client id from GA to add to payload for
   // submissions destined for EdPlus and their Lead API 4.0 by way of the
   // Middleware.
   drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/js/asu_rfi.fields.js', 'file');

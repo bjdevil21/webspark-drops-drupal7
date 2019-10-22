@@ -6,6 +6,7 @@
  * @param $name - (str) Which dataset to pull (state_province, country, rfi_dedupe_list_terms (aka sem_dates))
  * @param $installing - (bool) Module installing for the first time (TRUE)
  *   or just running via cron (FALSE).
+ * @throws \InvalidMergeQueryException
  */
 function asu_rfi_get_options_data($name, $installing = FALSE) {
 
@@ -91,7 +92,7 @@ function asu_rfi_get_options_data($name, $installing = FALSE) {
  * Helper function
  * Stores configs for all three types
  * @param $dataset - Which dataset to pull (states, country, semester dates, etc.)
- * @return $config - Array of configurations
+ * @return array $config - Array of configurations
  */
 function _asu_rfi_get_data_configs($dataset) {
   $config = array();

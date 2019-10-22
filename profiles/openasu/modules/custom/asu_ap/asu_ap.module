@@ -43,7 +43,7 @@ function asu_ap_block_view($delta = '') {
 function _asu_ap_BLOCK_CONTENT() {
   $node = node_load(arg(1));
   $result = array();
-    if (arg(0) == 'node' && $node->type == 'asu_ap') {
+  if (arg(0) == 'node' && $node->type == 'asu_ap') {
     if (count($node->field_asu_ap_related_programs)) {
       foreach ($node->field_asu_ap_related_programs[LANGUAGE_NONE] as $key => $value) {
         $result[] = array(
