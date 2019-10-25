@@ -72,15 +72,13 @@ regions in your theme, apply access controls, etc.
 panels in the site through its interface the same way you would add other ASU Web
 standards elements.
 
+_One exception_: The Multiform option cannot be added in Panels. It **must** instead be added to a page-level region called "Prefooter" or it will not display. Panels only allows the selection of node-level regions (which are all within the area of the page-level region called "Content"), so the multiform must be added to pages in that block's configuration form or at Admin > Structure > Blocks.
+
 #### Configuring individual RFI form blocks
 
-Each RFI block instance has its own independent settings, configurable through
-Admin > Structure  > Blocks > [your block] Configure. It's here where you
-define which form type to use (multistep, undegraduate long form, graduate
-long form, current undergraduate form, current graduate form).
+Each RFI block instance has its own independent settings, configurable through Admin > Structure  > Blocks > [your block] Configure. It's here where you define which form type to use (multistep, undegraduate long form, graduate long form, current undergraduate form, current graduate form).
 
-Some of the form types automatically define which programs will be listed in the form
-while others allow you to manually determine the program options.
+Some of the form types automatically define which programs will be listed in the form while others allow you to manually determine the program options.
 
 For more detailed instructions on configuration, go to 
 https://brandguide.asu.edu/executing-the-brand/web-and-mobile/webspark/features/asu_rfi.
