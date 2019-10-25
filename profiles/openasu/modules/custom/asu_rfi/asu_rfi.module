@@ -759,11 +759,12 @@ function asu_rfi_form_alter(&$form, &$form_state, $form_id) {
   }
 
   if ($form['#id'] == "asu-rfi-form-data") {
+
     dpm($form, __FUNCTION__ . ' $form');
-    if (isset($form['program_code']['#default_value'])) {
+    if (isset($form['program_code']['#default_value']) && !empty($form['program_code']['#default_value'])) {
       $pcode = $form['program_code']['#default_value'];
       $pcode2 = array($pcode => $form['my_interest']['prog_plan']['#default_value']);
-      fpm($pcode2, __FUNCTION__ . ' $pcode2');
+      dpm($pcode2, __FUNCTION__ . ' $pcode2');
       $possibleLocations = asu_rfi_query_codes($pcode2);
       asu_rfi_disable_form($form, $possibleLocations);
 
