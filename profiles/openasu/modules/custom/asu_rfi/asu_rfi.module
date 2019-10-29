@@ -833,8 +833,8 @@ function _asu_rfi_query_codes($pcodes) {
     $result = $query->execute();
 
     if (isset($result['node'])) {
-      $r_nodes = $result['node'];
-      $desiredProg = _asu_rfi_get_query_codes($r_nodes, 'desiredProg');
+      $result_nodes = $result['node'];
+      $desiredProg = _asu_rfi_get_program_codes($result_nodes, 'desiredProg');
       $availableOnline = _asu_rfi_compare_online_availability($desiredProg['code'], $asuOnlineList);
 
       $locations = $desiredProg['locations'];
@@ -1085,7 +1085,7 @@ function _asu_rfi_get_program_results($items, $out = array()) {
  * @param (str) $data_type - Must be 'programs' or 'desiredProg'
  * @return array
  */
-function _asu_rfi_get_query_codes($result_nodes, $data_type) {
+function _asu_rfi_get_program_codes($result_nodes, $data_type) {
   $degreeMappings = _asu_rfi_get_degree_mappings(); // Get degree mappings to grab content type specific values
   $program_nids = array_keys($result_nodes);
   $programs = entity_load('node', $program_nids);
@@ -1099,7 +1099,7 @@ function _asu_rfi_get_query_codes($result_nodes, $data_type) {
   );
   $type = ${$data_type};
   dpm($type, __FUNCTION__ . ' type - ' . $data_type);
-  return $type; // Must be 'programs' or 'desiredProg'
+  return ${$data_type}; // Must be 'programs' or 'desiredProg'
 }
 
 /**
