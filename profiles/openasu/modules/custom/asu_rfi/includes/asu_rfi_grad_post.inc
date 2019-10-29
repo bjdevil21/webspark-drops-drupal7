@@ -60,7 +60,6 @@ function asu_rfi_grad_post($data) {
 
   // Get siteDomain variable to see if it's dev or qa site.
   global $base_url;
-
   if ((strpos($base_url, 'https://localhost') === 0) || (strpos($base_url, 'http://localhost') === 0)) {
     $environ = 'dev';
   }
@@ -74,7 +73,7 @@ function asu_rfi_grad_post($data) {
     $environ = 'qa';
   }
 
-  // Salesforce URL to post data to
+  // Salesforce post URL based on environment
   if ((isset($environ) && $environ == "dev") || (isset($environ) && $environ == "qa")) {
     $url = 'https://requestinfo-qa.asu.edu/prospect_form_post';
   } else {
@@ -107,11 +106,11 @@ function asu_rfi_grad_post($data) {
     'campusSelection' => $campus,
   );
 
-  if(!isset($campus) && sizeof($availableCampuses) == 1 && ($availableCampuses[0] == "Online" || $availableCampuses[0] == "online")){
+  if(!isset($campus) && sizeof($availableCampuses) == 1 && (strtolower($availableCampuses[0]) == "online")){
     $location = "Online";
   }
 
-  if ($location == 'Online' || $location == 'online') {
+  if (strtolower($location) == 'online') {
     $submission_data['campusSelection'] = "ONLNE";
     $asuOnlineList = asu_rfi_parse_programs();
     $managedOnline = asu_rfi_check_managed_online($data['program_code'], $asuOnlineList);
@@ -172,7 +171,7 @@ function asu_rfi_grad_post($data) {
     $message = explode(':', $response);
   }
 
-  //Get the response from Salesforce. If the submission is not successfull, update the previous submission status to Incomplete
+  // Get the response from Salesforce. If the submission is not successful, update the previous submission status to Incomplete
   if (($info['http_code'] == 400) || ($info['http_code'] == 500)) {
     //update error message
     $node_wrapper->field_rfi_error_message->set($message[1]);
@@ -187,7 +186,7 @@ function asu_rfi_grad_post($data) {
     variable_set('last_success_SF_posting', time());
   }
 
-  //if failed to post to SF, the set "last_failure_SF_posting" variable to current time
+  // If failed to post to SF, the set "last_failure_SF_posting" variable to current time
   if (($info['http_code'] != 200)) {
     variable_set('last_failure_SF_posting', time());
   }

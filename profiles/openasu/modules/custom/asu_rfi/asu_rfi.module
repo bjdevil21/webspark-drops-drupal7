@@ -530,12 +530,12 @@ function _asu_rfi_repost_data($node, $post = array(), $program = 'Undergraduate'
   $post['citizenship'] = isset($node->field_rfi_international['und'][0]['value']) ? $node->field_rfi_international['und'][0]['value'] : '';
   $post['questions'] = isset($node->field_rfi_question['und'][0]['value']) ? $node->field_rfi_question['und'][0]['value'] : '';
   $post['student_type'] = $node->field_rfi_student_type['und'][0]['value'];
-  if (isset($node->field_rfi_location['und'][0]['value'])) {
-    $post['location'] = $node->field_rfi_location['und'][0]['value'];
-  }
-  else {
-    $post['location'] = 'no_preference';
-  }
+
+  // Location
+  $post['location'] = (isset($node->field_rfi_location['und'][0]['value']) && !empty($node->field_rfi_location['und'][0]['value']))
+    ? $node->field_rfi_location['und'][0]['value']
+    : 'no_preference';
+
   $post['campus'] = $node->field_rfi_campus['und'][0]['value'];
   $post['zipcode'] = isset($node->field_rfi_zipcode['und'][0]['value']) ? $node->field_rfi_zipcode['und'][0]['value'] : '';
   $post['mobile_check'] = isset($node->field_rfi_sms_opted['und'][0]['value']) ? $node->field_rfi_sms_opted['und'][0]['value'] : '';
@@ -834,7 +834,7 @@ function _asu_rfi_query_codes($pcodes) {
 
     if (isset($result['node'])) {
       $r_nodes = $result['node'];
-      $desiredProg = _asu_rfi_get_query_codes($r_nodes);
+      $desiredProg = _asu_rfi_get_query_codes($r_nodes, 'desiredProg');
       $availableOnline = _asu_rfi_compare_online_availability($desiredProg['code'], $asuOnlineList);
 
       $locations = $desiredProg['locations'];
@@ -1080,11 +1080,12 @@ function _asu_rfi_get_program_results($items, $out = array()) {
 }
 
 /**
- * Return desired programs from list of nodes.
+ * Return desired programs from list of nodes OR list of programs
  * @param $r_nodes
+ * @param (str) $data_type - Must be 'programs' or 'desiredProg'
  * @return array
  */
-function _asu_rfi_get_query_codes($r_nodes) {
+function _asu_rfi_get_query_codes($r_nodes, $data_type) {
   $degreeMappings = _asu_rfi_get_degree_mappings(); // Get degree mappings to grab content type specific values
   $program_nids = array_keys($r_nodes);
   $programs = entity_load('node', $program_nids);
@@ -1096,7 +1097,7 @@ function _asu_rfi_get_query_codes($r_nodes) {
     'title' => $programs['title'],
     'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
   );
-  return $desiredProg;
+  return ${$data_type}; // Must be 'programs' or 'desiredProg'
 }
 
 /**

@@ -1395,12 +1395,11 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
 }
 
 function asu_rfi_progloc_confirm($prog, $campus, $loc) {
-  $degreeMappings = asu_rfi_get_degree_mappings_pages();
 
+  $degreeMappings = asu_rfi_get_degree_mappings_pages();
   $campusOptions = array();
 
   $query = new EntityFieldQuery();
-
   $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', $degreeMappings['content_type'])
     ->fieldCondition($degreeMappings['field_academic_plan'], 'value', $prog)
@@ -1411,7 +1410,7 @@ function asu_rfi_progloc_confirm($prog, $campus, $loc) {
 
   if (isset($result['node'])) {
     $r_nodes = $result['node'];
-    $desiredProg = _asu_rfi_get_query_codes($r_nodes);
+    $programs = _asu_rfi_get_query_codes($r_nodes, 'programs');
     $locations = $programs[$degreeMappings['field_degree_campus']]['und'];
     foreach ($locations as $location) {
       if (!in_array($location['value'], $campusOptions)) {
