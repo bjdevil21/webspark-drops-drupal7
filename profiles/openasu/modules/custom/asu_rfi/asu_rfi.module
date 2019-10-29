@@ -1081,13 +1081,13 @@ function _asu_rfi_get_program_results($items, $out = array()) {
 
 /**
  * Return desired programs from list of nodes OR list of programs
- * @param $r_nodes
+ * @param $result_nodes
  * @param (str) $data_type - Must be 'programs' or 'desiredProg'
  * @return array
  */
-function _asu_rfi_get_query_codes($r_nodes, $data_type) {
+function _asu_rfi_get_query_codes($result_nodes, $data_type) {
   $degreeMappings = _asu_rfi_get_degree_mappings(); // Get degree mappings to grab content type specific values
-  $program_nids = array_keys($r_nodes);
+  $program_nids = array_keys($result_nodes);
   $programs = entity_load('node', $program_nids);
   $programs = reset($programs);
   $programs = (array) $programs;
@@ -1097,11 +1097,9 @@ function _asu_rfi_get_query_codes($r_nodes, $data_type) {
     'title' => $programs['title'],
     'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
   );
-  dpm($programs, __FUNCTION__ . ' programs');
-  dpm($desiredProg, __FUNCTION__ . ' desiredProg');
   $type = ${$data_type};
-  dpm($type, __FUNCTION__ . ' type');
-  return ${$data_type}; // Must be 'programs' or 'desiredProg'
+  dpm($type, __FUNCTION__ . ' type - ' . $data_type);
+  return $type; // Must be 'programs' or 'desiredProg'
 }
 
 /**

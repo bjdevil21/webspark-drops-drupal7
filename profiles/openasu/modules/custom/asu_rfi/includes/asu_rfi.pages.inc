@@ -1409,9 +1409,10 @@ function asu_rfi_progloc_confirm($prog, $campus, $loc) {
   $result = $query->execute();
 
   if (isset($result['node'])) {
-    $r_nodes = $result['node'];
-    $programs = _asu_rfi_get_query_codes($r_nodes, 'programs');
+    $result_nodes = $result['node'];
+    $programs = _asu_rfi_get_query_codes($result_nodes, 'programs');
     $locations = $programs[$degreeMappings['field_degree_campus']]['und'];
+    dpm($locations, __FUNCTION__ . ' - locations');
     foreach ($locations as $location) {
       if (!in_array($location['value'], $campusOptions)) {
         array_push($campusOptions, $location['value']);
