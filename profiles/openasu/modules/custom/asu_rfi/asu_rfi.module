@@ -1097,6 +1097,10 @@ function _asu_rfi_get_query_codes($r_nodes, $data_type) {
     'title' => $programs['title'],
     'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
   );
+  dpm($programs, __FUNCTION__ . ' programs');
+  dpm($desiredProg, __FUNCTION__ . ' desiredProg');
+  $type = ${$data_type};
+  dpm($type, __FUNCTION__ . ' type');
   return ${$data_type}; // Must be 'programs' or 'desiredProg'
 }
 
