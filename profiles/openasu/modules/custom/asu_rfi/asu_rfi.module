@@ -384,10 +384,9 @@ function asu_rfi_get_block_instance_settings($multi_id = NULL, $endpoint_build =
  */
 function asu_rfi_cron() {
 
-  asu_rfi_check_programs();
+  asu_rfi_check_cached_programs();
 
   // Set as system variables so we can adjust via devel/php if desired.
-
   $last_ran = variable_get('asu_rfi_cron_last_ran', 0);
   $stale_time = variable_get('asu_rfi_stale_time', 86400); // 86400 seconds == 1 day
 
@@ -812,13 +811,13 @@ function asu_rfi_disable_form(&$form, $decider) {
 }
 
 /**
- * Queries the degrees in order to configure the location piece.
- * @param array $pcodes A list of the plan codes used in the RFI
- * @return array $campusOptions Returns an array of the available campuses
+ * Queries the degrees in order to configure the location element of the form.
+ * @param array $pcodes A list of the plan codes used in the RFI form
+ * @return mixed $campusOptions An array of the available campuses
  */
 function _asu_rfi_query_codes($pcodes) {
   $degreeMappings = _asu_rfi_get_degree_mappings(); // Get degree mappings to grab content type specific values
-  $asuOnlineList = asu_rfi_parse_programs();
+  $asuOnlineList = _asu_rfi_parse_programs();
 
   $campusOptions = array();
 
@@ -844,7 +843,8 @@ function _asu_rfi_query_codes($pcodes) {
           if ($location['value'] == "Online") {
             $hasOnline = TRUE;
           }
-          if ((($hasOnline == TRUE && $availableOnline == TRUE) || ($hasOnline == FALSE)) && !in_array($location['value'], $campusOptions)) {
+          if ((($hasOnline == TRUE && $availableOnline == TRUE) || ($hasOnline == FALSE))
+            && !in_array($location['value'], $campusOptions)) {
             array_push($campusOptions, $location['value']);
           } else {
             if ($hasOnline == TRUE && $availableOnline == FALSE) {
@@ -863,7 +863,9 @@ function _asu_rfi_query_codes($pcodes) {
     if ($onlineError == TRUE) {
       global $user;
       if (in_array('administrator', $user->roles)) {
-        drupal_set_message("This degree program(" . $desiredProg['title'] . ") is not yet fully online. We may need more details from you to complete it’s launch. Please contact EdPlus at ASU for more information; EdPlus@asu.edu", 'error');
+        drupal_set_message("This degree program(" . $desiredProg['title']
+          . ") is not yet fully online. We may need more details from you to complete
+          its launch. Please email EdPlus@asu.edu for more information.", 'error');
       }
     }
   }

@@ -65,14 +65,17 @@ function asu_rfi_undergrad_post($data) {
   $source = $domain . '-' . $type_of_form . '-UG';
   $campus = _asu_rfi_correct_campus_id($campus);
 
-  $mobile = (isset($data['mobile_check'])) ? str_replace('-', '', $data['mobile_check']) : '';   // mobile phone
+  $mobile = (isset($data['mobile_check']))
+    ? str_replace('-', '', $data['mobile_check'])
+    : ''; // mobile phone
   $dob = (isset($data['birthdate'])) ? $data['birthdate'] : ''; // date of birth
   $military = (isset($data['military'])) ? $data['military'] : '';  // Military
   $comment = (isset($data['questions'])) ? $data['questions'] : ''; // Comment
   $city = (isset($data['city'])) ? $data['city'] : ''; // City
   $address = (isset($data['address'])) ? $data['address'] : ''; // Address
   $country = (isset($data['country'])) ? $data['country'] : ''; // country
-  $enterpriseclientid = (isset($data['enterpriseclientid'])) ? $data['enterpriseclientid'] : '';   // Enterprise clientid for EdPlus Leads
+  $enterpriseclientid = (isset($data['enterpriseclientid']))
+    ? $data['enterpriseclientid'] : ''; // Enterprise clientid for EdPlus Leads
 
   if ($location == "no_preference" &&
     sizeof($availableCampuses) == 1 &&
@@ -114,7 +117,7 @@ function asu_rfi_undergrad_post($data) {
 
   if (strtolower($location) == 'online') {
 
-    $asuOnlineList = asu_rfi_parse_programs();
+    $asuOnlineList = _asu_rfi_parse_programs();
     $managedOnline = asu_rfi_check_managed_online($prog_code, $asuOnlineList);
 
     if ($managedOnline == true) {
