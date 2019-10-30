@@ -1065,11 +1065,10 @@ function _asu_rfi_get_grad_programs() {
 
 /**
  * Get programs from query results
- * @param $items
- * @param array $out - list of programs
- * @return array $out
+ * @param array $items - array of nodes to pull program information from
+ * @return array $out - list of programs
  */
-function _asu_rfi_get_program_results($items, $out = array()) {
+function _asu_rfi_get_program_results($items) {
   $degreeMappings = _asu_rfi_get_degree_mappings(); // Get degree mappings to grab content type specific values
   foreach ($items as $nid => $program) {
     $program_wrapper = entity_metadata_wrapper('node', $program);
@@ -1078,11 +1077,12 @@ function _asu_rfi_get_program_results($items, $out = array()) {
     // Abbr in value matches how we present name in get programs Views Datasource View.
     $out[$program_plan_code] = $program_abbr;
   }
+  dpm($out, __FUNCTION__ . ' - programs for input ');
   return $out;
 }
 
 /**
- * Return desired programs from list of nodes OR list of programs
+ * Return desired programs from list of nodes OR list of programs, depending in $data_type
  * @param $result_nodes
  * @param (str) $data_type - Must be 'programs' or 'desiredProg'
  * @return array
@@ -1100,7 +1100,7 @@ function _asu_rfi_get_program_codes($result_nodes, $data_type) {
     'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
   );
   $out = ${$data_type};
-  dpm($out, __FILE__ . ' ' . __FUNCTION__ . ' - ' . $data_type);
+  dpm(${$data_type}['locations'], __FUNCTION__ . ' - ' . $desiredProg['code'] . ' - ' . $desiredProg['title']);
   return $out;
 }
 
@@ -1132,6 +1132,10 @@ function asu_rfi_determine_environment() {
 /*******************************************************************************
  * Views bulk operation hook to do bulk submissions of RFI submissions to middleware
  ********************************************************************************/
+
+/**
+ * Implements hook_action_info().
+ */
 function asu_rfi_action_info() {
   return array(
     'asu_rfi_bulk_submit_action' => array(
@@ -1145,6 +1149,11 @@ function asu_rfi_action_info() {
   );
 }
 
+/**
+ * Callback for hook_action_info
+ * @param $node
+ * @param $context
+ */
 function asu_rfi_bulk_submit_action(&$node, $context) {
   if ($node->field_rfi_prospect_level['und'][0]['value'] == "Graduate") {
     _asu_rfi_repost_data($node, array(), 'Graduate');
@@ -1550,4 +1559,38 @@ function _asu_rfi_correct_campus_id($campus) {
       $campusId = '';
   }
   return $campusId;
+}
+
+function _asu_rfi_failed_post_email($to_email) {
+  $host = $_SERVER['HTTP_HOST'];
+  //send email to admin reporting the issue
+  $content = "The following <a href='https://$host/node/$nid'>submission</a> from " . $_SERVER['HTTP_HOST']
+    . " has a problem and hasn't been submitted to middleware.";
+  $subject = "Failed submissions to SalesForce from " . $_SERVER['HTTP_HOST'];
+  $my_module = 'mimemail';
+  $my_mail_token = '';
+  $MimeMailSystem = drupal_mail_system($my_module, $my_mail_token);
+  $default_from = variable_get('site_mail', ini_get('sendmail_from'));
+  $message = array(
+    'id' => $my_module . '_' . $my_mail_token,
+    'from' => $default_from,
+    'key' => '',
+    'subject' => $subject,
+    'body' => array($content),
+    'to' => $to_email,
+    'module' => 'mimemail',
+    'headers' => array(
+      'From' => $default_from,
+      'Sender' => $default_from,
+      'Return-Path' => $default_from,
+      'Content-Type' => 'text/html; charset=UTF-8;',
+      'to' => $to_email
+    ),
+  );
+
+  $email_message = $MimeMailSystem->format($message);
+  if ($MimeMailSystem->mail($email_message)) {
+    watchdog('asu_rfi', 'SF Error message email sent to ' . $to_email);
+    variable_set('SF_error_message_sent', time());
+  }
 }

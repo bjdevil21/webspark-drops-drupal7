@@ -65,7 +65,7 @@ function asu_rfi_check_cached_programs() {
 }
 
 /**
- * Parse JSON list of programs previously pulled in
+ * Parse JSON list of programs previously pulled in and cached in asu_rfi_cached_programs
  * @return mixed
  */
 function _asu_rfi_parse_programs() {

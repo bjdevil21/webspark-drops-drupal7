@@ -2,11 +2,6 @@
 
 /**
  * Get degree mappings
- * Same as undergrad
- *
- * Example usage:
- * $degreeMappings = _asu_rfi_get_degree_mappings();
- * $degreeContentType = $degreeMappings['content_type'];
  */
 function asu_rfi_get_degree_mappings_grad_post() {
   return _asu_rfi_get_degree_mappings();

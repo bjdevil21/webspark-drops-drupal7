@@ -1395,7 +1395,14 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
 
 }
 
-function asu_rfi_progloc_confirm($prog, $campus, $loc) {
+/**
+ * Confirms if the given locations available for a program?
+ * @param $prog - program
+ * @param $campus - Campus
+ * @param $loc - Location
+ * @return bool
+ */
+function asu_rfi_program_location_confirm($prog, $campus, $loc) {
 
   $degreeMappings = asu_rfi_get_degree_mappings_pages();
   $campusOptions = array();
@@ -1441,7 +1448,7 @@ function asu_rfi_progloc_confirm($prog, $campus, $loc) {
 }
 
 /**
- * Form validation
+ * Form validation for ugrad and graduate RFI forms
  * @param $form
  * @param $form_state
  */
@@ -1451,7 +1458,7 @@ function asu_rfi_long_form_data_validate($form, &$form_state) {
       form_set_error('program_code', t('My program of interest field required.'));
     }
   }
-  if (!asu_rfi_progloc_confirm($form_state['input']['program_code'], $form_state['input']['campus'], $form_state['input']['location'])) {
+  if (!asu_rfi_program_location_confirm($form_state['input']['program_code'], $form_state['input']['campus'], $form_state['input']['location'])) {
     form_set_error('campus', t('Your campus choice is not valid.'));
   }
 
@@ -1475,10 +1482,11 @@ function asu_rfi_long_form_data_validate($form, &$form_state) {
   // validation for email and phone
   _asu_rfi_validate_electronic_contacts($email, $phone);
 
-  // Custom fields per student type
+  // Custom fields per student type (online vs. all others)
+
   //// Only Online student validation
-  if ($form_state['input']['location'] == 'online') {
-    // No fields not included in global validation above
+  if (strtolower($form_state['input']['location']) == 'online') {
+    // No fields not already included in shared validation above
   }
 
   //// Non-online student validation
