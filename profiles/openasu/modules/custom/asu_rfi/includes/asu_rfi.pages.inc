@@ -1238,7 +1238,6 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
     ),
   );
 
-
   //include modal help text for date of birth
   $modal_data = '<!-- Button trigger modal -->
     <span class="fa fa-info-circle" data-toggle="modal" data-target="#myModal"></span>
@@ -1247,7 +1246,8 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-body">
-            Your birthday is important! Not only will we send you a birthday message, it helps us keep your information secure as a unique identifier for your online submission.
+            Your birthday is important! Not only will we send you a birthday message, 
+            it helps us keep your information secure as a unique identifier for your online submission.
           </div>
           <div class="modal-footer">
             <div class="btn btn-default" data-dismiss="modal">Close</div>
@@ -1256,7 +1256,8 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
       </div>
     </div>';
 
-  // The below field creates illusion as part of date of birth field. I had to add this field to avoid validation error message containing modal data
+  // The below field creates illusion as part of date of birth field. I had to add
+  // this field to avoid validation error message containing modal data.
   $form['about_me']['dob_field'] = array(
     '#type' => 'item',
     '#markup' => '<label><strong>Date of birth</strong></label> ' . $modal_data,

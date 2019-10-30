@@ -111,7 +111,7 @@ function asu_rfi_grad_post($data) {
     $location = "Online";
   }
 
-  if ($location == 'Online' || $location == 'online') {
+  if (strtolower($location) == 'online') {
     $submission_data['campusSelection'] = "ONLNE";
     $asuOnlineList = asu_rfi_parse_programs();
     $managedOnline = asu_rfi_check_managed_online($data['program_code'], $asuOnlineList);

@@ -1,8 +1,10 @@
 <?php
 
-function asu_rfi_get_programs()
-{
-
+/**
+ * Get asuonline.asu.edu programs from feed
+ * @return mixed|bool
+ */
+function asu_rfi_get_programs() {
   $url = "asuonline.asu.edu/lead-submissions-v3.3/programs";
   $curl = curl_init();
   curl_setopt_array($curl, array(
@@ -17,10 +19,8 @@ function asu_rfi_get_programs()
   curl_close($curl);
 
   if (!empty($header) && !empty($header[0])) {
-
     $code = explode(" ", $header[0]);
     $finalHeader = count($header) - 1;
-
     if (isset($code[1]) && $code[1] >= 200 && $code[1] < 400) {
       if (isset($header[$finalHeader]) && !empty($header[$finalHeader])) {
         $data = $header[$finalHeader];
@@ -30,15 +30,17 @@ function asu_rfi_get_programs()
       watchdog('asu_rfi', 'The ASUOnline API is returning a status code of ' . $code[1]);
     }
   }
-
   if (!isset($data)) {
     watchdog('asu_rfi', 'Failed to utilize the Get Programs API');
   }
   return false;
 }
 
-function asu_rfi_check_programs()
-{
+/**
+ * ????
+ * @return bool
+ */
+function asu_rfi_check_programs() {
   $programs = variable_get('asu_rfi_cached_programs');
   $timestamp = variable_get('asu_rfi_cached_programs_timestamp');
   $now = time();
@@ -54,21 +56,23 @@ function asu_rfi_check_programs()
     return true;
   }
   return false;
-
 }
 
-function asu_rfi_parse_programs()
-{
-  $programString = variable_get('asu_rfi_cached_programs');
-
-  if (isset($programString)) {
-    $programs = json_decode($programString);
-
-    return $programs;
-
-  } else {
-
-    watchdog('asu_rfi', 'Attempted to parse the list of online programs, but this list does not exist.');
-    return FALSE;
+/**
+ * Parse JSON list of programs
+ * @return bool|mixed
+ */
+function asu_rfi_parse_programs() {
+  $programString = &drupal_static(__FUNCTION__);
+  if (!isset($programString)) {
+    $programString = variable_get('asu_rfi_cached_programs');
+    if (isset($programString)) {
+      $programs = json_decode($programString);
+      return $programs;
+    }
+    else {
+      watchdog('asu_rfi', 'Attempted to parse the list of online programs, but this list does not exist.');
+      return FALSE;
+    }
   }
 }

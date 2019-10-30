@@ -1097,9 +1097,9 @@ function _asu_rfi_get_program_codes($result_nodes, $data_type) {
     'title' => $programs['title'],
     'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
   );
-  $type = ${$data_type};
-  dpm($type, __FUNCTION__ . ' type - ' . $data_type);
-  return ${$data_type}; // Must be 'programs' or 'desiredProg'
+  $out = ${$data_type};
+  dpm($out, __FILE__ . ' ' . __FUNCTION__ . ' - ' . $data_type);
+  return $out;
 }
 
 /**
