@@ -7,6 +7,10 @@ function asu_rfi_get_degree_mappings_undergrad_post() {
   return _asu_rfi_get_degree_mappings();
 }
 
+/**
+ * Post data to SalesForce
+ * @param $data
+ */
 function asu_rfi_undergrad_post($data) {
   $degreeMappings = asu_rfi_get_degree_mappings_undergrad_post();
   $nid = $data['submission_nodeid'];
@@ -150,7 +154,7 @@ function asu_rfi_undergrad_post($data) {
       if (!empty($mw_auth_key)) {
         if (!empty($to_email)) {
           if (!isset($data['cron_run']) || ($data['cron_run'] != "Cron_running")) {
-            _asu_rfi_failed_post_email($to_email);
+            _asu_rfi_failed_post_email($to_email, $nid);
           }
         }
       }

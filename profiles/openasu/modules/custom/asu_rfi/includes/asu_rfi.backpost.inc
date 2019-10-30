@@ -48,7 +48,7 @@ function asu_rfi_fail_post($hash, $nid) {
 
     $to_email = variable_get('asu_rfi_error_email', NULL); //get error reporting email address from rfi admin settings page
     if (!empty($to_email)) {
-      _asu_rfi_failed_post_email($to_email);
+      _asu_rfi_failed_post_email($to_email, $nid);
     }
     $node_wrapper->field_rfi_error_message->set($error_message);
     $node_wrapper->save();

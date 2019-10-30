@@ -1561,7 +1561,7 @@ function _asu_rfi_correct_campus_id($campus) {
   return $campusId;
 }
 
-function _asu_rfi_failed_post_email($to_email) {
+function _asu_rfi_failed_post_email($to_email, $nid) {
   $host = $_SERVER['HTTP_HOST'];
   //send email to admin reporting the issue
   $content = "The following <a href='https://$host/node/$nid'>submission</a> from " . $_SERVER['HTTP_HOST']
