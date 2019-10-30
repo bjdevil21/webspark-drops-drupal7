@@ -158,11 +158,9 @@ function asu_rfi_undergrad_post($data) {
           }
         }
       }
-
       if (drupal_valid_path('admin')) {
         drupal_set_message('Error message from Middleware: ' . $error_message);
       }
-
     }
     curl_close($ch);
 

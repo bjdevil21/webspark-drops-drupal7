@@ -30,7 +30,6 @@ function asu_rfi_success_post($hash, $nid) {
  * @param $nid
  * @throws \Exception
  */
-
 function asu_rfi_fail_post($hash, $nid) {
   header('Content-Type: text/json');
   $mw_auth_key = variable_get('asu_rfi_form_auth_key');
@@ -46,7 +45,7 @@ function asu_rfi_fail_post($hash, $nid) {
       $node_wrapper->field_rfi_submission_status->set("Pending");
     }
 
-    $to_email = variable_get('asu_rfi_error_email', NULL); //get error reporting email address from rfi admin settings page
+    $to_email = variable_get('asu_rfi_error_email', NULL); // get error reporting email address from rfi admin settings page
     if (!empty($to_email)) {
       _asu_rfi_failed_post_email($to_email, $nid);
     }
