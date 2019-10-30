@@ -445,12 +445,12 @@ function asu_rfi_cron() {
 
   //check if the site hasn't posted submissions to salesforce for two days. If yes, send an email to administrator.
   //Get last time site had successful submission
-  $last_sf_success = variable_get('last_success_SF_posting', 0);
-  $last_sf_failure = variable_get('last_failure_SF_posting', 0);
+  $last_sf_success = variable_get('asu_rfi_last_success_SF_posting', 0);
+  $last_sf_failure = variable_get('asu_rfi_last_failure_SF_posting', 0);
   $timediff = $last_sf_failure - $last_sf_success;
-  $last_sf_attempt = variable_get('last_attempt_SF_posting', 0);
+  $last_sf_attempt = variable_get('asu_rfi_last_attempt_SF_posting', 0);
   $timediff_attempt = $last_sf_attempt - $last_sf_success;
-  $last_email_sent = variable_get('SF_error_message_sent', 0);
+  $last_email_sent = variable_get('asu_rfi_SF_error_message_sent', 0);
   $to_email = variable_get('asu_rfi_error_email', NULL); //get error reporting email address from rfi admin settings page
 
   if (($last_email_sent - time()) > 86400) { // If the email was sent within 24hrs, don't send it again.
@@ -484,7 +484,7 @@ function asu_rfi_cron() {
         $emailmessage = $MimeMailSystem->format($emailmessage);
         if ($MimeMailSystem->mail($emailmessage)) {
           watchdog('asu_rfi', 'SF Error message email sent to ' . $to_email);
-          variable_set('SF_error_message_sent', time());
+          variable_set('asu_rfi_SF_error_message_sent', time());
         }
       }
     }
@@ -567,7 +567,7 @@ function _asu_rfi_repost_data($node, $post = array(), $program = 'Undergraduate'
     asu_rfi_undergrad_post($post);
     drupal_set_message('Posted undergrad to Middleware');
   }
-  variable_set('last_attempt_SF_posting', time());
+  variable_set('asu_rfi_last_attempt_SF_posting', time());
 }
 
 /**
@@ -1125,7 +1125,7 @@ function asu_rfi_determine_environment() {
   else {
     $environ = 'unknown';
   }
-  variable_set('siteDomain', $environ);
+  variable_set('asu_rfi_siteDomain', $environ);
   return $environ;
 }
 
@@ -1591,6 +1591,6 @@ function _asu_rfi_failed_post_email($to_email, $nid) {
   $email_message = $MimeMailSystem->format($message);
   if ($MimeMailSystem->mail($email_message)) {
     watchdog('asu_rfi', 'SF Error message email sent to ' . $to_email);
-    variable_set('SF_error_message_sent', time());
+    variable_set('asu_rfi_SF_error_message_sent', time());
   }
 }

@@ -53,7 +53,7 @@ function asu_rfi_grad_post($data) {
   // enterpriseclientid for use in EdPlus Leads submissions.
   $enterpriseclientid = (isset($data['enterpriseclientid'])) ? $data['enterpriseclientid'] : '';
 
-  // Get siteDomain variable to see if it's dev or qa site.
+  // Get asu_rfi_siteDomain variable to see if it's dev or qa site.
   global $base_url;
 
   if ((strpos($base_url, 'https://localhost') === 0) || (strpos($base_url, 'http://localhost') === 0)) {
@@ -178,12 +178,12 @@ function asu_rfi_grad_post($data) {
     $node_wrapper->field_rfi_submission_status->set('SF_Complete');
     $node_wrapper->field_rfi_error_message->set('');
     $node_wrapper->save();
-    // If successfully to post to SF, the set "last_failure_SF_posting" variable to current time
-    variable_set('last_success_SF_posting', time());
+    // If successfully to post to SF, the set "asu_rfi_last_failure_SF_posting" variable to current time
+    variable_set('asu_rfi_last_attempt_SF_posting', time());
   }
 
-  //if failed to post to SF, the set "last_failure_SF_posting" variable to current time
+  //if failed to post to SF, the set "asu_rfi_last_failure_SF_posting" variable to current time
   if (($info['http_code'] != 200)) {
-    variable_set('last_failure_SF_posting', time());
+    variable_set('asu_rfi_last_failure_SF_posting', time());
   }
 }
