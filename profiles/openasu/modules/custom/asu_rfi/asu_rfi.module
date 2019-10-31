@@ -1066,27 +1066,30 @@ function _asu_rfi_get_program_codes($result_nodes, $data_type) {
 }
 
 /**
- * Determine which environment we're operating in.
+ * Determine which type of environment we're operating in.
  * @return string $environ - Name of the environment. dev, qa, or prod
  */
-function asu_rfi_determine_environment() {
-  global $base_url;
-  if ((strpos($base_url, 'https://localhost') > 0) || (strpos($base_url, 'http://localhost') > 0)) {
-    $environ = 'dev';
+function _asu_rfi_determine_environment() {
+  $environ = &drupal_static(__FUNCTION__);
+  if (!isset($environ)) {
+    global $base_url;
+    if ((strpos($base_url, 'https://localhost') > 0) || (strpos($base_url, 'http://localhost') > 0)) {
+      $environ = 'dev';
     }
-  elseif ((strpos($base_url, 'https://dev-') > 0) || (strpos($base_url, 'http://dev-') > 0) || (strpos($base_url, '-dev') > 0)) {
-    $environ = 'dev';
+    elseif ((strpos($base_url, 'https://dev-') > 0) || (strpos($base_url, 'http://dev-') > 0) || (strpos($base_url, '-dev') > 0)) {
+      $environ = 'dev';
     }
-  elseif ((strpos($base_url, 'https://qa-') > 0) || (strpos($base_url, 'http://qa-') > 0) || (strpos($base_url, '-qa') > 0)) {
-    $environ = 'qa';
+    elseif ((strpos($base_url, 'https://qa-') > 0) || (strpos($base_url, 'http://qa-') > 0) || (strpos($base_url, '-qa') > 0)) {
+      $environ = 'qa';
+    }
+    elseif ((strpos($base_url, 'https://test-') > 0) || (strpos($base_url, 'http://test-') > 0)) {
+      $environ = 'qa';
+    }
+    else {
+      $environ = 'unknown';
+    }
+    variable_set('asu_rfi_siteDomain', $environ);
   }
-  elseif ((strpos($base_url, 'https://test-') > 0) || (strpos($base_url, 'http://test-') > 0)) {
-    $environ = 'qa';
-  }
-  else {
-    $environ = 'unknown';
-  }
-  variable_set('asu_rfi_siteDomain', $environ);
   return $environ;
 }
 
@@ -1398,11 +1401,15 @@ function _asu_rfi_check_form_values($db_tbl) {
   return (int) $result;
 }
 
+/**
+ * Validation for phone number
+ * @param $email
+ * @param $phone
+ */
 function _asu_rfi_validate_electronic_contacts($email, $phone) {
   if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)*(\.[a-zA-Z]{2,6})+$/", $email)) {
     form_set_error('email', t('You entered an invalid email.'));
   }
-// validation for phone number
   /** If mobile number field is checked, then check for USA format, else check for special characters **/
   $scam_num = substr($phone, 0, 3);
   if (!empty($mobile_check) && $mobile_check != 0) {
@@ -1417,6 +1424,10 @@ function _asu_rfi_validate_electronic_contacts($email, $phone) {
   }
 }
 
+/**
+ * Birthdate validation
+ * @param $birthdate
+ */
 function _asu_rfi_validate_birthdate($birthdate) {
   //get number of occurences of '/' in dob
   $slashes = substr_count($birthdate, '/');
@@ -1484,6 +1495,32 @@ function _asu_rfi_validate_birthdate($birthdate) {
   } else {
     form_set_error('birthdate', t('Date of birth is invalid, it accepts the format mm/dd/yyyy.'));
     form_set_error('dob_field', t(' '));
+  }
+}
+
+/**
+ * Validation for zipcodes
+ * @param $country
+ * @param $zip
+ */
+function _asu_rfi_validate_zipcode($country, $zip) {
+  if ($country == "United States") {
+    if ((strlen($zip) < 5)) {
+      form_set_error('zipcode', t('Postal code cannot be less than 5 digits.'));
+    }
+    if (!preg_match('/^[0-9]{5}+$/', $zip)) {
+      form_set_error('zipcode', t('Postal code accepts 5 digits only.'));
+    }
+  } else {
+    if (!preg_match("/^[a-zA-Z0-9\s-]+$/", $zip)) {
+      form_set_error('zipcode', t('Postal code is not valid.'));
+    }
+    if ((strlen($zip) < 4)) {
+      form_set_error('zipcode', t('Postal code cannot be less than 4 characters.'));
+    }
+    if (strlen($zip) > 20) {
+      form_set_error('zipcode', t('Postal code cannot be longer than 20 characters.'));
+    }
   }
 }
 

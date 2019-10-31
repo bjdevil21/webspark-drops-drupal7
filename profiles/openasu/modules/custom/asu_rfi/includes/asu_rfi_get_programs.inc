@@ -10,7 +10,8 @@ function asu_rfi_import_online_programs() {
   curl_setopt_array($curl, array(
     CURLOPT_URL => $url,
     CURLOPT_HEADER => true,
-    CURLOPT_SSLVERSION => 5,
+    // UPDATE: Letting the web server pick which version to use
+    // CURLOPT_SSLVERSION => 5,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER => array('Accept: application/json')
   ));
