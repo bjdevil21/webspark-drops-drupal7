@@ -1351,10 +1351,11 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
   );
   $form['questions'] = array(
     '#type' => 'textarea',
-    '#title' => t('I also need assistance with the following - limit 255 characters'),
+    '#title' => t('I also need assistance with the following:'),
     '#cols' => 60,
     '#resizable' => TRUE,
     '#rows' => 5,
+    '#description' => '(Limit of 255 characters)',
   );
   $form['webform_url'] = array(
     '#type' => 'hidden',
@@ -1420,7 +1421,6 @@ function asu_rfi_program_location_confirm($prog, $campus, $loc) {
     $result_nodes = $result['node'];
     $programs = _asu_rfi_get_program_codes($result_nodes, 'programs');
     $locations = $programs[$degreeMappings['field_degree_campus']]['und'];
-    dpm($locations, __FUNCTION__ . ' - locations');
     foreach ($locations as $location) {
       if (!in_array($location['value'], $campusOptions)) {
         array_push($campusOptions, $location['value']);
@@ -1879,10 +1879,11 @@ function asu_rfi_current_form_data($form, &$form_state, $programs, $form_type) {
   );
   $form['questions'] = array(
     '#type' => 'textarea',
-    '#title' => t('I also need assistance with the following - limit 255 characters'),
+    '#title' => t('I also need assistance with the following:'),
     '#cols' => 60,
     '#resizable' => TRUE,
     '#rows' => 5,
+    '#description' => '(Limit of 255 characters)',
   );
   $form['webform_url'] = array(
     '#type' => 'hidden',

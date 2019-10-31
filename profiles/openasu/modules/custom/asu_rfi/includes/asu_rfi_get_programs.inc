@@ -73,7 +73,6 @@ function _asu_rfi_parse_programs() {
   if (!isset($programs)) {
     $programString = variable_get('asu_rfi_cached_programs');
     if (isset($programString)) {
-      dpm($programString, __FUNCTION__);
       $programs = json_decode($programString);
       if ($programs == NULL) {
         watchdog('asu_rfi', __FUNCTION__ . ' -- The cached JSON of
