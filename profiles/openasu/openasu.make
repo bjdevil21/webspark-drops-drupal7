@@ -7,9 +7,14 @@ api = 2
 
 projects[drupal][type] = core
 projects[drupal][version] = 7.67
+
 ; Drupal Core Patches
+
 ;projects[drupal][patch][1334818] = https://drupal.org/files/issues/D7-install-profile-ajax-1334818-8.patch
 projects[drupal][patch][1803048] = patches/ws-1514_array-flip-error-travis-ci-tests_1803048.patch
+projects[drupal][patch][1353] = patches/ws-1353_update-output-DOM-cleanup.patch
+projects[drupal][patch][1497] = patches/ws-1497_removed-seven-theme-IE-css.patch
+projects[drupal][patch][948516] = https://www.drupal.org/files/issues/2019-08-09/drupal-948516-fieldset-arrows-43.patch
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; The Panopoly Foundation
@@ -57,13 +62,11 @@ projects[panopoly_test][patch][137] = patches/webspark-847_panopoly-test-137-upd
 projects[panopoly_test][patch][1370] = patches/webspark-847_behat_common.patch
 projects[panopoly_test][patch][142] = patches/webspark-944_add-init-config-tests-panopoly-test.patch
 projects[panopoly_test][patch][143] = patches/webspark-1066-panopoly-test-v146.patch
+; Last patch must be applied until the patches are combined down the road
+projects[panopoly_test][patch][1560] = patches/ws-1560-1353_panopoly-behat-widget-name-changes.patch
 
 ; ASU-specific, Webspark-agnostic modules (/custom directory contents)
-
-;projects[asu_drupal_modules][type] = module
-;projects[asu_drupal_modules][directory_name] = custom
-;projects[asu_drupal_modules][download][revision] = 7e86f7fed3a06597335c7ca8850e95cb9f56c373
-;projects[asu_drupal_modules][download][url] = https://github.com/ASU/asu-drupal-modules.git
+; No longer pulled from asu_drupal_modules repo
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ASU Module Prerequisites -- Webspark
@@ -99,7 +102,7 @@ projects[job_scheduler][subdir] = contrib
 
 projects[ldap][type] = module
 projects[ldap][subdir] = contrib
-projects[ldap][version] = 2.3
+projects[ldap][version] = 2.5
 
 projects[references][type] = module
 projects[references][subdir] = contrib
@@ -125,6 +128,8 @@ projects[viewfield][subdir] = contrib
 projects[webform][version] = 4.19
 projects[webform][type] = module
 projects[webform][subdir] = contrib
+projects[webform][patch][3078020] = https://www.drupal.org/files/issues/2019-08-01/webform_7.x-4.19_conditional-form-control-css-class-email-number.patch
+projects[webform][patch][2894251] = https://www.drupal.org/files/issues/empty-pages-email-2894251-8.patch
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ASU Module prerequisites - Webspark Web Standards components - contrib
@@ -146,7 +151,7 @@ projects[chosen][version] = 2.1
 projects[chosen][type] = module
 projects[chosen][subdir] = contrib
 
-projects[easy_breadcrumb][version] = 2.15
+projects[easy_breadcrumb][version] = 2.17
 projects[easy_breadcrumb][type] = module
 projects[easy_breadcrumb][subdir] = contrib
 
@@ -169,11 +174,6 @@ projects[flexslider][subdir] = contrib
 projects[fontawesome][version] = 1.0
 projects[fontawesome][type] = module
 projects[fontawesome][subdir] = contrib
-
-; @TODO v1.15
-projects[google_appliance][version] = 1.14
-projects[google_appliance][type] = module
-projects[google_appliance][subdir] = contrib
 
 projects[google_cse][version] = 2.5
 projects[google_cse][type] = module
@@ -288,7 +288,7 @@ projects[honeypot][type] = module
 projects[honeypot][subdir] = contrib
 
 ; pre-req for mimemail
-projects[mailsystem][version] = 2.34
+projects[mailsystem][version] = 2.35
 projects[mailsystem][type] = module
 projects[mailsystem][subdir] = contrib
 

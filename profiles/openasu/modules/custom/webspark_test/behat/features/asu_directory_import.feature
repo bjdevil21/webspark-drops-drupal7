@@ -1,4 +1,4 @@
-Feature: Import iSearch Profiles
+Feature: Import and display iSearch Profiles
   Background:
     Given I am logged in as a user with the "administrator" role
 
@@ -28,7 +28,7 @@ Feature: Import iSearch Profiles
     And I press the "Publish" button
     And I click "Customize this page"
     And I click "Add new pane"
-    And I click "Add ASU Directory Panel"
+    And I click "Add ASU directory panel"
     And I press the "Browse" button
     And I click the '[dept_nid="1359"] a.jqtree-toggler' element
     And I click the '[dept_nid="1569"] a.jqtree-toggler' element

@@ -46,6 +46,7 @@ before_install:
   - sleep 1
   # Disable PHP features - XDebug
   - phpenv config-rm xdebug.ini
+  - phpenv config-add travis.php.ini
   #- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 
 install:
@@ -56,9 +57,11 @@ install:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - composer global require --no-interaction drush/drush:7.*
 
-  # get chromedriver
+  # Download LATEST_RELEASE of ChromeDriver
+  # https://sites.google.com/a/chromium.org/chromedriver/downloads - Downloads page
+  # https://chromedriver.storage.googleapis.com/ - XML of latest downloads
   - cd ~/
-  - wget -N https://chromedriver.storage.googleapis.com/74.0.3729.6/chromedriver_linux64.zip
+  - wget -N https://chromedriver.storage.googleapis.com/$(curl -L https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
   - unzip ~/chromedriver_linux64.zip -d ~/
   - rm ~/chromedriver_linux64.zip
   - sudo mv -f ~/chromedriver /usr/local/share/
@@ -83,8 +86,6 @@ install:
 
   # Setup files
   - sudo chmod -R 777 sites
-
-
 
   # Get Selenium
   - wget https://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar
