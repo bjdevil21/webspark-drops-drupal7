@@ -1,4 +1,5 @@
-<?php /** @noinspection SqlDialectInspection */
+<?php /** @noinspection HtmlUnknownTarget */
+/** @noinspection SqlDialectInspection */
 /** @noinspection PhpInconsistentReturnPointsInspection */
 /** @noinspection PhpUnhandledExceptionInspection */
 /** @noinspection SqlNoDataSourceInspection */
@@ -266,7 +267,7 @@ function asu_rfi_block_view($delta = '', $multi_id = NULL) {
         $block['content'] = asu_rfi_form($delta);
       }
 
-      // Undergrad long form settings ONLY
+      // Undergrad long + current forms settings ONLY
         // Only array keys are passed, so load all programs and compare with saved
         // instance setting using array_intersect_key function
       if (($instance_settings['form_type'] == 'ugrad_longform')
@@ -282,7 +283,7 @@ function asu_rfi_block_view($delta = '', $multi_id = NULL) {
         }
       }
 
-      // Grad long form settings ONLY
+      // Grad long + current forms settings ONLY
       if (($instance_settings['form_type'] == 'graduate_longform')
         || ($instance_settings['form_type'] == 'current_grad_form')) {
         $program_options = _asu_rfi_get_grad_programs();
@@ -628,6 +629,23 @@ function asu_rfi_form_alter(&$form, &$form_state, $form_id) {
       drupal_set_message("You do not have access to view this form", 'warning');
       return FALSE;
     }
+  }
+}
+
+/**
+ * "Is the form in Test Mode" check?
+ * @param array $form
+ * @return string $form_mode - if "test", then it's in test mode
+ */
+function _asu_rfi_form_test_mode_markup(&$form) {
+  $form_mode = variable_get('asu_rfi_form_mode');
+  if (($form_mode == "test") || empty($form_mode)) {
+    $form['form_stage'] = array(
+      '#type' => 'item',
+      '#markup' => t('<div class="alert alert-warning"><b>NOTE</b>: The form is in <b>TEST MODE</b>.
+        Its submissions will not go to Salesforce. <a href="/admin/config/content/asurfi">Toggle
+        TEST MODE off</a> under "Test/Live Mode"</div>')
+    );
   }
 }
 

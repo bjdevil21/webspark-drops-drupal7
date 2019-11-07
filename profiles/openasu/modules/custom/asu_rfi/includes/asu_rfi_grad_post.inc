@@ -98,14 +98,12 @@ function asu_rfi_grad_post($data) {
     && (ucfirst($availableCampuses[0]) == "Online")) {
     $location = "Online";
   }
-  // Online?
   if (strtolower($location) == 'online') {
     $submission_data['campusSelection'] = "ONLNE";
     $asuOnlineList = _asu_rfi_parse_programs();
     $managedOnline = asu_rfi_check_managed_online($data['program_code'], $asuOnlineList);
 
     if ($managedOnline == true) {
-
       $college_code = db_query('select ' . $degreeMappings['field_academic_program_value']
         . ' from ' . $degreeMappings['table_asu_academic_program'] . ' prog join '
         . $degreeMappings['table_asu_academic_plan'] . ' plan on prog.entity_id = plan.entity_id where plan.'
@@ -133,7 +131,7 @@ function asu_rfi_grad_post($data) {
       $url = "https://webforms.asu.edu/asu_edplus_middleware/submit/$fieldHash";
     }
   }
-  // NOT online
+  // NOT online campus
   else {
     foreach ($submission_data as $key_value => $result_array) {
       if (($result_array == "None")) {
@@ -142,25 +140,37 @@ function asu_rfi_grad_post($data) {
     }
   }
 
-  // Post data to salesforce via cURL
+  ///////////////////////////////////
+  // Post data to SalesForce middleware via cURL
+  ///////////////////////////////////
   try {
-    $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE); // If you don't want to use any of the return information, set to false
-    curl_setopt($curl, CURLOPT_HEADER, FALSE); // FALSE Remove informational headers
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $submission_data); // data mapping
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    $curl = curl_init();
+    $options = array(
+      CURLOPT_URL => $url,
+      CURLOPT_POST => 1,
+      CURLOPT_POSTFIELDS => $submission_data,
+      CURLOPT_RETURNTRANSFER => 1,
+      CURLOPT_HTTPHEADER => array('Content-Type: text/json'),
+      CURLOPT_SSL_VERIFYPEER => FALSE,
+    );
+    curl_setopt_array($curl, $options);
+
+    // DEBUG
+    watchdog('asu_rfi', CURLOPT_SSLVERSION, array(), WATCHDOG_DEBUG);
+    watchdog('asu_rfi', print_r($options), array(), WATCHDOG_DEBUG);
 
     $response = curl_exec($curl);
-    $info = curl_getinfo($curl); // Used by your drupal messages below
-    curl_close($curl);
+    $curl_info = curl_getinfo($curl); // Used by your drupal messages below
 
+    watchdog('asu_rfi', 'Middleware response: ' . $response, array(), WATCHDOG_DEBUG);
+
+    // Get the response from Salesforce middleware
     if (strpos($response, "-1 ") == 0) {
       $message = explode(':', $response);
     }
 
-    // Get the response from Salesforce. If the submission is not successful, update the previous submission status to Incomplete
-    if (($info['http_code'] == 400) || ($info['http_code'] == 500)) {
+    // If the submission is not successful, update the previous submission status to Incomplete.
+    if (($curl_info['http_code'] == 400) || ($curl_info['http_code'] == 500)) {
       // update error message
       if (isset($node_wrapper->field_rfi_error_message)) {
         if (isset($message)) {
@@ -169,7 +179,8 @@ function asu_rfi_grad_post($data) {
         $node_wrapper->save();
       }
     }
-    if (($info['http_code'] == 200)) {
+    // Successful POST of submission to middleware.
+    if (($curl_info['http_code'] == 200)) {
       $node_wrapper->field_rfi_submission_status->set('SF_Complete');
       $node_wrapper->field_rfi_error_message->set('');
       $node_wrapper->save();
@@ -179,9 +190,11 @@ function asu_rfi_grad_post($data) {
     }
     // If failed to post to SF, set "asu_rfi_last_failure_SF_posting" variable
     // to current time
-    if (($info['http_code'] != 200)) {
+    if (($curl_info['http_code'] != 200)) {
       variable_set('asu_rfi_last_failure_SF_posting', time());
     }
+
+    curl_close($curl);
 
     if (FALSE === $response) {
       throw new Exception(curl_error($curl), curl_errno($curl));
