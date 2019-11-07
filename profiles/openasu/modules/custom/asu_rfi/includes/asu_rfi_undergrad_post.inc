@@ -11,7 +11,7 @@ function asu_rfi_undergrad_post($data) {
   $nodeArr = array(
     $node->field_rfi_program['und'][0]['value'] => $node->field_rfi_program_name['und'][0]['value']
   );
-  $availableCampuses = _asu_rfi_query_codes($nodeArr);
+  $availableCampuses = _asu_rfi_campus_location_options($nodeArr);
 
   $node_wrapper = entity_metadata_wrapper('node', $node);
   if (isset($node_wrapper->field_rfi_submission_status)) {

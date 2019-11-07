@@ -423,14 +423,11 @@ function asu_rfi_form_data_submit($form, &$form_state) {
   $form_state['storage']['phone'] = $form_state['values']['phone'];
   $sms_opted = $form_state['values']['mobile_check'];
 
-  // Check if the phone number already has 1 prepended. If yes, just pass phone
-  // number to sms field, else prepend 1.
+  // Check if the phone number already has 1 prepended. If not, prepend with 1.
   if (!empty($sms_opted)) {
-    if (substr($form_state['values']['phone'], 0, 1) != "1") {
-      $form_state['storage']['mobile_check'] = '1-' . $form_state['values']['phone'];
-    } else {
-      $form_state['storage']['mobile_check'] = $form_state['values']['phone'];
-    }
+    $form_state['storage']['mobile_check'] = (substr($form_state['values']['phone'], 0, 1) != "1")
+      ? '1' . $form_state['values']['phone']
+      : $form_state['values']['phone'];
   } else {
     $form_state['storage']['mobile_check'] = '';
   }
@@ -1541,10 +1538,10 @@ function asu_rfi_long_form_data_submit($form, &$form_state) {
 
   $sms_opted = $form_state['values']['mobile_check'];
 
-  // check if the phone number already has 1 prepended. If yes, just pass phone number to sms field, else prepend "1-".
+  // Check if the phone number already has 1 prepended. If not, prepend with 1.
   if (!empty($sms_opted)) {
     $form_state['values']['mobile_check'] = (substr($form_state['values']['phone'], 0, 1) != "1")
-      ? '1-' . $form_state['values']['phone']
+      ? '1' . $form_state['values']['phone']
       : $form_state['values']['phone'];
   } else {
     $form_state['values']['mobile_check'] = '';
