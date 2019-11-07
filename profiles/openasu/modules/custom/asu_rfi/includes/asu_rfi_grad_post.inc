@@ -38,7 +38,7 @@ function asu_rfi_grad_post($data) {
 
   $ipAddress = isset($data['ip_address']) ? $data['ip_address'] : $_SERVER['REMOTE_ADDR'];
   $term = (isset($data['semester_name'])) ? $data['semester_name'] : '';
-  $campus = _asu_rfi_correct_campus_id($data['campus']);
+  $campus = _asu_rfi_get_correct_campus_id($data['campus']);
   $phone = preg_replace('[\D]', '', $data['phone']);
   $mobile = (isset($data['mobile_check'])) ? str_replace('-', '', $data['mobile_check']) : '';   // mobile phone
   $dob = (isset($data['birthdate'])) ? $data['birthdate'] : ''; // date of birth

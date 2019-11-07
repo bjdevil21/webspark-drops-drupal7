@@ -59,7 +59,7 @@ function asu_rfi_undergrad_post($data) {
   $type_of_form = $data['type_of_form'];
   $domain = isset($data['domain']) ? $data['domain'] : $_SERVER['HTTP_HOST'];
   $source = $domain . '-' . $type_of_form . '-UG';
-  $campus = _asu_rfi_correct_campus_id($campus);
+  $campus = _asu_rfi_get_correct_campus_id($campus);
 
   $mobile = (isset($data['mobile_check']))
     ? str_replace('-', '', $data['mobile_check'])

@@ -493,13 +493,15 @@ function asu_rfi_get_block_instance_settings($multi_id = NULL, $endpoint_build =
 }
 
 /*********************************************************************
- * FORMS (alterations, etc. Main form logic is in asu_rfi.pages.inc)
+ * FORMS (alterations, helpers, validation only; Main form logic is in asu_rfi.pages.inc)
  *********************************************************************/
+
 /**
  * Implementation of hook_form_alter()
+ *
+ * // 1. change exposed form type in view to select option
+ * // 2. To update RFI forms access if the forms are in test mode
  */
-// 1. change exposed form type in view to select option
-// 2. To update RFI forms access if the forms are in test mode
 function asu_rfi_form_alter(&$form, &$form_state, $form_id) {
   // Adds css to ajax preview of rfi forms in the panels preview page
   $form_exists = strpos($form['#id'], 'asu-rfi-long-form-data--');
@@ -657,6 +659,142 @@ function asu_rfi_form_after_build($form, &$form_state) {
   return $form;
 }
 
+/**
+ * Check if any options (valid or not) still exist from past pulls so it can
+ * possibly (at least partially) function?
+ */
+function _asu_rfi_check_form_values($db_tbl) {
+  $query = Database::getConnection('default')
+    ->select($db_tbl);
+  $result = $query->countQuery()
+    ->execute()
+    ->fetchField();
+  return (int) $result;
+}
+
+/**
+ * Validation - phone numbers
+ * @param $email
+ * @param $phone
+ */
+function _asu_rfi_validate_electronic_contacts($email, $phone) {
+  if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)*(\.[a-zA-Z]{2,6})+$/", $email)) {
+    form_set_error('email', t('You entered an invalid email.'));
+  }
+  /** If mobile number field is checked, then check for USA format, else check for special characters **/
+  $scam_num = substr($phone, 0, 3);
+  if (!empty($mobile_check) && $mobile_check != 0) {
+    if (!preg_match("/^([1]-)?([0-9]{3}[-|.][0-9]{3}[-|.][0-9]{4})$/i", $phone) || ($scam_num == "555")) {
+      form_set_error('phone', t('You entered an invalid Phone number.'));
+    }
+  }
+  else {
+    if (!preg_match("/^[0-9.\s-_+()]+$/", $phone) || ($scam_num == "555")) {
+      form_set_error('phone', t('You entered an invalid Phone number.'));
+    }
+  }
+}
+
+/**
+ * Validation - Birthdate
+ * @param $birthdate
+ */
+function _asu_rfi_validate_birthdate($birthdate) {
+  //get number of occurences of '/' in dob
+  $slashes = substr_count($birthdate, '/');
+  if ($slashes == 2) {
+    $date_format = explode('/', $birthdate);
+    $month = $date_format[0];
+    $day = $date_format[1];
+    $year = $date_format[2];
+    $current_year = date('Y');
+    $year_limit = $current_year - 1;
+    $isLeapYear = date('L');
+
+    if (strlen($birthdate) < 11) {
+      if (($month < 1) || ($month > 12)) {
+        form_set_error('birthdate', t('Month range has to be between 1 and 12.'));
+        form_set_error('dob_field', t(' '));
+      }
+
+      if (($month == 1) || ($month == 3) || ($month == 5) || ($month == 7) || ($month == 8) || ($month == 10) || ($month == 12)) {
+        if (($day < 1) || ($day > 31)) {
+          form_set_error('birthdate', t('Date range has to be between 1 and 31.'));
+          form_set_error('dob_field', t(' '));
+        }
+      }
+
+      if (($month == 4) || ($month == 6) || ($month == 9) || ($month == 11)) {
+        if (($day < 1) || ($day > 30)) {
+          form_set_error('birthdate', t('Date range has to be between 1 and 30.'));
+          form_set_error('dob_field', t(' '));
+        }
+      }
+
+      if ($month == 2) {
+        if ($isLeapYear == 1) {
+          if (($day < 1) || ($day > 29)) {
+            form_set_error('birthdate', t('Date range has to be between 1 and 29.'));
+            form_set_error('dob_field', t(' '));
+          }
+        }
+        if ($isLeapYear == 0) {
+          if (($day < 1) || ($day > 28)) {
+            form_set_error('birthdate', t('Date range has to be between 1 and 28.'));
+            form_set_error('dob_field', t(' '));
+          }
+        }
+      }
+
+      if (strlen($year) != 4) {
+        form_set_error('birthdate', t('Year has to be 4 digits.'));
+      }
+
+      if ($year > $year_limit) {
+        form_set_error('birthdate', t('Year cannot be greater than ' . $year_limit));
+      }
+
+      if (!preg_match("/^(0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])[\-\/.](19|20)\d\d$/", $birthdate)) {
+        form_set_error('birthdate', t('Date of birth accepts the format mm/dd/yyyy.'));
+        form_set_error('dob_field', t(' '));
+      }
+
+    } else {
+      form_set_error('birthdate', t('Date of birth is invalid, it accepts the format mm/dd/yyyy.'));
+      form_set_error('dob_field', t(' '));
+    }
+  } else {
+    form_set_error('birthdate', t('Date of birth is invalid, it accepts the format mm/dd/yyyy.'));
+    form_set_error('dob_field', t(' '));
+  }
+}
+
+/**
+ * Validation - ZIP Codes
+ * @param $country
+ * @param $zip
+ */
+function _asu_rfi_validate_zipcode($country, $zip) {
+  if ($country == "United States") {
+    if ((strlen($zip) < 5)) {
+      form_set_error('zipcode', t('Postal code cannot be less than 5 digits.'));
+    }
+    if (!preg_match('/^[0-9]{5}+$/', $zip)) {
+      form_set_error('zipcode', t('Postal code accepts 5 digits only.'));
+    }
+  } else {
+    if (!preg_match("/^[a-zA-Z0-9\s-]+$/", $zip)) {
+      form_set_error('zipcode', t('Postal code is not valid.'));
+    }
+    if ((strlen($zip) < 4)) {
+      form_set_error('zipcode', t('Postal code cannot be less than 4 characters.'));
+    }
+    if (strlen($zip) > 20) {
+      form_set_error('zipcode', t('Postal code cannot be longer than 20 characters.'));
+    }
+  }
+}
+
 /*********************************************************************
  * CALLBACKS
  *********************************************************************/
@@ -724,12 +862,12 @@ function _asu_rfi_repost_data($node, $post = array(), $program = ASU_RFI_PROSPEC
 }
 
 /**
- * Cron worker callback
+ * Cron worker callback for _asu_rfi_repost_data()
  * POSTs data to Salesforce when cron runs.
  * Called once for each submission.
  * @param object $data - ASU RFI node with submitted data
  */
-function _asu_rfi_repost_rfi($data) {
+function _asu_rfi_cron_repost_data($data) {
   // Load and repost the RFI submissions based on the Prospect level
   $node = node_load($data->nid);
   // if graduate submission node, try to repost it to asu_rfi_grad_post file.
@@ -771,394 +909,6 @@ function asu_rfi_bulk_submit_action(&$node, $context) {
       || $student_type === ASU_RFI_PROSPECT_LEVEL_GRAD)) {
     _asu_rfi_repost_data($node, array(), $student_type);
   }
-}
-
-/********************************************
- * HELPERS (Model/date building logic)
- ********************************************/
-
-/**
- * Returns mappings between ASU RFI node fields and degree module(s) fields
- *
- * Example usage:
- * $degreeMappings = _asu_rfi_get_degree_mappings();
- * $degreeContentType = $degreeMappings['content_type'];
- */
-function _asu_rfi_degree_field_mappings() {
-  $map = &drupal_static(__FUNCTION__);
-  // Swap out mapping values based on module enabled.
-  // ASU AP takes priority, but default is to ASU
-  // Degrees (deprecated);
-  if (!isset($map)) {
-    if (module_exists('asu_ap')) {
-      $map = array(
-        // Content Type
-        'content_type' => 'asu_ap',
-        // Tables
-        'table_asu_academic_plan' => 'field_data_field_asu_ap_acad_plan',
-        'table_asu_academic_program' => 'field_data_field_asu_ap_acad_prog',
-        'table_asu_degree_awarded' => 'field_data_field_asu_ap_awarded',
-        'table_asu_degree_program' => 'field_data_field_asu_ap_program',
-        'table_asu_diploma_description' => 'field_data_field_asu_ap_diploma_desc',
-        // Fields
-        'field_academic_plan' => 'field_asu_ap_acad_plan',
-        'field_academic_plan_value' => 'field_asu_ap_acad_plan_value',
-        'field_academic_program' => 'field_asu_ap_acad_prog',
-        'field_academic_program_value' => 'field_asu_ap_acad_prog_value',
-        'field_degree_awarded' => 'field_asu_ap_awarded',
-        'field_degree_awarded_value' => 'field_asu_ap_awarded_value',
-        'field_degree_campus' => 'field_asu_ap_campus',
-        'field_degree_program' => 'field_asu_ap_program',
-        'field_degree_program_value' => 'field_asu_ap_program_value',
-        'field_diploma_description' => 'field_asu_ap_diploma_desc',
-        'field_diploma_description_value' => 'field_asu_ap_diploma_desc_value',
-      );
-    } else { // asu_degrees
-      $map = array(
-        // Content Type
-        'content_type' => 'asu_degree',
-        // Tables
-        'table_asu_academic_plan' => 'field_data_field_asu_academic_plan',
-        'table_asu_academic_program' => 'field_data_field_asu_academic_program',
-        'table_asu_degree_awarded' => 'field_data_field_asu_degree_awarded',
-        'table_asu_degree_program' => 'field_data_field_asu_degree_program',
-        'table_asu_diploma_description' => 'field_data_field_asu_diploma_description',
-        // Fields
-        'field_academic_plan' => 'field_asu_academic_plan',
-        'field_academic_plan_value' => 'field_asu_academic_plan_value',
-        'field_academic_program' => 'field_asu_academic_program',
-        'field_academic_program_value' => 'field_asu_academic_program_value',
-        'field_degree_awarded' => 'field_asu_degree_awarded',
-        'field_degree_awarded_value' => 'field_asu_degree_awarded_value',
-        'field_degree_campus' => 'field_asu_degree_campus',
-        'field_degree_program' => 'field_asu_degree_program',
-        'field_degree_program_value' => 'field_asu_degree_program_value',
-        'field_diploma_description' => 'field_asu_diploma_description',
-        'field_diploma_description_value' => 'field_asu_diploma_description_value',
-      );
-    }
-  }
-  return $map;
-}
-
-/**
- * Queries the degrees in order to configure the location element of the form.
- * @param array $pcodes A list of the plan codes used in the RFI form
- * @return mixed $campusOptions An array of the available campuses
- */
-function _asu_rfi_campus_location_options($pcodes) {
-  $degree_mappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
-  $asu_online_list = _asu_rfi_parse_programs();
-
-  $campus_location_options = array();
-
-  foreach ($pcodes as $code => $prog) {
-    $onlineError = FALSE;
-    $query = new EntityFieldQuery();
-    $query->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', $degree_mappings['content_type'])
-      ->fieldCondition($degree_mappings['field_academic_plan'], 'value', $code)
-      ->range(0, 10)
-      ->addMetaData('account', user_load(1)); // Run the query as user 1.
-    $result = $query->execute();
-
-    if (isset($result['node'])) {
-      $result_nodes = $result['node'];
-      $desiredProg = _asu_rfi_get_program_codes($result_nodes, 'desiredProg');
-      $availableOnline = _asu_rfi_program_online_availability($desiredProg['code'], $asu_online_list);
-
-      $locations = $desiredProg['locations'];
-      if ($locations) {
-        foreach ($locations as $location) {
-          $hasOnline = FALSE;
-          if ($location['value'] == "Online") {
-            $hasOnline = TRUE;
-          }
-          if ((($hasOnline == TRUE && $availableOnline == TRUE) || ($hasOnline == FALSE))
-            && !in_array($location['value'], $campus_location_options)) {
-            array_push($campus_location_options, $location['value']);
-          } else {
-            if ($hasOnline == TRUE && $availableOnline == FALSE) {
-              $onlineError = TRUE;
-              for ($i = 0; $i < sizeof($desiredProg['locations']); $i++) {
-                if ($desiredProg['locations'][$i]['value'] == 'Online') {
-                  unset($desiredProg['locations'][$i]);
-                }
-              }
-            }
-          }
-        }
-      }
-      _asu_rfi_add_program_data_js($desiredProg);
-    }
-    if ($onlineError == TRUE) {
-      global $user;
-      $desiredProgram = (isset($desiredProg) && isset($desiredProg['title'])) ? $desiredProg['title'] : '';
-      if (in_array('administrator', $user->roles)) {
-        drupal_set_message("This degree program(" . $desiredProgram
-          . ") is not yet fully online. We may need more details from you to complete
-          its launch. Please email EdPlus@asu.edu for more information.", 'error');
-      }
-    }
-  }
-
-  if (sizeof($campus_location_options) == 0) {
-    return FALSE;
-  }
-  else {
-    return $campus_location_options;
-  }
-}
-
-/**
- * Compares the degree feed programs listed with online availability, using the
- * cached Get Programs API list.
- * @param string $programsFromDegreeFeed The current program
- * @param array $getProgramsAPIList The cached list of programs currently available with ASU Online. Cached Daily
- * @return boolean $available True False value determining whether it can be handled by ASU Online.
- */
-function _asu_rfi_program_online_availability($programsFromDegreeFeed, $getProgramsAPIList) {
-  $available = FALSE;
-  if ($getProgramsAPIList !== FALSE) {
-    foreach ($getProgramsAPIList as $item) {
-      if ($programsFromDegreeFeed == $item->plancode) {
-        $available = TRUE;
-      }
-    }
-  }
-  return $available;
-}
-
-/**
- * Adds program data to a JS object available to the form
- * @param array $desiredProg The current program
- */
-function _asu_rfi_add_program_data_js($desiredProg) {
-  drupal_add_js(
-    array(
-      'asu_rfi' => array(
-        'degrees' => array(
-          $desiredProg['vid'] => array(
-            'code' => $desiredProg['code'],
-            'title' => $desiredProg['title'],
-            'locations' => $desiredProg['locations'],
-          )
-        )
-      )
-    ), 'setting');
-}
-
-/**
- * Detect the user's OS. // WHY? UNUSED.
- * @return int|string
- */
-function _asu_rfi_detect_os() {
-  $current_os = "unknown";
-  $os_list = array(
-    'Windows 7' => '(Windows NT 6\.1)',
-    'Windows Vista' => '(Windows NT 6\.0)',
-    'Windows XP' => '(Windows NT 5\.1)|(Windows XP)',
-    'Mac OS' => '(Mac_PowerPC)|(Macintosh)',
-    'Linux' => '(Linux)|(X11)',
-    'Search Bot' => '(nuhk)|(Googlebot)|(Yammybot)|(Openbot)|(Slurp)|(MSNBot)|(Ask Jeeves\/Teoma)|(ia_archiver)',
-    'Windows 3.11' => 'Win16',
-    'Windows 95' => '(Windows 95)|(Win95)|(Windows_95)',
-    'Windows 98' => '(Windows 98)|(Win98)',
-    'Windows 2000' => '(Windows NT 5\.0)|(Windows 2000)',
-    'Windows Server 2003' => '(Windows NT 5\.2)',
-    'Windows NT 4.0' => '(Windows NT 4\.0)|(WinNT4\.0)|(WinNT)|(Windows NT)',
-    'Windows ME' => '(Windows 98)|(Win 9x 4\.90)|(Windows ME)',
-    'Open BSD' => 'OpenBSD',
-    'Sun OS' => 'SunOS',
-    'QNX' => 'QNX',
-    'BeOS' => 'BeOS',
-    'OS/2' => 'OS\/2'
-  );
-
-  if (isset($_SERVER['HTTP_USER_AGENT'])) {
-    foreach ($os_list as $current_os => $match) {
-      if (preg_match('#' . $match . '#i', $_SERVER['HTTP_USER_AGENT'])) {
-        break;
-      }
-    }
-  }
-  return $current_os;
-}
-
-/**
- * Detect the user's browser.
- * @return string
- */
-function _asu_rfi_detect_browser() {
-  $browser = 'unknown';
-  if (isset($_SERVER['HTTP_USER_AGENT'])) {
-    $u_agent = $_SERVER['HTTP_USER_AGENT'];
-    if (stripos($u_agent, 'MSIE') !== FALSE) {
-      $browser = "IE";
-    }
-    elseif (stripos($u_agent, 'Chrome') !== FALSE) {
-      $browser = "Chrome";
-    }
-    elseif (stripos($u_agent, 'Firefox') !== FALSE) {
-      $browser = "Firefox";
-    }
-    elseif (stripos($u_agent, 'Safari') !== FALSE) {
-      $browser = "Safari";
-    }
-    elseif (stripos($u_agent, 'Flock') !== FALSE) {
-      $browser = "Flock";
-    }
-    elseif (stripos($u_agent, 'Opera') !== FALSE) {
-      $browser = "Opera";
-    }
-  }
-  return $browser;
-}
-
-/**
- * Determine type of environment (live or testing)
- * @return string $environ - Name of the environment. dev, qa, or prod
- */
-function _asu_rfi_detect_environment() {
-  $environ = &drupal_static(__FUNCTION__);
-  if (!isset($environ)) {
-    global $base_url;
-    if ((strpos($base_url, 'https://localhost') > 0) || (strpos($base_url, 'http://localhost') > 0)) {
-      $environ = 'dev';
-    }
-    elseif ((strpos($base_url, 'https://dev-') > 0) || (strpos($base_url, 'http://dev-') > 0) || (strpos($base_url, '-dev') > 0)) {
-      $environ = 'dev';
-    }
-    elseif ((strpos($base_url, 'https://qa-') > 0) || (strpos($base_url, 'http://qa-') > 0) || (strpos($base_url, '-qa') > 0)) {
-      $environ = 'qa';
-    }
-    elseif ((strpos($base_url, 'https://test-') > 0) || (strpos($base_url, 'http://test-') > 0)) {
-      $environ = 'qa';
-    }
-    else {
-      $environ = 'unknown';
-    }
-  }
-  return $environ;
-}
-
-/**
- * Returns all active status program nodes
- * @return array where key is nid and value is program focus (program code +
- *   program plan code)
- * @throws \EntityFieldQueryException
- * @TODO Probably will want to remove, or edit to use new program gathering logic.
- */
-function _asu_rfi_get_undergrad_program_nodes() {
-  // Get degree mappings to grab content type specific values
-  $degreeMappings = _asu_rfi_degree_field_mappings();
-  // Get the degree types from the database
-  $program_type = db_query('SELECT DISTINCT ' . $degreeMappings['field_degree_program_value']
-    . ' from ' . $degreeMappings['table_asu_degree_program']);
-  // Set the variables so they can be used to show degree programs based on the form
-  // type selections above in block settings
-  foreach ($program_type as $programs) {
-    $degreetype = $programs->{$degreeMappings['field_degree_program_value']};
-    if ($degreetype == "undergrad") {
-      variable_set('asu_rfi_ugrad_degree_type', $degreetype);
-    }
-    if ($degreetype == "graduate") {
-      variable_set('asu_rfi_graduate_degree_type', $degreetype);
-    }
-  }
-
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', $degreeMappings['content_type'])
-    ->propertyCondition('status', 1)
-    ->fieldCondition($degreeMappings['field_degree_awarded'], 'value', 'NULL', '!=')
-    ->fieldCondition($degreeMappings['field_academic_program'], 'value', 'NULL', '!=')
-    ->fieldCondition($degreeMappings['field_academic_plan'], 'value', 'NULL', '!=')
-    ->fieldCondition($degreeMappings['field_degree_program'], 'value', 'undergrad', '=')
-    ->fieldOrderBy($degreeMappings['field_degree_awarded'], 'value', 'ASC')
-    ->addMetaData('account', user_load(1)); // Run the query as user 1.
-  $result = $query->execute();
-
-  // Build program results (array)
-  $program_entities = array();
-  if (isset($result['node'])) {
-    $items_nids = array_keys($result['node']);
-    $items = entity_load('node', $items_nids);
-    $program_entities = _asu_rfi_get_program_results($items);
-  }
-
-  return $program_entities;
-}
-
-/**
- * Get grad programs if any exist
- * @throws \EntityFieldQueryException
- */
-function _asu_rfi_get_grad_programs() {
-  $degreeMappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
-
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', $degreeMappings['content_type'])
-    ->propertyCondition('status', 1)
-    ->fieldCondition($degreeMappings['field_degree_awarded'], 'value', 'NULL', '!=')
-    ->fieldCondition($degreeMappings['field_degree_program'], 'value', 'NULL', '!=')
-    ->fieldCondition($degreeMappings['field_academic_plan'], 'value', 'NULL', '!=')
-    ->fieldCondition($degreeMappings['field_degree_program'], 'value', 'graduate', '=')
-    ->fieldOrderBy($degreeMappings['field_degree_awarded'], 'value', 'ASC')
-    ->addMetaData('account', user_load(1)); // Run the query as user 1.
-  $result = $query->execute();
-  if (isset($result['node'])) {
-    $items_nids = array_keys($result['node']);
-    $items = entity_load('node', $items_nids);
-  }
-  // Build program results list (array)
-  $program_results = array();
-  if (isset($items)) {
-    $program_results = _asu_rfi_get_program_results($items);
-  }
-  return $program_results;
-}
-
-/**
- * Get programs from query results
- * @param array $items - array of nodes to pull program information from
- * @return array $out - list of programs
- */
-function _asu_rfi_get_program_results($items) {
-  $degreeMappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
-  $program_results = array();
-  foreach ($items as $nid => $program) {
-    $program_wrapper = entity_metadata_wrapper('node', $program);
-    $program_abbr = $program_wrapper->{$degreeMappings['field_degree_awarded']}->value();
-    $program_plan_code = $program_wrapper->{$degreeMappings['field_academic_plan']}->value();
-    // Abbr in value matches how we present name in get programs Views Datasource View.
-    $program_results[$program_plan_code] = $program_abbr;
-  }
-  return $program_results;
-}
-
-/**
- * Return desired programs from list of nodes OR list of programs, depending in $data_type
- * @param $result_nodes
- * @param (str) $data_type - Must be 'programs' or 'desiredProg'
- * @return array
- */
-function _asu_rfi_get_program_codes($result_nodes, $data_type) {
-  $degreeMappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
-  $program_nids = array_keys($result_nodes);
-  $programs = entity_load('node', $program_nids);
-  $programs = reset($programs);
-  $programs = (array) $programs;
-  /** @noinspection PhpUnusedLocalVariableInspection */
-  $desiredProg = array(
-    'code' => $programs[$degreeMappings['field_academic_plan']]['und']['0']['value'],
-    'vid' => $programs['vid'],
-    'title' => $programs['title'],
-    'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
-  );
-  $out = ${$data_type};
-  return $out;
 }
 
 /*********************************************************************
@@ -1395,149 +1145,76 @@ function asu_rfi_preprocess_page(&$variables) {
   }
 }
 
-/**
- * CURL options for JSON feed pulls in data inc files
- */
-function _asu_rfi_get_curl_auth() {
-  return array(
-    'Content-Type: text/json',
-    'Authorization: Basic 7755:e7acf2e698751f4cac11718d97df6ebf64b94372'
-  );
-}
+/*********************************************************************
+ * HELPERS (Model/data building
+ *********************************************************************/
 
 /**
- * Check if any options (valid or not) still exist from past pulls so it can
- * possibly (at least partially) function?
+ * Queries the degrees in order to configure the location element of the form.
+ * @param array $pcodes A list of the plan codes used in the RFI form
+ * @return mixed $campusOptions An array of the available campuses
  */
-function _asu_rfi_check_form_values($db_tbl) {
-  $query = Database::getConnection('default')
-    ->select($db_tbl);
-  $result = $query->countQuery()
-    ->execute()
-    ->fetchField();
-  return (int) $result;
-}
+function _asu_rfi_campus_location_options($pcodes) {
+  $degree_mappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
+  $asu_online_list = _asu_rfi_parse_programs();
 
-/**
- * Validation - phone numbers
- * @param $email
- * @param $phone
- */
-function _asu_rfi_validate_electronic_contacts($email, $phone) {
-  if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)*(\.[a-zA-Z]{2,6})+$/", $email)) {
-    form_set_error('email', t('You entered an invalid email.'));
-  }
-  /** If mobile number field is checked, then check for USA format, else check for special characters **/
-  $scam_num = substr($phone, 0, 3);
-  if (!empty($mobile_check) && $mobile_check != 0) {
-    if (!preg_match("/^([1]-)?([0-9]{3}[-|.][0-9]{3}[-|.][0-9]{4})$/i", $phone) || ($scam_num == "555")) {
-      form_set_error('phone', t('You entered an invalid Phone number.'));
+  $campus_location_options = array();
+
+  foreach ($pcodes as $code => $prog) {
+    $onlineError = FALSE;
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', $degree_mappings['content_type'])
+      ->fieldCondition($degree_mappings['field_academic_plan'], 'value', $code)
+      ->range(0, 10)
+      ->addMetaData('account', user_load(1)); // Run the query as user 1.
+    $result = $query->execute();
+
+    if (isset($result['node'])) {
+      $result_nodes = $result['node'];
+      $desiredProg = _asu_rfi_get_program_codes($result_nodes, 'desiredProg');
+      $availableOnline = _asu_rfi_program_online_availability($desiredProg['code'], $asu_online_list);
+
+      $locations = $desiredProg['locations'];
+      if ($locations) {
+        foreach ($locations as $location) {
+          $hasOnline = FALSE;
+          if ($location['value'] == "Online") {
+            $hasOnline = TRUE;
+          }
+          if ((($hasOnline == TRUE && $availableOnline == TRUE) || ($hasOnline == FALSE))
+            && !in_array($location['value'], $campus_location_options)) {
+            array_push($campus_location_options, $location['value']);
+          } else {
+            if ($hasOnline == TRUE && $availableOnline == FALSE) {
+              $onlineError = TRUE;
+              for ($i = 0; $i < sizeof($desiredProg['locations']); $i++) {
+                if ($desiredProg['locations'][$i]['value'] == 'Online') {
+                  unset($desiredProg['locations'][$i]);
+                }
+              }
+            }
+          }
+        }
+      }
+      _asu_rfi_add_program_data_js($desiredProg);
     }
+    if ($onlineError == TRUE) {
+      global $user;
+      $desiredProgram = (isset($desiredProg) && isset($desiredProg['title'])) ? $desiredProg['title'] : '';
+      if (in_array('administrator', $user->roles)) {
+        drupal_set_message("This degree program(" . $desiredProgram
+          . ") is not yet fully online. We may need more details from you to complete
+          its launch. Please email EdPlus@asu.edu for more information.", 'error');
+      }
+    }
+  }
+
+  if (sizeof($campus_location_options) == 0) {
+    return FALSE;
   }
   else {
-    if (!preg_match("/^[0-9.\s-_+()]+$/", $phone) || ($scam_num == "555")) {
-      form_set_error('phone', t('You entered an invalid Phone number.'));
-    }
-  }
-}
-
-/**
- * Validation - Birthdate
- * @param $birthdate
- */
-function _asu_rfi_validate_birthdate($birthdate) {
-  //get number of occurences of '/' in dob
-  $slashes = substr_count($birthdate, '/');
-  if ($slashes == 2) {
-    $date_format = explode('/', $birthdate);
-    $month = $date_format[0];
-    $day = $date_format[1];
-    $year = $date_format[2];
-    $current_year = date('Y');
-    $year_limit = $current_year - 1;
-    $isLeapYear = date('L');
-
-    if (strlen($birthdate) < 11) {
-      if (($month < 1) || ($month > 12)) {
-        form_set_error('birthdate', t('Month range has to be between 1 and 12.'));
-        form_set_error('dob_field', t(' '));
-      }
-
-      if (($month == 1) || ($month == 3) || ($month == 5) || ($month == 7) || ($month == 8) || ($month == 10) || ($month == 12)) {
-        if (($day < 1) || ($day > 31)) {
-          form_set_error('birthdate', t('Date range has to be between 1 and 31.'));
-          form_set_error('dob_field', t(' '));
-        }
-      }
-
-      if (($month == 4) || ($month == 6) || ($month == 9) || ($month == 11)) {
-        if (($day < 1) || ($day > 30)) {
-          form_set_error('birthdate', t('Date range has to be between 1 and 30.'));
-          form_set_error('dob_field', t(' '));
-        }
-      }
-
-      if ($month == 2) {
-        if ($isLeapYear == 1) {
-          if (($day < 1) || ($day > 29)) {
-            form_set_error('birthdate', t('Date range has to be between 1 and 29.'));
-            form_set_error('dob_field', t(' '));
-          }
-        }
-        if ($isLeapYear == 0) {
-          if (($day < 1) || ($day > 28)) {
-            form_set_error('birthdate', t('Date range has to be between 1 and 28.'));
-            form_set_error('dob_field', t(' '));
-          }
-        }
-      }
-
-      if (strlen($year) != 4) {
-        form_set_error('birthdate', t('Year has to be 4 digits.'));
-      }
-
-      if ($year > $year_limit) {
-        form_set_error('birthdate', t('Year cannot be greater than ' . $year_limit));
-      }
-
-      if (!preg_match("/^(0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])[\-\/.](19|20)\d\d$/", $birthdate)) {
-        form_set_error('birthdate', t('Date of birth accepts the format mm/dd/yyyy.'));
-        form_set_error('dob_field', t(' '));
-      }
-
-    } else {
-      form_set_error('birthdate', t('Date of birth is invalid, it accepts the format mm/dd/yyyy.'));
-      form_set_error('dob_field', t(' '));
-    }
-  } else {
-    form_set_error('birthdate', t('Date of birth is invalid, it accepts the format mm/dd/yyyy.'));
-    form_set_error('dob_field', t(' '));
-  }
-}
-
-/**
- * Validation - ZIP Codes
- * @param $country
- * @param $zip
- */
-function _asu_rfi_validate_zipcode($country, $zip) {
-  if ($country == "United States") {
-    if ((strlen($zip) < 5)) {
-      form_set_error('zipcode', t('Postal code cannot be less than 5 digits.'));
-    }
-    if (!preg_match('/^[0-9]{5}+$/', $zip)) {
-      form_set_error('zipcode', t('Postal code accepts 5 digits only.'));
-    }
-  } else {
-    if (!preg_match("/^[a-zA-Z0-9\s-]+$/", $zip)) {
-      form_set_error('zipcode', t('Postal code is not valid.'));
-    }
-    if ((strlen($zip) < 4)) {
-      form_set_error('zipcode', t('Postal code cannot be less than 4 characters.'));
-    }
-    if (strlen($zip) > 20) {
-      form_set_error('zipcode', t('Postal code cannot be longer than 20 characters.'));
-    }
+    return $campus_location_options;
   }
 }
 
@@ -1547,7 +1224,7 @@ function _asu_rfi_validate_zipcode($country, $zip) {
  * @return string
  * @TODO pull in from feed to stay up to date
  */
-function _asu_rfi_correct_campus_id($campus) {
+function _asu_rfi_get_correct_campus_id($campus) {
   switch ($campus) {
     case "Tempe":
       $campusId = "TEMPE";
@@ -1580,12 +1257,233 @@ function _asu_rfi_correct_campus_id($campus) {
 }
 
 /**
+ * Returns mappings between ASU RFI node fields and degree module(s) fields
+ *
+ * Example usage:
+ * $degreeMappings = _asu_rfi_get_degree_mappings();
+ * $degreeContentType = $degreeMappings['content_type'];
+ */
+function _asu_rfi_degree_field_mappings() {
+  $map = &drupal_static(__FUNCTION__);
+  // Swap out mapping values based on module enabled.
+  // ASU AP takes priority, but default is to ASU
+  // Degrees (deprecated);
+  if (!isset($map)) {
+    if (module_exists('asu_ap')) {
+      $map = array(
+        // Content Type
+        'content_type' => 'asu_ap',
+        // Tables
+        'table_asu_academic_plan' => 'field_data_field_asu_ap_acad_plan',
+        'table_asu_academic_program' => 'field_data_field_asu_ap_acad_prog',
+        'table_asu_degree_awarded' => 'field_data_field_asu_ap_awarded',
+        'table_asu_degree_program' => 'field_data_field_asu_ap_program',
+        'table_asu_diploma_description' => 'field_data_field_asu_ap_diploma_desc',
+        // Fields
+        'field_academic_plan' => 'field_asu_ap_acad_plan',
+        'field_academic_plan_value' => 'field_asu_ap_acad_plan_value',
+        'field_academic_program' => 'field_asu_ap_acad_prog',
+        'field_academic_program_value' => 'field_asu_ap_acad_prog_value',
+        'field_degree_awarded' => 'field_asu_ap_awarded',
+        'field_degree_awarded_value' => 'field_asu_ap_awarded_value',
+        'field_degree_campus' => 'field_asu_ap_campus',
+        'field_degree_program' => 'field_asu_ap_program',
+        'field_degree_program_value' => 'field_asu_ap_program_value',
+        'field_diploma_description' => 'field_asu_ap_diploma_desc',
+        'field_diploma_description_value' => 'field_asu_ap_diploma_desc_value',
+      );
+    } else { // asu_degrees
+      $map = array(
+        // Content Type
+        'content_type' => 'asu_degree',
+        // Tables
+        'table_asu_academic_plan' => 'field_data_field_asu_academic_plan',
+        'table_asu_academic_program' => 'field_data_field_asu_academic_program',
+        'table_asu_degree_awarded' => 'field_data_field_asu_degree_awarded',
+        'table_asu_degree_program' => 'field_data_field_asu_degree_program',
+        'table_asu_diploma_description' => 'field_data_field_asu_diploma_description',
+        // Fields
+        'field_academic_plan' => 'field_asu_academic_plan',
+        'field_academic_plan_value' => 'field_asu_academic_plan_value',
+        'field_academic_program' => 'field_asu_academic_program',
+        'field_academic_program_value' => 'field_asu_academic_program_value',
+        'field_degree_awarded' => 'field_asu_degree_awarded',
+        'field_degree_awarded_value' => 'field_asu_degree_awarded_value',
+        'field_degree_campus' => 'field_asu_degree_campus',
+        'field_degree_program' => 'field_asu_degree_program',
+        'field_degree_program_value' => 'field_asu_degree_program_value',
+        'field_diploma_description' => 'field_asu_diploma_description',
+        'field_diploma_description_value' => 'field_asu_diploma_description_value',
+      );
+    }
+  }
+  return $map;
+}
+
+/**
+ * Returns all active status program nodes
+ * @return array where key is nid and value is program focus (program code +
+ *   program plan code)
+ * @throws \EntityFieldQueryException
+ * @TODO Probably will want to remove, or edit to use new program gathering logic.
+ */
+function _asu_rfi_get_undergrad_program_nodes() {
+  // Get degree mappings to grab content type specific values
+  $degreeMappings = _asu_rfi_degree_field_mappings();
+  // Get the degree types from the database
+  $program_type = db_query('SELECT DISTINCT ' . $degreeMappings['field_degree_program_value']
+    . ' from ' . $degreeMappings['table_asu_degree_program']);
+  // Set the variables so they can be used to show degree programs based on the form
+  // type selections above in block settings
+  foreach ($program_type as $programs) {
+    $degreetype = $programs->{$degreeMappings['field_degree_program_value']};
+    if ($degreetype == "undergrad") {
+      variable_set('asu_rfi_ugrad_degree_type', $degreetype);
+    }
+    if ($degreetype == "graduate") {
+      variable_set('asu_rfi_graduate_degree_type', $degreetype);
+    }
+  }
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $degreeMappings['content_type'])
+    ->propertyCondition('status', 1)
+    ->fieldCondition($degreeMappings['field_degree_awarded'], 'value', 'NULL', '!=')
+    ->fieldCondition($degreeMappings['field_academic_program'], 'value', 'NULL', '!=')
+    ->fieldCondition($degreeMappings['field_academic_plan'], 'value', 'NULL', '!=')
+    ->fieldCondition($degreeMappings['field_degree_program'], 'value', 'undergrad', '=')
+    ->fieldOrderBy($degreeMappings['field_degree_awarded'], 'value', 'ASC')
+    ->addMetaData('account', user_load(1)); // Run the query as user 1.
+  $result = $query->execute();
+
+  // Build program results (array)
+  $program_entities = array();
+  if (isset($result['node'])) {
+    $items_nids = array_keys($result['node']);
+    $items = entity_load('node', $items_nids);
+    $program_entities = _asu_rfi_get_program_results($items);
+  }
+
+  return $program_entities;
+}
+
+/**
+ * Get grad programs if any exist
+ * @throws \EntityFieldQueryException
+ */
+function _asu_rfi_get_grad_programs() {
+  $degreeMappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $degreeMappings['content_type'])
+    ->propertyCondition('status', 1)
+    ->fieldCondition($degreeMappings['field_degree_awarded'], 'value', 'NULL', '!=')
+    ->fieldCondition($degreeMappings['field_degree_program'], 'value', 'NULL', '!=')
+    ->fieldCondition($degreeMappings['field_academic_plan'], 'value', 'NULL', '!=')
+    ->fieldCondition($degreeMappings['field_degree_program'], 'value', 'graduate', '=')
+    ->fieldOrderBy($degreeMappings['field_degree_awarded'], 'value', 'ASC')
+    ->addMetaData('account', user_load(1)); // Run the query as user 1.
+  $result = $query->execute();
+  if (isset($result['node'])) {
+    $items_nids = array_keys($result['node']);
+    $items = entity_load('node', $items_nids);
+  }
+  // Build program results list (array)
+  $program_results = array();
+  if (isset($items)) {
+    $program_results = _asu_rfi_get_program_results($items);
+  }
+  return $program_results;
+}
+
+/**
+ * Get programs from query results
+ * @param array $items - array of nodes to pull program information from
+ * @return array $out - list of programs
+ */
+function _asu_rfi_get_program_results($items) {
+  $degreeMappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
+  $program_results = array();
+  foreach ($items as $nid => $program) {
+    $program_wrapper = entity_metadata_wrapper('node', $program);
+    $program_abbr = $program_wrapper->{$degreeMappings['field_degree_awarded']}->value();
+    $program_plan_code = $program_wrapper->{$degreeMappings['field_academic_plan']}->value();
+    // Abbr in value matches how we present name in get programs Views Datasource View.
+    $program_results[$program_plan_code] = $program_abbr;
+  }
+  return $program_results;
+}
+
+/**
+ * Return desired programs from list of nodes OR list of programs, depending in $data_type
+ * @param $result_nodes
+ * @param (str) $data_type - Must be 'programs' or 'desiredProg'
+ * @return array
+ */
+function _asu_rfi_get_program_codes($result_nodes, $data_type) {
+  $degreeMappings = _asu_rfi_degree_field_mappings(); // Get degree mappings to grab content type specific values
+  $program_nids = array_keys($result_nodes);
+  $programs = entity_load('node', $program_nids);
+  $programs = reset($programs);
+  $programs = (array) $programs;
+  /** @noinspection PhpUnusedLocalVariableInspection */
+  $desiredProg = array(
+    'code' => $programs[$degreeMappings['field_academic_plan']]['und']['0']['value'],
+    'vid' => $programs['vid'],
+    'title' => $programs['title'],
+    'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
+  );
+  $out = ${$data_type};
+  return $out;
+}
+
+/**
+ * Compares the degree feed programs listed with online availability, using the
+ * cached Get Programs API list.
+ * @param string $programsFromDegreeFeed The current program
+ * @param array $getProgramsAPIList The cached list of programs currently available with ASU Online. Cached Daily
+ * @return boolean $available True False value determining whether it can be handled by ASU Online.
+ */
+function _asu_rfi_program_online_availability($programsFromDegreeFeed, $getProgramsAPIList) {
+  $available = FALSE;
+  if ($getProgramsAPIList !== FALSE) {
+    foreach ($getProgramsAPIList as $item) {
+      if ($programsFromDegreeFeed == $item->plancode) {
+        $available = TRUE;
+      }
+    }
+  }
+  return $available;
+}
+
+/**
+ * Adds program data to a JS object available to the form
+ * @param array $desiredProg The current program
+ */
+function _asu_rfi_add_program_data_js($desiredProg) {
+  drupal_add_js(
+    array(
+      'asu_rfi' => array(
+        'degrees' => array(
+          $desiredProg['vid'] => array(
+            'code' => $desiredProg['code'],
+            'title' => $desiredProg['title'],
+            'locations' => $desiredProg['locations'],
+          )
+        )
+      )
+    ), 'setting');
+}
+
+/**
  * Get career summary data
  * // UNUSED??
  * @param $data
  * @return array|string
  */
-function _asu_rfi_career($data) {
+function _asu_rfi_get_career_data($data) {
   foreach ($data as $var_arr) {
     foreach ($var_arr["careerData"] as $career_summary) {
       $career_data_title = $career_summary["careerDataOnetTitle"];
@@ -1609,6 +1507,114 @@ function _asu_rfi_career($data) {
 }
 
 /**
+ * Detect the user's OS. // WHY? UNUSED.
+ * @return int|string
+ */
+function _asu_rfi_detect_os() {
+  $current_os = "unknown";
+  $os_list = array(
+    'Windows 7' => '(Windows NT 6\.1)',
+    'Windows Vista' => '(Windows NT 6\.0)',
+    'Windows XP' => '(Windows NT 5\.1)|(Windows XP)',
+    'Mac OS' => '(Mac_PowerPC)|(Macintosh)',
+    'Linux' => '(Linux)|(X11)',
+    'Search Bot' => '(nuhk)|(Googlebot)|(Yammybot)|(Openbot)|(Slurp)|(MSNBot)|(Ask Jeeves\/Teoma)|(ia_archiver)',
+    'Windows 3.11' => 'Win16',
+    'Windows 95' => '(Windows 95)|(Win95)|(Windows_95)',
+    'Windows 98' => '(Windows 98)|(Win98)',
+    'Windows 2000' => '(Windows NT 5\.0)|(Windows 2000)',
+    'Windows Server 2003' => '(Windows NT 5\.2)',
+    'Windows NT 4.0' => '(Windows NT 4\.0)|(WinNT4\.0)|(WinNT)|(Windows NT)',
+    'Windows ME' => '(Windows 98)|(Win 9x 4\.90)|(Windows ME)',
+    'Open BSD' => 'OpenBSD',
+    'Sun OS' => 'SunOS',
+    'QNX' => 'QNX',
+    'BeOS' => 'BeOS',
+    'OS/2' => 'OS\/2'
+  );
+
+  if (isset($_SERVER['HTTP_USER_AGENT'])) {
+    foreach ($os_list as $current_os => $match) {
+      if (preg_match('#' . $match . '#i', $_SERVER['HTTP_USER_AGENT'])) {
+        break;
+      }
+    }
+  }
+  return $current_os;
+}
+
+/**
+ * Detect the user's browser.
+ * @return string
+ */
+function _asu_rfi_detect_browser() {
+  $browser = 'unknown';
+  if (isset($_SERVER['HTTP_USER_AGENT'])) {
+    $u_agent = $_SERVER['HTTP_USER_AGENT'];
+    if (stripos($u_agent, 'MSIE') !== FALSE) {
+      $browser = "IE";
+    }
+    elseif (stripos($u_agent, 'Chrome') !== FALSE) {
+      $browser = "Chrome";
+    }
+    elseif (stripos($u_agent, 'Firefox') !== FALSE) {
+      $browser = "Firefox";
+    }
+    elseif (stripos($u_agent, 'Safari') !== FALSE) {
+      $browser = "Safari";
+    }
+    elseif (stripos($u_agent, 'Flock') !== FALSE) {
+      $browser = "Flock";
+    }
+    elseif (stripos($u_agent, 'Opera') !== FALSE) {
+      $browser = "Opera";
+    }
+  }
+  return $browser;
+}
+
+/**
+ * Determine type of environment (live or testing)
+ * @return string $environ - Name of the environment. dev, qa, or prod
+ */
+function _asu_rfi_detect_environment() {
+  $environ = &drupal_static(__FUNCTION__);
+  if (!isset($environ)) {
+    global $base_url;
+    if ((strpos($base_url, 'https://localhost') > 0) || (strpos($base_url, 'http://localhost') > 0)) {
+      $environ = 'dev';
+    }
+    elseif ((strpos($base_url, 'https://dev-') > 0) || (strpos($base_url, 'http://dev-') > 0) || (strpos($base_url, '-dev') > 0)) {
+      $environ = 'dev';
+    }
+    elseif ((strpos($base_url, 'https://qa-') > 0) || (strpos($base_url, 'http://qa-') > 0) || (strpos($base_url, '-qa') > 0)) {
+      $environ = 'qa';
+    }
+    elseif ((strpos($base_url, 'https://test-') > 0) || (strpos($base_url, 'http://test-') > 0)) {
+      $environ = 'qa';
+    }
+    else {
+      $environ = 'unknown';
+    }
+  }
+  return $environ;
+}
+
+/***************************
+ * For asu_rfi.pages.inc, other includes
+ ***************************/
+
+/**
+ * CURL options for JSON feed pulls in data inc files
+ */
+function _asu_rfi_get_curl_auth() {
+  return array(
+    'Content-Type: text/json',
+    'Authorization: Basic 7755:e7acf2e698751f4cac11718d97df6ebf64b94372'
+  );
+}
+
+/**
  * Create and deliver email receipt to admin about failed SF submissions
  * @param $to_email
  * @param $nid
@@ -1619,7 +1625,7 @@ function _asu_rfi_failed_post_email($to_email, $nid = 0) {
   // form submission posting vs. hook_cron() running
   $content = ($nid != 0)
     ? "The following <a href='https://$host/node/$nid'>submission</a> from " . $_SERVER['HTTP_HOST']
-      . " has a problem and hasn't been submitted to middleware."
+    . " has a problem and hasn't been submitted to middleware."
     : "The site " . $_SERVER['HTTP_HOST'] . " hasn\'t been submitting to Salesforce for at least 2 days.";
   $subject = "Failed submissions to SalesForce from " . $_SERVER['HTTP_HOST'];
   $my_module = 'mimemail';
