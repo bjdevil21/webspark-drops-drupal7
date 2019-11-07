@@ -15,7 +15,7 @@
                 //The field name sent to the Lead API should be enterpriseclientid
                 //You can use an existing field or create it dynamically
                 console.log('this');
-                $('input[name="enterpriseclientid"]').val(gaIds[i].get('clientId'));
+                $('input[name="enterpriseclientid"]').attr({'data-test':'valuable'}).val(gaIds[i].get('clientId'));
                 console.log(gaIds[i].valueOf('trackingId'));
                 console.log(gaIds[i].b.data.trackingId);
                 console.log(gaIds[i].valueOf('clientId'));
