@@ -341,8 +341,8 @@ function asu_rfi_form_data($form, &$form_state) {
 
 
 /**
- * Validation handler for the MULTIFORM form, as defined by asu_rfi_form_data()
- * // NOT SURE THIS IS GETTING USED??
+ * MULTIFORM (BOTH) - Validation handler
+ * // NOT GETTING USED??
  *
  * @param $form
  * @param $form_state
@@ -392,7 +392,6 @@ function asu_rfi_form_data_validate($form, &$form_state) {
     form_set_error('dob_field', t(' '));
   }
 }
-
 
 /**
  * MULTIFORM (BOTH) - SUBMIT handler, as defined by the form from asu_rfi_form_data().
@@ -1510,14 +1509,12 @@ function asu_rfi_long_form_data_validate($form, &$form_state) {
 }
 
 /**
- * LONG FORM submit handler (undergrad or graduate)
+ * LONG FORM - SUBMIT handler (undergrad or graduate)
  * @param $form
  * @param $form_state
  */
 function asu_rfi_long_form_data_submit($form, &$form_state) {
-
   global $user;
-
   $degreeMappings = _asu_rfi_degree_field_mappings();
 
   // Get the type of the form. If the form is grad form, set prospect_level

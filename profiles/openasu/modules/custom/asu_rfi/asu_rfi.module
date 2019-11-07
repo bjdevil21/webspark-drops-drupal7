@@ -1568,6 +1568,35 @@ function _asu_rfi_correct_campus_id($campus) {
 }
 
 /**
+ * Get career summary data
+ * // UNUSED??
+ * @param $data
+ * @return array|string
+ */
+function _asu_rfi_career($data) {
+  foreach ($data as $var_arr) {
+    foreach ($var_arr["careerData"] as $career_summary) {
+      $career_data_title = $career_summary["careerDataOnetTitle"];
+      $growth = $career_summary["careerDataGrowth"];
+      $median = $career_summary["careerDataSalary"];
+
+      if (!empty($growth)) {
+        $growth = $growth . "%";
+      }
+      if ($growth < 0) {
+        $growth = "";
+      }
+      if (empty($median)) {
+        $median = "not available";
+      }
+      $career_option[] = "<tr><td>" . $career_data_title . "&nbsp;&nbsp;&nbsp;&nbsp;</td><td>" . $growth . "</td><td>" . $median . "</td></tr>";
+    }
+  }
+  $option = (isset($career_option)) ? $career_option : '';
+  return $option;
+}
+
+/**
  * Create and deliver email receipt to admin about failed SF submissions
  * @param $to_email
  * @param $nid
