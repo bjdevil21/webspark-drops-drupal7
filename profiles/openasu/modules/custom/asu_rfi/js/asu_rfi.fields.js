@@ -8,7 +8,6 @@
           ga(function () {
             //var extraFields = "";
             var gaIds = ga.getAll();
-            console.log(gaIds.trackingId);
             var i, size, match;
             for (i = 0, size = gaIds.length, match = 0; i < size; i++) {
               if (gaIds[i].get('trackingId') === 'UA-42798992-4') {
@@ -16,13 +15,10 @@
                 //You can use an existing field or create it dynamically
                 console.log('this');
                 $('input[name="enterpriseclientid"]').attr({'data-test':'valuable'}).val(gaIds[i].get('clientId'));
-                console.log(gaIds[i].valueOf('trackingId'));
                 console.log('trackingId');
-                console.log(gaIds[i].trackingId);
-                console.log(gaIds[i].data.trackingId);
+                console.log(gaIds[i].get('trackingId'));
                 console.log('clientId');
-                console.log(gaIds[i].valueOf('clientId'));
-                console.log(gaIds[i].data.clientId);
+                console.log(gaIds[i].get('clientId'));
                 // This counter should be equal to the number of GA accounts to be read
                 if (++match === 1)
                   break;
