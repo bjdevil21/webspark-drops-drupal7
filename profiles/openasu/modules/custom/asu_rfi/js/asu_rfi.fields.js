@@ -14,7 +14,7 @@
                 //The field name sent to the Lead API should be enterpriseclientid
                 //You can use an existing field or create it dynamically
                 var ga_id = gaIds[i].get('clientId');
-                $('input[name="enterpriseclientid"]').val(gaIds[i].get('clientId'));
+                $('input[name="enterpriseclientid"]').val(ga_id);
                 // This counter should be equal to the number of GA accounts to be read
                 if (++match === 1)
                   break;
