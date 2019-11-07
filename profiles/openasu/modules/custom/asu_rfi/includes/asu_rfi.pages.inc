@@ -1,4 +1,6 @@
-<?php /** @noinspection SqlDialectInspection */
+<?php /** @noinspection PhpInconsistentReturnPointsInspection */
+/** @noinspection PhpUnused */
+/** @noinspection SqlDialectInspection */
 /** @noinspection SqlNoDataSourceInspection */
 /** @noinspection PhpIllegalStringOffsetInspection */
 /** @noinspection HtmlUnknownTarget */
@@ -24,6 +26,8 @@ module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_undergrad_post');
 
 /**
  * Implementation of hook_form().
+ * @param $delta
+ * @return array|mixed
  */
 function asu_rfi_form($delta) {
   // MULTIFORM - Form definition
@@ -889,6 +893,10 @@ function asu_rfi_second_form_submit($form, &$form_state) {
  * using entity_metadata_wrapper().
  *
  * @param $entity - submission entity/node
+ * @param $form_state
+ * @param $multi_form_type
+ * @param $dob_date
+ * @param $unique_id -
  */
 function _asu_rfi_update_submission_future_fields($entity, $form_state, $multi_form_type, $dob_date, $unique_id) {
   $wrapper = entity_metadata_wrapper('node', $entity);
@@ -2014,7 +2022,7 @@ function asu_rfi_current_form_data_submit($form, &$form_state) {
  */
 function _asu_rfi_initial_form_settings($form_main_type) {
   drupal_add_css(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css', 'file');
-  if ($form_type === 'multiform' || $form_type === 'long_form') {
+  if ($form_main_type === 'multiform' || $form_main_type === 'long_form') {
     // Add no-store in Cache-Control to clear all data when browser back button is clicked
     drupal_add_http_header(
       'Cache-Control',

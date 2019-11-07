@@ -144,7 +144,7 @@ function asu_rfi_grad_post($data) {
   // Post data to SalesForce middleware via cURL
   ///////////////////////////////////
   try {
-    $curl = curl_init();
+    $ch = curl_init();
     $options = array(
       CURLOPT_URL => $url,
       CURLOPT_POST => 1,
@@ -153,22 +153,25 @@ function asu_rfi_grad_post($data) {
       CURLOPT_HTTPHEADER => array('Content-Type: text/json'),
       CURLOPT_SSL_VERIFYPEER => FALSE,
     );
-    curl_setopt_array($curl, $options);
+    curl_setopt_array($ch, $options);
 
     // DEBUG
-    watchdog('asu_rfi', CURLOPT_SSLVERSION, array(), WATCHDOG_DEBUG);
-    watchdog('asu_rfi', print_r($options), array(), WATCHDOG_DEBUG);
+    dpm(CURLOPT_SSLVERSION, 'curlopt_sslversion');
+    dpm($options, 'curl - options');
 
-    $response = curl_exec($curl);
-    $curl_info = curl_getinfo($curl); // Used by your drupal messages below
+    $response = curl_exec($ch);
+    $curl_info = curl_getinfo($ch); // Used by your drupal messages below
 
-    watchdog('asu_rfi', 'Middleware response: ' . $response, array(), WATCHDOG_DEBUG);
+    // DEBUG
+    dpm($response, 'curl - response');
+    dpm($curl_info, 'curl - curl_info');
 
     // Get the response from Salesforce middleware
     if (strpos($response, "-1 ") == 0) {
       $message = explode(':', $response);
     }
-
+    dpm($message, 'message');
+    
     // If the submission is not successful, update the previous submission status to Incomplete.
     if (($curl_info['http_code'] == 400) || ($curl_info['http_code'] == 500)) {
       // update error message
@@ -194,10 +197,10 @@ function asu_rfi_grad_post($data) {
       variable_set('asu_rfi_last_failure_SF_posting', time());
     }
 
-    curl_close($curl);
+    curl_close($ch);
 
     if (FALSE === $response) {
-      throw new Exception(curl_error($curl), curl_errno($curl));
+      throw new Exception(curl_error($ch), curl_errno($ch));
     }
   } catch (Exception $e) {
     trigger_error(sprintf(
