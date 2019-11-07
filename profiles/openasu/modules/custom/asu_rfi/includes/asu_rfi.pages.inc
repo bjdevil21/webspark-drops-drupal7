@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpIllegalStringOffsetInspection */
+<?php /** @noinspection SqlDialectInspection */
+/** @noinspection SqlNoDataSourceInspection */
+/** @noinspection PhpIllegalStringOffsetInspection */
 /** @noinspection HtmlUnknownTarget */
 /** @noinspection PhpUnusedParameterInspection */
 /**
@@ -467,7 +469,7 @@ function asu_rfi_form_data_submit($form, &$form_state) {
   $form_state['storage']['ip_address'] = $form_state['values']['ip_address'];
   $form_state['storage']['college_code'] = $form_state['values']['college'];
   $form_state['storage']['program_code'] = $form_state['values']['program_code'];
-  $ip_address = $form_state['values']['ip_address']; // UNUSED
+  //$ip_address = $form_state['values']['ip_address']; // UNUSED
 
   $current_time = time();
   $form_state['storage']['submit_time'] = $current_time;
@@ -811,12 +813,12 @@ function asu_rfi_second_form_submit($form, &$form_state) {
   $coded_college_code = base64_encode($form_state['storage']['college_code']);
   $coded_zip = base64_encode($zipcode);
   $coded_country = base64_encode($country);
-
-  /* If undergraduate degree is submitted, root the from to undergraduate posting function below.
- * Grab the node id of information page from admin settings page if exists and
- * redirect the user to confirmation node. If the node id doesn't exist, take
- * the user to built in confirmation page*
- */
+  /* If undergraduate degree is submitted, route the from to undergraduate posting
+   * function below.
+   * Grab the node id of information page from admin settings page if exists and
+   * redirect the user to confirmation node.
+   * If the node id doesn't exist, redirect the user to builtin confirmation page.
+   */
   if ($form_state['storage']['prospect_level'] == ASU_RFI_PROSPECT_LEVEL_UNDERGRAD) {
     asu_rfi_undergrad_post($form_state['storage']); //-- To be used in future
     $undergrad_conf_id = variable_get('asu_rfi_undergrad_confirm_node');
@@ -1547,6 +1549,7 @@ function asu_rfi_long_form_data_submit($form, &$form_state) {
   } else {
     $form_state['values']['mobile_check'] = '';
   }
+  $sms_number = $form_state['values']['mobile_check'];
 
   $address = check_plain($form_state['values']['address']);
   $city = check_plain($form_state['values']['city']);
@@ -1588,7 +1591,7 @@ function asu_rfi_long_form_data_submit($form, &$form_state) {
   // Get college name from database based on program code
   $college_name = db_query('select ' . $degreeMappings['field_diploma_description_value'] . ' from ' . $degreeMappings['table_asu_diploma_description'] . ' progn join ' . $degreeMappings['table_asu_academic_plan'] . ' plann on progn.entity_id = plann.entity_id where plann.' . $degreeMappings['field_academic_plan_value'] . ' = :plancode', array(':plancode' => $program))->fetchField();
 
-  // Create node
+  // Create new RFI submission node
   $ent_values = array(
     'type' => 'asu_rfi',
     'uid' => $user->uid,
@@ -1597,6 +1600,8 @@ function asu_rfi_long_form_data_submit($form, &$form_state) {
     'promote' => 0,
   );
   $entity = entity_create('node', $ent_values);
+
+  // Now update new RFI submission node
   $wrapper = entity_metadata_wrapper('node', $entity);
   if (isset($wrapper->title)) {
     $wrapper->title->set($f_name);
@@ -1618,6 +1623,9 @@ function asu_rfi_long_form_data_submit($form, &$form_state) {
   }
   if (isset($wrapper->field_rfi_phone)) {
     $wrapper->field_rfi_phone->set($phone);
+  }
+  if (isset($wrapper->field_rfi_sms_opted)) {
+    $wrapper->field_rfi_sms_opted->set($sms_number);
   }
   if (isset($wrapper->field_rfi_country)) {
     $wrapper->field_rfi_country->set($country);

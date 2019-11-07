@@ -144,6 +144,7 @@ function asu_rfi_undergrad_post($data) {
     // submission node and send message onto the confirmation page screen
     // if ($response == "Access Denied - hashed value does not match any registered site") {
     if (($curl_code['http_code'] == 403 || $curl_code['http_code'] == 500)) {
+      $error_message = "INIT (not set yet)";
       if (isset($node_wrapper->field_rfi_error_message)) {
         $error_message = $response;
         $node_wrapper->field_rfi_error_message->set($error_message);

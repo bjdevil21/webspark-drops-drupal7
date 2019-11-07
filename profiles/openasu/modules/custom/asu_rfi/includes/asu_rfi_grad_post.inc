@@ -173,18 +173,18 @@ function asu_rfi_grad_post($data) {
       $node_wrapper->field_rfi_submission_status->set('SF_Complete');
       $node_wrapper->field_rfi_error_message->set('');
       $node_wrapper->save();
-      // If this successfully posts to SF, the set "asu_rfi_last_failure_SF_posting"
+      // If this successfully posts to SF, set "asu_rfi_last_failure_SF_posting"
       // variable to current time.
       variable_set('asu_rfi_last_attempt_SF_posting', time());
     }
-    // If failed to post to SF, the set "asu_rfi_last_failure_SF_posting" variable
+    // If failed to post to SF, set "asu_rfi_last_failure_SF_posting" variable
     // to current time
     if (($info['http_code'] != 200)) {
       variable_set('asu_rfi_last_failure_SF_posting', time());
     }
 
     if (FALSE === $response) {
-      throw new Exception(curl_error($ch), curl_errno($ch));
+      throw new Exception(curl_error($curl), curl_errno($curl));
     }
   } catch (Exception $e) {
     trigger_error(sprintf(
