@@ -17,9 +17,9 @@
                 console.log('this');
                 $('input[name="enterpriseclientid"]').attr({'data-test':'valuable'}).val(gaIds[i].get('clientId'));
                 console.log(gaIds[i].valueOf('trackingId'));
-                console.log(gaIds[i].b.data.trackingId);
+                console.log(gaIds[i].trackingId);
                 console.log(gaIds[i].valueOf('clientId'));
-                console.log(gaIds[i].b.data.clientId);
+                console.log(gaIds[i].data.clientId);
                 // This counter should be equal to the number of GA accounts to be read
                 if (++match === 1)
                   break;
