@@ -13,13 +13,8 @@
               if (gaIds[i].get('trackingId') === 'UA-42798992-4') {
                 //The field name sent to the Lead API should be enterpriseclientid
                 //You can use an existing field or create it dynamically
-                console.log('this');
                 var ga_id = gaIds[i].get('clientId');
-                $('input[name="enterpriseclientid"]').attr({'data-enterpriseclientid':ga_id}).val(gaIds[i].get('clientId'));
-                console.log('trackingId');
-                console.log(gaIds[i].get('trackingId'));
-                console.log('clientId');
-                console.log(gaIds[i].get('clientId'));
+                $('input[name="enterpriseclientid"]').val(gaIds[i].get('clientId'));
                 // This counter should be equal to the number of GA accounts to be read
                 if (++match === 1)
                   break;
