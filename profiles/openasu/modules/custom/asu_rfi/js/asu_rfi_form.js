@@ -13,7 +13,7 @@
         } else {
           console.log(forms.length);
           console.log(forms.attr('id'));
-          location.href = forms.attr('id');
+          location.href = '#' + forms.attr('id');
         }
       });
     }
