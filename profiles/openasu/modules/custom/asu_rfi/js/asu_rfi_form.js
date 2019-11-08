@@ -8,13 +8,11 @@
         console.log($('form[id^="asu-rfi-form-data"]').length);
         console.log('this');
         console.log($(this).length);
-        console.log('this 2');
-        console.log($(this).closest("form"));
-        console.log('this 3 attr');
-        console.log($(this).closest("form").attr('id'));
-/*        location.href = ($(this).length === 0)
+        console.log('this 2 - attr id');
+        console.log($(this).attr('id'));
+        location.href = ($(this).length === 0)
           ? 'https://students.asu.edu/typeofstudent'
-          : $(this).closest("form").attr('id'); */
+          : $(this).attr('id');
       });
     }
   };
