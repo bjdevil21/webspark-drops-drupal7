@@ -1597,7 +1597,7 @@ function _asu_rfi_detect_browser() {
  * @return string $environ - Name of the environment. dev, qa, or prod
  */
 function _asu_rfi_detect_environment() {
-  dpm(PANTHEON_ENVIRONMENT, 'PANTHEON_ENVIRONMENT');
+  dpm(PANTHEON_ENVIRONMENT, __FUNCTION__ . 'PANTHEON_ENVIRONMENT');
   $environ = &drupal_static(__FUNCTION__);
   if (!isset($environ)) {
     global $base_url;
