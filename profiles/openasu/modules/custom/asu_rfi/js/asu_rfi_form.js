@@ -5,9 +5,11 @@
       // Go to div if it is go to URL if it isn't #block-asu-rfi-asu-rfi-form-block
       $('#take-me-to-rfi').on('click', function (e) {
         e.preventDefault();
-        location.href = ($('form[id^="asu-rfi-form-data"]').length === 0)
-          ? 'https://students.asu.edu/typeofstudent'
-          : $(this).closest('form').attr('id'); //
+        if ($('form[id^="asu-rfi-form-data"]').length === 0) {
+          location.href = 'https://students.asu.edu/typeofstudent';
+        } else {
+          location.href = $(this).closest('form').attr('id');
+        }
       });
     }
   };
