@@ -5,14 +5,9 @@
       // Go to div if it is go to URL if it isn't #block-asu-rfi-asu-rfi-form-block
       $('#take-me-to-rfi').on('click', function (e) {
         e.preventDefault();
-        console.log($('form[id^="asu-rfi-form-data"]').length);
-        console.log('this');
-        console.log($(this).length);
-        console.log('this 2 - attr id');
-        console.log($(this).attr('id'));
-        location.href = ($(this).length === 0)
+        location.href = ($('form[id^="asu-rfi-form-data"]').length === 0)
           ? 'https://students.asu.edu/typeofstudent'
-          : $(this).closest('form[id^="asu-rfi-form-data"]').attr('id');
+          : $(this)[0].attr('id'); // select 1st found form to match
       });
     }
   };
