@@ -9,13 +9,11 @@
         if (forms.length === 0) {
           console.log(forms.length);
           console.log(forms.attr('id'));
-//          location.href = 'https://students.asu.edu/typeofstudent';
+          location.href = 'https://students.asu.edu/typeofstudent';
         } else {
           console.log(forms.length);
           console.log(forms.attr('id'));
-          console.log($('form[id^="asu-rfi-form-data"]').attr('id'));
-
-//          location.href = $(this).closest('form').attr('id');
+          location.href = forms.attr('id');
         }
       });
     }
