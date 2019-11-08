@@ -12,7 +12,7 @@
         console.log($(this).attr('id'));
         location.href = ($(this).length === 0)
           ? 'https://students.asu.edu/typeofstudent'
-          : $(this).attr('id');
+          : $(this).closest('form[id^="asu-rfi-form-data"]').attr('id');
       });
     }
   };
