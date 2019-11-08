@@ -7,7 +7,7 @@
         e.preventDefault();
         location.href = ($('form[id^="asu-rfi-form-data"]').length === 0)
           ? 'https://students.asu.edu/typeofstudent'
-          : $(this)[0].attr('id'); // select 1st found form to match
+          : $(this).closest('form').attr('id'); //
       });
     }
   };
