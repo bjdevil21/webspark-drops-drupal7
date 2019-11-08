@@ -6,8 +6,10 @@
       $('#take-me-to-rfi').on('click', function (e) {
         e.preventDefault();
         if ($('form[id^="asu-rfi-form-data"]').length === 0) {
+          console.log($(this).attr('id'));
           location.href = 'https://students.asu.edu/typeofstudent';
         } else {
+          console.log($(this).attr('id'));
           location.href = $(this).closest('form').attr('id');
         }
       });
