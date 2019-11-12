@@ -576,11 +576,9 @@ function asu_rfi_second_form($form, &$form_state) {
 
   // If the form in "Test Mode", add Test mode warning message markup
   _asu_rfi_form_test_mode_markup($form);
+  $thanks_msg = _asu_rfi_form_multi_part1_thanks();
+  drupal_set_message($thanks_msg, 'success', FALSE);
 
-  $form['markup'] = array(
-    '#type' => 'item',
-    '#markup' => '<div id="asu-rfi-multi-part1-thanks" style="background: green; padding:2%; color: #ffffff !important; width: 100%; text-align: justify;"><strong>Thank you for your interest in Arizona State University!</strong> We will send you information that matches your unique interests. If you would like additional information, please specify below.</div>',
-  );
   $form['citizenship'] = array(
     '#type' => 'checkbox',
     '#title' => t('I am not a U.S. citizen and do not have a green card.'),
@@ -2243,4 +2241,15 @@ function _asu_get_gdpr_markup() {
   ";
 
   return $gdpr_markup;
+}
+
+function _asu_rfi_form_multi_part1_thanks($major = 'N/A') {
+  $message = <<<EOT
+  <div class="alert alert-success">
+  <h3>Thank you for your interest in Arizona State University!</h3>
+  <p>We will send you information that matches your unique interests. If you would like additional information,
+   please specify below in the form below this program information.</p>
+  </div>
+EOT;
+  return $message;
 }
