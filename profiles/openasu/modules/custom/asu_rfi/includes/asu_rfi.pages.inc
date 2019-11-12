@@ -124,7 +124,7 @@ function asu_rfi_form_data($form, &$form_state) {
     // Form field definitions
     $form['req_header_text'] = array(
       '#type' => 'item',
-      '#markup' => '<h4>Please complete and submit the form below, and a representative will contact you about enrolling at ASU</h4>'
+      '#markup' => _asu_rfi_form_header_text(),
     );
     $form['req_helper'] = array(
       '#type' => 'item',
@@ -515,8 +515,6 @@ function asu_rfi_form_data_submit($form, &$form_state) {
       ->condition('field_rfi_uniquedata_value', $unique_id, '=')
       ->execute()
       ->fetchField();
-    /*    $get_nodeid = db_query('SELECT entity_id FROM {field_data_field_rfi_uniquedata}
-      WHERE field_rfi_uniquedata_value = :unid', array(':unid' => $unique_id))->fetchField(); */
 
     // Update ASU RFI node values
     $node = node_load($get_nodeid);
@@ -576,6 +574,8 @@ function asu_rfi_second_form($form, &$form_state) {
 
   // If the form in "Test Mode", add Test mode warning message markup
   _asu_rfi_form_test_mode_markup($form);
+
+  // Thank you for submitting first part of form messaging.
   $thanks_msg = _asu_rfi_form_multi_part1_thanks();
   drupal_set_message($thanks_msg, 'success', FALSE);
 
@@ -1016,7 +1016,7 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
   _asu_rfi_form_test_mode_markup($form);
 
   $form['req_header_text'] = array(
-    '#value' => '<h4>Please complete and submit the form below, and a representative will contact you about enrolling at ASU.</h4>'
+    '#value' => _asu_rfi_form_header_text(),
   );
   $form['req_helper'] = array(
     '#value' => '<p>Fields marked with <span style = "color:black;">*</span> are required.</p>',
@@ -1805,7 +1805,7 @@ function asu_rfi_current_form_data($form, &$form_state, $programs, $form_type) {
   _asu_rfi_form_test_mode_markup($form);
 
   $form['req_header_text'] = array(
-    '#value' => '<h4>Please complete and submit the form below, and a representative will contact you about enrolling at ASU</h4>'
+    '#value' => _asu_rfi_form_header_text(),
   );
   $form['req_helper'] = array(
     '#value' => '<p>Fields marked with <span style = "color:black;">*</span> are required.</p>',
@@ -2243,7 +2243,10 @@ function _asu_get_gdpr_markup() {
   return $gdpr_markup;
 }
 
-function _asu_rfi_form_multi_part1_thanks($major = 'N/A') {
+/**
+ * Get multiform thanks messaging for posting in site outside of the form.
+ */
+function _asu_rfi_form_multi_part1_thanks() {
   $message = <<<EOT
   <div class="alert alert-success">
   <h3>Thank you for your interest in Arizona State University!</h3>
@@ -2252,4 +2255,12 @@ function _asu_rfi_form_multi_part1_thanks($major = 'N/A') {
   </div>
 EOT;
   return $message;
+}
+
+/**
+ * Get standardized form header for all forms (excluding part 2 of the multiform).
+ * @return string
+ */
+function _asu_rfi_form_header_text() {
+  return "<h4>Please complete and submit the form below, and a representative will contact you about enrolling at ASU.";
 }
