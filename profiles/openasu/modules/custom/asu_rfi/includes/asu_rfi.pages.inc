@@ -802,6 +802,7 @@ function asu_rfi_second_form_submit($form, &$form_state) {
   $coded_college_code = base64_encode($form_state['storage']['college_code']);
   $coded_zip = base64_encode($zipcode);
   $coded_country = base64_encode($country);
+
   /* If undergraduate degree is submitted, route the from to undergraduate posting
    * function below.
    * Grab the node id of information page from admin settings page if exists and
@@ -1388,8 +1389,6 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
  * @param $form_state
  */
 function asu_rfi_long_form_data_validate($form, &$form_state) {
-
-  dpm(PANTHEON_ENVIRONMENT, __FUNCTION__ . 'PANTHEON_ENVIRONMENT');
 
   if ($form_state['input']['degree_type'] == 'graduate_longform' || $form_state['input']['location'] == 'online') {
     if (empty($form_state['input']['program_code'])) {
