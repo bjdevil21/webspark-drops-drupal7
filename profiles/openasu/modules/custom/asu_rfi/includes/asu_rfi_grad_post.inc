@@ -7,6 +7,7 @@
  */
 
 function asu_rfi_grad_post($data) {
+  global $base_url;
   $degreeMappings = _asu_rfi_degree_field_mappings();
   $form_mode = variable_get('asu_rfi_form_mode');
 
@@ -97,6 +98,8 @@ function asu_rfi_grad_post($data) {
     'campusSelection' => $campus,
   );
 
+  dpm($submission_data, __FUNCTION__ . ' - $submission_data');
+
   // But WAIT! There's custom management for Online (and ONLY online) campus people
   if(!isset($campus) && sizeof($availableCampuses) == 1
     && (ucfirst($availableCampuses[0]) == "Online")) {
@@ -122,7 +125,7 @@ function asu_rfi_grad_post($data) {
         'phone' => $data['phone'],
         'prod_test_flag' => $form_mode,
         'base_url' => $data['domain'],
-        'origin_uri' => $GLOBALS['base_url'] . '/' . request_path(),
+        'origin_uri' => $base_url . '/' . request_path(),
         'remote_nid' => $nodeid,
         'ldetect_v' => $ipAddress,
         'campaign' => $data['domain'] . '-' . $type_of_form . '-G',

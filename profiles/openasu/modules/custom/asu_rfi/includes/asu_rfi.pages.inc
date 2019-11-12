@@ -742,16 +742,9 @@ function asu_rfi_second_form_validate($form, &$form_state) {
 function asu_rfi_second_form_submit($form, &$form_state) {
   unset($_SESSION['rfi_data']);
 
-  //$f_name = check_plain($form_state['storage']['first_name']); // unused??
-  //$f_name = ucfirst(check_plain($f_name)); // unused??
-  //$l_name = check_plain($form_state['storage']['last_name']); // unused??
-  //$l_name = ucfirst(check_plain($l_name)); // unused??
-  //$phone = $form_state['storage']['phone']; // unused??
-  //$dob = check_plain($form_state['storage']['birthdate']); // unused??
   $email = check_plain($form_state['storage']['email']);
   $zipcode = check_plain($form_state['values']['zipcode']);
   $country = $form_state['storage']['country'];
-  //$semester = $form_state['storage']['semester_name']; // unused??
   $major = $form_state['storage']['prog_plan'];
   //$student_type = $form_state['storage']['student_type']; // unused??
   $address = check_plain($form_state['values']['address']);
@@ -2249,9 +2242,22 @@ function _asu_get_gdpr_markup() {
 function _asu_rfi_form_multi_part1_thanks() {
   $message = <<<EOT
   <div class="alert alert-success">
-  <h3>Thank you for your interest in Arizona State University!</h3>
+  <h4>Thank you for your interest in Arizona State University!</h4>
   <p>We will send you information that matches your unique interests. If you would like additional information,
-   please specify below in the form below this program information.</p>
+   please <a href="#asu-rfi-second-form">specify below in the form</a>, under the program information.</p>
+  </div>
+EOT;
+  return $message;
+}
+
+/**
+ * Get multiform thanks messaging for posting in site outside of the form.
+ */
+function _asu_rfi_form_multi_part2_thanks() {
+  $message = <<<EOT
+  <div class="alert alert-success">
+  <h4>Thank you for your interest in ASU.</h4>
+  <p>An ASU representative will contact you soon!</p>
   </div>
 EOT;
   return $message;
