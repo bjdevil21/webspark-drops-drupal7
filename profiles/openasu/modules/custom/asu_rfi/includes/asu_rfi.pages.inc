@@ -2237,33 +2237,6 @@ function _asu_get_gdpr_markup() {
 }
 
 /**
- * Get multiform thanks messaging for posting in site outside of the form.
- */
-function _asu_rfi_form_multi_part1_thanks() {
-  $message = <<<EOT
-  <div class="alert alert-success">
-  <h4>Thank you for your interest in Arizona State University!</h4>
-  <p>We will send you information that matches your unique interests. If you would like additional information,
-   please <a href="#asu-rfi-second-form">specify below in the form</a>, under the program information.</p>
-  </div>
-EOT;
-  return $message;
-}
-
-/**
- * Get multiform thanks messaging for posting in site outside of the form.
- */
-function _asu_rfi_form_multi_part2_thanks() {
-  $message = <<<EOT
-  <div class="alert alert-success">
-  <h4>Thank you for your interest in ASU.</h4>
-  <p>An ASU representative will contact you soon!</p>
-  </div>
-EOT;
-  return $message;
-}
-
-/**
  * Get standardized form header for all forms (excluding part 2 of the multiform).
  * @return string
  */
