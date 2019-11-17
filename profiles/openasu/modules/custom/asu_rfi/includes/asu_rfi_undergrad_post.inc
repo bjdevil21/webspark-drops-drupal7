@@ -14,6 +14,7 @@ function asu_rfi_undergrad_post($data) {
   );
   $availableCampuses = _asu_rfi_campus_location_options($nodeArr);
 
+  // Pull up RFI submission node
   $node_wrapper = entity_metadata_wrapper('node', $node);
 
   // Get information for logging
@@ -146,8 +147,16 @@ function asu_rfi_undergrad_post($data) {
 
     // Successful CURL submission to middleware
     if (($curl_info['http_code'] == 200)) {
-      watchdog('asu_rfi', 'SF SUCCESS - Posted undergrad form submission'
-        . $nid_info . ' to ' . $url, array(), WATCHDOG_INFO);
+      $curl_message = 'SF SUCCESS - Posted undergrad form submission'
+        . $nid_info . ' to ' . $url;
+      if (isset($node_wrapper->field_rfi_error_message)) {
+        $node_wrapper->field_rfi_error_message->set('');
+      }
+      if (isset($node_wrapper->field_rfi_submission_status)) {
+        $node_wrapper->field_rfi_submission_status->set('SF_Complete');
+      }
+      $node_wrapper->save();
+      watchdog('asu_rfi', $curl_message, array(), WATCHDOG_INFO);
       variable_set('asu_rfi_last_success_SF_posting', time());
     }
     // Failed CURL submission to SF middleware
@@ -155,13 +164,15 @@ function asu_rfi_undergrad_post($data) {
     // onto the confirmation page screen. And set the submission status to
     // Incomplete.
     else {
-      $error_message = (isset($node_wrapper->field_rfi_error_message))
-        ? $node_wrapper->field_rfi_error_message->value()
-        : 'cURL error - HTTP CODE: ' . $curl_info['http_code'];
+      $curl_message = (isset($node_wrapper->field_rfi_error_message))
+        ? 'SF FAILURE - cURL POST '
+        . $nid_info . ' to ' . $url . ' -- HTTP CODE: ' . $curl_info['http_code']
+        . ' - ' . $response
+        : '';
       // if ($response == "Access Denied - hashed value does not match any registered site") {
       if (($curl_info['http_code'] >= 400)) {
 
-        $node_wrapper->field_rfi_error_message->set($error_message);
+        $node_wrapper->field_rfi_error_message->set($curl_message);
         $node_wrapper->field_rfi_submission_status->set('Incomplete');  // Why wasn't this here before???
         $node_wrapper->save();
 
@@ -176,11 +187,13 @@ function asu_rfi_undergrad_post($data) {
           }
         }
       }
-      if (drupal_valid_path('admin')) {
-        drupal_set_message('Message from Middleware: ' . $error_message);
-      }
     }
     curl_close($ch);
+
+    // Output result of cURL action for admins
+    if (drupal_valid_path('admin')) {
+      drupal_set_message($curl_message);
+    }
 
     if (FALSE === $response) {
       throw new Exception(curl_error($ch), curl_errno($ch));

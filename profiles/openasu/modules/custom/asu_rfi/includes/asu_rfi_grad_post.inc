@@ -13,6 +13,7 @@ function asu_rfi_grad_post($data) {
 
   dpm($data, __FUNCTION__ . ' $data');
 
+  // Pull up RFI submission node
   $nodeid = $data['submission_nodeid'];
   $node = node_load($nodeid);
   $nodeArr = array(
@@ -34,8 +35,10 @@ function asu_rfi_grad_post($data) {
 
   // Load submission node
   $node_wrapper = entity_metadata_wrapper('node', $node);
+  // Get messaging info for logging
+  $nid_info = (isset($node_wrapper->nid)) ? ' for NID ' . $node_wrapper->nid->value() : '';
 
-  // Set current status of submission node
+  // Set current status of submission node to reflect upcoming action
   if (isset($node_wrapper->field_rfi_submission_status)) {
     if ($node_wrapper->field_rfi_submission_status->value() == "Incomplete") {
       $node_wrapper->field_rfi_submission_status->set('Pending');
@@ -46,8 +49,6 @@ function asu_rfi_grad_post($data) {
       }
     }
   }
-  // Get messaging info for logging
-  $nid_info = (isset($node_wrapper->nid)) ? ' for NID ' . $node_wrapper->nid->value() : '';
 
   // Other form value generation
   $domain = isset($data['domain']) ? $data['domain'] : $_SERVER['HTTP_HOST'];
@@ -71,12 +72,13 @@ function asu_rfi_grad_post($data) {
   $city = (isset($data['city'])) ? $data['city'] : ''; // City
   $state = (isset($data['state'])) ? $data['state'] : ''; // State
   $country = (isset($data['country'])) ? $data['country'] : ''; // country
-  // If NEITHER the USA NOR Canada, drop the address field data.
+  // If NEITHER the USA NOR Canada, drop the address fields' data.
   if ($country !== "United States" && $country !== "Canada") {
     $address = '';
     $state = '';
     $city = '';
   }
+
   $location = (isset($data['location'])) ? $data['location'] : '';
   // GA enterpriseclientid for use in EdPlus Leads submissions.
   $enterpriseclientid = (isset($data['enterpriseclientid'])) ? $data['enterpriseclientid'] : '';
@@ -185,15 +187,14 @@ function asu_rfi_grad_post($data) {
       dpm($curl_info, 'curl - curl_info');
 
       // Get the response from Salesforce middleware
-      if (strpos($response, "-1 ") == 0) {
-        $message = explode(':', $response);
-      }
+      $message = (strpos($response, "-1 ") == 0) ? explode(':', $response) : '';
 
       // DEBUG
       dpm($message, 'message');
 
       // Successful POST of submission to middleware.
       if (($curl_info['http_code'] == 200)) {
+        $curl_message = 'SF SUCCESS - Posted graduate form submission' . $nid_info . ' to ' . $url;
         if (isset($node_wrapper->field_rfi_submission_status)) {
           $node_wrapper->field_rfi_submission_status->set('SF_Complete');
         }
@@ -203,20 +204,16 @@ function asu_rfi_grad_post($data) {
         $node_wrapper->save();
         // Record time of latest successful post
         variable_set('asu_rfi_last_success_SF_posting', time());
-        watchdog('asu_rfi', 'SF SUCCESS - Posted graduate form submission' . $nid_info . ' to ' . $url,
+        watchdog('asu_rfi', $curl_message,
           array(), WATCHDOG_INFO);
       }
-      // Failed to POST to the middleware
+      // Or it failed to POST to the middleware
       else {
+        $msg = 'HTTP Code: ' . $curl_info['http_code'] . ' - See Exception error.';
         if (($curl_info['http_code'] >= 400)) { // errors !== 400
           // update error message
           if (isset($node_wrapper->field_rfi_error_message)) {
-            if (isset($message)) {
-              $msg = $message[1];
-            }
-            else {
-              $msg = 'HTTP Code: ' . $curl_info['http_code'] . ' - See Exception error.';
-            }
+            $msg = (is_array($message)) ? $message[1] : $msg;
           }
         }
         // Update the failed submission status to Incomplete.
@@ -225,15 +222,17 @@ function asu_rfi_grad_post($data) {
 
         $curl_message = 'SF FAILURE - HTTP code ' . $curl_info['http_code']
           . ' - Could not post graduate form submission' . $nid_info . ' to ' . $url;
-        if (drupal_valid_path('admin')) {
-          drupal_set_message($curl_message);
-        }
+
         watchdog('asu_rfi', $curl_message, array(), WATCHDOG_INFO);
         $node_wrapper->save();
         variable_set('asu_rfi_last_failure_SF_posting', time());
       }
 
       curl_close($ch);
+
+      if (drupal_valid_path('admin')) {
+        drupal_set_message($curl_message);
+      }
 
       if (FALSE === $response) {
         throw new Exception(curl_error($ch), curl_errno($ch));
