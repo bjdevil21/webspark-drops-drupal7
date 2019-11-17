@@ -17,7 +17,9 @@
  * Archana Puliroju (apuliroj@asu.edu)
  * Michael Samuelson (mlsamuel@asu.edu)
  * Jared Rounsavall (jrounsav@asu.edu)
- * Bryan Roseberry (aubjr@asu.edu)
+ *
+ * @maintainer
+ * Bryan Roseberry (jax@asu.edu)
  *
  * Module provides ASU RFI form submission functionality.
  */
@@ -29,10 +31,6 @@ module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_grad_post');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_undergrad_post');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_get_programs');
 
-/*********************************************************************
- * DRUPAL HOOKS (MISC/GLOBAL)
- *********************************************************************/
-
 /**
  * Implements hook_views_api().
  */
@@ -42,105 +40,6 @@ function asu_rfi_views_api() {
     'path' => drupal_get_path('module', 'asu_rfi') . '/views',
     'template path' => drupal_get_path('module', 'asu_rfi') . '/templates'
   );
-}
-
-/*****************************************
- * CRON
- *****************************************/
-
-/**
- * Implements hook_cron().
- * @throws \Exception
- */
-function asu_rfi_cron() {
-
-  asu_rfi_check_cached_programs();
-
-  // Set as system variables so we can adjust via devel/php if desired.
-  $last_ran = variable_get('asu_rfi_cron_last_ran', 0);
-  $stale_time = variable_get('asu_rfi_stale_time', 86400); // 86400 seconds == 1 day
-
-  if (($last_ran + $stale_time) < time()) { // If we last ran over $stale_time seconds ago.
-    module_load_include('inc', 'asu_rfi', 'data/asu_rfi.form_options');
-    drupal_flush_all_caches();
-
-    // Update countries DB table
-    asu_rfi_get_options_data('country');
-    // Update states DB table
-    asu_rfi_get_options_data('state_province');
-    // Update semester dates DB table
-    asu_rfi_get_options_data('rfi_dedupe_list_terms');
-
-    // Update asu_rfi_cron_last_ran time.
-    variable_set('asu_rfi_cron_last_ran', time());
-  }
-
-  // Check for unposted leads (confirmation == -1), and add them to the cron
-  // queue.
-  $queue = DrupalQueue::get('asu_rfi_failed_leads_queue');
-  $queue->deleteQueue();
-  $queue = DrupalQueue::get('asu_rfi_failed_leads_queue');
-  variable_set('asu_rfi_cron_last_ran', time());
-  // Get failed RFI Leads.
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'asu_rfi')
-    // Don't let this keep happening forever if we have permanent failure.
-    ->propertyCondition('created', array(
-      REQUEST_TIME - 864000,
-      REQUEST_TIME - 900
-    ), 'between')// Created in the last 10 days (864000 = 10(24 * 3600)).
-    ->propertyCondition('changed', array(
-      REQUEST_TIME - 864000,
-      REQUEST_TIME
-    ), 'between')// changed in the last 10 days (864000 = 10(24 * 3600)).
-    ->propertyOrderBy('created', 'DESC')
-    ->fieldCondition('field_rfi_submission_status', 'value', array(
-      'Incomplete',
-      'Pending'
-    ), 'IN')// Failed lead.
-    ->addMetaData('account', user_load(1)); // Run the query as user 1.
-  $results = $query->execute();
-
-  // Add failed leads to the cron jobs queue.
-  if (isset($results['node'])) {
-    // For each failed lead, add it to the asu_rfi_failed_leads_queue.
-    foreach ($results['node'] as $key => $failed_rfi_lead) {
-      $queue->createItem($failed_rfi_lead);
-    }
-  }
-
-  //check if the site hasn't posted submissions to salesforce for two days. If yes, send an email to administrator.
-  //Get last time site had successful submission
-  $last_sf_success = variable_get('asu_rfi_last_success_SF_posting', 0);
-  $last_sf_failure = variable_get('asu_rfi_last_failure_SF_posting', 0);
-  $timediff = $last_sf_failure - $last_sf_success;
-  $last_sf_attempt = variable_get('asu_rfi_last_attempt_SF_posting', 0);
-  $timediff_attempt = $last_sf_attempt - $last_sf_success;
-  $last_email_sent = variable_get('asu_rfi_SF_error_message_sent', 0);
-  $to_email = variable_get('asu_rfi_error_email', NULL); //get error reporting email address from rfi admin settings page
-
-  if (($last_email_sent - time()) > 86400) { // If the email was sent within 24hrs, don't send it again.
-    if (($timediff > 172800) || ($timediff_attempt > 172800)) { // greater that two days
-      if (!empty($to_email)) {
-        // send email to admin reporting the issue
-        _asu_rfi_failed_post_email($to_email, 0);
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_cron_queue_info().
- */
-function asu_rfi_cron_queue_info() {
-  // Process to repost failed leads.
-  $queues = array();
-  $queues['asu_rfi_failed_leads_queue'] = array(
-    'worker callback' => '_asu_rfi_repost_data', // Function to call each item.
-    'time' => 20, // Seconds to spend working on the queue.
-  );
-  return $queues;
 }
 
 /*********************************************************************
@@ -818,17 +717,115 @@ function _asu_rfi_validate_zipcode($country, $zip) {
   }
 }
 
+/*****************************************
+ * CRON
+ *****************************************/
+
+/**
+ * Implements hook_cron().
+ * @throws \Exception
+ */
+function asu_rfi_cron() {
+
+  asu_rfi_check_cached_programs();
+
+  // Set as system variables so we can adjust via devel/php if desired.
+  $last_ran = variable_get('asu_rfi_cron_last_ran', 0);
+  $stale_time = variable_get('asu_rfi_stale_time', 86400); // 86400 seconds == 1 day
+
+  if (($last_ran + $stale_time) < time()) { // If we last ran over $stale_time seconds ago.
+    module_load_include('inc', 'asu_rfi', 'data/asu_rfi.form_options');
+    drupal_flush_all_caches();
+
+    // Update countries DB table
+    asu_rfi_get_options_data('country');
+    // Update states DB table
+    asu_rfi_get_options_data('state_province');
+    // Update semester dates DB table
+    asu_rfi_get_options_data('rfi_dedupe_list_terms');
+
+    // Update asu_rfi_cron_last_ran time.
+    variable_set('asu_rfi_cron_last_ran', time());
+  }
+
+  // Check for unposted leads (confirmation == -1), and add them to the cron
+  // queue.
+  $queue = DrupalQueue::get('asu_rfi_failed_leads_queue');
+  $queue->deleteQueue();
+  $queue = DrupalQueue::get('asu_rfi_failed_leads_queue');
+  variable_set('asu_rfi_cron_last_ran', time());
+  // Get failed RFI Leads.
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'asu_rfi')
+    // Don't let this keep happening forever if we have permanent failure.
+    ->propertyCondition('created', array(
+      REQUEST_TIME - 864000,
+      REQUEST_TIME - 900
+    ), 'between')// Created in the last 10 days (864000 = 10(24 * 3600)).
+    ->propertyCondition('changed', array(
+      REQUEST_TIME - 864000,
+      REQUEST_TIME
+    ), 'between')// changed in the last 10 days (864000 = 10(24 * 3600)).
+    ->propertyOrderBy('created', 'DESC')
+    ->fieldCondition('field_rfi_submission_status', 'value', array(
+      'Incomplete',
+      'Pending'
+    ), 'IN')// Failed lead.
+    ->addMetaData('account', user_load(1)); // Run the query as user 1.
+  $results = $query->execute();
+
+  // Add failed leads to the cron jobs queue (passed into hook_cron_queue_info() worker)
+  if  (count($results) !== false && isset($results['node'])) {
+    // For each failed lead, add it to the asu_rfi_failed_leads_queue.
+    foreach ($results['node'] as $key => $failed_rfi_lead) {
+      $queue->createItem($failed_rfi_lead);
+    }
+  }
+
+  // If the site hasn't posted submissions to salesforce for two days, send an email to administrator.
+  $last_sf_success = variable_get('asu_rfi_last_success_SF_posting', 0);
+  $last_sf_failure = variable_get('asu_rfi_last_failure_SF_posting', 0);
+  $timediff = $last_sf_failure - $last_sf_success;
+  $last_sf_attempt = variable_get('asu_rfi_last_attempt_SF_posting', 0);
+  $timediff_attempt = $last_sf_attempt - $last_sf_success;
+  $last_email_sent = variable_get('asu_rfi_SF_error_message_sent', 0);
+  $to_email = variable_get('asu_rfi_error_email', NULL); // get error reporting email address from rfi admin settings page
+
+  if (($last_email_sent - time()) > 86400) { // If the email was sent within 24hrs, don't send it again.
+    if (($timediff > 172800) || ($timediff_attempt > 172800)) { // greater that two days
+      if (!empty($to_email)) {
+        // send email to admin reporting the issue
+        _asu_rfi_failed_post_email($to_email, 0);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function asu_rfi_cron_queue_info() {
+  // Process to repost failed leads.
+  $queues = array();
+  $queues['asu_rfi_failed_leads_queue'] = array(
+    'worker callback' => '_asu_rfi_cron_repost_data',
+    'time' => 20, // Seconds to spend working on the queue.
+  );
+  return $queues;
+}
+
 /*********************************************************************
  * CALLBACKS
  *********************************************************************/
 
 /**
- * POSTs data to Salesforce middleware for all programs and forms
+ * Attempts to POST data to Salesforce middleware for all programs and forms
  * @param $node - ASU RFI node storing the data
  * @param array $post - data to submit
  * @param string $program - program type (ugrad, grad)
  */
-function _asu_rfi_repost_data($node, $post = array(), $program = ASU_RFI_PROSPECT_LEVEL_UNDERGRAD) {
+function _asu_rfi_post_data_sf_middleware($node, $post = array(), $program = ASU_RFI_PROSPECT_LEVEL_UNDERGRAD) {
   // Global, shared fields (undergrad and graduate)
   $post['domain'] = $node->field_rfi_domain['und'][0]['value'];
   $post['first_name'] = $node->field_rfi_first_name['und'][0]['value'];
@@ -866,7 +863,6 @@ function _asu_rfi_repost_data($node, $post = array(), $program = ASU_RFI_PROSPEC
     }
     $post['semester_name'] = isset($node->field_rfi_start_term['und'][0]['value']) ? $node->field_rfi_start_term['und'][0]['value'] : '';
     asu_rfi_grad_post($post);
-    drupal_set_message('Posted graduate form submission to SF Middleware');
   }
   // Undergrad program (default)
   else {
@@ -879,25 +875,22 @@ function _asu_rfi_repost_data($node, $post = array(), $program = ASU_RFI_PROSPEC
     $post['ip_address'] = isset($node->field_rfi_ip_address['und'][0]['value']) ? $node->field_rfi_ip_address['und'][0]['value'] : '';
     $post['start_date'] = $node->field_rfi_start_term_code['und'][0]['value'];
     asu_rfi_undergrad_post($post);
-    drupal_set_message('Posted undergrad form submission to Middleware');
   }
   variable_set('asu_rfi_last_attempt_SF_posting', time());
 }
 
 /**
- * Cron worker callback for _asu_rfi_repost_data()
- * POSTs data to Salesforce when cron runs.
- * Called once for each submission.
- * @param object $data - ASU RFI node with submitted data
+ * Cron worker callback
+ * Load an RFI submission node object to attempt to repost to SF middleware
+ * Called once for each submission from the cron $queues array populated in hook_cron (createItem()).
+ * @param object $data - RFI node ID, revision ID, node type
  */
 function _asu_rfi_cron_repost_data($data) {
-  // Load and repost the RFI submissions based on the Prospect level
   $node = node_load($data->nid);
-  // if graduate submission node, try to repost it to asu_rfi_grad_post file.
   $student_type = (sizeof($node->field_rfi_prospect_level) != 0) ? $node->field_rfi_prospect_level['und'][0]['value'] : '';
   if (!empty($student_type) && ($student_type === ASU_RFI_PROSPECT_LEVEL_UNDERGRAD
       || $student_type === ASU_RFI_PROSPECT_LEVEL_GRAD)) {
-    _asu_rfi_repost_data($node, array(), $student_type);
+    _asu_rfi_post_data_sf_middleware($node, array(), $student_type);
   }
 }
 
@@ -930,7 +923,7 @@ function asu_rfi_bulk_submit_action(&$node, $context) {
   $student_type = (isset($node->field_rfi_prospect_level['und'][0]['value'])) ? $node->field_rfi_prospect_level['und'][0]['value'] : '';
   if (!empty($student_type) && ($student_type === ASU_RFI_PROSPECT_LEVEL_UNDERGRAD
       || $student_type === ASU_RFI_PROSPECT_LEVEL_GRAD)) {
-    _asu_rfi_repost_data($node, array(), $student_type);
+    _asu_rfi_post_data_sf_middleware($node, array(), $student_type);
   }
 }
 

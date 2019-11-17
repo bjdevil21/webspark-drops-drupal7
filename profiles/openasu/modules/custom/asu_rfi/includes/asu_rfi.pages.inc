@@ -1889,13 +1889,11 @@ function asu_rfi_current_form_data($form, &$form_state, $programs, $form_type) {
   return $form;
 }
 
-
 /**
  * CURRENT STUDENTS - Validate handler
  * @param $form
  * @param $form_state
  */
-
 function asu_rfi_current_form_data_validate($form, &$form_state) {
   $f_name = $form_state['values']['first_name'];
   $f_name = ucfirst($f_name);
