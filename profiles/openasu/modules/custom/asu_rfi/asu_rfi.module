@@ -826,6 +826,7 @@ function asu_rfi_cron_queue_info() {
  * @param string $program - program type (ugrad, grad)
  */
 function _asu_rfi_post_data_sf_middleware($node, $post = array(), $program = ASU_RFI_PROSPECT_LEVEL_UNDERGRAD) {
+  dpm($node, __FUNCTION__);
   // Global, shared fields (undergrad and graduate)
   $post['domain'] = $node->field_rfi_domain['und'][0]['value'];
   $post['first_name'] = $node->field_rfi_first_name['und'][0]['value'];

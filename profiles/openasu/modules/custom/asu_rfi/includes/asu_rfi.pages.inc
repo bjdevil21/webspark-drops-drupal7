@@ -62,6 +62,7 @@ function asu_rfi_form_data($form, &$form_state) {
   $start_dates = _asu_rfi_get_sem_dates();
   $country = _asu_rfi_get_country_list();
 
+  // Dates
   for ($idate = 0; $idate < 4; $idate++) {
     $date = date('Y') + $idate;
     $date_key = substr_replace($date, '', 1, -2);
@@ -339,7 +340,7 @@ function asu_rfi_form_data($form, &$form_state) {
 
 
 /**
- * MULTIFORM (BOTH) - VALIDATE handler
+ * MULTIFORM (BOTH)- VALIDATE handler
  * Defaults to FIRST FORM
  * // NOT GETTING DEFINED OR USED??
  *
@@ -560,7 +561,6 @@ function asu_rfi_second_form($form, &$form_state) {
   }
 
   $states = _asu_rfi_get_state_list();
-
   honeypot_add_form_protection($form, $form_state, array(
     'honeypot',
     'time_restriction'
@@ -731,7 +731,6 @@ function asu_rfi_second_form_validate($form, &$form_state) {
     }
   }
 }
-
 
 /**
  * MULTIFORM - SECOND FORM submit (for undergrad and grad students)
@@ -966,7 +965,6 @@ function _asu_rfi_update_multiform_submission_fields($entity, $form_state, $mult
   }
   $wrapper->save();
 }
-
 
 /**
  * LONG FORM RFI generation
