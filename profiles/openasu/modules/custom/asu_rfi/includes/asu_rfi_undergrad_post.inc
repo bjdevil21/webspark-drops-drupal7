@@ -173,7 +173,7 @@ function asu_rfi_undergrad_post($data) {
       if (($curl_info['http_code'] >= 400)) {
 
         $node_wrapper->field_rfi_error_message->set($curl_message);
-        $node_wrapper->field_rfi_submission_status->set('Incomplete');  // Why wasn't this here before???
+        //$node_wrapper->field_rfi_submission_status->set('Incomplete');  // Why wasn't this here before???
         $node_wrapper->save();
 
         // Get admin email address from admin settings page
