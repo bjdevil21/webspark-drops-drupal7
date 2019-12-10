@@ -1445,7 +1445,12 @@ function _asu_rfi_detect_source($data, $type) {
   return $server_data;
 }
 
-/** Determine College Code via manual query */
+/**
+ * Determine College Code via manual query
+ * @param array $degreeMappings
+ * @param string $prog_code - Program code
+ * @return string $result
+ */
 function _asu_rfi_get_college_code($degreeMappings, $prog_code) {
   $result = db_query(
     'select ' . $degreeMappings['field_academic_program_value'] . ' from ' .
