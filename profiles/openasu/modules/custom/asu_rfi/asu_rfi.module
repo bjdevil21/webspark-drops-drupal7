@@ -27,7 +27,7 @@
 define('ASU_RFI_PROSPECT_LEVEL_UNDERGRAD', "Undergraduate");
 define('ASU_RFI_PROSPECT_LEVEL_GRAD', "Graduate");
 
-module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_all');
+module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_to_salesforce');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_get_programs');
 
 /**
@@ -860,7 +860,7 @@ function _asu_rfi_post_data_to_middleware($node, $post = array(), $program = ASU
       $post['type_of_form'] = 'MF';
     }
     $post['semester_name'] = isset($node->field_rfi_start_term['und'][0]['value']) ? $node->field_rfi_start_term['und'][0]['value'] : '';
-    asu_rfi_grad_post($post, ASU_RFI_PROSPECT_LEVEL_GRAD);
+    asu_rfi_post_to_salesforce($post, ASU_RFI_PROSPECT_LEVEL_GRAD);
   }
   // Undergrad program (default)
   else {
@@ -872,7 +872,7 @@ function _asu_rfi_post_data_to_middleware($node, $post = array(), $program = ASU
     }
     $post['ip_address'] = isset($node->field_rfi_ip_address['und'][0]['value']) ? $node->field_rfi_ip_address['und'][0]['value'] : '';
     $post['start_date'] = $node->field_rfi_start_term_code['und'][0]['value'];
-    asu_rfi_post_all($post, ASU_RFI_PROSPECT_LEVEL_UNDERGRAD);
+    asu_rfi_post_to_salesforce($post, ASU_RFI_PROSPECT_LEVEL_UNDERGRAD);
   }
   variable_set('asu_rfi_last_attempt_SF_posting', time());
 }

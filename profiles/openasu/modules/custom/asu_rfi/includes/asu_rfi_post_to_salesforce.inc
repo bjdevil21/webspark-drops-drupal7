@@ -7,7 +7,7 @@
  * @param array $data
  * @param string $type - Undergrad or graduate
  */
-function asu_rfi_post_all($data, $type) {
+function asu_rfi_post_to_salesforce($data, $type) {
   global $base_url;
   $submission_data = array();
   $college_code = $url = $body = '';
