@@ -300,9 +300,10 @@ function asu_rfi_post_to_salesforce($data, $type) {
       }
     } catch (Exception $e) {
       $msg_added = ((int) $e->getCode() === 0) ? 'ASU RFI NOTICE: Testing SalesForce RFI
-      submissions is not possible in this web hosting environment. The SalesForce
+      submissions is not possible from ' . $base_url . ' because the SalesForce
       endpoint for testing is not reachable from this web server due to ASU network access
-      restrictions.' : '';
+      restrictions. HTTP error ' . $curl_info['http_code'] : '';
+      watchdog('asu_rfi', $msg_added, array(), WATCHDOG_ERROR);
       trigger_error(sprintf(
         'Curl failed with error #%d: %s' . $msg_added,
         $e->getCode(), $e->getMessage()),
