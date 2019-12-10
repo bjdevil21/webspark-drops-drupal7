@@ -282,10 +282,7 @@ function asu_rfi_post_to_salesforce($data, $type) {
           }
         }
 
-        dpm($node_wrapper, __FUNCTION__ . ' node_wrapper');
-        dpm($curl_message, __FUNCTION__ . ' curl_message');
         $node_wrapper->field_rfi_error_message->set($curl_message);
-        dpm($node_wrapper, __FUNCTION__ . ' node_wrapper');
         $node_wrapper->save();
 
         watchdog('asu_rfi', $curl_message, array(), WATCHDOG_ERROR);
@@ -302,25 +299,29 @@ function asu_rfi_post_to_salesforce($data, $type) {
         throw new Exception(curl_error($ch), curl_errno($ch));
       }
     } catch (Exception $e) {
-      $msg_added = ((int) $e->getCode() === 0) ? 'ASU RFI NOTICE: Testing SalesForce RFI
-      submissions is not possible from ' . $base_url . ' because the SalesForce
-      endpoint is not reachable from this web server due to ASU network access
-      restrictions. HTTP error ' . $curl_info['http_code'] : '';
-      watchdog('asu_rfi', $msg_added, array(), WATCHDOG_ERROR);
+      $msg_start = '<strong>ERROR</strong>: RFI submission failed to the Salesforce middleware at '
+        . $base_url . 'HTTP CODE ' . $curl_info['http_code'] . '. ';
+      $msg_ending = ' Please contact <a href="https://drupal.asu.edu/wcs">Web Consulting</a> for assistance.';
+      $message_final = $msg_start . (((int) $e->getCode() === 0) ? ' This may have been due to
+      ASU network access restrictions.' : '') . $msg_ending;
+      watchdog('asu_rfi', $message_final, array(), WATCHDOG_ERROR);
       trigger_error(sprintf(
-        'Curl failed with error #%d: %s' . $msg_added,
+        'Curl failed with error #%d: %s' . $message_final,
         $e->getCode(), $e->getMessage()),
         E_USER_ERROR);
     }
   }
   else { // Do not attempt a JSON submission to a SF middleware endpoint.
-    $msg_added = 'ASU RFI NOTICE: While RFI submissions can be checked in this site\'s database,
-     testing SalesForce RFI submissions is not possible from this web hosting
-     environment (' . $base_url . ') because ' . $url . ' is not reachable due
-     to ASU network access restrictions.';
-    watchdog('asu_rfi', $msg_added, array(), WATCHDOG_WARNING);
+    $message_final = 'RFI test submissions to the Salesforce middleware at ' . $url
+      . ' from (' . $base_url . ') will not work due to ASU network access restrictions.';
+    watchdog('asu_rfi', $message_final, array(), WATCHDOG_WARNING);
     if (drupal_valid_path('admin')) {
-      drupal_set_message($msg_added, 'warning');
+      drupal_set_message($message_final, 'warning');
     }
+
+    if (isset($node_wrapper->field_rfi_error_message)) {
+      $node_wrapper->field_rfi_error_message->set($message_final);
+    }
+    $node_wrapper->save();
   }
 }
