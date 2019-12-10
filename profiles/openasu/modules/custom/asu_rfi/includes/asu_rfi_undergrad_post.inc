@@ -1,11 +1,16 @@
 <?php
 
 /**
- * Post data stored in an ASU RFI node to SalesForce middleware
+ * POSTs form data to Salesforce for UNDERGRADUATE submissions.
  * Done one submission at a time.
- * @param $data
+ * @param array $data
+ * @param string $type - UGrad or Graduate (constants)
  */
-function asu_rfi_undergrad_post($data) {
+function asu_rfi_undergrad_post($data, $type) {
+  global $base_url;
+  $form_mode = variable_get('asu_rfi_form_mode');
+
+  // Pull up RFI submission node
   $degreeMappings = _asu_rfi_degree_field_mappings();
   $nid = $data['submission_nodeid'];
   $node = node_load($nid);
@@ -20,7 +25,6 @@ function asu_rfi_undergrad_post($data) {
   // Get information for logging
   $nid_info = (isset($node_wrapper->nid)) ? ' for NID ' . $node_wrapper->nid->value() : '';
 
-  // Set current status before attempt
   if (isset($node_wrapper->field_rfi_submission_status)) {
     if ($node_wrapper->field_rfi_submission_status->value() == "Incomplete") {
       $node_wrapper->field_rfi_submission_status->set('Pending');
@@ -33,98 +37,162 @@ function asu_rfi_undergrad_post($data) {
     }
   }
 
-  $mw_auth_key = variable_get('asu_rfi_form_auth_key');
-  $f_name = $data['first_name'];
-  $l_name = $data['last_name'];
-  $email = $data['email'];
-  $ipAddress = isset($data['ip_address']) ? $data['ip_address'] : $_SERVER['REMOTE_ADDR'];
-  $phone = preg_replace('[\D]', '', $data['phone']);
-  $location = $data['location'];
-  $campus = $data['campus'];
-  $state = $data['state'];
-
+  // Start building data for middleware submission
   $prog_code = $data['program_code'];
-  if ($prog_code == "" || empty($prog_code)) {
-    $prog_code = "Exploratory";
-    $college_code = null;
-  } else {
-    // Get college code from database based on program code
-    $college_code = db_query(
-      'select ' . $degreeMappings['field_academic_program_value'] . ' from ' .
-      $degreeMappings['table_asu_academic_program'] . ' prog join ' .
-      $degreeMappings['table_asu_academic_plan'] .
-      ' plan on prog.entity_id = plan.entity_id where plan.' .
-      $degreeMappings['field_academic_plan_value'] .
-      ' = :plancode',
-      array(':plancode' => $prog_code))
-      ->fetchField();
-  }
-
-  $form_mode = variable_get('asu_rfi_form_mode');
-  $hashkey = sha1($mw_auth_key . '+' . $nid);
-  $type_of_form = $data['type_of_form'];
-  $domain = isset($data['domain']) ? $data['domain'] : $_SERVER['HTTP_HOST'];
-  $source = $domain . '-' . $type_of_form . '-UG';
-  $campus = _asu_rfi_get_correct_campus_id($campus);
-
+  $campus = _asu_rfi_get_correct_campus_id($data['campus']);
+  $phone = preg_replace('[\D]', '', $data['phone']);
   $mobile = (isset($data['mobile_check']))
     ? str_replace('-', '', $data['mobile_check'])
     : ''; // mobile phone
   $dob = (isset($data['birthdate'])) ? $data['birthdate'] : ''; // date of birth
   $military = (isset($data['military'])) ? $data['military'] : '';  // Military
   $comment = (isset($data['questions'])) ? $data['questions'] : ''; // Comment
-  $city = (isset($data['city'])) ? $data['city'] : ''; // City
-  $address = (isset($data['address'])) ? $data['address'] : ''; // Address
-  $country = (isset($data['country'])) ? $data['country'] : ''; // country
-  $enterpriseclientid = (isset($data['enterpriseclientid']))
-    ? $data['enterpriseclientid'] : ''; // Enterprise clientid for EdPlus Leads
 
-  if ($location == "no_preference" &&
-    sizeof($availableCampuses) == 1 &&
-    ($availableCampuses[0] == "Online" || $availableCampuses[0] == "online")) {
-    $location = "Online";
-  }
-
-  // Compile Undergrad RFI submission data array
-  $url = "https://webforms.asu.edu/asu_rfi_dedupe/submit_rfi/$hashkey/$nid";
-  $fields = array(
-    'source_id' => $source,
-    'base_url' => $domain,
-    'prod_test_flag' => $form_mode,
-    'first_name' => $f_name,
-    'last_name' => $l_name,
-    'prospect_level' => ASU_RFI_PROSPECT_LEVEL_UNDERGRAD,
-    'student_type' => $data['student_type'],
-    'program' => $prog_code,
-    'starting_semester' => $data['start_date'],
-    'email' => $email,
-    'zip' => $data['zipcode'],
-    'phone' => $phone,
-    'birth_date' => $dob,
-    'country' => $country,
-    'sms' => $mobile,
-    'comments' => $comment,
-    'street' => $address,
-    'city' => $city,
-    'state' => $state,
-    'intnl_student' => $data['citizenship'],
-    'veteran_status' => $military,
-    'campus' => $campus,
-    'location' => $location,
-  );
-  $body = json_encode($fields);
-
-  // Alter middleware submission data IF Online program
-  if (strtolower($location) == 'online') {
-    $asuOnlineList = _asu_rfi_parse_programs();
-    $managedOnline = _asu_rfi_check_managed_online($prog_code, $asuOnlineList);
-    if ($managedOnline == true) {
-      $fields = asu_rfi_online_fields($fields, $nid, $ipAddress, $college_code, $type_of_form, $enterpriseclientid);
-      $body = json_encode($fields);
-      $fieldHash = sha1($mw_auth_key . '+' . $body);
-      $url = "https://webforms.asu.edu/asu_edplus_middleware/submit/$fieldHash";
+  $location = (isset($data['location'])) ? $data['location'] : ''; // Location
+  // Online campus check
+  if ($location === "no_preference" || $type === ASU_RFI_PROSPECT_LEVEL_GRAD) {
+    if (!isset($campus) && sizeof($availableCampuses) == 1
+      && (ucfirst($availableCampuses[0]) == "Online")) {
+      $location = "Online";
     }
   }
+
+  $address = (isset($data['address'])) ? $data['address'] : ''; // Address
+  $city = (isset($data['city'])) ? $data['city'] : ''; // City
+  $state = (isset($data['state'])) ? $data['state'] : ''; // State
+  $country = (isset($data['country'])) ? $data['country'] : ''; // country
+
+  // GA enterpriseclientid for use in EdPlus Leads submissions.
+  $enterpriseclientid = (isset($data['enterpriseclientid'])) ? $data['enterpriseclientid'] : '';
+
+  // Get authentication key
+  $mw_auth_key = variable_get('asu_rfi_form_auth_key');
+
+  // Get server diagnostic data for submissions
+  $server = _asu_rfi_detect_source($data, $type);
+
+  // Submission customization - UNDERGRAD vs GRAD
+  if ($type === ASU_RFI_PROSPECT_LEVEL_UNDERGRAD) {
+    $hashkey = sha1($mw_auth_key . '+' . $nid);
+    // Default submission URL (non-Online)
+    $url = "https://webforms.asu.edu/asu_rfi_dedupe/submit_rfi/$hashkey/$nid";
+
+    // Get college code from database based on program code
+    if ($prog_code == "" || empty($prog_code)) {
+      $prog_code = "Exploratory";
+      $college_code = null;
+    } else {
+      $college_code = _asu_rfi_get_college_code($degreeMappings, $prog_code);
+    }
+
+    // Compile DEFAULT Undergrad RFI submission data array
+    $submission_data = array(
+      'source_id' => $server['source'],
+      'base_url' => $server['domain'],
+      'prod_test_flag' => $form_mode,
+      'first_name' => $data['first_name'],
+      'last_name' => $data['last_name'],
+      'prospect_level' => ASU_RFI_PROSPECT_LEVEL_UNDERGRAD,
+      'student_type' => $data['student_type'],
+      'program' => $prog_code,
+      'starting_semester' => $data['start_date'],
+      'email' => $data['email'],
+      'zip' => $data['zipcode'],
+      'phone' => $phone,
+      'birth_date' => $dob,
+      'country' => $country,
+      'sms' => $mobile,
+      'comments' => $comment,
+      'street' => $address,
+      'city' => $city,
+      'state' => $state,
+      'intnl_student' => $data['citizenship'],
+      'veteran_status' => $military,
+      'campus' => $campus,
+      'location' => $location,
+    );
+
+    // Build default submission for email
+    $body = json_encode($submission_data);
+  }
+
+  if ($type === ASU_RFI_PROSPECT_LEVEL_GRAD) {
+    // Semester term name
+    $term = (isset($data['semester_name'])) ? $data['semester_name'] : '';
+    // If NEITHER the USA NOR Canada, drop the address fields' data.
+    if ($country !== "United States" && $country !== "Canada") {
+      $address = '';
+      $state = '';
+      $city = '';
+    }
+
+    // Select proper ENV for Salesforce GRAD POSTs.
+    // Is it a dev or qa site, or in "test mode"?
+    $environ = (array) _asu_rfi_detect_environment();
+    if (($environ['type'] === "dev") || ($environ['type'] === "qa")) {
+      $url = 'https://requestinfo-qa.asu.edu/prospect_form_post';
+    } else {
+      if ($form_mode == 'test') {
+        $url = 'https://requestinfo-qa.asu.edu/prospect_form_post';
+      }
+      else {
+        $url = 'https://requestinfo.asu.edu/prospect_form_post';
+      }
+    }
+
+    // Build DEFAULT Graduate data array for Salesforce (the camelCase field
+    // keys don't match the usual key formatting).
+    $submission_data = array(
+      'source' => $server['source'],
+      'firstName' => $data['first_name'],
+      'lastName' => $data['last_name'],
+      'emailAddress' => $data['email'],
+      'phoneNumber' => $phone,
+      'projectedEnrollment' => $term,
+      'addressLine1' => $address,
+      'city' => $city,
+      'state' => $state,
+      'countryOfResidence' => $country,
+      'birthdate' => $dob,
+      'militaryStatus' => $military,
+      'questions' => $comment,
+      'poiCode' => $prog_code,
+      'zip' => $data['zipcode'],
+      'iStudent' => $data['citizenship'],
+      'smsNumber' => $mobile,
+      'campusSelection' => $campus,
+    );
+  }
+
+  // Alter Online campus submission data
+  if (strtolower($location) === "online") {
+    if ($type === ASU_RFI_PROSPECT_LEVEL_GRAD) {
+      // Match different "Online" campus spelling
+      $submission_data['campusSelection'] = "ONLNE";
+    }
+    $asuOnlineList = _asu_rfi_parse_programs();
+    $managedOnline = _asu_rfi_check_managed_online($prog_code, $asuOnlineList);
+
+    if ($managedOnline == true) {
+      if ($type === ASU_RFI_PROSPECT_LEVEL_GRAD) {
+        $college_code = _asu_rfi_get_college_code($degreeMappings, $prog_code);
+        // Make sure all submissions to webforms.asu.edu are attempted.
+        $environ['endpoint_access'] = true;
+      }
+      $submission_data = _asu_rfi_online_fields_alter($type, $submission_data, $server, $college_code, $enterpriseclientid, $nid, $form_mode);
+      $body = json_encode($submission_data);
+      $fieldHash = sha1($mw_auth_key . '+' .  $body);
+      $url = "https://webforms.asu.edu/asu_edplus_middleware/submit/$fieldHash";
+    }
+  } else { // NOT online campus
+    foreach ($submission_data as $key_value => $result_array) {
+      if (($result_array == "None")) {
+        unset($submission_data[$key_value]);
+      }
+    }
+  }
+
+  //////////////////////////////////
 
   ///////////////////////////////////
   // Post data to SalesForce middleware via cURL
@@ -198,39 +266,11 @@ function asu_rfi_undergrad_post($data) {
     if (FALSE === $response) {
       throw new Exception(curl_error($ch), curl_errno($ch));
     }
-  } catch (Exception $e) {
+  }
+  catch (Exception $e) {
     trigger_error(sprintf(
       'Curl failed with error #%d: %s',
       $e->getCode(), $e->getMessage()),
       E_USER_ERROR);
   }
-}
-
-/**
- * Build online submission data array
- * @param $fields
- * @param $nid
- * @param $ip
- * @param $college_code
- * @param $type_of_form
- * @param $enterpriseclientid
- * @return array
- */
-function asu_rfi_online_fields($fields, $nid, $ip, $college_code, $type_of_form, $enterpriseclientid) {
-  $fieldsUpdated = array(
-    'first_name' => $fields['first_name'],
-    'last_name' => $fields['last_name'],
-    'program' => $college_code . '-' . $fields['program'],
-    'email' => $fields['email'],
-    'phone' => $fields['phone'],
-    'prod_test_flag' => $fields['prod_test_flag'],
-    'base_url' => $fields['base_url'],
-    'origin_uri' => $GLOBALS['base_url'] . '/' . request_path(),
-    'remote_nid' => $nid,
-    'ldetect_v' => $ip,
-    'campaign' => $fields['base_url'] . '-' . $type_of_form . '-UG',
-    'sourceid' => $nid, // Overwritten with API key in Middleware.
-    'enterpriseclientid' => $enterpriseclientid,
-  );
-  return $fieldsUpdated;
 }
