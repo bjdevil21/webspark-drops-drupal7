@@ -282,11 +282,14 @@ function asu_rfi_post_to_salesforce($data, $type) {
           }
         }
 
+        dpm($node_wrapper, __FUNCTION__ . ' node_wrapper');
+        dpm($curl_message, __FUNCTION__ . ' curl_message');
+        $node_wrapper->field_rfi_error_message->set($curl_message);
+        dpm($node_wrapper, __FUNCTION__ . ' node_wrapper');
+        $node_wrapper->save();
+
         watchdog('asu_rfi', $curl_message, array(), WATCHDOG_ERROR);
         variable_set('asu_rfi_last_failure_SF_posting', time());
-
-        $node_wrapper->field_rfi_error_message->set($curl_message);
-        $node_wrapper->save();
       }
 
       curl_close($ch);
@@ -301,7 +304,7 @@ function asu_rfi_post_to_salesforce($data, $type) {
     } catch (Exception $e) {
       $msg_added = ((int) $e->getCode() === 0) ? 'ASU RFI NOTICE: Testing SalesForce RFI
       submissions is not possible from ' . $base_url . ' because the SalesForce
-      endpoint for testing is not reachable from this web server due to ASU network access
+      endpoint is not reachable from this web server due to ASU network access
       restrictions. HTTP error ' . $curl_info['http_code'] : '';
       watchdog('asu_rfi', $msg_added, array(), WATCHDOG_ERROR);
       trigger_error(sprintf(
