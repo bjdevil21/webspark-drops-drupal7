@@ -1,4 +1,5 @@
-<?php /** @noinspection HtmlUnknownTarget */
+<?php /** @noinspection HtmlUnknownAnchorTarget */
+/** @noinspection HtmlUnknownTarget */
 /** @noinspection SqlDialectInspection */
 /** @noinspection PhpInconsistentReturnPointsInspection */
 /** @noinspection PhpUnhandledExceptionInspection */
@@ -519,11 +520,11 @@ function asu_rfi_form_alter(&$form, &$form_state, $form_id) {
   }
   // * Get the RFI form mode settings, if form is in test mode, give only admins access to the form view
   $rfi_mode = variable_get('asu_rfi_form_mode');
-  global $user;
   if ((($rfi_mode == "test") || empty($rfi_mode)) && ($form['#id'] == "asu-rfi-form-data"
       || $form['#id'] == "asu-rfi-long-form-data"
       || $form['#id'] == 'views-exposed-form-asu-rfi-submissions-report-page')) {
-//    if (user_access('administer nodes', $user) == 1 || user_access('administer asu rfi', $user) == 1) {
+      // global $user;
+      // if (user_access('administer nodes', $user) == 1 || user_access('administer asu rfi', $user) == 1) {
       return TRUE;
 /*    } else {
       $form['#access'] = FALSE;
