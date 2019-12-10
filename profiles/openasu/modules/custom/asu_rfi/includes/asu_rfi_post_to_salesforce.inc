@@ -299,7 +299,7 @@ function asu_rfi_post_to_salesforce($data, $type) {
         throw new Exception(curl_error($ch), curl_errno($ch));
       }
     } catch (Exception $e) {
-      $msg_added = ((int) $e->getCode() === 0) ? ' -- IMPORTANT: Testing SalesForce RFI
+      $msg_added = ((int) $e->getCode() === 0) ? 'ASU RFI NOTICE: Testing SalesForce RFI
       submissions is not possible in this web hosting environment. The SalesForce
       endpoint for testing is not reachable from this web server due to ASU network access
       restrictions.' : '';
@@ -310,7 +310,7 @@ function asu_rfi_post_to_salesforce($data, $type) {
     }
   }
   else { // Do not attempt a JSON submission to a SF middleware endpoint.
-    $msg_added = 'IMPORTANT: While submissions can be checked in this site\'s database,
+    $msg_added = 'ASU RFI NOTICE: While RFI submissions can be checked in this site\'s database,
      testing SalesForce RFI submissions is not possible from this web hosting
      environment (' . $base_url . ') because ' . $url . ' is not reachable due
      to ASU network access restrictions.';
