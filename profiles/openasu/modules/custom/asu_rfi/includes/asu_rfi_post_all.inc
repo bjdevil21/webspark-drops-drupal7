@@ -1,12 +1,13 @@
 <?php
 
 /**
- * POSTs form data to Salesforce for GRADUATE submissions.
+ * POSTs form data to Salesforce for both UNDERGRAD and GRADUATE submissions.
  * Used by multiple forms (long form, multiform)
- * @param array $data (was $post - why renamed here??)
+ * Done one submission at a time.
+ * @param array $data
  * @param string $type - Undergrad or graduate
  */
-function asu_rfi_grad_post($data, $type) {
+function asu_rfi_post_all($data, $type) {
   global $base_url;
   $submission_data = array();
   $college_code = $url = $body = '';
