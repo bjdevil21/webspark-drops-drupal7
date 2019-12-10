@@ -267,7 +267,7 @@ function asu_rfi_post_to_salesforce($data, $type) {
         if (($curl_info['http_code'] >= 400)) {
           // update error message
           if (isset($node_wrapper->field_rfi_error_message)) {
-            $curl_message = (is_array($message)) ? $message[1] : $curl_message;
+            $curl_message = (is_array($message)) ? $message[0] : $curl_message;
           }
           // Get admin email address from admin settings page
           $to_email = variable_get('asu_rfi_error_email', NULL);
