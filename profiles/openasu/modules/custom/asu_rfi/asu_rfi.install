@@ -237,6 +237,11 @@ function asu_rfi_update_7004(&$sandbox) {
       ->fields(array('data' => $field_base))
       ->condition('field_name', 'field_rfi_submission_status', 'LIKE')
       ->execute();
+
+    // Empty form_cache table to reset node edit forms with old values (probably needs cleanup anyways)
+    Database::getConnection('default')
+      ->delete('cache_form')
+      ->execute();
   }
 
   // 3) Rebuild ASU RFI feature to update the RFI forms
