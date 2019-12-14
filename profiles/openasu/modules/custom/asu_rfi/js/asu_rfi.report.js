@@ -5,7 +5,8 @@
         $(this).on("click", function() {
           Drupal.toggleFieldset(this);
         });
-     });
+      });
+      $('.view-asu-rfi-submissions-report .view-header p:empty').remove();
     }
   }
 })(jQuery);
