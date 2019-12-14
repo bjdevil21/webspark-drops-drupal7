@@ -183,7 +183,7 @@ function asu_rfi_update_7003(&$sandbox) {
  * Update ASU RFI submission statuses to more instructional, guiding values
  */
 function asu_rfi_update_7004(&$sandbox) {
-  // Update these four Status values:
+  // Update Submission Status values:
   // Complete => Form_Completed
   // Incomplete => Form_Multi_Partial
   // Pending => SF_Pending
