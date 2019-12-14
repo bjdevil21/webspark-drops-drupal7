@@ -220,8 +220,8 @@ function asu_rfi_update_7004(&$sandbox) {
     $field_base = unserialize($field_base);
     if (isset($field_base['settings']['allowed_values'])) {
       $field_base['settings']['allowed_values'] = array(
-        'Form_Completed' => 'Ready for SF submission',
-        'Form_Multi_Partial' => 'Partial multiform submission',
+        'Form_Completed' => 'Ready for SF POST',
+        'Form_Multi_Partial' => 'Partial multiform submitted',
         'SF_Pending' => 'SF POST Pending',
         'SF_Failed' => 'SF POST Failed',
         'SF_Completed' => 'SF POST Successful',
