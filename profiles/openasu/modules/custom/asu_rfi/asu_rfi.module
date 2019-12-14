@@ -862,7 +862,7 @@ function asu_rfi_cron_queue_info() {
   );
   // Delete stale/completed submissions.
   $queues['asu_rfi_delete_submissions_queue'] = array(
-    'worker_callback' => '_asu_rfi_cron_delete_submissions',
+    'worker callback' => '_asu_rfi_cron_delete_submissions',
     'time' => 20,
   );
   return $queues;
