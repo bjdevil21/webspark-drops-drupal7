@@ -444,7 +444,7 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['filters']['field_rfi_submission_status_value']['field'] = 'field_rfi_submission_status_value';
   $handler->display->display_options['filters']['field_rfi_submission_status_value']['exposed'] = TRUE;
   $handler->display->display_options['filters']['field_rfi_submission_status_value']['expose']['operator_id'] = 'field_rfi_submission_status_value_op';
-  $handler->display->display_options['filters']['field_rfi_submission_status_value']['expose']['label'] = 'Submission status';
+  $handler->display->display_options['filters']['field_rfi_submission_status_value']['expose']['label'] = 'Status';
   $handler->display->display_options['filters']['field_rfi_submission_status_value']['expose']['operator'] = 'field_rfi_submission_status_value_op';
   $handler->display->display_options['filters']['field_rfi_submission_status_value']['expose']['identifier'] = 'field_rfi_submission_status_value';
   $handler->display->display_options['filters']['field_rfi_submission_status_value']['expose']['remember_roles'] = array(
@@ -474,7 +474,7 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['filters']['field_rfi_email_value']['operator'] = 'contains';
   $handler->display->display_options['filters']['field_rfi_email_value']['exposed'] = TRUE;
   $handler->display->display_options['filters']['field_rfi_email_value']['expose']['operator_id'] = 'field_rfi_email_value_op';
-  $handler->display->display_options['filters']['field_rfi_email_value']['expose']['label'] = 'Submitter\'s email';
+  $handler->display->display_options['filters']['field_rfi_email_value']['expose']['label'] = 'Email';
   $handler->display->display_options['filters']['field_rfi_email_value']['expose']['operator'] = 'field_rfi_email_value_op';
   $handler->display->display_options['filters']['field_rfi_email_value']['expose']['identifier'] = 'field_rfi_email_value';
   $handler->display->display_options['filters']['field_rfi_email_value']['expose']['remember_roles'] = array(
