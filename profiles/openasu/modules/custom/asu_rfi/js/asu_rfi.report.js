@@ -6,7 +6,7 @@
           Drupal.toggleFieldset(this);
         });
       });
-      $('.view-asu-rfi-submissions-report .view-header p:empty').remove();
+      $('.view-asu-rfi-submissions-report .view-header p:empty, fieldset.asu-rfi-intro br').remove();
     }
   }
 })(jQuery);
