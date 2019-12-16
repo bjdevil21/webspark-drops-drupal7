@@ -223,17 +223,10 @@ function asu_rfi_post_to_sf_middleware($data, $type) {
       );
       curl_setopt_array($ch, $options);
 
-      dpm(CURLOPT_SSLVERSION, 'curlopt_sslversion');
-      dpm($options, 'curl - options');
-
       $response = curl_exec($ch);
       $curl_info = curl_getinfo($ch); // Used by your drupal messages below
 
       variable_set('asu_rfi_last_attempt_SF_posting', time());
-
-      // DEBUG
-      dpm($response, 'curl - response');
-      dpm($curl_info, 'curl - curl_info');
 
       // Get the response from Salesforce middleware
       $message = (strpos($response, "-1 ") === 0) ? explode(':', $response) : '';
