@@ -65,22 +65,6 @@ function asu_rfi_views_pre_render(&$view) {
  }
 }
 
-/*function HOOK_views_pre_render ( &$view ) {
-  /// check to make sure the view has a classname
-  if ( $view->display_handler && !empty($view->display_handler->options['css_class']) ) {
-    $cln = $view->display_handler->options['css_class'];
-    $cls = 'CLASS GOES HERE';
-    /// test that the classname contains our class
-    if ( preg_match('/(^|\s+)' . preg_quote($cls) . '(\s+|$)/i', $cln) ) {
-      /// build the path to the js, which is local to my module, js/view.js
-      $sep = DIRECTORY_SEPARATOR;
-      $dir = rtrim(drupal_get_path('module', 'HOOK'), $sep);
-      $pth = "{$dir}{$sep}js{$sep}view.js";
-      drupal_add_js($pth);
-    }
-  }
-}
-*/
 /*********************************************************************
  * BLOCKS
  *********************************************************************/
