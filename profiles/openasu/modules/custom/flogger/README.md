@@ -15,9 +15,9 @@ Replace your watchdog, drupal_set_message, and drush_log calls with one function
 #### Optional
  * @param array $msg_params (OPTIONAL) - array of tokens/values to sanitize in $message (see t() documentation for more on this.)
  * @param int $severity (OPTIONAL) - 0-8, matching WATCHDOG_* constants integer values. Defaults to WATCHDOG_INFO. Use 8 for "success" for Drush.
- * @param bool $watchdog (OPTIONAL) - Create a watchdog message. TRUE by default.
- * @param bool $drush (OPTIONAL) - Create a drush_log message. TRUE by default.
  * @param bool $drupal_message (OPTIONAL) - Create a drupal_set_message. FALSE by default.
+ * @param bool $drush (OPTIONAL) - Create a drush_log message. TRUE by default.
+  * @param bool $watchdog (OPTIONAL) - Create a watchdog message. TRUE by default.
  * @param bool $dsm_admin_only (OPTIONAL) - Only show to users with /admin access. Defaults to TRUE.
  
  ## Examples
