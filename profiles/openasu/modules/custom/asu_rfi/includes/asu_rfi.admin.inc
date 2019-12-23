@@ -88,6 +88,9 @@ function asu_rfi_admin_settings() {
   $form['confirm_settings'] = array(
     '#type' => 'fieldset',
     '#title' => 'Confirmation settings',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#description' => 'Management of RFI form responses to prospective (or current) students.',
   );
   $form['confirm_settings']['asu_rfi_confirm_content'] = array(
     '#type' => 'fieldset',
