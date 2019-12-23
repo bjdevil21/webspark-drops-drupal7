@@ -157,8 +157,8 @@ function _asu_rfi_admin_settings_validate($form, $form_state) {
   );
   foreach ($confirm as $field => $nid) {
     if (!empty($nid)) {
-      if (!is_int($nid)) {
-        form_set_error($field, 'Not a valid node ID number.');
+      if (!preg_match('/^\d+$/', $nid)) {
+        form_set_error($field, 'Node IDs must be integers.');
       }
       if (!drupal_lookup_path('alias', 'node/' . $nid)) {
         form_set_error($field, t('Node ID @nid does not exist.', array('@nid' => $nid)));
