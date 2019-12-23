@@ -15,7 +15,7 @@ function asu_rfi_admin_settings() {
   );
   $form['asu_rfi_form_access'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Request info form access settings',
+    '#title' => 'General settings',
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#attributes' => array('class' => array('asu_rfi_admin_field asu_rfi_form_access')),
@@ -74,17 +74,18 @@ function asu_rfi_admin_settings() {
   );
   $form['asu_rfi_confirm_content'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Confirmation webpage content settings.',
-    '#description' => 'If a custom confirmation page has been created in this site,'
-      . ' enter its node ID in the appropriate field(s) below. If left empty, a'
-      . ' default confirmation template will be used.',
+    '#title' => 'Confirmation page settings',
+    '#description' => 'If custom confirmation pages to display (upon successful'
+      . ' submission) have been created in this site, please'
+      . ' enter its NODE ID in the appropriate field(s) below. If left empty, a'
+      . ' default confirmation template will instead be output.',
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#attributes' => array('class' => array('asu_rfi_confirm_email_fields')),
   );
   $form['asu_rfi_confirm_content']['asu_rfi_undergrad_confirm_node'] = array(
     '#type' => 'textfield',
-    '#title' => t('Undergraduate - Confirmation page node ID'),
+    '#title' => t('Undergraduate NID'),
     '#default_value' => variable_get('asu_rfi_undergrad_confirm_node'),
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
     '#size' => 10,
@@ -97,7 +98,7 @@ function asu_rfi_admin_settings() {
   );
   $form['asu_rfi_confirm_content']['asu_rfi_grad_confirm_node'] = array(
     '#type' => 'textfield',
-    '#title' => t('Graduate - Confirmation page NID'),
+    '#title' => t('Graduate NID'),
     '#default_value' => variable_get('asu_rfi_grad_confirm_node'),
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
     '#size' => 10,
@@ -113,13 +114,15 @@ function asu_rfi_admin_settings() {
     '#title' => 'Confirmation email settings',
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
+    '#description' => t('If desired, enter the following information that'
+      . ' will be used when a receipt/confirmation email is sent to the submitter.'),
     '#attributes' => array('class' => array('asu_rfi_confirm_email_fields')),
   );
   $form['asu_rfi_confirm_email']['asu_rfi_from_email_field'] = array(
     '#type' => 'textfield',
     '#title' => t('"From" email field'),
     '#default_value' => variable_get('asu_rfi_from_email_field'),
-    '#description' => t('From email address to be shown in the user\'s email'),
+    '#description' => t('Displayed email address of sender'),
     '#size' => 50,
     '#maxlength' => 100,
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
@@ -128,7 +131,7 @@ function asu_rfi_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('"From" name field'),
     '#default_value' => variable_get('asu_rfi_from_name_field'),
-    '#description' => t('Name to be shown in the user\'s email'),
+    '#description' => t('Displayed name of sender'),
     '#size' => 50,
     '#maxlength' => 100,
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
@@ -137,16 +140,14 @@ function asu_rfi_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('"Subject" field'),
     '#default_value' => variable_get('asu_rfi_email_subject_field'),
-    '#description' => t('Subject line of the email to be sent to the user upon form submission'),
+    '#description' => t('Subject'),
     '#size' => 100,
     '#maxlength' => 100,
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
     '#siffix' => '</div>',
   );
   $form['#validate'][] = '_asu_rfi_admin_settings_validate';
-
   return system_settings_form($form);
-  // drupal_set_message('Next steps: Please start adding instances of RFI Master form <a href="/admin/structure/block/instances"><strong>here</strong></a>');
 }
 
 function _asu_rfi_admin_settings_validate($form, $form_state) {
