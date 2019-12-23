@@ -75,19 +75,20 @@ function asu_rfi_admin_settings() {
   $form['asu_rfi_confirm_content'] = array(
     '#type' => 'fieldset',
     '#title' => 'Confirmation webpage content settings.',
-    '#description' => '(OPTIONAL) Text box to enter node id will appear after the form has been created. If left empty, a default confirmation template will be used.',
+    '#description' => 'If a custom confirmation page has been created in this site,'
+      . ' enter its node ID in the appropriate field(s) below. If left empty, a'
+      . ' default confirmation template will be used.',
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#attributes' => array('class' => array('asu_rfi_confirm_email_fields')),
   );
   $form['asu_rfi_confirm_content']['asu_rfi_undergrad_confirm_node'] = array(
     '#type' => 'textfield',
-    '#title' => t('Enter undergraduate confirmation node ID'),
+    '#title' => t('Undergraduate - Confirmation page node ID'),
     '#default_value' => variable_get('asu_rfi_undergrad_confirm_node'),
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
     '#size' => 10,
     '#maxlength' => 20,
-    '#description' => t("Enter a custom node id for the undergraduate form confirmation page."),
     '#states' => array(
       'visible' => array(
         ':input[name="undergrad_degree_type"]' => array('value' => 'undergrad'),
@@ -96,12 +97,11 @@ function asu_rfi_admin_settings() {
   );
   $form['asu_rfi_confirm_content']['asu_rfi_grad_confirm_node'] = array(
     '#type' => 'textfield',
-    '#title' => t('Enter graduate confirmation node ID'),
+    '#title' => t('Graduate - Confirmation page NID'),
     '#default_value' => variable_get('asu_rfi_grad_confirm_node'),
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
     '#size' => 10,
     '#maxlength' => 20,
-    '#description' => t("Enter a custom node id for the graduate form confirmation page."),
     '#states' => array(
       'visible' => array(
         ':input[name="grad_degree_type"]' => array('value' => 'graduate'),
@@ -150,7 +150,6 @@ function asu_rfi_admin_settings() {
 }
 
 function _asu_rfi_admin_settings_validate($form, $form_state) {
-  dpm($form_state, __FUNCTION__ . ' form_state');
   $confirm = array(
     'asu_rfi_undergrad_confirm_node' => $form_state['values']['asu_rfi_undergrad_confirm_node'],
     'asu_rfi_grad_confirm_node' => $form_state['values']['asu_rfi_grad_confirm_node'],
