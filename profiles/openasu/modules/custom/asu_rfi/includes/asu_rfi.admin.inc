@@ -42,15 +42,28 @@ function asu_rfi_admin_settings() {
     '#required' => FALSE,
   );
   // Error notification email if submissions to Sales force failed for more than 2 days
-  $form['asu_rfi_error_email'] = array(
+  $form['asu_rfi_error_reporting'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Error reporting',
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#description' => t('What to do if a submission fails, etc..'),
+    '#attributes' => array('class' => array('asu-rfi-admin-error-reporting')),
+  );
+  $form['asu_rfi_error_reporting']['asu_rfi_error_email'] = array(
     '#type' => 'textfield',
     '#title' => t('Email(s) for error notification'),
     '#default_value' => variable_get('asu_rfi_error_email', NULL),
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
-    '#description' => t("Email addresses to be notified if site cannot post RFI submissions to Salesforce for more than 2 days. Use a comma-delimited list of emails if more than one recipient. (NOTE: Using more than 3 email addresses can sometimes be blocked as spam by some email servers.)"),
+    '#description' => t("Email addresses to be notified if site cannot post'
+     . ' RFI submissions to Salesforce for more than 2 days. Use a comma-delimited'
+     . ' list of emails if more than one recipient. (NOTE: Keep the number of email'
+     . ' addresses here to a minimum to avoid being blocked as spam by some email (SMTP) servers.)'
+     . ' "),
     '#size' => 60,
     '#maxlength' => 150,
   );
+
   $form['asu_rfi_form_access']['asu_rfi_google_analytics_key'] = array(
     '#type' => 'textfield',
     '#title' => t('Site identifier for Google Analytics'),
