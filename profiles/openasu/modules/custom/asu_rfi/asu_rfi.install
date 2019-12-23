@@ -127,6 +127,9 @@ function asu_rfi_update_7001(&$sandbox) {
  * Updates variable names not properly set by ASU RFI module.
  */
 function asu_rfi_update_7200(&$sandbox){
+  if (!module_exists('flogger')) {
+    module_enable(array('flogger'));
+  }
   $or = db_or()
     ->condition('v.name', 'last_attempt_SF_posting', 'LIKE')
     ->condition('v.name', 'last_success_SF_posting', 'LIKE')
