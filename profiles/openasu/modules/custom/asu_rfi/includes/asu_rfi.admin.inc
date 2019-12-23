@@ -85,9 +85,13 @@ function asu_rfi_admin_settings() {
     '#maxlength' => 64,
     '#default_value' => variable_get('asu_rfi_graduate_degree_type'),
   );
-  $form['asu_rfi_confirm_content'] = array(
+  $form['confirm_settings'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Confirmation page settings',
+    '#title' => 'Confirmation settings',
+  );
+  $form['confirm_settings']['asu_rfi_confirm_content'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Confirmation pages',
     '#description' => 'If custom confirmation pages to display (upon successful'
       . ' submission) have been created in this site, please'
       . ' enter its NODE ID in the appropriate field(s) below. If left empty, a'
@@ -96,7 +100,7 @@ function asu_rfi_admin_settings() {
     '#collapsed' => FALSE,
     '#attributes' => array('class' => array('asu_rfi_confirm_email_fields')),
   );
-  $form['asu_rfi_confirm_content']['asu_rfi_undergrad_confirm_node'] = array(
+  $form['confirm_settings']['asu_rfi_confirm_content']['asu_rfi_undergrad_confirm_node'] = array(
     '#type' => 'textfield',
     '#title' => t('Undergraduate NID'),
     '#default_value' => variable_get('asu_rfi_undergrad_confirm_node'),
@@ -109,7 +113,7 @@ function asu_rfi_admin_settings() {
       ),
     ),
   );
-  $form['asu_rfi_confirm_content']['asu_rfi_grad_confirm_node'] = array(
+  $form['confirm_settings']['asu_rfi_confirm_content']['asu_rfi_grad_confirm_node'] = array(
     '#type' => 'textfield',
     '#title' => t('Graduate NID'),
     '#default_value' => variable_get('asu_rfi_grad_confirm_node'),
@@ -122,38 +126,35 @@ function asu_rfi_admin_settings() {
       ),
     ),
   );
-  $form['asu_rfi_confirm_email'] = array(
+  $form['confirm_settings']['asu_rfi_confirm_email'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Confirmation email settings',
+    '#title' => 'Confirmation Email',
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#description' => t('If desired, enter the following information that'
       . ' will be used when a receipt/confirmation email is sent to the submitter.'),
     '#attributes' => array('class' => array('asu_rfi_confirm_email_fields')),
   );
-  $form['asu_rfi_confirm_email']['asu_rfi_from_email_field'] = array(
+  $form['confirm_settings']['asu_rfi_confirm_email']['asu_rfi_from_email_field'] = array(
     '#type' => 'textfield',
-    '#title' => t('"From" email field'),
+    '#title' => t('Displayed "From" email address'),
     '#default_value' => variable_get('asu_rfi_from_email_field'),
-    '#description' => t('Displayed email address of sender'),
     '#size' => 50,
     '#maxlength' => 100,
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
   );
-  $form['asu_rfi_confirm_email']['asu_rfi_from_name_field'] = array(
+  $form['confirm_settings']['asu_rfi_confirm_email']['asu_rfi_from_name_field'] = array(
     '#type' => 'textfield',
-    '#title' => t('"From" name field'),
+    '#title' => t('Displayed "From" name'),
     '#default_value' => variable_get('asu_rfi_from_name_field'),
-    '#description' => t('Displayed name of sender'),
     '#size' => 50,
     '#maxlength' => 100,
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
   );
-  $form['asu_rfi_confirm_email']['asu_rfi_email_subject_field'] = array(
+  $form['confirm_settings']['asu_rfi_confirm_email']['asu_rfi_email_subject_field'] = array(
     '#type' => 'textfield',
     '#title' => t('"Subject" field'),
     '#default_value' => variable_get('asu_rfi_email_subject_field'),
-    '#description' => t('Subject'),
     '#size' => 100,
     '#maxlength' => 100,
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
