@@ -150,6 +150,12 @@ function asu_rfi_admin_settings() {
   return system_settings_form($form);
 }
 
+/**
+ * Custom hook_form_validate helper function
+ * Validate confrimation page NIDs
+ * @param $form
+ * @param $form_state
+ */
 function _asu_rfi_admin_settings_validate($form, $form_state) {
   $confirm = array(
     'asu_rfi_undergrad_confirm_node' => $form_state['values']['asu_rfi_undergrad_confirm_node'],
