@@ -11,7 +11,10 @@ function asu_rfi_admin_settings() {
 
   $form['form_stage'] = array(
     '#type' => 'item',
-    '#markup' => t('<div class="rfi_note">Important: The RFI submissions will not be posted to Salesforce via Middleware unless Authentication code has been added. You can request the authentication key from <a href="https://webforms.asu.edu/content/access-rfi-middleware-request">here</a>. Note that RFI submissions will not be posted to Sales force via Middle ware unless this code has been added</div>'),
+    '#markup' => t('<div class="rfi_note">Important: The RFI submissions will not be'
+    . ' posted to Salesforce via Middleware unless a valid authentication code has been added.'
+    . ' <a href="https://webforms.asu.edu/content/access-rfi-middleware-request">Request '
+    . ' authentication key</a></div>'),
   );
   $form['asu_rfi_form_access'] = array(
     '#type' => 'fieldset',
@@ -37,11 +40,11 @@ function asu_rfi_admin_settings() {
     '#title' => t('Authentication code'),
     '#default_value' => variable_get('asu_rfi_form_auth_key'),
     '#attributes' => array('class' => array('asu_rfi_admin_field')),
-    '#description' => t("Specify the form authentication key from Middleware. "
-    . "You can request the authentication key from <a href='https://webforms.asu.edu/content/access-rfi-middleware-request'>here</a>. Note that RFI submissions will not be posted to Salesforce via Middleware unless this code has been added"),
+    '#description' => t('Don\'t have a code? <a href="https://webforms.asu.edu/content/access-rfi-middleware-request">Request'
+    . ' authentication key</a>.'),
     '#required' => FALSE,
   );
-  // Error notification email if submissions to Sales force failed for more than 2 days
+
   $form['asu_rfi_error_reporting'] = array(
     '#type' => 'fieldset',
     '#title' => 'Error reporting',
@@ -63,7 +66,6 @@ function asu_rfi_admin_settings() {
     '#size' => 60,
     '#maxlength' => 150,
   );
-
   $form['asu_rfi_form_access']['asu_rfi_google_analytics_key'] = array(
     '#type' => 'textfield',
     '#title' => t('Site identifier for Google Analytics'),
