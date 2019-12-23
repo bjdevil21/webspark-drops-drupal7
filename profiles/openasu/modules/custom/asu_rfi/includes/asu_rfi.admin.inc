@@ -152,10 +152,8 @@ function asu_rfi_admin_settings() {
 function _asu_rfi_admin_settings_validate($form, $form_state) {
   dpm($form_state, __FUNCTION__ . ' form_state');
   $confirm = array(
-    'asu_rfi_undergrad_confirm_node' => $form_state['values']['asu_rfi_confirm_content']['asu_rfi_undergrad_confirm_node'],
-    'asu_rfi_grad_confirm_node' => $form_state['values']['asu_rfi_confirm_content']['asu_rfi_grad_confirm_node'],
-    // 'asu_rfi_undergrad_confirm_node' => $form_state['values']['asu_rfi_confirm_content']['asu_rfi_undergrad_confirm_node'],
-    // 'asu_rfi_grad_confirm_node' => $form_state['values']['asu_rfi_confirm_content']['asu_rfi_grad_confirm_node'],
+    'asu_rfi_undergrad_confirm_node' => $form_state['values']['asu_rfi_undergrad_confirm_node'],
+    'asu_rfi_grad_confirm_node' => $form_state['values']['asu_rfi_grad_confirm_node'],
   );
   foreach ($confirm as $field => $nid) {
     if (!empty($nid)) {
