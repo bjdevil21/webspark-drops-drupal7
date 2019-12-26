@@ -64,6 +64,7 @@ function asu_rfi_views_pre_render(&$view) {
      'group' => JS_THEME,
      'weight' => 19,
    ));
+   dpm($view, __FUNCTION__);
  }
 }
 

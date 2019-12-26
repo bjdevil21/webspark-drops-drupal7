@@ -35,7 +35,7 @@ function asu_rfi_post_to_middleware($data, $type) {
       $sf_multi_pending = TRUE;
       $node_wrapper->field_rfi_submission_status->set('SF_Multi_Pending');
       if (isset($node_wrapper->field_rfi_error_message)) {
-        $node_wrapper->field_rfi_error_message->set('Multiform is now pending to be submitted in an upcoming iteration of submissions (regardless of completion state).');
+        $node_wrapper->field_rfi_error_message->set('Pending to be submitted (regardless of completion state).');
       }
       $node_wrapper->save();
     } elseif ($node_wrapper->field_rfi_submission_status->value() === "SF_Multi_Pending") {
@@ -252,9 +252,9 @@ function asu_rfi_post_to_middleware($data, $type) {
       else {
         $created = $node_wrapper->created->value();
         $expired_message = _asu_rfi_create_expired_message($created);
-        $curl_message = "\n" . 'NID ' . $nid_info . ' submission to ' . $url . ' failed.'
+        $curl_message = "\n" . 'Submission #' . $nid_info . ' to ' . $url . ' failed.'
          . " \n" . 'HTTP CODE ' . $curl_info['http_code']
-          . ': ' . $response . "\n -- " . $expired_message;
+          . ': "' . $response . '" ' . "\n" . $expired_message;
 
         if (($curl_info['http_code'] >= 400)) {
           // update error message
@@ -286,7 +286,7 @@ function asu_rfi_post_to_middleware($data, $type) {
         throw new Exception(curl_error($ch), curl_errno($ch));
       }
     } catch (Exception $e) {
-      $msg_start = 'Submission POST to ' . $base_url . ' failed. HTTP CODE: '
+      $msg_start = 'POST to ' . $base_url . ' failed. HTTP CODE: '
         . ((isset($curl_info)) ? $curl_info['http_code'] : 'unknown') . '. ';
       $message_final = $msg_start . (((int) $e->getCode() <= 0) ? ' This may have been due to
       ASU network access restrictions.' : '');
@@ -299,10 +299,10 @@ function asu_rfi_post_to_middleware($data, $type) {
   }
   else { // Do not attempt submission to SF middleware
     if ($sf_multi_pending) { // Multiform submission not ready to submit yet
-      $message_final = 'NID ' . $nid . ' MF submission will be submitted when 1) the student completes
-      the form, or 2) it is resubmitted by either a cron job or manual administrator submission.';
+      $message_final = 'WAITING - MF submission will be submitted 1) when the student completes
+      the form, or 2) it is resubmitted by either a cron job or a manual submission.';
     } else { // Other connectivity issue?
-      $message_final = 'NID ' . $nid_info . ' RFI submission ' . $nid_info . ' to ' . $url . ' will not work
+      $message_final = 'CANCELLED - Submission #' . $nid_info . ' to ' . $url . ' 
        due to ASU network access restrictions.';
       if (isset($node_wrapper->field_rfi_error_message)) {
         $node_wrapper->field_rfi_error_message->set($message_final);
