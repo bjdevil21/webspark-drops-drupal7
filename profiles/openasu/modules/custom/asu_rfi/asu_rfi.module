@@ -68,6 +68,7 @@ function asu_rfi_views_pre_render(&$view) {
    // Alter field outputs in the page view
    foreach ($view->result as $key => $result) {
      if ($result->field_field_rfi_submission_status[0]['raw']['value'] === 'SF_Failed') {
+       Submission #' . $nid_info . ' to __' . $url . '__.'
        $markup = preg_replace('/Submission (#\d+?) to __(.+?)__\./',
          "Submission $1 (<a href=\"$2\">middleware URL</a>).",
          $result->field_field_rfi_error_message[0]['rendered']['#markup'], 1);
