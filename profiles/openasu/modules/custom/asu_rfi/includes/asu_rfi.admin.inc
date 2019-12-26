@@ -48,18 +48,19 @@ function asu_rfi_admin_settings() {
   );
   $form['asu_rfi_form_access']['asu_rfi_expired_submit'] = array(
     '#type' => 'select',
-    '#title' => t('Submit ALL expired submissions with..'),
+    '#title' => t('Submit ALL expired submissions with...'),
     '#options' => $special_action_modes,
     '#default_value' => variable_get('asu_rfi_expired_submit', 'all'),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
     '#description' => t("Submit ALL expired RFI submissions to Salesforce "
-      . " middleware - even if they are more than "
-      . round((float) (ASU_RFI_SUBMISSION_EXP_PERIOD) / 86400 , 2) . " days old."),
+      . " middleware - even though they are more than "
+      . round((float) (ASU_RFI_SUBMISSION_EXP_PERIOD) / 86400 , 2)
+      . " days old and may not be relevant leads anymore."),
     '#required' => TRUE,
   );
   $form['asu_rfi_form_access']['asu_rfi_expired_delete'] = array(
     '#type' => 'select',
-    '#title' => t('Delete all expired submissions'),
+    '#title' => t('Delete all expired submissions with...'),
     '#options' => $special_action_modes,
     '#default_value' => variable_get('asu_rfi_expired_delete', 'all'),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
