@@ -165,7 +165,7 @@ function asu_rfi_admin_settings() {
     '#era_query_settings' => array(
       'limit' => 25, // Default is 50.
     ),
-    '#default_value' => variable_get('asu_rfi_grad_confirm_nid', ''),
+    '#default_value' => variable_get('asu_rfi_grad_confirm', ''),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
   );
 
