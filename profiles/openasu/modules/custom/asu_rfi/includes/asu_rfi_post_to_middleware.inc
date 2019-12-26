@@ -276,7 +276,7 @@ function asu_rfi_post_to_middleware($data, $type) {
         }
         $node_wrapper->save();
         // Log/print messaging to end user and set timestamp
-        flogger('asu_rfi', $curl_message, array(), WATCHDOG_ERROR, FALSE,TRUE, TRUE);
+        flogger('asu_rfi', $curl_message, array(), WATCHDOG_ERROR, FALSE,TRUE, FALSE);
         variable_set('asu_rfi_last_failure_SF_posting', time());
       }
 
