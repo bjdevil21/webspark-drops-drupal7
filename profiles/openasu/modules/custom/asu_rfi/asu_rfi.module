@@ -1103,7 +1103,7 @@ function _asu_rfi_get_unpassed_submissions($include_rtp = FALSE, $expired = 'all
   }
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'asu_rfi');
+    ->entityCondition('bundle', 'asu_rfi', 'LIKE');
 
   // Include the expired submissions?
   if (variable_get('asu_rfi_expired_submit') === 'all') {
