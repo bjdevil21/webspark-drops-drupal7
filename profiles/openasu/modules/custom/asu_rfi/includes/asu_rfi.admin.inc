@@ -222,12 +222,12 @@ function _asu_rfi_admin_settings_submit($form, $form_state) {
   dpm($form_state['values'], __FUNCTION__);
 
   $grad_confirm_nid = ($form_state['values']['asu_rfi_grad_confirm']['entity_id']);
-  $undergrad_confirm_nid = $form_state['values']['asu_rfi_undergrad_confirm']['entity_id'];
+  $undergrad_confirm_nid = ($form_state['values']['asu_rfi_undergrad_confirm']['entity_id']);
 
   if ($grad_confirm_nid) {
     variable_set('asu_rfi_grad_confirm_nid', $grad_confirm_nid );
   }
   if (isset($undergrad_confirm_nid)) {
-    variable_set('asu_rfi_grad_confirm_nid', $undergrad_confirm_nid );
+    variable_set('asu_rfi_undergrad_confirm_nid', $undergrad_confirm_nid );
   }
 }
