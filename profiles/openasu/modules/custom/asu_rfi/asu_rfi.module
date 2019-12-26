@@ -1107,13 +1107,11 @@ function _asu_rfi_get_unpassed_submissions($include_rtp = FALSE, $expired = 'all
 
   // Include the expired submissions?
   if (variable_get('asu_rfi_expired_submit') === 'all') {
-    dpm('all', __FUNCTION__);
-    $query->propertyCondition('created', array(1, REQUEST_TIME - strtotime('15 minutes')),
+    $query->propertyCondition('created', array(1, REQUEST_TIME - 1800), // everything up to 30 mins ago... just in case the submitter continues on.
       'between');
   } else {
-    dpm('form_only', __FUNCTION__);
     $query->propertyCondition('created', array(REQUEST_TIME - ASU_RFI_SUBMISSION_EXP_PERIOD,
-      REQUEST_TIME - strtotime('15 minutes')), 'between');
+      REQUEST_TIME - 900), 'between');
   }
     $query->propertyOrderBy('created', 'DESC')
     ->fieldCondition('field_rfi_submission_status', 'value', $statuses, 'IN')// Failed lead.
