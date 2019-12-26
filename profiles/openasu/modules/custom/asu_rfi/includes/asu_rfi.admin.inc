@@ -197,7 +197,7 @@ function asu_rfi_admin_settings() {
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
     '#siffix' => '</div>',
   );
-  $form['#validate'][] = '_asu_rfi_admin_settings_validate';
+//  $form['#validate'][] = '_asu_rfi_admin_settings_validate';
   return system_settings_form($form);
 }
 
@@ -207,9 +207,12 @@ function asu_rfi_admin_settings() {
  * @param $form
  * @param $form_state
  */
+
+/*
 function _asu_rfi_admin_settings_validate($form, $form_state) {
   $email = $form_state['values']['asu_rfi_from_email_field'];
   if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)*(\.[a-zA-Z]{2,6})+$/", $email)) {
     form_set_error('email', t('You entered an invalid email.'));
   }
 }
+*/
