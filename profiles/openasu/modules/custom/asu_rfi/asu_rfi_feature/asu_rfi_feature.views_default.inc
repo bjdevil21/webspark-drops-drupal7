@@ -589,7 +589,7 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_error_message']['id'] = 'field_rfi_error_message';
   $handler->display->display_options['fields']['field_rfi_error_message']['table'] = 'field_data_field_rfi_error_message';
   $handler->display->display_options['fields']['field_rfi_error_message']['field'] = 'field_rfi_error_message';
-  $handler->display->display_options['fields']['field_rfi_error_message']['label'] = 'Message from MW/SF';
+  $handler->display->display_options['fields']['field_rfi_error_message']['label'] = 'Middleware response';
   $handler->display->display_options['fields']['field_rfi_error_message']['element_label_colon'] = FALSE;
   /* Field: Content: Student type */
   $handler->display->display_options['fields']['field_rfi_student_type']['id'] = 'field_rfi_student_type';
