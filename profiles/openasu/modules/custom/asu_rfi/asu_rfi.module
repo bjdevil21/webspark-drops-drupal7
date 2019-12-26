@@ -52,7 +52,6 @@ function asu_rfi_views_api() {
 function asu_rfi_views_pre_render(&$view) {
   // For the RFI report page intro
  if ($view->name === 'asu_rfi_submissions_report') {
-   dpm($view->result[0], __FUNCTION__);
    // Add JS
    drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/js/asu_rfi.report.js',   array(
      'type' => 'file',
@@ -68,15 +67,16 @@ function asu_rfi_views_pre_render(&$view) {
    ));
    // Alter field outputs in the page view
    foreach ($view->result as $key => $result) {
-     if ($result->field_field_rfi_submission_status[0]['raw'] === 'SF_Failed') {
+     if ($result->field_field_rfi_submission_status[0]['raw']['value'] === 'SF_Failed') {
        $markup = preg_replace('/Submission (#\d+?) to __(.+?)__ failed\./',
          "Submission $1 to <a href=\"$2\">middleware</a> failed.",
          $result->field_field_rfi_error_message[0]['rendered']['#markup'], 1);
-       dpm($markup, __FUNCTION__ . " - result $key");
        $markup = str_replace('\n', '<br />', $markup);
+       dpm($markup, __FUNCTION__ . " - result $key");
        $view->result[$key]->field_field_rfi_error_message[0]['rendered']['#markup'] = $markup;
      }
    }
+   dpm($view->result[0], __FUNCTION__);
  }
 }
 
