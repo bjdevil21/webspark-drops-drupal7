@@ -48,7 +48,7 @@ function asu_rfi_admin_settings() {
   );
   $form['asu_rfi_form_access']['asu_rfi_expired_submit'] = array(
     '#type' => 'select',
-    '#title' => t('Submit ALL expired submissions with...'),
+    '#title' => t('Submit all expired submissions with...'),
     '#options' => $special_action_modes,
     '#default_value' => variable_get('asu_rfi_expired_submit', 'all'),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
