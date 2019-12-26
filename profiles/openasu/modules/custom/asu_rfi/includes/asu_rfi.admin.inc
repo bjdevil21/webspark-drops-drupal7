@@ -6,13 +6,16 @@
  * @return array $form
  */
 function asu_rfi_admin_settings() {
-  $form = array();
   $form_modes = array('test' => 'Test', 'prod' => 'Production');
   $special_action_modes = array(
     'all' => 'All (RFI Report page + Cron runs)',
     'form_only' => 'RFI Report page ONLY',
     'none' => 'Never',
   );
+
+  ////////////////////////
+
+  $form = array();
 
   $form['form_stage'] = array(
     '#type' => 'item',
@@ -21,6 +24,10 @@ function asu_rfi_admin_settings() {
     . ' <a href="https://webforms.asu.edu/content/access-rfi-middleware-request">Request '
     . ' authentication key</a></div>'),
   );
+
+  // GENERAL SETTINGS
+  ///////////////////////
+
   $form['asu_rfi_form_access'] = array(
     '#type' => 'fieldset',
     '#title' => 'General settings',
@@ -71,6 +78,9 @@ function asu_rfi_admin_settings() {
     '#required' => FALSE,
   );
 
+  // ERROR REPORTING
+  /////////////////////////
+
   $form['asu_rfi_error_reporting'] = array(
     '#type' => 'fieldset',
     '#title' => 'Error reporting',
@@ -112,6 +122,10 @@ function asu_rfi_admin_settings() {
     '#maxlength' => 64,
     '#default_value' => variable_get('asu_rfi_graduate_degree_type'),
   );
+
+  // CONFIRMATION SETTINGS
+  ////////////////////////////
+
   $form['confirm_settings'] = array(
     '#type' => 'fieldset',
     '#title' => 'Confirmation messaging',
@@ -119,6 +133,8 @@ function asu_rfi_admin_settings() {
     '#collapsed' => FALSE,
     '#description' => 'Management of RFI form responses to prospective (or current) students.',
   );
+
+  //// CONF PAGES
   $form['confirm_settings']['asu_rfi_confirm_content'] = array(
     '#type' => 'fieldset',
     '#title' => 'Confirmation pages',
@@ -133,18 +149,13 @@ function asu_rfi_admin_settings() {
   $form['confirm_settings']['asu_rfi_confirm_content']['asu_rfi_undergrad_confirm'] = array(
     '#type' => 'entityreference',
     '#title' => t('Undergraduate confirmation page'),
-    '#default_value' => ASU_RFI_UNDERGRAD_CONFIRMATION,
     '#era_entity_type' => 'node',
     '#era_bundles' => array('panopoly_page'),
     '#era_query_settings' => array(
       'limit' => 10, // Default is 50.
     ),
+    '#default_value' => variable_get('asu_rfi_undergrad_confirm_nid', ''),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="undergrad_degree_type"]' => array('value' => 'undergrad'),
-      ),
-    ),
   );
   $form['confirm_settings']['asu_rfi_confirm_content']['asu_rfi_grad_confirm'] = array(
     '#type' => 'entityreference',
@@ -154,15 +165,11 @@ function asu_rfi_admin_settings() {
     '#era_query_settings' => array(
       'limit' => 10, // Default is 50.
     ),
-    '#default_value' => ASU_RFI_GRAD_CONFIRMATION,
+    '#default_value' => variable_get('asu_rfi_grad_confirm_nid', ''),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="grad_degree_type"]' => array('value' => 'graduate'),
-      ),
-    ),
   );
 
+  //// CONF EMAIL
   $form['confirm_settings']['asu_rfi_confirm_email'] = array(
     '#type' => 'fieldset',
     '#title' => 'Confirmation Email',
@@ -197,7 +204,10 @@ function asu_rfi_admin_settings() {
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
     '#siffix' => '</div>',
   );
-//  $form['#validate'][] = '_asu_rfi_admin_settings_validate';
+
+  // EXTRA submission actions for confirmation pages
+  $form['#submit'][] = '_asu_rfi_admin_settings_submit';
+
   return system_settings_form($form);
 }
 
@@ -208,11 +218,17 @@ function asu_rfi_admin_settings() {
  * @param $form_state
  */
 
+function _asu_rfi_admin_settings_submit($form, $form_state) {
+  dpm($form_state['values'], __FUNCTION__);
 /*
-function _asu_rfi_admin_settings_validate($form, $form_state) {
-  $email = $form_state['values']['asu_rfi_from_email_field'];
-  if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)*(\.[a-zA-Z]{2,6})+$/", $email)) {
-    form_set_error('email', t('You entered an invalid email.'));
+ *
+   $grad_confirm = ($form_state['values']['asu_rfi_grad_confirm']);
+  $undergrad_confirm = $form_state['values']['asu_rfi_grad_confirm'];
+  if (isset($asu_rfi_grad_confirm['entity_id'])) {
+    variable_set('asu_rfi_grad_confirm_nid',$asu_rfi_grad_confirm['entity_id'] );
   }
-}
+  if (isset($asu_rfi_grad_confirm['entity_id'])) {
+    variable_set('asu_rfi_grad_confirm_nid',$asu_rfi_grad_confirm['entity_id'] );
+  }
 */
+}

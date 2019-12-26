@@ -89,7 +89,7 @@ function asu_rfi_install() {
   }
 
   // If honeypot module exists, set its variable value
-  if(module_exists('honeypot')){
+  if (module_exists('honeypot')){
       variable_set('honeypot_element_name','rfihurl');
   }
 
@@ -352,7 +352,6 @@ function asu_rfi_update_7205(&$sandbox) {
         ->execute();
     }
   }
-
   // #2 Update submission status of all current student forms, using NIDs from form_type tables.
   $db_or = db_or()
     ->condition('field_rfi_form_type_value', $values['current_undergrad_form'])
@@ -405,6 +404,8 @@ function asu_rfi_update_7206(&$sandbox) {
           )
         );
         variable_set($new, $entity);
+        // Add separate value to pull quickly
+        variable_set($new . '_nid', $node->nid);
         variable_del($old);
       } else {
         flogger('asu_rfi', 'Node ID @nid does not exist. Skipping update of @old.',
