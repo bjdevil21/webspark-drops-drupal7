@@ -72,11 +72,9 @@ function asu_rfi_views_pre_render(&$view) {
          "Submission $1 (<a href=\"$2\">middleware URL</a>)",
          $result->field_field_rfi_error_message[0]['rendered']['#markup'], 1);
        $markup = str_replace(array("\r\n", "\n", "\r"), '<br />', $markup);
-       dpm($markup, __FUNCTION__ . " - result $key");
        $view->result[$key]->field_field_rfi_error_message[0]['rendered']['#markup'] = $markup;
      }
    }
-   dpm($view->result[0], __FUNCTION__);
  }
 }
 
