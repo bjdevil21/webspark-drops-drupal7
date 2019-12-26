@@ -809,10 +809,13 @@ function asu_rfi_cron() {
   $expired = (variable_get('asu_rfi_expired_delete') === 'all') ? TRUE : FALSE;
   $all_nids = _asu_rfi_get_submissions_to_delete(75, FALSE, $expired);
 
+
+
   $count_nids = (int) count($all_nids);
   if ($count_nids > 0) {
     foreach ($all_nids as $nid) {
       $queue_2->createItem($nid);
+      flogger('asu_rfi', $nid . ' queued for deletion...', array(), WATCHDOG_NOTICE);
     }
     flogger('asu_rfi', '@count ASU RFI submissions have'
       . ' been queued for deletion.', array('@count' => $count_nids), WATCHDOG_NOTICE);

@@ -268,15 +268,17 @@ function asu_rfi_post_to_middleware($data, $type) {
           }
         }
         // Save the error message in the submission node
-        if (isset($node_wrapper->field_rfi_submission_status)) { //
+        if (isset($node_wrapper->field_rfi_submission_status)) {
           $node_wrapper->field_rfi_submission_status->set('SF_Failed');
+          flogger('asu_rfi', 'field_rfi_submission_status set to "SF_Failed".');
         }
         if (isset($node_wrapper->field_rfi_error_message)) {
           $node_wrapper->field_rfi_error_message->set($curl_message);
+          flogger('asu_rfi', 'field_rfi_error_message set.');
         }
         $node_wrapper->save();
         // Log/print messaging to end user and set timestamp
-        flogger('asu_rfi', $curl_message, array(), WATCHDOG_ERROR, FALSE,TRUE, FALSE);
+        flogger('asu_rfi', $curl_message, array(), WATCHDOG_ERROR, FALSE,FALSE, TRUE);
         variable_set('asu_rfi_last_failure_SF_posting', time());
       }
 
