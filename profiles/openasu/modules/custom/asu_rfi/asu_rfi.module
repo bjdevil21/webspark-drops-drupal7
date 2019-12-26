@@ -1087,7 +1087,7 @@ function _asu_rfi_get_submissions_to_delete($submissions_returned = 0, $only_cou
  * to (re)submit (again).
  * @param bool $include_rtp - If TRUE, include older, "Ready to SF POST"
  * submissions that haven't been submitted yet (for whatever reason).
- *
+ * @param string $expired - Set by RFI settings form; Defaults to ALL (applies to cron AND VBO actions)
  * @return mixed $results - List of nodes to delete.
  */
 function _asu_rfi_get_unpassed_submissions($include_rtp = FALSE, $expired = 'all') {
