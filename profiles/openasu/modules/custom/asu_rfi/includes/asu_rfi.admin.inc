@@ -215,9 +215,7 @@ function asu_rfi_admin_settings() {
  * @param $form
  * @param $form_state
  */
-
 function _asu_rfi_admin_settings_submit($form, $form_state) {
-  dpm($form_state['values'], __FUNCTION__);
   $keys = array(
     'asu_rfi_grad_confirm' => 1,
     'asu_rfi_undergrad_confirm' => 1,

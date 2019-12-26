@@ -188,6 +188,7 @@ function asu_rfi_update_7201(&$sandbox) {
     ->delete('variable')
     ->condition('name', 'asu_rfi_siteDomain', 'LIKE')
     ->execute();
+  flogger('asu_rfi', 'The unused asu_rfi_siteDomain setting was deleted.');
 }
 
 /**
@@ -240,7 +241,7 @@ function asu_rfi_update_7202(&$sandbox) {
         'Form_Completed_No_SF' => 'Completed (No Salesforce)',
       );
     } else {
-      flogger('asu_rfi', 'Field field_rfi_submission_status settings could not be updated.'
+      flogger('asu_rfi', __FUNCTION__ . ': Field field_rfi_submission_status settings could not be updated.'
         . 'Check the Submission status field dropdown to ensure the proper values are available.',
         array(), WATCHDOG_ERROR);
     }
@@ -264,6 +265,9 @@ function asu_rfi_update_7202(&$sandbox) {
   $view->set_display('default');
   $cache = $view->display_handler->get_plugin('cache');
   $cache->cache_flush();
+
+  flogger('asu_rfi', 'Submission status values were updated to more'
+  . ' helpful, friendly values');
 }
 
 /**
@@ -352,6 +356,7 @@ function asu_rfi_update_7205(&$sandbox) {
         ->execute();
     }
   }
+
   // #2 Update submission status of all current student forms, using NIDs from form_type tables.
   $db_or = db_or()
     ->condition('field_rfi_form_type_value', $values['current_undergrad_form'])
@@ -378,6 +383,8 @@ function asu_rfi_update_7205(&$sandbox) {
         ->where('entity_id IN (' . $nids . ')')
         ->execute();
     }
+    flogger('asu_rfi', __FUNCTION__ . ': Any current student form '
+      . ' submissions (if they existed) were updated to "Completed (No Salesforce)".');
   }
 }
 
@@ -404,16 +411,20 @@ function asu_rfi_update_7206(&$sandbox) {
           )
         );
         variable_set($new, $entity);
-        // Add separate value to pull quickly
+        // Add separate value for NIDs
         variable_set($new . '_nid', $node->nid);
         variable_del($old);
-      } else {
-        flogger('asu_rfi', 'Node ID @nid does not exist. Skipping update of @old.',
-          array('@nid' => $nid, '@old' => $old), WATCHDOG_WARNING, TRUE,
-          TRUE, FALSE);
+        flogger('asu_rfi', __FUNCTION__ . ': ' . $old
+          . ' has been updated to ' . $new . ' in the variables table.');
+      }
+      else {
+        flogger('asu_rfi', __FUNCTION__ . ': Node ID @nid does'
+        . ' not exist. Skipping update of @old.', array('@nid' => $nid, '@old' => $old),
+          WATCHDOG_WARNING, TRUE, TRUE, FALSE);
       }
     } else {
-      flogger('asu_rfi', $old . ' not already set. Skipping variable update.');
+      flogger('asu_rfi', __FUNCTION__ . ': ' . $old . ' was not'
+       . ' already set. Skipping variable update.');
     }
   }
 }
