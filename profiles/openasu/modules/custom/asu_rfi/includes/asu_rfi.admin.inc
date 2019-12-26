@@ -8,9 +8,9 @@
 function asu_rfi_admin_settings() {
   $form_modes = array('test' => 'Test', 'prod' => 'Production');
   $special_action_modes = array(
-    'all' => 'All (RFI Report page + Cron runs)',
-    'form_only' => 'RFI Report page ONLY',
-    'none' => 'Never',
+    'all' => 'ALL - RFI Report page + Cron runs)',
+    'form_only' => 'Some - RFI Report page ONLY',
+    'none' => 'Neither',
   );
 
   ////////////////////////
@@ -19,7 +19,7 @@ function asu_rfi_admin_settings() {
 
   $form['form_stage'] = array(
     '#type' => 'item',
-    '#markup' => t('<div class="rfi_note">Important: The RFI submissions will not be'
+    '#markup' => t('<div class="alert alert-info">Important: The RFI submissions will not be'
     . ' posted to Salesforce via Middleware unless a valid authentication code has been added.'
     . ' <a href="https://webforms.asu.edu/content/access-rfi-middleware-request">Request '
     . ' authentication key</a></div>'),
@@ -48,11 +48,12 @@ function asu_rfi_admin_settings() {
   );
   $form['asu_rfi_form_access']['asu_rfi_expired_submit'] = array(
     '#type' => 'select',
-    '#title' => t('Submit all expired submissions'),
+    '#title' => t('Submit ALL expired submissions with..'),
     '#options' => $special_action_modes,
     '#default_value' => variable_get('asu_rfi_expired_submit', 'all'),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
-    '#description' => t("Submit ALL expired RFI submissions, even if they are more than "
+    '#description' => t("Submit ALL expired RFI submissions to Salesforce "
+      . " middleware - even if they are more than "
       . round((float) (ASU_RFI_SUBMISSION_EXP_PERIOD) / 86400 , 2) . " days old."),
     '#required' => TRUE,
   );
