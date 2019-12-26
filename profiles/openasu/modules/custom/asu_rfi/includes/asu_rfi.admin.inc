@@ -152,9 +152,9 @@ function asu_rfi_admin_settings() {
     '#era_entity_type' => 'node',
     '#era_bundles' => array('panopoly_page'),
     '#era_query_settings' => array(
-      'limit' => 10, // Default is 50.
+      'limit' => 25, // Default is 50.
     ),
-    '#default_value' => variable_get('asu_rfi_undergrad_confirm_nid', ''),
+    '#default_value' => variable_get('asu_rfi_undergrad_confirm', ''),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
   );
   $form['confirm_settings']['asu_rfi_confirm_content']['asu_rfi_grad_confirm'] = array(
@@ -163,7 +163,7 @@ function asu_rfi_admin_settings() {
     '#era_entity_type' => 'node',
     '#era_bundles' => array('panopoly_page'),
     '#era_query_settings' => array(
-      'limit' => 10, // Default is 50.
+      'limit' => 25, // Default is 50.
     ),
     '#default_value' => variable_get('asu_rfi_grad_confirm_nid', ''),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
@@ -220,15 +220,14 @@ function asu_rfi_admin_settings() {
 
 function _asu_rfi_admin_settings_submit($form, $form_state) {
   dpm($form_state['values'], __FUNCTION__);
-/*
- *
-   $grad_confirm = ($form_state['values']['asu_rfi_grad_confirm']);
-  $undergrad_confirm = $form_state['values']['asu_rfi_grad_confirm'];
-  if (isset($asu_rfi_grad_confirm['entity_id'])) {
-    variable_set('asu_rfi_grad_confirm_nid',$asu_rfi_grad_confirm['entity_id'] );
+
+  $grad_confirm_nid = ($form_state['values']['asu_rfi_grad_confirm']['entity_id']);
+  $undergrad_confirm_nid = $form_state['values']['asu_rfi_undergrad_confirm']['entity_id'];
+
+  if ($grad_confirm_nid) {
+    variable_set('asu_rfi_grad_confirm_nid', $grad_confirm_nid );
   }
-  if (isset($asu_rfi_grad_confirm['entity_id'])) {
-    variable_set('asu_rfi_grad_confirm_nid',$asu_rfi_grad_confirm['entity_id'] );
+  if (isset($undergrad_confirm_nid)) {
+    variable_set('asu_rfi_grad_confirm_nid', $undergrad_confirm_nid );
   }
-*/
 }
