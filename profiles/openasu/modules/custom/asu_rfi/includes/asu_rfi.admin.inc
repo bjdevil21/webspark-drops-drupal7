@@ -19,7 +19,7 @@ function asu_rfi_admin_settings() {
 
   $form['form_stage'] = array(
     '#type' => 'item',
-    '#markup' => t('<div class="alert alert-info">Important: The RFI submissions will not be'
+    '#markup' => t('<div class="messages warning">Important: The RFI submissions will not be'
     . ' posted to Salesforce via Middleware unless a valid authentication code has been added.'
     . ' <a href="https://webforms.asu.edu/content/access-rfi-middleware-request">Request '
     . ' authentication key</a></div>'),
