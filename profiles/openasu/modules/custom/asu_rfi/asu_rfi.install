@@ -295,7 +295,6 @@ function asu_rfi_update_7203(&$sandbox) {
     }
 
   // Actual batch operation to delete
-  $expired = (variable_get('asu_rfi_expired_delete') === 'all') ? TRUE : FALSE;
   $all_nids = _asu_rfi_get_submissions_to_delete($nids_per_pass);
 
   foreach ($all_nids as $nid) {
