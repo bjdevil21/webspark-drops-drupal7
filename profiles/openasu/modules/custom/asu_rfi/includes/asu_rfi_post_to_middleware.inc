@@ -253,7 +253,7 @@ function asu_rfi_post_to_middleware($data, $type) {
         $created = $node_wrapper->created->value();
         $expired_message = _asu_rfi_create_expired_message($created);
         $curl_message = 'FAIL - Submission #' . $nid_info . ' to __' . $url . '__.'
-         . " \n" . 'HTTP code ' . $curl_info['http_code']
+         . 'HTTP code ' . $curl_info['http_code']
           . ': "' . $response . '" ' . "\n" . $expired_message;
 
         if (($curl_info['http_code'] >= 400)) {
