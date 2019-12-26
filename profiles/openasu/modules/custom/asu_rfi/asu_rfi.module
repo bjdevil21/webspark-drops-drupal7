@@ -68,7 +68,15 @@ function asu_rfi_views_pre_render(&$view) {
      'weight' => 19,
    ));
    // Alter field outputs in the page view
-   $view->display['page']->display_options['fields']['download']['text'] = $mymsg;
+   foreach ($view->result as $key => $result) {
+     if ($result->field_field_rfi_submission_status[0]['raw'] === 'SF_Failed') {
+       $markup = preg_replace('/Submission (#\d+?) to __(.+?)__/',
+         'Submission $1 to <a href="$2">middleware</a> failed.',
+         $result->field_field_rfi_error_message[0]['rendered']['#markup'], 1);
+       $markup = str_replace('\n', '<br />', $markup);
+       $view->result[$key]->field_field_rfi_error_message[0]['rendered']['#markup'] = $markup;
+     }
+   }
  }
 }
 
