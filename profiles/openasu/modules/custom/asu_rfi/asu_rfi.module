@@ -68,10 +68,10 @@ function asu_rfi_views_pre_render(&$view) {
    // Alter field outputs in the page view
    foreach ($view->result as $key => $result) {
      if ($result->field_field_rfi_submission_status[0]['raw']['value'] === 'SF_Failed') {
-       $markup = preg_replace('/Submission (#\d+?) to __(.+?)__ failed\./',
-         "Submission $1 to <a href=\"$2\">middleware</a> failed.",
+       $markup = preg_replace('/Submission (#\d+?) to __(.+?)__\./',
+         "Submission $1 (<a href=\"$2\">middleware URL</a>).",
          $result->field_field_rfi_error_message[0]['rendered']['#markup'], 1);
-       $markup = str_replace('\n', '<br />', $markup);
+       $markup = str_replace(array("\r\n", "\n", "\r"), '<br />', $markup);
        dpm($markup, __FUNCTION__ . " - result $key");
        $view->result[$key]->field_field_rfi_error_message[0]['rendered']['#markup'] = $markup;
      }
