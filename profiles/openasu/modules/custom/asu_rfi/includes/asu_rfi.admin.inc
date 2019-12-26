@@ -8,9 +8,8 @@
 function asu_rfi_admin_settings() {
   $form_modes = array('test' => 'Test', 'prod' => 'Production');
   $special_action_modes = array(
-    'all' => 'ALL - RFI Report page + Cron runs)',
-    'form_only' => 'Some - RFI Report page ONLY',
-    'none' => 'Neither',
+    'all' => 'RFI Report page + Cron runs',
+    'form_only' => 'RFI Report page ONLY',
   );
 
   ////////////////////////
