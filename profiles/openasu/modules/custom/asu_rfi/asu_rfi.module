@@ -52,7 +52,8 @@ function asu_rfi_views_api() {
 function asu_rfi_views_pre_render(&$view) {
   // For the RFI report page intro
  if ($view->name === 'asu_rfi_submissions_report') {
-   dpm($view->display['page'], __FUNCTION__);
+   dpm($view->result, __FUNCTION__);
+//   dpm($view->display['page']->display_options, __FUNCTION__);
    // Add JS
    drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/js/asu_rfi.report.js',   array(
      'type' => 'file',
@@ -67,7 +68,7 @@ function asu_rfi_views_pre_render(&$view) {
      'weight' => 19,
    ));
    // Alter field outputs in the page view
-   $view->display['block_1']->display_options['fields']['download']['text'] = $mymsg;
+   $view->display['page']->display_options['fields']['download']['text'] = $mymsg;
  }
 }
 
