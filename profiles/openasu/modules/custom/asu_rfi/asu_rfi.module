@@ -35,9 +35,6 @@ define('ASU_RFI_GRAD_CONFIRMATION_NID', variable_get('asu_rfi_grad_confirm_nid',
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_to_middleware');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_get_programs');
 
-dpm(ASU_RFI_UNDERGRAD_CONFIRMATION_NID, 'undergrad');
-dpm(ASU_RFI_GRAD_CONFIRMATION_NID, 'grad');
-
 /**
  * Implements hook_views_api().
  */

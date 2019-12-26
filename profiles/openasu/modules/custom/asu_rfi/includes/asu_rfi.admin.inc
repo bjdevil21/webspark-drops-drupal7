@@ -46,22 +46,21 @@ function asu_rfi_admin_settings() {
      . 'site admins can view the forms if they are in Test mode."),
     '#required' => TRUE,
   );
-  $form['asu_rfi_form_access']['asu_rfi_submit_all_expired'] = array(
+  $form['asu_rfi_form_access']['asu_rfi_expired_submit'] = array(
     '#type' => 'select',
     '#title' => t('Submit all expired submissions'),
     '#options' => $special_action_modes,
-    '#default_value' => variable_get('asu_rfi_submit_all_expired', 'all'),
+    '#default_value' => variable_get('asu_rfi_expired_submit', 'all'),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
     '#description' => t("Submit ALL expired RFI submissions, even if they are more than "
       . round((float) (ASU_RFI_SUBMISSION_EXP_PERIOD) / 86400 , 2) . " days old."),
     '#required' => TRUE,
   );
-
-  $form['asu_rfi_form_access']['asu_rfi_delete_all_expired'] = array(
+  $form['asu_rfi_form_access']['asu_rfi_expired_delete'] = array(
     '#type' => 'select',
     '#title' => t('Delete all expired submissions'),
     '#options' => $special_action_modes,
-    '#default_value' => variable_get('asu_rfi_delete_all_expired', 'all'),
+    '#default_value' => variable_get('asu_rfi_expired_delete', 'all'),
     '#attributes' => array('class' => array('asu-rfi-admin-field')),
     '#description' => t("Delete ALL expired RFI submissions, even if they are more than "
       . round((float) (ASU_RFI_SUBMISSION_EXP_PERIOD) / 86400 , 2) . " days old."),
@@ -212,22 +211,26 @@ function asu_rfi_admin_settings() {
 }
 
 /**
- * Custom hook_form_validate helper function
- * Validate admin email address
+ * Defines keys and saves their values in the variable DB table (extra form submit callback)
  * @param $form
  * @param $form_state
  */
 
 function _asu_rfi_admin_settings_submit($form, $form_state) {
   dpm($form_state['values'], __FUNCTION__);
-
-  $grad_confirm_nid = ($form_state['values']['asu_rfi_grad_confirm']['entity_id']);
-  $undergrad_confirm_nid = ($form_state['values']['asu_rfi_undergrad_confirm']['entity_id']);
-
-  if ($grad_confirm_nid) {
-    variable_set('asu_rfi_grad_confirm_nid', $grad_confirm_nid );
-  }
-  if (isset($undergrad_confirm_nid)) {
-    variable_set('asu_rfi_undergrad_confirm_nid', $undergrad_confirm_nid );
+  $keys = array(
+    'asu_rfi_grad_confirm' => 1,
+    'asu_rfi_undergrad_confirm' => 1,
+    'asu_rfi_expired_delete' => 0,
+    'asu_rfi_expired_submit' => 0,
+  );
+  foreach ($keys as $element => $is_entity) {
+    $value = ($is_entity === 1)
+      ? ((isset($form_state['values'][$element]['entity_id']))
+        ? $form_state['values'][$element]['entity_id']
+        : '')
+      : $form_state['values'][$element];
+    $key = ($is_entity === 1) ? $element . '_nid' : $element;
+    variable_set($key, $value );
   }
 }
