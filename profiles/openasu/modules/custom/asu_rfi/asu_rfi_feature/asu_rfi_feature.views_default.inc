@@ -586,11 +586,32 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_error_message']['field'] = 'field_rfi_error_message';
   $handler->display->display_options['fields']['field_rfi_error_message']['label'] = 'Middleware response';
   $handler->display->display_options['fields']['field_rfi_error_message']['element_label_colon'] = FALSE;
+  /* Field: Content: Link to content */
+  $handler->display->display_options['fields']['view_node']['id'] = 'view_node';
+  $handler->display->display_options['fields']['view_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['view_node']['field'] = 'view_node';
+  $handler->display->display_options['fields']['view_node']['label'] = '';
+  $handler->display->display_options['fields']['view_node']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['view_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Link to delete content */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = '';
+  $handler->display->display_options['fields']['delete_node']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Link to edit content */
+  $handler->display->display_options['fields']['edit_node_1']['id'] = 'edit_node_1';
+  $handler->display->display_options['fields']['edit_node_1']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node_1']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node_1']['label'] = '';
+  $handler->display->display_options['fields']['edit_node_1']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['edit_node_1']['element_label_colon'] = FALSE;
   /* Field: Global: Contextual Links */
   $handler->display->display_options['fields']['contextual_links']['id'] = 'contextual_links';
   $handler->display->display_options['fields']['contextual_links']['table'] = 'views';
   $handler->display->display_options['fields']['contextual_links']['field'] = 'contextual_links';
-  $handler->display->display_options['fields']['contextual_links']['label'] = 'Actions';
+  $handler->display->display_options['fields']['contextual_links']['label'] = 'Node Actions';
   $handler->display->display_options['fields']['contextual_links']['fields'] = array(
     'view_node' => 'view_node',
     'delete_node' => 'delete_node',
@@ -693,27 +714,6 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_form_name']['table'] = 'field_data_field_rfi_form_name';
   $handler->display->display_options['fields']['field_rfi_form_name']['field'] = 'field_rfi_form_name';
   $handler->display->display_options['fields']['field_rfi_form_name']['element_label_colon'] = FALSE;
-  /* Field: Content: Link to content */
-  $handler->display->display_options['fields']['view_node']['id'] = 'view_node';
-  $handler->display->display_options['fields']['view_node']['table'] = 'views_entity_node';
-  $handler->display->display_options['fields']['view_node']['field'] = 'view_node';
-  $handler->display->display_options['fields']['view_node']['label'] = '';
-  $handler->display->display_options['fields']['view_node']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['view_node']['element_label_colon'] = FALSE;
-  /* Field: Content: Link to delete content */
-  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
-  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
-  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
-  $handler->display->display_options['fields']['delete_node']['label'] = '';
-  $handler->display->display_options['fields']['delete_node']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
-  /* Field: Content: Link to edit content */
-  $handler->display->display_options['fields']['edit_node_1']['id'] = 'edit_node_1';
-  $handler->display->display_options['fields']['edit_node_1']['table'] = 'views_entity_node';
-  $handler->display->display_options['fields']['edit_node_1']['field'] = 'edit_node';
-  $handler->display->display_options['fields']['edit_node_1']['label'] = '';
-  $handler->display->display_options['fields']['edit_node_1']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['edit_node_1']['element_label_colon'] = FALSE;
   /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'node';
@@ -877,9 +877,9 @@ function asu_rfi_feature_views_default_views() {
     t('Submitted date'),
     t('Last updated (here)'),
     t('Middleware response'),
+    t('Node Actions'),
     t('Location preference'),
     t('Additional question/comment'),
-    t('Actions'),
     t('Data export'),
     t('Attachment'),
     t('<style type="text/css">
