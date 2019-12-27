@@ -611,7 +611,9 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['contextual_links']['id'] = 'contextual_links';
   $handler->display->display_options['fields']['contextual_links']['table'] = 'views';
   $handler->display->display_options['fields']['contextual_links']['field'] = 'contextual_links';
-  $handler->display->display_options['fields']['contextual_links']['label'] = 'Node Actions';
+  $handler->display->display_options['fields']['contextual_links']['label'] = 'More Submission Actions';
+  $handler->display->display_options['fields']['contextual_links']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['contextual_links']['alter']['text'] = '<div class="asu-rfi-contextual-links-container">[contextual_links]</div>';
   $handler->display->display_options['fields']['contextual_links']['fields'] = array(
     'view_node' => 'view_node',
     'delete_node' => 'delete_node',
@@ -788,6 +790,9 @@ function asu_rfi_feature_views_default_views() {
   background-image: url(/misc/menu-collapsed.png);
   background-position: 5px 50%;
 }
+.view-asu-rfi-submissions-report .asu-rfi-contextual-links-container {
+  position: relative;
+}
 </style>';
   $handler->display->display_options['header']['area_1']['format'] = 'full_html';
   /* Header: Global: Text area */
@@ -877,7 +882,8 @@ function asu_rfi_feature_views_default_views() {
     t('Submitted date'),
     t('Last updated (here)'),
     t('Middleware response'),
-    t('Node Actions'),
+    t('More Submission Actions'),
+    t('<div class="asu-rfi-contextual-links-container">[contextual_links]</div>'),
     t('Location preference'),
     t('Additional question/comment'),
     t('Data export'),
@@ -910,6 +916,9 @@ function asu_rfi_feature_views_default_views() {
 .view-asu-rfi-submissions-report .view-header .questions.questions-collapsed {
   background-image: url(/misc/menu-collapsed.png);
   background-position: 5px 50%;
+}
+.view-asu-rfi-submissions-report .asu-rfi-contextual-links-container {
+  position: relative;
 }
 </style>'),
     t('<h4 class="questions"><a href="/admin/reports/asu-rfi-submissions-report">Commonly asked RFI submission questions...</a></h4>
