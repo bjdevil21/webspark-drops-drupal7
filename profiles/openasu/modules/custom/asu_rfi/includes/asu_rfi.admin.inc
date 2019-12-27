@@ -233,6 +233,8 @@ function _asu_rfi_admin_settings_submit($form, $form_state) {
         : '')
       : $form_state['values'][$element];
     $key = ($is_entity === 1) ? $element . '_nid' : $element;
+    dpm($key, __FUNCTION__ . ' key');
+    dpm($value, __FUNCTION__ . ' value');
     variable_set($key, $value );
   }
 }
