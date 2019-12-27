@@ -283,7 +283,7 @@ function asu_rfi_update_7203(&$sandbox) {
 
   // First update run ONLY (Initialize update counters, data)
   if (!isset($sandbox['total'])) {
-    $total_count = _asu_rfi_get_submissions_to_delete(0, TRUE, TRUE);
+    $total_count = _asu_rfi_get_submissions_to_delete(0, TRUE);
     $sandbox['total'] = $total_count;
     $sandbox['max'] = $nids_per_pass;
     $sandbox['progress'] = 0;

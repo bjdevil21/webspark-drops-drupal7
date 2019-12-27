@@ -795,56 +795,69 @@ function asu_rfi_cron() {
   // #2 - Cron + Queue API - Delete ASU RFI nodes that have either
   // 1) been submitted to SF already (SF_Complete), or
   // 2) Has gone ASU_RFI_SUBMISSION_EXP_PERIOD (seconds) without getting successfully
-  // processed (stuck in SF_Failed) - IF expired flag is set to "all" in admin form. (on by default)
-  // A max of 50 nodes is deleted with each cron run.
-  $queue_2 = DrupalQueue::get('asu_rfi_delete_submissions_queue');
-
+  // processed (stuck in SF_Failed)
+  // A max of 50 nodes is deleted with each cron run...
+  // IF expired flag is set to "all" in admin form. (on by default)
   $expired = (variable_get('asu_rfi_expired_delete') === 'all') ? TRUE : FALSE;
-  $all_nids = _asu_rfi_get_submissions_to_delete(50, FALSE, $expired);
+  if ($expired) {
+    $queue_2 = DrupalQueue::get('asu_rfi_delete_submissions_queue');
 
-  $count_nids = (int) count($all_nids);
-  if ($count_nids > 0) {
-    foreach ($all_nids as $nid) {
-      $queue_2->createItem($nid);
+    $all_nids = _asu_rfi_get_submissions_to_delete(50, FALSE);
+
+    $count_nids = (int) count($all_nids);
+    if ($count_nids > 0) {
+      foreach ($all_nids as $nid) {
+        $queue_2->createItem($nid);
+      }
+      flogger('asu_rfi', '@count ASU RFI submissions have'
+        . ' been queued for deletion.', array('@count' => $count_nids), WATCHDOG_NOTICE);
     }
-    flogger('asu_rfi', '@count ASU RFI submissions have'
-      . ' been queued for deletion.', array('@count' => $count_nids), WATCHDOG_NOTICE);
+    variable_set('asu_rfi_cron_queue2_last_ran', time());
   }
 
-  // #3 - Cron + Queue API - Check for unposted leads (confirmation == -1), and add them to the cron queue.
-  $queue_3 = DrupalQueue::get('asu_rfi_failed_leads_queue');
-  $queue_3->deleteQueue(); // @TODO - Why is this repeated??
-  $queue_3 = DrupalQueue::get('asu_rfi_failed_leads_queue');
+  // #3 - Cron + Queue API - Check for unposted leads (confirmation == -1)
+  // and add them to the cron queue.
 
-  // Get asu_rfi node submissions that have failed at least once.
   // Include expired in next cron run (per admin form setting) or skip them?
   $expired = (variable_get('asu_rfi_expired_submit') === 'all') ? TRUE : FALSE;
-  $results = _asu_rfi_get_unpassed_submissions(TRUE, $expired);
+  if ($expired) {
+    $queue_3 = DrupalQueue::get('asu_rfi_failed_leads_queue');
+    $queue_3->deleteQueue(); // @TODO - Why is this repeated??
+    $queue_3 = DrupalQueue::get('asu_rfi_failed_leads_queue');
 
-  // Add failed leads to the cron jobs queue
-  if (isset($results['node'])) {
-    // For each failed lead, add it to the asu_rfi_failed_leads_queue.
-    foreach ($results['node'] as $key => $unpassed_submission) {
-      $queue_3->createItem($unpassed_submission);
-    }
-  }
+    // Get asu_rfi node submissions that have failed at least once.
+    $results = _asu_rfi_get_unpassed_submissions(TRUE, $expired);
 
-  // #4 - If the site hasn't posted submissions to salesforce for two days, send an email to administrator.
-  $last_sf_success = variable_get('asu_rfi_last_success_SF_posting', 0);
-  $last_sf_failure = variable_get('asu_rfi_last_failure_SF_posting', 0);
-  $timediff = $last_sf_failure - $last_sf_success;
-  $last_sf_attempt = variable_get('asu_rfi_last_attempt_SF_posting', 0);
-  $timediff_attempt = $last_sf_attempt - $last_sf_success;
-  $last_email_sent = variable_get('asu_rfi_SF_error_message_sent', 0);
-
-  if (($last_email_sent - time()) > ASU_RFI_STALE_TIME_DEFAULT) { // If the email was sent within 24hrs, don't send it again.
-    if (($timediff > (ASU_RFI_STALE_TIME_DEFAULT * 2)) || ($timediff_attempt > (ASU_RFI_STALE_TIME_DEFAULT * 2))) { // greater that two days
-      $to_email = variable_get('asu_rfi_error_email', NULL); // get error reporting email address from rfi admin settings page
-      if (!empty($to_email)) {
-        // send email to admin reporting the issue
-        _asu_rfi_create_failed_post_email($to_email, 0);
+    // Add failed leads to the cron jobs queue
+    if (isset($results['node'])) {
+      // For each failed lead, add it to the asu_rfi_failed_leads_queue.
+      foreach ($results['node'] as $key => $unpassed_submission) {
+        $queue_3->createItem($unpassed_submission);
       }
     }
+
+    // #4 - If the site hasn't posted submissions to salesforce for two days, send an email to administrator.
+    $last_sf_success = variable_get('asu_rfi_last_success_SF_posting', 0);
+    $last_sf_failure = variable_get('asu_rfi_last_failure_SF_posting', 0);
+    $timediff = $last_sf_failure - $last_sf_success;
+    $last_sf_attempt = variable_get('asu_rfi_last_attempt_SF_posting', 0);
+    $timediff_attempt = $last_sf_attempt - $last_sf_success;
+    $last_email_sent = variable_get('asu_rfi_SF_error_message_sent', 0);
+
+    // If an admin email wasn't sent within 24hrs, try to send it again...
+    if (time() - $last_email_sent > ASU_RFI_STALE_TIME_DEFAULT) {
+      // If last success or failure was greater that two days...
+      if (($timediff > (ASU_RFI_STALE_TIME_DEFAULT * 2))
+        || ($timediff_attempt > (ASU_RFI_STALE_TIME_DEFAULT * 2))) {
+        // get error reporting email address from rfi admin settings page...
+        $to_email = variable_get('asu_rfi_error_email', NULL);
+        if (!empty($to_email)) {
+          // and send email to admin reporting the issue.
+          _asu_rfi_create_failed_post_email($to_email, 0);
+        }
+      }
+    }
+    variable_set('asu_rfi_cron_queue3_last_ran', time());
   }
 
   // Update asu_rfi_cron_last_ran time.
@@ -1041,10 +1054,9 @@ function _asu_rfi_get_status_field_tables() {
  * @param int $submissions_per_pass - If 0, return all results. If > 0, limit the
  * size per execution (likely a Batch API call).
  * @param bool $only_count - Only return the count of nodes to delete. If FALSE, return all nids.
- * @param bool $expired - Include expired submissions.
  * @return array|int
  */
-function _asu_rfi_get_submissions_to_delete($submissions_returned = 0, $only_count = FALSE, $expired = TRUE) {
+function _asu_rfi_get_submissions_to_delete($submissions_returned = 0, $only_count = FALSE) {
 
   // waste of time
   if ($only_count && $submissions_returned !== 0) {
@@ -1098,10 +1110,9 @@ function _asu_rfi_get_submissions_to_delete($submissions_returned = 0, $only_cou
  * to (re)submit (again).
  * @param bool $include_rtp - If TRUE, include older, "Ready to SF POST"
  * submissions that haven't been submitted yet (for whatever reason).
- * @param string $expired - Set by RFI settings form; Defaults to ALL (applies to cron AND VBO actions)
  * @return mixed $results - List of nodes to delete.
  */
-function _asu_rfi_get_unpassed_submissions($include_rtp = FALSE, $expired = 'all') {
+function _asu_rfi_get_unpassed_submissions($include_rtp = FALSE) {
 
   $statuses = array(
     'Form_Multi_Partial',
