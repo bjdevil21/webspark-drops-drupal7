@@ -131,7 +131,6 @@ function asu_rfi_menu() {
     'access arguments' => array('administer asu rfi'),
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
-    'weight' => -20,
   );
   $items['admin/config/asurfi/settings'] = array(
     'title' => 'Settings',
