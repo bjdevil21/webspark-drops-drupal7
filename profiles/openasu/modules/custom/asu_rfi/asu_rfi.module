@@ -51,6 +51,7 @@ function asu_rfi_views_api() {
  */
 function asu_rfi_views_pre_render(&$view) {
   // For the RFI report page intro
+  dpm($view, __FUNCTION__);
  if ($view->name === 'asu_rfi_submissions_report') {
    // Add JS
    drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/js/asu_rfi.report.js',   array(
