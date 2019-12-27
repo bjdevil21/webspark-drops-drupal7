@@ -414,7 +414,15 @@ function asu_rfi_update_7206(&$sandbox) {
             'entity_uuid' => $node->uuid,
           )
         );
-        variable_set($new, $entity);
+        // manually insert serialized array
+        Database::getConnection('default', 'default')
+          ->merge('variable')
+          ->fields(array(
+            'name' => $new,
+            'value' => $entity,
+          ))
+          ->condition('name', $new, 'LIKE')
+          ->execute();
         // Add separate value for NIDs
         variable_set($new . '_nid', $node->nid);
         variable_del($old);
