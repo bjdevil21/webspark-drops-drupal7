@@ -586,6 +586,17 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_error_message']['field'] = 'field_rfi_error_message';
   $handler->display->display_options['fields']['field_rfi_error_message']['label'] = 'Middleware response';
   $handler->display->display_options['fields']['field_rfi_error_message']['element_label_colon'] = FALSE;
+  /* Field: Global: Contextual Links */
+  $handler->display->display_options['fields']['contextual_links']['id'] = 'contextual_links';
+  $handler->display->display_options['fields']['contextual_links']['table'] = 'views';
+  $handler->display->display_options['fields']['contextual_links']['field'] = 'contextual_links';
+  $handler->display->display_options['fields']['contextual_links']['label'] = 'Actions';
+  $handler->display->display_options['fields']['contextual_links']['fields'] = array(
+    'view_node' => 'view_node',
+    'delete_node' => 'delete_node',
+    'edit_node_1' => 'edit_node_1',
+  );
+  $handler->display->display_options['fields']['contextual_links']['check_access'] = 0;
   /* Field: Content: Student type */
   $handler->display->display_options['fields']['field_rfi_student_type']['id'] = 'field_rfi_student_type';
   $handler->display->display_options['fields']['field_rfi_student_type']['table'] = 'field_data_field_rfi_student_type';
@@ -703,17 +714,6 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['edit_node_1']['label'] = '';
   $handler->display->display_options['fields']['edit_node_1']['exclude'] = TRUE;
   $handler->display->display_options['fields']['edit_node_1']['element_label_colon'] = FALSE;
-  /* Field: Global: Contextual Links */
-  $handler->display->display_options['fields']['contextual_links']['id'] = 'contextual_links';
-  $handler->display->display_options['fields']['contextual_links']['table'] = 'views';
-  $handler->display->display_options['fields']['contextual_links']['field'] = 'contextual_links';
-  $handler->display->display_options['fields']['contextual_links']['label'] = 'Actions';
-  $handler->display->display_options['fields']['contextual_links']['fields'] = array(
-    'view_node' => 'view_node',
-    'delete_node' => 'delete_node',
-    'edit_node_1' => 'edit_node_1',
-  );
-  $handler->display->display_options['fields']['contextual_links']['check_access'] = 0;
   /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'node';
