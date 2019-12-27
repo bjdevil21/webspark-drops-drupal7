@@ -503,12 +503,11 @@ function asu_rfi_feature_views_default_views() {
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->display->display_options['defaults']['header'] = FALSE;
-  /* Header: Global: Text area */
-  $handler->display->display_options['header']['area']['id'] = 'area';
-  $handler->display->display_options['header']['area']['table'] = 'views';
-  $handler->display->display_options['header']['area']['field'] = 'area';
-  $handler->display->display_options['header']['area']['content'] = '<fieldset class="collapsible collapsed field-group-fieldset form-wrapper fieldset-nested-even asu-rfi-intro collapse-processed"><style type="text/css">.view-asu-rfi-submissions-report table td { vertical-align: text-top; } .view-asu-rfi-submissions-report .views-field-field-rfi-error-message, .view-asu-rfi-submissions-report .views-field-field-rfi-question { min-width: 16em;}</style><legend><span class="fieldset-legend"><a class="fieldset-title" href="#"><span class="fieldset-legend-prefix element-invisible">Show</span>INTRO: What do submissions statuses mean?</a></span></legend><div class="fieldset-wrapper"><ul><li><strong>Ready for SF POST</strong> - A prospective/current student has successfully submitted either the single page "long" form OR the LAST page of a multistep form. It is ready (and waiting) to be submitted to Salesforce middleware.</li><li><strong>Partial multiform submitted</strong> - (Multi-page forms ONLY). A prospective student has only submitted the first part of a multistep RFI form. If the student does not fill out and submit the other half before the next cron job runs, (or a site administrator manually submits the data to Salesforce here), the cron job will attempt to POST this submission to its Salesforce middleware.</li><li><strong>SF POST Multiform Pending</strong> - (Multi-page forms ONLY). Multiform submissions that have been submitted once and failed. It is waiting to be submitted to Salesforce</li><li><strong>SF POST Successful</strong> - DONE. A submission has successfully posted to the middleware. No further action is required.</li><li><strong>SF POST Failed</strong> - An error occurs while trying to submit to the middleware. The site administrators need to review the submission fields for issues and correct any errors found, and resubmit it to Salesforce middleware by either running cron or using the "OPERATIONS" list to resubmit. (NOTE: If the errors are not rectified, this submission will be deleted automatically by the next cron run 14 days past its submission date.</li><li><strong>Completed (No Salesforce)</strong> - (Current student forms ONLY). The submission has been received, and no Salesforce processing will occur. This is DONE. </li></ul></div></fieldset><h4>Search submissions by:</h4>';
-  $handler->display->display_options['header']['area']['format'] = 'full_html';
+  /* Header: Global: Result summary with an additional token to change the items/page */
+  $handler->display->display_options['header']['webform_result']['id'] = 'webform_result';
+  $handler->display->display_options['header']['webform_result']['table'] = 'views';
+  $handler->display->display_options['header']['webform_result']['field'] = 'webform_result';
+  $handler->display->display_options['header']['webform_result']['content'] = 'Displaying @start - @end of @total submissions. @items_per_page_links';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Bulk operations: Content */
   $handler->display->display_options['fields']['views_bulk_operations']['id'] = 'views_bulk_operations';
@@ -683,6 +682,38 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_form_name']['table'] = 'field_data_field_rfi_form_name';
   $handler->display->display_options['fields']['field_rfi_form_name']['field'] = 'field_rfi_form_name';
   $handler->display->display_options['fields']['field_rfi_form_name']['element_label_colon'] = FALSE;
+  /* Field: Content: Link to content */
+  $handler->display->display_options['fields']['view_node']['id'] = 'view_node';
+  $handler->display->display_options['fields']['view_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['view_node']['field'] = 'view_node';
+  $handler->display->display_options['fields']['view_node']['label'] = '';
+  $handler->display->display_options['fields']['view_node']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['view_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Link to delete content */
+  $handler->display->display_options['fields']['delete_node']['id'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['delete_node']['field'] = 'delete_node';
+  $handler->display->display_options['fields']['delete_node']['label'] = '';
+  $handler->display->display_options['fields']['delete_node']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['delete_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Link to edit content */
+  $handler->display->display_options['fields']['edit_node_1']['id'] = 'edit_node_1';
+  $handler->display->display_options['fields']['edit_node_1']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node_1']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node_1']['label'] = '';
+  $handler->display->display_options['fields']['edit_node_1']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['edit_node_1']['element_label_colon'] = FALSE;
+  /* Field: Global: Contextual Links */
+  $handler->display->display_options['fields']['contextual_links']['id'] = 'contextual_links';
+  $handler->display->display_options['fields']['contextual_links']['table'] = 'views';
+  $handler->display->display_options['fields']['contextual_links']['field'] = 'contextual_links';
+  $handler->display->display_options['fields']['contextual_links']['label'] = 'Actions';
+  $handler->display->display_options['fields']['contextual_links']['fields'] = array(
+    'view_node' => 'view_node',
+    'delete_node' => 'delete_node',
+    'edit_node_1' => 'edit_node_1',
+  );
+  $handler->display->display_options['fields']['contextual_links']['check_access'] = 0;
   /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'node';
@@ -690,12 +721,6 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['nid']['label'] = '';
   $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
-  /* Field: Content: Link to edit content */
-  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
-  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
-  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
-  $handler->display->display_options['fields']['edit_node']['label'] = '';
-  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
   $handler->display->display_options['path'] = 'admin/reports/asu-rfi-submissions-report';
   $handler->display->display_options['menu']['type'] = 'normal';
   $handler->display->display_options['menu']['title'] = 'RFI lead submissions';
@@ -723,6 +748,84 @@ function asu_rfi_feature_views_default_views() {
   );
   $handler->display->display_options['use_batch'] = 'batch';
   $handler->display->display_options['segment_size'] = '100';
+
+  /* Display: Attachment */
+  $handler = $view->new_display('attachment', 'Attachment', 'attachment_1');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['pager']['type'] = 'some';
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  /* Header: Global: Text area */
+  $handler->display->display_options['header']['area_1']['id'] = 'area_1';
+  $handler->display->display_options['header']['area_1']['table'] = 'views';
+  $handler->display->display_options['header']['area_1']['field'] = 'area';
+  $handler->display->display_options['header']['area_1']['empty'] = TRUE;
+  $handler->display->display_options['header']['area_1']['content'] = '<style type="text/css">
+.view-asu-rfi-submissions-report table td { vertical-align: text-top; }
+.view-asu-rfi-submissions-report .views-field-field-rfi-error-message, .view-asu-rfi-submissions-report .views-field-field-rfi-question { min-width: 16em;}
+.view-asu-rfi-submissions-report .attachment .questions,
+.view-asu-rfi-submissions-report .view-header legend {
+  font-weight: 300;
+}
+.view-asu-rfi-submissions-report .view-header {
+  border: 1px solid #ddd;
+  padding: 1em;
+  background-color: #f7f7f7;
+  margin-bottom: 1em;
+}
+.view-asu-rfi-submissions-report .attachment .view-header {
+  padding: 0 1em;
+}
+.view-asu-rfi-submissions-report .view-header fieldset {
+  background-color: #fff;
+  text-transform: none !important;
+  margin-bottom: 1em;
+}
+.view-asu-rfi-submissions-report .view-header .questions {
+  background: url(/misc/menu-expanded.png) 5px 65% no-repeat;
+  padding-left: 1em;
+}
+.view-asu-rfi-submissions-report .view-header .questions.questions-collapsed {
+  background-image: url(/misc/menu-collapsed.png);
+  background-position: 5px 50%;
+}
+</style>';
+  $handler->display->display_options['header']['area_1']['format'] = 'full_html';
+  /* Header: Global: Text area */
+  $handler->display->display_options['header']['area']['id'] = 'area';
+  $handler->display->display_options['header']['area']['table'] = 'views';
+  $handler->display->display_options['header']['area']['field'] = 'area';
+  $handler->display->display_options['header']['area']['empty'] = TRUE;
+  $handler->display->display_options['header']['area']['content'] = '<h4 class="questions"><a href="/admin/reports/asu-rfi-submissions-report">Commonly asked RFI submission questions...</a></h4>
+<div class="questions-container">
+<fieldset class="collapsible collapsed field-group-fieldset form-wrapper fieldset-nested-even asu-rfi-intro collapse-processed"><style type="text/css">.view-asu-rfi-submissions-report table td { vertical-align: text-top; } .view-asu-rfi-submissions-report .views-field-field-rfi-error-message, .view-asu-rfi-submissions-report .views-field-field-rfi-question { min-width: 16em;}</style><legend><span class="fieldset-legend"><a class="fieldset-title" href="#"><span class="fieldset-legend-prefix element-invisible">Show</span>Q: What does the submission status tell me?</a></span></legend><div class="fieldset-wrapper">
+<p>Submission statuses show where the submissions are in the process of getting the form submission from your site on their way to Salesforce (SF) via a "middleware" server that will do the rest of the work for your site. They can also tell you what action (if any) needs to be taken if there is a problem.</p>
+<ul><li><strong>Ready for SF POST</strong> - A prospective/current student has successfully submitted either the single page "long" form OR the LAST page of a multistep form, but for some reason it hasn\'t been submitted to the SF middleware yet. (NOTE: You won\'t normally see this status because the data is automatically submitted to the SF middleware when the form is submitted by the end user.)</li><li><strong>Partial multiform submitted</strong> <em>(Multi-page form submissions ONLY)</em> - A prospective student has only submitted the first half of a multistep RFI form and either hasn\'t finished yet or has chosen to not complete the second half. The next cron job (an automated website process that <a href="/admin/config/system/cron">runs at periodic intervals</a>) will submit the data to the SF middleware (or you can submit it manually here).</li><li><strong>SF POST Multiform Pending</strong> <em>(Multi-page forms ONLY)</em> - Multiform submissions that have been submitted once and failed, or were not completed by the end user and the cron job changed its status from "Partial multiform submitted" - making it eligible to be submitted by a future cron job. It is waiting to be submitted to SF middleware. Similar to "Ready for SF POST".</li><li><strong>SF POST Successful</strong> - DONE. A submission has successfully posted to the middleware. No further action is required.</li><li><strong>SF POST Failed</strong> - An error occurred while trying to submit to the middleware. The site administrators need to first check the "Middleware response" field for possible explanations. Also check the submission\'s data for issues (bad characters, missing data, etc.), and if possible correct any errors found and resubmit it by either <a href="/admin/reports/status/run-cron">running cron</a> or using the "OPERATIONS" list to resubmit. <br />NOTE: If the errors are not rectified, after its expiration date (currently set at 14 days after it was submitted), this submission will be deleted automatically by a future cron job. (Submissions can also be manually deleted here, if desired.)</li><li><strong>Completed (No Salesforce)</strong> <em>(Current student forms ONLY)</em> - The submission has been received, and no Salesforce processing will occur. DONE. <br />IMPORTANT: This data should be deleted ASAP (see, "Can I store RFI form submission data on my site after it has been submitted to Salesforce?", below.)</li></ul></div></fieldset>
+<fieldset class="collapsible collapsed field-group-fieldset form-wrapper fieldset-nested-even asu-rfi-intro collapse-processed"><style type="text/css">.view-asu-rfi-submissions-report table td { vertical-align: text-top; } .view-asu-rfi-submissions-report .views-field-field-rfi-error-message, .view-asu-rfi-submissions-report .views-field-field-rfi-question { min-width: 16em;}</style><legend><span class="fieldset-legend"><a class="fieldset-title" href="#"><span class="fieldset-legend-prefix element-invisible">Show</span>Q: Can I store RFI form submission data on my site after it has been submitted to Salesforce?</a></span></legend><div class="fieldset-wrapper">
+<p>No. It must be deleted after it has been submitted onto the SF middleware and into Salesforce itself.</p>
+<p>Storing personally identifiable information (PII) that has been submitted by end users in your site violates ASU and UTO policies regarding PII data storage and data security.</p>
+</div></fieldset>
+</div>';
+  $handler->display->display_options['header']['area']['format'] = 'full_html';
+  $handler->display->display_options['defaults']['empty'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: First name */
+  $handler->display->display_options['fields']['field_rfi_first_name']['id'] = 'field_rfi_first_name';
+  $handler->display->display_options['fields']['field_rfi_first_name']['table'] = 'field_data_field_rfi_first_name';
+  $handler->display->display_options['fields']['field_rfi_first_name']['field'] = 'field_rfi_first_name';
+  $handler->display->display_options['fields']['field_rfi_first_name']['element_label_colon'] = FALSE;
+  $handler->display->display_options['defaults']['sorts'] = FALSE;
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: First name (field_rfi_first_name) */
+  $handler->display->display_options['filters']['field_rfi_first_name_value']['id'] = 'field_rfi_first_name_value';
+  $handler->display->display_options['filters']['field_rfi_first_name_value']['table'] = 'field_data_field_rfi_first_name';
+  $handler->display->display_options['filters']['field_rfi_first_name_value']['field'] = 'field_rfi_first_name_value';
+  $handler->display->display_options['filters']['field_rfi_first_name_value']['value'] = 'Mytzlflick';
+  $handler->display->display_options['displays'] = array(
+    'page' => 'page',
+    'default' => 0,
+  );
+  $handler->display->display_options['inherit_arguments'] = FALSE;
   $translatables['asu_rfi_submissions_report'] = array(
     t('Master'),
     t('ASU RFI submissions report'),
@@ -768,15 +871,57 @@ function asu_rfi_feature_views_default_views() {
     t('Location'),
     t('Status'),
     t('Page'),
-    t('<fieldset class="collapsible collapsed field-group-fieldset form-wrapper fieldset-nested-even asu-rfi-intro collapse-processed"><legend><span class="fieldset-legend"><a class="fieldset-title" href="#"><span class="fieldset-legend-prefix element-invisible">Show</span>INTRO: What do submissions statuses mean?</a></span></legend><div class="fieldset-wrapper"><ul><li><strong>Ready for SF POST</strong> - A prospective/current student has successfully submitted either the single page "long" form OR the LAST page of a multistep form. It is ready (and waiting) to be submitted to Salesforce middleware.</li><li><strong>Partial multiform submitted</strong> - (Multi-page forms ONLY). A prospective student has only submitted the first part of a multistep RFI form. If the student does not fill out and submit the other half before the next cron job runs, (or a site administrator manually submits the data to Salesforce here), the cron job will attempt to POST this submission to its Salesforce middleware.</li><li><strong>SF POST Multiform Pending</strong> - (Multi-page forms ONLY). Multiform submissions that have been submitted once and failed. It is waiting to be submitted to Salesforce</li><li><strong>SF POST Successful</strong> - DONE. A submission has successfully posted to the middleware. No further action is required.</li><li><strong>SF POST Failed</strong> - An error occurs while trying to submit to the middleware. The site administrators need to review the submission fields for issues and correct any errors found, and resubmit it to Salesforce middleware by either running cron or using the "OPERATIONS" list to resubmit. (NOTE: If the errors are not rectified, this submission will be deleted automatically by the next cron run 14 days past its submission date.</li><li><strong>Completed (No Salesforce)</strong> - (Current student forms ONLY). The submission has been received, and no Salesforce processing will occur. This is DONE. </li></ul></div></fieldset><h4>Search submissions by:</h4>'),
+    t('Displaying @start - @end of @total submissions. @items_per_page_links'),
     t('Content'),
     t('- Choose an operation -'),
     t('Submitted date'),
     t('Last updated (here)'),
-    t('Message from MW/SF'),
+    t('Middleware response'),
     t('Location preference'),
     t('Additional question/comment'),
+    t('Actions'),
     t('Data export'),
+    t('Attachment'),
+    t('<style type="text/css">
+.view-asu-rfi-submissions-report table td { vertical-align: text-top; }
+.view-asu-rfi-submissions-report .views-field-field-rfi-error-message, .view-asu-rfi-submissions-report .views-field-field-rfi-question { min-width: 16em;}
+.view-asu-rfi-submissions-report .attachment .questions,
+.view-asu-rfi-submissions-report .view-header legend {
+  font-weight: 300;
+}
+.view-asu-rfi-submissions-report .view-header {
+  border: 1px solid #ddd;
+  padding: 1em;
+  background-color: #f7f7f7;
+  margin-bottom: 1em;
+}
+.view-asu-rfi-submissions-report .attachment .view-header {
+  padding: 0 1em;
+}
+.view-asu-rfi-submissions-report .view-header fieldset {
+  background-color: #fff;
+  text-transform: none !important;
+  margin-bottom: 1em;
+}
+.view-asu-rfi-submissions-report .view-header .questions {
+  background: url(/misc/menu-expanded.png) 5px 65% no-repeat;
+  padding-left: 1em;
+}
+.view-asu-rfi-submissions-report .view-header .questions.questions-collapsed {
+  background-image: url(/misc/menu-collapsed.png);
+  background-position: 5px 50%;
+}
+</style>'),
+    t('<h4 class="questions"><a href="/admin/reports/asu-rfi-submissions-report">Commonly asked RFI submission questions...</a></h4>
+<div class="questions-container">
+<fieldset class="collapsible collapsed field-group-fieldset form-wrapper fieldset-nested-even asu-rfi-intro collapse-processed"><style type="text/css">.view-asu-rfi-submissions-report table td { vertical-align: text-top; } .view-asu-rfi-submissions-report .views-field-field-rfi-error-message, .view-asu-rfi-submissions-report .views-field-field-rfi-question { min-width: 16em;}</style><legend><span class="fieldset-legend"><a class="fieldset-title" href="#"><span class="fieldset-legend-prefix element-invisible">Show</span>Q: What does the submission status tell me?</a></span></legend><div class="fieldset-wrapper">
+<p>Submission statuses show where the submissions are in the process of getting the form submission from your site on their way to Salesforce (SF) via a "middleware" server that will do the rest of the work for your site. They can also tell you what action (if any) needs to be taken if there is a problem.</p>
+<ul><li><strong>Ready for SF POST</strong> - A prospective/current student has successfully submitted either the single page "long" form OR the LAST page of a multistep form, but for some reason it hasn\'t been submitted to the SF middleware yet. (NOTE: You won\'t normally see this status because the data is automatically submitted to the SF middleware when the form is submitted by the end user.)</li><li><strong>Partial multiform submitted</strong> <em>(Multi-page form submissions ONLY)</em> - A prospective student has only submitted the first half of a multistep RFI form and either hasn\'t finished yet or has chosen to not complete the second half. The next cron job (an automated website process that <a href="/admin/config/system/cron">runs at periodic intervals</a>) will submit the data to the SF middleware (or you can submit it manually here).</li><li><strong>SF POST Multiform Pending</strong> <em>(Multi-page forms ONLY)</em> - Multiform submissions that have been submitted once and failed, or were not completed by the end user and the cron job changed its status from "Partial multiform submitted" - making it eligible to be submitted by a future cron job. It is waiting to be submitted to SF middleware. Similar to "Ready for SF POST".</li><li><strong>SF POST Successful</strong> - DONE. A submission has successfully posted to the middleware. No further action is required.</li><li><strong>SF POST Failed</strong> - An error occurred while trying to submit to the middleware. The site administrators need to first check the "Middleware response" field for possible explanations. Also check the submission\'s data for issues (bad characters, missing data, etc.), and if possible correct any errors found and resubmit it by either <a href="/admin/reports/status/run-cron">running cron</a> or using the "OPERATIONS" list to resubmit. <br />NOTE: If the errors are not rectified, after its expiration date (currently set at 14 days after it was submitted), this submission will be deleted automatically by a future cron job. (Submissions can also be manually deleted here, if desired.)</li><li><strong>Completed (No Salesforce)</strong> <em>(Current student forms ONLY)</em> - The submission has been received, and no Salesforce processing will occur. DONE. <br />IMPORTANT: This data should be deleted ASAP (see, "Can I store RFI form submission data on my site after it has been submitted to Salesforce?", below.)</li></ul></div></fieldset>
+<fieldset class="collapsible collapsed field-group-fieldset form-wrapper fieldset-nested-even asu-rfi-intro collapse-processed"><style type="text/css">.view-asu-rfi-submissions-report table td { vertical-align: text-top; } .view-asu-rfi-submissions-report .views-field-field-rfi-error-message, .view-asu-rfi-submissions-report .views-field-field-rfi-question { min-width: 16em;}</style><legend><span class="fieldset-legend"><a class="fieldset-title" href="#"><span class="fieldset-legend-prefix element-invisible">Show</span>Q: Can I store RFI form submission data on my site after it has been submitted to Salesforce?</a></span></legend><div class="fieldset-wrapper">
+<p>No. It must be deleted after it has been submitted onto the SF middleware and into Salesforce itself.</p>
+<p>Storing personally identifiable information (PII) that has been submitted by end users in your site violates ASU and UTO policies regarding PII data storage and data security.</p>
+</div></fieldset>
+</div>'),
   );
   $export['asu_rfi_submissions_report'] = $view;
 
