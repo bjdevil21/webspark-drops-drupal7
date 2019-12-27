@@ -596,17 +596,6 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_start_term']['table'] = 'field_data_field_rfi_start_term';
   $handler->display->display_options['fields']['field_rfi_start_term']['field'] = 'field_rfi_start_term';
   $handler->display->display_options['fields']['field_rfi_start_term']['element_label_colon'] = FALSE;
-  /* Field: Content: Campus */
-  $handler->display->display_options['fields']['field_rfi_campus']['id'] = 'field_rfi_campus';
-  $handler->display->display_options['fields']['field_rfi_campus']['table'] = 'field_data_field_rfi_campus';
-  $handler->display->display_options['fields']['field_rfi_campus']['field'] = 'field_rfi_campus';
-  $handler->display->display_options['fields']['field_rfi_campus']['element_label_colon'] = FALSE;
-  /* Field: Content: Location */
-  $handler->display->display_options['fields']['field_rfi_location']['id'] = 'field_rfi_location';
-  $handler->display->display_options['fields']['field_rfi_location']['table'] = 'field_data_field_rfi_location';
-  $handler->display->display_options['fields']['field_rfi_location']['field'] = 'field_rfi_location';
-  $handler->display->display_options['fields']['field_rfi_location']['label'] = 'Location preference';
-  $handler->display->display_options['fields']['field_rfi_location']['element_label_colon'] = FALSE;
   /* Field: Content: Program */
   $handler->display->display_options['fields']['field_rfi_program']['id'] = 'field_rfi_program';
   $handler->display->display_options['fields']['field_rfi_program']['table'] = 'field_data_field_rfi_program';
@@ -617,6 +606,23 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_program_name']['table'] = 'field_data_field_rfi_program_name';
   $handler->display->display_options['fields']['field_rfi_program_name']['field'] = 'field_rfi_program_name';
   $handler->display->display_options['fields']['field_rfi_program_name']['element_label_colon'] = FALSE;
+  /* Field: Content: Location */
+  $handler->display->display_options['fields']['field_rfi_location']['id'] = 'field_rfi_location';
+  $handler->display->display_options['fields']['field_rfi_location']['table'] = 'field_data_field_rfi_location';
+  $handler->display->display_options['fields']['field_rfi_location']['field'] = 'field_rfi_location';
+  $handler->display->display_options['fields']['field_rfi_location']['label'] = 'Location preference';
+  $handler->display->display_options['fields']['field_rfi_location']['element_label_colon'] = FALSE;
+  /* Field: Content: Campus */
+  $handler->display->display_options['fields']['field_rfi_campus']['id'] = 'field_rfi_campus';
+  $handler->display->display_options['fields']['field_rfi_campus']['table'] = 'field_data_field_rfi_campus';
+  $handler->display->display_options['fields']['field_rfi_campus']['field'] = 'field_rfi_campus';
+  $handler->display->display_options['fields']['field_rfi_campus']['element_label_colon'] = FALSE;
+  /* Field: Content: Question */
+  $handler->display->display_options['fields']['field_rfi_question']['id'] = 'field_rfi_question';
+  $handler->display->display_options['fields']['field_rfi_question']['table'] = 'field_data_field_rfi_question';
+  $handler->display->display_options['fields']['field_rfi_question']['field'] = 'field_rfi_question';
+  $handler->display->display_options['fields']['field_rfi_question']['label'] = 'Additional question/comment';
+  $handler->display->display_options['fields']['field_rfi_question']['element_label_colon'] = FALSE;
   /* Field: Content: Email */
   $handler->display->display_options['fields']['field_rfi_email']['id'] = 'field_rfi_email';
   $handler->display->display_options['fields']['field_rfi_email']['table'] = 'field_data_field_rfi_email';
@@ -671,12 +677,6 @@ function asu_rfi_feature_views_default_views() {
   $handler->display->display_options['fields']['field_rfi_international']['table'] = 'field_data_field_rfi_international';
   $handler->display->display_options['fields']['field_rfi_international']['field'] = 'field_rfi_international';
   $handler->display->display_options['fields']['field_rfi_international']['element_label_colon'] = FALSE;
-  /* Field: Content: Question */
-  $handler->display->display_options['fields']['field_rfi_question']['id'] = 'field_rfi_question';
-  $handler->display->display_options['fields']['field_rfi_question']['table'] = 'field_data_field_rfi_question';
-  $handler->display->display_options['fields']['field_rfi_question']['field'] = 'field_rfi_question';
-  $handler->display->display_options['fields']['field_rfi_question']['label'] = 'Additional question/comment';
-  $handler->display->display_options['fields']['field_rfi_question']['element_label_colon'] = FALSE;
   /* Field: Content: Form name */
   $handler->display->display_options['fields']['field_rfi_form_name']['id'] = 'field_rfi_form_name';
   $handler->display->display_options['fields']['field_rfi_form_name']['table'] = 'field_data_field_rfi_form_name';
