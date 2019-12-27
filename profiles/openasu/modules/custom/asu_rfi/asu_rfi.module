@@ -126,7 +126,7 @@ function asu_rfi_menu() {
   $items['admin/config/asurfi'] = array(
     'title' => 'ASU RFI',
     'description' => 'Administer the ASU Request for Information module.',
-    'position' => 'left',
+    'position' => 'right',
     'page callback' => 'system_admin_menu_block_page',
     'access arguments' => array('administer asu rfi'),
     'file' => 'system.admin.inc',
