@@ -7,9 +7,7 @@
         });
       });
       $('.view-display-id-attachment_1 h4.questions', context).once('asuRfiReport', function() {
-        $(this).on("load", function() {
-          $(this).addClass('questions-collapsed').siblings('.questions-container').hide();
-        });
+        $(this).addClass('questions-collapsed').siblings('.questions-container').hide();
         $(this).on("click", function(e) {
           e.preventDefault();
           $(this).toggleClass('questions-collapsed').siblings('.questions-container').toggle('fast', 'linear');
