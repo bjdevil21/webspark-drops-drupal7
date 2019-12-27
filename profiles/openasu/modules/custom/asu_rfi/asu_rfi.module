@@ -139,7 +139,7 @@ function asu_rfi_menu() {
     'page arguments' => array('asu_rfi_admin_settings'),
     'access arguments' => array('administer asu rfi'),
     'options' => array('attributes' => array('class' => 'title')),
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK,
     'file' => 'includes/asu_rfi.admin.inc'
   );
 
