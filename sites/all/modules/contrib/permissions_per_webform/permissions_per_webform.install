@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @file
+ * Permissions per Webform module install/schema hooks.
+ *
+ * @author Daniel Imhoff
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function permissions_per_webform_schema() {
+  $schema = array();
+
+  $schema['permissions_per_webform'] = array(
+    'description' => 'Table for storing webform permissions per webform.',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'oid' => array(
+        'description' => 'The operation identifier of the operation the user is performing.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'rid' => array(
+        'description' => 'The role identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('nid', 'oid', 'rid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_update_N().
+ * Delete existing permissions_per_webform entries where the node has been deleted.
+ */
+function permissions_per_webform_update_7000(&$sandbox) {
+  // Do a DB select for all entries where there is no existing webform.
+  // SELECT DISTINCT p.nid, n.title
+  //   FROM `permissions_per_webform` p LEFT JOIN `node` n ON p.nid = n.nid
+  //   WHERE n.title IS NULL ORDER BY p.nid
+  $nids_query = db_select('permissions_per_webform', 'p')
+    ->distinct()
+    ->fields('p', array('nid'));
+  $nids_query->leftJoin('node', 'n', 'p.nid = n.nid');
+  $joined_query = $nids_query->fields('n', array('title'))
+    ->isNull('n.title')
+    ->orderBy('p.nid', 'ASC');
+  $result = $joined_query
+    ->execute()
+    ->fetchAll();
+
+  if (!empty($result)) {
+    $count = 0;
+    foreach ($result as $deleted_webform) {
+      db_delete('permissions_per_webform')
+        ->condition('nid', $deleted_webform->nid)
+        ->execute();
+      $count++;
+    }
+    $grammar = ($count >= 2) ? "s have" : " has";
+    $message = t("Permissions per Webform settings for %count missing or previously deleted webform"
+      . $grammar . " been deleted.", array('%count' => $count));
+    drupal_set_message($message);
+    watchdog('permissions_per_webform', $message);
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function permissions_per_webform_uninstall() {
+  // Manual uninstall, just in case hook_schema doesn't work properly on un-installation
+  $table_name = 'permissions_per_webform';
+  if (db_table_exists($table_name)) {
+    db_drop_table($table_name);
+  }
+}

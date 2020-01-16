@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * Helper function - Returns name of temporary table, submissions migrate class name
+ * @param string $type
+ * @return mixed
+ */
+function _eoss_webforms_followup_migration_data($type = 'table_nid') {
+  $names = array(
+    'table_nid' => 'migrate_map_custom_nid',
+    'table_cid' => 'migrate_map_custom_cid',
+    'table_ws_data' => 'migrate_map_custom_orphaned_ws_data',
+    'table_files_dirs' => 'migrate_map_custom_files_dirs',
+    'class_nid' => 'MigrateWebformSubmissionEOSS',
+    'class_cid' => 'MigrateWebformSubmittedDataEOSS',
+    'class_uid' => 'MigrateWebformLastDownloadEOSS',
+  );
+  return $names[$type];
+}
+
+
+/**
+ * Webform Features pre-cid mappings creation - data cleanup on eoss_webform generated
+ * data (bad field names, etc.) due to bugs in Webform Features module.
+ * @param $result
+ * @return mixed
+ */
+function _eoss_webforms_followup_cid_import_pre_insert($result) {
+  /* Update feature keys in eoss-migrate that didn't migrate due to bad/duplicate machine names
+  This was mostly the Contact Us forms. */
+
+  $names = array(
+    'contact_us-email' => array(
+      'form_key' => 'email',
+      'machine_name' => 'contact_us_ada-email',
+    ),
+    'contact_us-first_name' => array(
+      'form_key' => 'email',
+      'machine_name' => 'contact_us_ada-first_name',
+    ),
+    'contact_us-last_name' => array(
+      'form_key' => 'email',
+      'machine_name' => 'contact_us_ada-last_name',
+    ),
+    'contact_us-phone_number' => array(
+      'form_key' => 'email',
+      'machine_name' => 'contact_us_ada-phone_number',
+    ),
+    'contact_us-are_you_interested_in_having_american_dream_academy_at_your_site' => array(
+      'form_key' => 'are_you_interested_in_having_american_dream_academy_at_your_site',
+      'machine_name' => 'contact_us_ada-are_you_interested_in_having_american_dream_academy_at_your_site',
+    ),
+    'contact_us-question__comment' => array(
+      'form_key' => 'question__comment',
+      'machine_name' => 'contact_us_ada-question__comment',
+    ),
+    'contact_us-school_or_organization' => array(
+      'form_key' => 'school_or_organization',
+      'machine_name' => 'contact_us_ada-school_or_organization',
+    ),
+    'contact_us-title' => array(
+      'form_key' => 'title',
+      'machine_name' => 'contact_us_ada-title',
+    ),
+
+    'contact_us_2-message' => array(
+      'form_key' => 'message',
+      'machine_name' => 'contact_us_cesar-message',
+    ),
+
+    'contact_us_2-ccli_class' => array(
+      'form_key' => 'ccli_class',
+      'machine_name' => 'contact_us_cesar-ccli_class',
+    ),
+    'contact_us_2-city' => array(
+      'form_key' => 'city',
+      'machine_name' => 'contact_us_cesar-city',
+    ),
+    'contact_us_2-email' => array(
+      'form_key' => 'email',
+      'machine_name' => 'contact_us_cesar-email',
+    ),
+    'contact_us_2-first_name' => array(
+      'form_key' => 'first_name',
+      'machine_name' => 'contact_us_cesar-first_name',
+    ),
+    'contact_us_2-last_name' => array(
+      'form_key' => 'last_name',
+      'machine_name' => 'contact_us_cesar-last_name',
+    ),
+    'contact_us_2-middle_name' => array(
+      'form_key' => 'middle_name',
+      'machine_name' => 'contact_us_cesar-middle_name',
+    ),
+    'contact_us_2-phone_number' => array(
+      'form_key' => 'phone_number',
+      'machine_name' => 'contact_us_cesar-phone_number',
+    ),
+    'contact_us_2-state' => array(
+      'form_key' => 'state',
+      'machine_name' => 'contact_us_cesar-state',
+    ),
+    'contact_us_2-street_address_1' => array(
+      'form_key' => 'street_address_1',
+      'machine_name' => 'contact_us_cesar-street_address_1',
+    ),
+    'contact_us_2-street_address_2' => array(
+      'form_key' => 'street_address_2',
+      'machine_name' => 'contact_us_cesar-street_address_2',
+    ),
+    'contact_us_2-subject' => array(
+      'form_key' => 'subject',
+      'machine_name' => 'contact_us_cesar-subject',
+    ),
+    'contact_us_2-what_is_the_highest_level_of_education_you_have_achieved' => array(
+      'form_key' => 'what_is_the_highest_level_of_education_you_have_achieved',
+      'machine_name' => 'contact_us_cesar-what_is_the_highest_level_of_education_you_have_achieved',
+    ),
+    'contact_us_2-zip_code' => array(
+      'form_key' => 'zip_code',
+      'machine_name' => 'contact_us_cesar-zip_code',
+    ),
+
+    'contact_us_3-name' => array(
+      'form_key' => 'name',
+      'machine_name' => 'contact_us_asu_access-name',
+    ),
+    'contact_us_3-phone' => array(
+      'form_key' => 'phone',
+      'machine_name' => 'contact_us_asu_access-phone',
+    ),
+
+    'contact_us_3-email_address' => array(
+      'form_key' => 'email_address',
+      'machine_name' => 'contact_us_asu_access-email_address',
+    ),
+    'contact_us_3-message' => array(
+      'form_key' => 'message',
+      'machine_name' => 'contact_us_asu_access-message',
+    ),
+    'contact_us_3-school_or_organziation' => array(
+      'form_key' => 'school_or_organziation',
+      'machine_name' => 'contact_us_asu_access-school_or_organziation',
+    ),
+    'contact_us_3-title_or_affiliation' => array(
+      'form_key' => 'title_or_affiliation',
+      'machine_name' => 'contact_us_asu_access-title_or_affiliation',
+    ),
+
+    'contact_us_4-email' => array(
+      'form_key' => 'email',
+      'machine_name' => 'contact_us_students_families-email',
+    ),
+    'contact_us_4-question__comment' => array(
+      'form_key' => 'name',
+      'machine_name' => 'contact_us_students_families-question__comment',
+    ),
+
+    'contact_us_4-i_have_a_question_comment_suggestion_regarding' => array(
+      'form_key' => 'i_have_a_question_comment_suggestion_regarding',
+      'machine_name' => 'contact_us_students_families-i_have_a_question_comment_suggestion_regarding',
+    ),
+    'contact_us_4-name' => array(
+      'form_key' => 'name',
+      'machine_name' => 'contact_us_students_families-name',
+    ),
+    'contact_us_4-phone' => array(
+      'form_key' => 'phone',
+      'machine_name' => 'contact_us_students_families-phone',
+    ),
+    'contact_us_4-preferred_method_of_contact' => array(
+      'form_key' => 'preferred_method_of_contact',
+      'machine_name' => 'contact_us_students_families-preferred_method_of_contact',
+    ),
+    // This key hit a sweet spot of bugginess at 129 characters long.
+    'eoss_marketing_request_form-how_are_you_going_to_measure_success_what_is_your_benchmark_for_success_select_all_that_apply_digital' => array(
+      'form_key' => 'what_is_benchmark_to_measure_success_select_all_that_apply_digital',
+      'machine_name' => 'eoss_marketing_request_form-what_is_benchmark_to_measure_success_select_all_that_apply_digital',
+    ),
+  );
+/*
+  if ($result->nid == 1747) {
+    if ($result->cid == 14) {
+      $result->form_key = 'email_address_4';
+      $result->machine_name = 'web_development_request-email_address_4';
+      $result->cid = 12; // This won't be available because email_address_4 does not exist to map
+    }
+    if ($result->cid == 13) {
+      $result->form_key = 'name_6';
+      $result->machine_name = 'web_development_request-name_6';
+      $result->cid = 10; // This should be mapping, but just to be safe...
+    }
+  }
+*/
+
+  // Change web_development_request-name_2_2 to web_development_request-name_2
+  // (matches Feature-defined name now)
+  if ($result->machine_name == 'web_development_request-name_2_2') {
+    $result->machine_name = 'web_development_request-name_2';
+  }
+
+  foreach($names as $src => $dst) {
+    if ($result->machine_name == $src) {
+      $result->form_key = $dst['form_key'];
+      $result->machine_name = $dst['machine_name'];
+    }
+  }
+
+  return $result;
+}

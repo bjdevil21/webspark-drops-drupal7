@@ -1,0 +1,30 @@
+<?php
+/**
+ * @file
+ * Drupal needs this blank file.
+ */
+
+/**
+ * Delete temporary mappings tables defined outside of the Schema API.
+ *
+ * Implements hook_post_features_enable_feature().
+ */
+function eoss_webforms_inputformats_post_features_enable_feature($component) {
+  $tables = array('nid_0_submissions', 'nid_0_tmp');
+  foreach ($tables as $table) {
+    $query = "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'eoss-forms' AND table_name = '$table'";
+    $result = Database::getConnection('default')
+      ->query($query)
+      ->fetchField();
+    if ($result == 1) {
+      $query_exec = Database::getConnection('default')
+        ->query("DROP TABLE IF EXISTS $table;");
+      if ($query_exec->execute()) {
+        watchdog('migrate', "eoss_webforms_inputformats: Table $table dropped from database.", array('@table' => $table));
+      }
+    }
+    else {
+      watchdog('migrate', 'eoss_webforms_inputformats: Table @table did not exist. Skipping deletion.', array('@table' => $table));
+    }
+  }
+}
