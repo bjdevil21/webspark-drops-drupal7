@@ -145,6 +145,9 @@ abstract class EntityMetadataWrapper {
    */
   public function validate($value) {
     if (isset($value) && !entity_property_verify_data_type($value, $this->type)) {
+      watchdog('asu_rfi', __CLASS__ . '::' . __FUNCTION__);
+      flogger('asu_rfi', 'entity_property_verify_data_type failed. value - @value, type - @type',
+        array('@value' => $value, '@type' => $this->type), WATCHDOG_DEBUG);
       return FALSE;
     }
     // Only proceed with further checks if this is not a list item. If this is
@@ -753,6 +756,8 @@ class EntityDrupalWrapper extends EntityStructureWrapper {
    */
   public function set($value) {
     if (!$this->validate($value)) {
+      watchdog('asu_rfi', __FUNCTION__);
+      flogger('asu_rfi', 'failed value - @value', array('@value' => $value), WATCHDOG_DEBUG);
       throw new EntityMetadataWrapperException(t('Invalid data value given. Be sure it matches the required data type and format. Value at !location: !value.', array(
         // An exception's message is output through check_plain().
         '!value' => is_array($value) || is_object($value) ? var_export($value, TRUE) : $value,
