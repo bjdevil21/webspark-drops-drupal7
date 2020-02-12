@@ -1,59 +1,68 @@
 # ASU Request for Information Changelog
 
 ### ASU RFI 7.x-2.0-rc1, 2020-02-11
+
 #### Major overhaul of the entire module
 ##### Architecture & Development
-- Refactored and/or consolidated many functionally duplicitous functions (and files) to reduce bugs and ease future development
-- Fixed the naming convention of configuration variables and private PHP functions, to match Drupal standards for better installation/removal results
-- Removed unneeded, legacy configuration variables
-- Added new Fun Logger (flogger) module integration to improve the developer debugging experience
-- Added EntityReference_autocomplete module as a dependency (for the RFI submissions report page)
-- Updated Multiblock contrib module (v1.6) plus other patches
-- Integrated the Queue API to queue middleware submission related tasks that may take too long to complete during a single web page request
-- Utilized drupal_static in heavily used functions for performance improvements
-- Added UNDERGRAD/GRAD constants for universal module use.
-- Added separate "Delete RFI submission" permission for VBO operations
-- Added some Drupal Database API entries to replace static SQL queries
+
+- Refactored and/or consolidated many functionally duplicitous functions and files
+- Fixed the naming convention of configuration variables and private PHP functions to match Drupal standards
+- Removed unused configuration variables
+- Created Fun Logger (flogger) module to improve the developer debugging experience
 - Added much-needed internal documentation/comments for developers
+- Added EntityReference_autocomplete contrib module as a dependency
+- Updated Multiblock contrib module (v1.6) plus other patches
+- Integrated the Queue API to queue larger middleware submission related tasks (to avoid web page timeouts)
+- Utilized drupal_static for performance improvements
+- Added UNDERGRAD/GRAD constants for universal module use.
+- Added "Delete RFI submissions" permission for RFI report operations
+- Updated some Drupal queries to use the Database API
+- Utilized the Batch API to update existing data for the code and UI changes.
 
 ##### More bug fixes
+
 - Updated deprecated PHP code to PHP 7.x standards
 - The Request Info button now correctly chooses when and how to point to existing RFI forms
-- Fixed multiblock ID issues
 - RFI multiblock instance settings now correctly save for grad RFI forms when all majors are wanted for a single RFI form block
+- Fixed multiblock ID issues.
 - Fixed instance settings for multistep RFI form blocks
-- Fixed JSON feed URL for secure connections to ASUOnline program data sources
+- Fixed JSON feed URL to ASUOnline program data sources (also forces an HTTPS connection)
 - Added endpoint availability detection to avoid hanging a site while attempting to POST submissions to unavailable middleware
 - Added try/catch to cURL calls for graduate RFI posts to middleware
 - Re-added limited integration with deprecated ASU Degrees module-generated degrees pages
+- Fixed state and country form field logic
+- Refactored the CSS/JS and added other module theming improvements
 
 ##### UI/UX Improvements
+
 - RFI submission reports page improvements
-    * Updated RFI submission status value options, and improved the help text above the report.
-    * Reorganized the columns to put more relevant data up towards the front
-    * Improved the messaging of the submission's current status
+    * Updated RFI submission status value options, and improved the related help text.
+    * Reorganized the report's columns to put more relevant data up towards the front
+    * Improved the messaging of the submission's current status for end users
     * Added a "Delete submissions" bulk operation option
     * Cleaned up the page theming
+
 - RFI configuration page improvements/fixes
     * Added easier to find "RFI settings" admin menu link under "Configuration"
-    * Reorganized the configuration form into categories
+    * Reorganized the configuration form items into categories
     * Added dynamic messaging about middleware auth key status
-    * Confirmation pages can now be easily selected via autocomplete on the page's title (vs. entering a potentially obscure node ID)
+    * Confirmation pages can now be selected via autocomplete on the page's title (vs. entering a raw node ID integer)
     * The automatic resubmission of failed RFI submissions and the deletion of qualifying RFI submissions (both via cron jobs) can be toggled on/off
-- Refactored the CSS/JS and added other module theming improvements, including better error messaging and moving jQuery into theme-appropriate areas
-- Added missing form field validation to email, phone number, and email fields
-- Fixed state and country form field logic
+
+- Form improvements
+    * The major is now chosen automatically regardless of the RFI form type (works for both undergrad and graduate programs)
+    * Added missing form field validation to email, phone number, and email fields
+    * RFI blocks now display error messages (to admins only) with helper instructions for when the form isn't rendering within a correctly placed block on a degrees page
+
 - Updated README documentation for end users
-- RFI blocks now display error messages with helper instructions when the form isn't rendering within a correctly placed block on a degrees page
-- The major is now chosen automatically regardless of the RFI form type
 
 ##### Data Management
+
 - Updated RFI submission deletion policies to better adhere to UTO security and/or PII policies
     * Upon updating the module to this version, all submissions older than 14 days old upon updating the module, regardless of status
     * All submissions that have successfully been sent onto any Salesforce middleware are deleted upon every cron run
     * All submissions that have not been sent on (status SF_Failed) are resubmitted every time a cron job runs
     * All submissions that have failed for 14 days past the initial submission date are deleted at the next cron run - regardless of their status
-- Upon update, the existing data will be altered to work with the module changes (utilizing the Batch API)
 
 ---
 
