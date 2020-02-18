@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * Generates a Form API element for a single field from pre-determined list of
+ * RFI form elements.
+ *
+ * To create multi-tiered elements for fieldsets (i.e. My Interest -> Major),
+ * first use _asu_rfi_form_elements_multiple_keys to establish the array element
+ * structure and then call this function for the elements contents.
+ *
+ * @param $name - Name of form element desired
+ * @param bool $session - TRUE if #default_value is supposed to be set by $_SESSION
+ * values IF they exist. Defaults to FALSE.
+ * @param mixed $value
+ * - For non-hidden FAPI elements: POSSIBLE Default values generated for form element;
+ *   Usually for <select> element
+ * - For hidden FAPI elements: Single, static value passed in manually.
+ * @return array|bool - Form API array element if exists, or returns FALSE if $name is not matched.
+ */
 function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
   switch ($name) {
     // Category bases
@@ -52,7 +69,7 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
       );
       break;
     case 'student_type':
-      return array(
+      $student_type = array(
         '#type' => 'select',
         '#title' => t('I will be a future'),
         '#options' => array(
@@ -61,11 +78,11 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
           'Readmission' => 'Readmission'
         ),
         '#attributes' => array('class' => array('reqinfo_student_type', 'chosen-disable')),
-        '#default_value' => isset($_SESSION['rfi_data']['student_type']) ? $_SESSION['rfi_data']['student_type'] : NULL,
       );
+      // DEFAULT
       break;
     case 'start_date':
-      return array(
+      $start_date = array(
         '#type' => 'select',
         '#title' => t('My start date'),
         '#options' => $value,
@@ -83,27 +100,27 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
       );
       break;
     case 'last_name':
-      return array(
+      $last_name = array(
         '#type' => 'textfield',
         '#title' => t('Last name'),
         '#size' => 30,
         '#maxlength' => 64,
         '#required' => TRUE,
-        '#default_value' => isset($_SESSION['rfi_data']['last_name']) ? $_SESSION['rfi_data']['last_name'] : NULL,
       );
+      // DEFAULT
       break;
     case 'email':
-      return array(
+      $email = array(
         '#type' => 'textfield',
         '#title' => t('Email'),
         '#size' => 30,
         '#maxlength' => 100,
         '#required' => TRUE,
-        '#default_value' => isset($_SESSION['rfi_data']['email']) ? $_SESSION['rfi_data']['email'] : NULL,
+        // DEFAULT
       );
       break;
     case 'phone':
-      return array(
+      $phone = array(
         '#prefix' => '<div class="phone_field_rfi">',
         '#suffix' => '</div>',
         '#type' => 'textfield',
@@ -113,11 +130,11 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#maxlength' => 40,
         '#required' => TRUE,
         '#attributes' => array('class' => array('rfi_phone')),
-        '#default_value' => isset($_SESSION['rfi_data']['phone']) ? $_SESSION['rfi_data']['phone'] : NULL,
       );
+      // DEFAULT
       break;
     case 'mobile_check':
-      return array(
+      $mobile_check = array(
         '#type' => 'checkbox',
         '#title' => t('This is a USA mobile number and I would like to receive information via SMS text messaging'),
         '#title_display' => 'before',
@@ -125,8 +142,8 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#maxlength' => 30,
         '#required' => FALSE,
         '#attributes' => array('class' => array('rfi_mobile')),
-        '#default_value' => isset($_SESSION['rfi_data']['mobile_check']) ? $_SESSION['rfi_data']['mobile_check'] : NULL,
       );
+      // DEFAULT
       break;
     case 'address':
       return array(
@@ -143,16 +160,19 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#size' => 30,
         '#maxlength' => 30,
       );
+      break;
     case 'state':
-      return array(
+      $state = array(
         '#id' => 'rfi-state',
         '#type' => 'select',
         '#options' => $value,
         '#title' => t('State/Province'),
         '#required' => FALSE,
       );
+      // DEFAULT
+      break;
     case 'zipcode':
-      return array( // Addon
+      $zipcode = array( // Addon
         '#type' => 'textfield',
         '#title' => t('Postal code'),
         '#size' => 30,
@@ -162,18 +182,18 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
             ':input[name="country"]' => array('value' => 'United States'),
           ),
         ),
-        '#default_value' => isset($_SESSION['rfi_data']['zipcode']) ? $_SESSION['rfi_data']['zipcode'] : NULL,
       );
+      // DEFAULT
       break;
     case 'country':
-      return array(
+      $country = array(
         '#id' => 'rfi-country',
         '#type' => 'select',
         '#options' => $value,
         '#title' => t('Country'),
         '#attributes' => array('class' => array('chosen-disable')),
-        '#default_value' => isset($_SESSION['rfi_data']['country']) ? $_SESSION['rfi_data']['country'] : NULL,
       );
+      // DEFAULT
       break;
     case 'citizenship':
       return array(
@@ -281,16 +301,34 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#default_value' => $_SERVER['HTTP_HOST'],
       );
       break;
+    default:
+      flogger('asu_rfi', 'Form element @name cannot be found and rendered',
+        array('@name' => $name), WATCHDOG_ERROR);
+      return FALSE;
+      break;
   }
-  return false;
+  // HAVE #default_value set and not returned yet.
+  if (isset(${$name})) {
+    if ($session) {
+      ${$name}['#default_value'] = (isset($_SESSION['rfi_data'][$name])) ? $_SESSION['rfi_data'][$name] : NULL;
+    }
+    return ${$name};
+  }
 }
 
 
 /**
- * @param $name
- * @param $sub_name
- * @param bool $session
- * @param null $value
+ * Generates a single Form API element that is nested in a <fieldset>.
+ *
+ * - Only handles two levels (name, sub_name) for FAPI array keys.
+ * - Passes FAPI element generation to _asu_rfi_form_base_components().
+ *
+ * @param $name - Fieldset key
+ * @param $sub_name - Form element name
+ * @param bool $session - TRUE if #default_value is supposed to be set by $_SESSION
+ * values IF they exist. Defaults to FALSE.
+ * @param null $value - default values generated for form element; Usually for <select> element
+ * @return array|bool - Form API array element if exists, or returns FALSE if $name is not matched.
  * @return mixed
  */
 function _asu_rfi_form_elements_multiple_keys($name, $sub_name, $session = FALSE, $value = NULL) {
@@ -371,10 +409,9 @@ function _asu_rfi_form_elements_multiple_keys($name, $sub_name, $session = FALSE
       }
       break;
     default:
-      // none
+      flogger('asu_rfi', 'Form element @name -> @sub_name cannot be found and rendered',
+        array('@name' => $name, '@sub_name' => $sub_name), WATCHDOG_ERROR);
+      return FALSE;
       break;
   }
-  flogger('asu_rfi', 'Form element @name cannot be found and rendered',
-    array('@name' => $name, '@subname' => $sub_name), WATCHDOG_ERROR);
-  return FALSE;
 }
