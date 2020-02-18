@@ -20,7 +20,7 @@ header("Pragma: no-cache");
 /**
  * INIT configs
  */
-module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_form_elements');
+module_load_include('inc', 'asu_rfi', 'includes/asu_rfi.form_elements');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_email');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_to_salesforce');
 
@@ -130,7 +130,7 @@ function asu_rfi_form_data($form, &$form_state) {
     // MY INTEREST
     $form['my_interest'] = _asu_rfi_form_base_components('my_interest');
 
-    $form['my_interest']['student_type'] =  _asu_rfi_form_base_components('my_interest', 'student_type');
+    $form['my_interest']['student_type'] =  _asu_rfi_form_elements_multiple_keys('my_interest', 'student_type');
     $form['my_interest']['student_type']['#states'] = array(
         'visible' => array(
           ':input[name="degree_type"]' => array('value' => 'undergrad'),
@@ -146,11 +146,12 @@ function asu_rfi_form_data($form, &$form_state) {
       '#disabled' => TRUE,
       '#size' => 30,
     );
-    $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'student_type');
+    $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'campus');
       $form['my_interest']['campus']['#required'] = TRUE;
     $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', TRUE, $start_dates); // Addon(s)
     $form['my_interest']['start_date']['#required'] = TRUE;
     //$form['my_interest']['start_date']['#default_value'] = isset($_SESSION['rfi_data']['start_date']) ? $_SESSION['rfi_data']['start_date'] : NULL;
+
     // ABOUT ME
     $form['about_me'] = _asu_rfi_form_base_components('about_me');
     $form['about_me']['first_name'] = _asu_rfi_form_elements_multiple_keys('about_me', 'first_name');
@@ -823,6 +824,15 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
   $form['req_helper'] = _asu_rfi_form_base_components('req_helper');
   $form['domain'] = _asu_rfi_form_base_components('domain');
   $form['degree_type'] = _asu_rfi_form_base_components('degree_type', FALSE, $form_type);
+
+  // MY INTEREST
+
+  $form['my_interest']['campus']['#required'] = TRUE;
+  //$form['my_interest']['start_date']['#default_value'] = isset($_SESSION['rfi_data']['start_date']) ? $_SESSION['rfi_data']['start_date'] : NULL;
+
+
+
+  // MY INTEREST
   $form['my_interest'] = _asu_rfi_form_base_components('my_interest');
   // Nope - Single instance
   $form['my_interest']['location'] = array(
@@ -851,6 +861,7 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
   if (count($programs) !== 1) {
     $form['my_interest']['program_code']['#empty_option'] = t('- Select -');
   }
+  /*
   $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'campus');
     $form['my_interest']['campus']['#states'] = array(
     'visible' => array(
@@ -874,6 +885,55 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
       ),
     );
     $form['my_interest']['student_type']['#empty_option'] = t('- Select -');
+  */
+
+  $form['my_interest']['campus'] = array(
+    '#type' => 'select',
+    '#title' => t('My campus of choice is'),
+    '#options' => array(),
+    '#attributes' => array(
+      'class' => array(
+        'reqinfo_campus',
+        'chosen-disable'
+      )
+    ),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="location"]' => array('value' => 'on_campus'),
+      ),
+      'optional' => array(
+        ':input[name="program_code"]' => array('value' => ''),
+      ),
+      'disabled' => array(
+        ':input[name="program_code"]' => array('value' => ''),
+      ),
+    ),
+    "#empty_option" => t('- Select -'),
+  );
+  $form['my_interest']['student_type'] = array(
+    '#type' => 'select',
+    '#title' => t('I will be a future'),
+    '#options' => array(
+      'First Time Freshman' => 'First Time Freshman',
+      'Transfer' => 'Transfer',
+      ' Readmission' => 'Readmission'
+    ),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="degree_type"]' => array('value' => 'ugrad_longform'),
+      ),
+      'optional' => array(
+        ':input[name="location"]' => array('value' => 'online'),
+      ),
+    ),
+    '#attributes' => array(
+      'class' => array(
+        'reqinfo_student_type',
+        'chosen-disable'
+      )
+    ),
+    "#empty_option" => t('- Select -'),
+  );
 
   $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', FALSE, $start_dates);
     $form['my_interest']['start_date']['#states']['optional'][':input[name="location"]']['value'] = 'online';
@@ -947,7 +1007,7 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
   $form['questions'] = _asu_rfi_form_base_components('questions');
   $form['webform_url'] = _asu_rfi_form_base_components('webform_url');
   $form['ip_address'] = _asu_rfi_form_base_components('ip_address');
-  $form['type_of_form'] = _asu_rfi_form_base_components('ip_address', FALSE, 'LF');
+  $form['type_of_form'] = _asu_rfi_form_base_components('type_of_form', FALSE, 'LF');
   $form['enterpriseclientid'] = _asu_rfi_form_base_components('enterpriseclientid');
   $form['gdpr_message'] = _asu_rfi_form_base_components('gdpr_message');
 
@@ -956,8 +1016,13 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
     '#value' => t('I Agree / Submit'),
     '#attributes' => array('class' => array('rfi-button')),
   );
+  $form['#submit'][] = '_pre_eval';
   return $form;
+}
 
+function _pre_eval($form, &$form_state) {
+  dpm($form, __FUNCTION__ . ' form');
+  dpm($form_state, __FUNCTION__ . 'form_state');
 }
 
 /**
@@ -975,6 +1040,8 @@ function asu_rfi_long_form_data_validate($form, &$form_state) {
   if (!_asu_rfi_program_location_confirm($form_state['input']['program_code'], $form_state['input']['campus'], $form_state['input']['location'])) {
     form_set_error('campus', t('Your campus choice is not valid.'));
   }
+
+  dpm($form_state['input'], __FUNCTION__ . ' form_state => input 2');
 
   //// Shared form elements to validate
   $student_type = $form_state['values']['student_type'];
@@ -1532,6 +1599,65 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
   }
 }
 
+
+
+function asu_rfi_progloc_confirm($prog, $campus, $loc)
+{
+  $degreeMappings = asu_rfi_get_degree_mappings_pages();
+
+  $campusOptions = array();
+
+  $query = new EntityFieldQuery();
+
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $degreeMappings['content_type'])
+    ->fieldCondition($degreeMappings['field_academic_plan'], 'value', $prog)
+    ->range(0, 10)
+    ->addMetaData('account', user_load(1));
+
+  $result = $query->execute();
+
+  if (isset($result['node'])) {
+    $program_nids = array_keys($result['node']);
+    $programs = entity_load('node', $program_nids);
+    $programs = reset($programs);
+    $programs = (array)$programs;
+
+    $desiredProg = array(
+      'code' => $programs[$degreeMappings['field_academic_plan']]['und']['0']['value'],
+      'vid' => $programs['vid'],
+      'title' => $programs['title'],
+      'locations' => $programs[$degreeMappings['field_degree_campus']]['und'],
+    );
+
+    $locations = $programs[$degreeMappings['field_degree_campus']]['und'];
+    foreach ($locations as $location) {
+      if (!in_array($location['value'], $campusOptions)) {
+        array_push($campusOptions, $location['value']);
+      }
+    }
+  }
+
+  if ($loc == "on_campus" && $prog == '') {
+
+    return TRUE;
+  } else if ($loc == "online" && ((!isset($campus) || $campus == '') || $campus == 'online' || $campus == 'Online')) {
+
+    return TRUE;
+  } else if ($loc !== "online" && in_array($campus, $campusOptions)) {
+
+    return TRUE;
+  } else if ($loc == 'no_preference') {
+
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+
+
+
 /**
  * Confirms if the given locations available for a program?
  *
@@ -1541,6 +1667,7 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
  * @return bool
  */
 function _asu_rfi_program_location_confirm($prog, $campus, $loc) {
+  dpm(func_get_args(), __FUNCTION__ . ' func_get_args()');
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
   $campusOptions = array();
 
@@ -1555,8 +1682,11 @@ function _asu_rfi_program_location_confirm($prog, $campus, $loc) {
 
   if (isset($result['node'])) {
     $result_nodes = $result['node'];
-    $programs = _asu_rfi_get_program_codes($result_nodes, 'programs');
-    $locations = $programs[$degreeMappings['field_degree_campus']][LANGUAGE_NONE];
+    dpm($result_nodes, __FUNCTION__ . ' - $result_nodes');
+    $programs = _asu_rfi_get_program_codes($result_nodes, 'desiredProg');
+    dpm($programs, __FUNCTION__ . ' - $programs');
+    $locations = $programs['locations'];
+    dpm($locations, __FUNCTION__ . ' - $locations');
     foreach ($locations as $location) {
       if (!in_array($location['value'], $campusOptions)) {
         array_push($campusOptions, $location['value']);
