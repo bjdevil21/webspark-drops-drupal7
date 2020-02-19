@@ -445,7 +445,7 @@ if (module_exists('metatag')) {
                             $online_url = (!empty($node_info['field_asu_ap_curriculum_url']['#items'][0]['url']))
                               ? $node_info['field_asu_ap_curriculum_url']['#items'][0]['url']
                               : '//asuonline.asu.edu/';
-                            echo '<a href="' . $online_url . '">'.$campus['value'].'</a>';
+                            echo '<a href="' . $online_url . '" target="_blank">'.$campus['value'].'</a>';
                             break;
                           // Check ASU Feeds Parser. The campus being used doesn't exist.
                           default:
