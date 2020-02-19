@@ -446,7 +446,7 @@ if (module_exists('metatag')) {
                               : '//asuonline.asu.edu/';
                             echo 'AAA<a href="' . $online_url . '">'.$campus['value'].'</a>AAA<br><br>';
                             echo 'BBB' . $online_url . 'BBB<br><br>';
-                            $testing1 = theme_link_field($node_info['field_asu_ap_curriculum_url'][0]['#element']);
+                            $testing1 = theme_link_field($node_info['field_asu_ap_curriculum_url'][0]);
                             echo 'CCC' . $testing1 . 'CCC';
                             dpm($testing1, 'testing1');
                             dpm($node_info['field_asu_ap_curriculum_url'], 'field_asu_ap_curriculum_url');
