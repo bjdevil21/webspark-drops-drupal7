@@ -166,11 +166,6 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       }
 
       // Graduate All Apply Dates
-      if (count($data['CurriculumUrl'])) {
-        $parsed_data[$key]['CurriculumUrl'] = $data['CurriculumUrl'][0];
-      }
-
-      // Graduate All Apply Dates
       if (count($data['graduateAllApplyDates'])) {
         $gAAD = array();
         foreach ($data['graduateAllApplyDates'] as $code => $dates) {
