@@ -446,6 +446,8 @@ if (module_exists('metatag')) {
                               : '//asuonline.asu.edu/';
                             echo 'AAA<a href="' . $online_url . '">'.$campus['value'].'</a>AAA<br><br>';
                             echo 'BBB' . $online_url . 'BBB';
+
+                            dpm($node_info);
                             break;
                           //Check ASU Feeds Parser.  The campus being used doesn't exist.
                           default:
