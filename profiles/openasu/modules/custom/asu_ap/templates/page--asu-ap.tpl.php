@@ -446,10 +446,10 @@ if (module_exists('metatag')) {
                               : '//asuonline.asu.edu/';
                             echo 'AAA<a href="' . $online_url . '">'.$campus['value'].'</a>AAA<br><br>';
                             echo 'BBB' . $online_url . 'BBB<br><br>';
-                            $testing1 = theme('link_formatter_link_default', $node_info['field_asu_ap_curriculum_url'][0]['#element']);
-                            echo $testing1;
+                            $testing1 = theme_link_field($node_info['field_asu_ap_curriculum_url'][0]['#element']);
+                            echo 'CCC' . $testing1 . 'CCC';
                             dpm($testing1, 'testing1');
-                            dpm($node_info['field_asu_ap_curriculum_url'], 'field URL');
+                            dpm($node_info['field_asu_ap_curriculum_url'], 'field_asu_ap_curriculum_url');
                             break;
                           //Check ASU Feeds Parser.  The campus being used doesn't exist.
                           default:
