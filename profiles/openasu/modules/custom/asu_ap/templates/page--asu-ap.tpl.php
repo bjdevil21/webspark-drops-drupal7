@@ -441,13 +441,15 @@ if (module_exists('metatag')) {
                             echo '<a href="//admission.asu.edu/transfer/pima">'.$campus['value'].'</a>';
                             break;
                           case 'Online':
-                            $online_url = (!empty($node_info['field_asu_ap_curriculum_url']['#items'][0]['url']))
+                            $online_url = (!empty($node_info['#items'][0]['url']))
                               ? $node_info['field_asu_ap_curriculum_url']['#items'][0]['url']
                               : '//asuonline.asu.edu/';
                             echo 'AAA<a href="' . $online_url . '">'.$campus['value'].'</a>AAA<br><br>';
                             echo 'BBB' . $online_url . 'BBB<br><br>';
-                            echo drupal_render($node_info['field_asu_ap_curriculum_url'][0]['#element']);
-                            dpm($node_info);
+                            $testing1 = drupal_render($node_info['field_asu_ap_curriculum_url'][0]['#element']);
+                            echo $testing1;
+                            dpm($testing1, 'testing1');
+                            dpm($node_info['field_asu_ap_curriculum_url'], 'field URL');
                             break;
                           //Check ASU Feeds Parser.  The campus being used doesn't exist.
                           default:
