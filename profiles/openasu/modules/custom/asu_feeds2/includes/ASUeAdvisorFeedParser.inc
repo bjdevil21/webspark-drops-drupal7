@@ -335,7 +335,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
     } // END FOREACH of all data
     // DEBUG
     //error_log(print_r($parsed_data, true));
-    //watchdog('A2P Debug', '<pre>'. print_r($parsed_data, true) .'</pre>');
+    watchdog('A2P Debug', '<pre>'. print_r($parsed_data, true) .'</pre>');
 
     return new FeedsParserResult($parsed_data);
   }
