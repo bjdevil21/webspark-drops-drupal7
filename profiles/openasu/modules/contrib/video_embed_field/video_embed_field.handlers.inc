@@ -458,10 +458,11 @@ function _video_embed_field_get_vimeo_data($url) {
   $oembed_endpoint = 'http://vimeo.com/api/oembed';
   // Vimeo refactoring for player.vimeo.com URLs
   if (strpos($url, 'player.vimeo.com') !== FALSE) {
-     $url = preg_replace('|^(https?)://player.(vimeo.com)/video/(\d+)$|', '$1://$2/$3', $url);
+     $url2 = preg_replace('|^(https?)://player.(vimeo.com)/video/(\d+)$|', '$1://$2/$3', $url);
   }
+  watchdog('video_embed_field', $url2, array(), WATCHDOG_DEBUG);
   // Fetch vimeo data
-  $response = drupal_http_request($oembed_endpoint . '.json?url=' . rawurlencode($url));
+  $response = drupal_http_request($oembed_endpoint . '.json?url=' . rawurlencode($url2));
 
   try {
     return json_decode($response->data, TRUE);
