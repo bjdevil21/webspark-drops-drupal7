@@ -1,7 +1,9 @@
 /**
-  * View page styles
+  * ASU AP styles
   **/
-
+/**
+  * View page
+  */
 .view-asu-ap-view .view-content .views-field.views-field-field-degree-image {
   float: left;
   padding-right: 0.9375em;
@@ -31,90 +33,72 @@
   margin-bottom: 1.5em;
 }
 
-
 /**
   * Academic Programs Page styles
   **/
-
 .col-md-8 h2 {
   margin-top: 0;
 }
-
 .asu-ap-grey-section {
   background: #f1f1f1;
   padding: 48px 0;
 }
-
 .asu-ap-grey-section a {
   font-weight: 500;
 }
-
 .space-bot-md {
   margin-bottom: 1.5em;
 }
-
 .space-bot-lg {
   margin-bottom: 36px;
 }
-
-.node-type-asu-ap p {
+body.node-type-asu-ap #main-wrapper p {
   margin: 0 0 1.5em;
   font-weight: 200;
 }
-
-.node-type-asu-ap .field-name-field-asu-ap-example-careers p {
+body.node-type-asu-ap #main-wrapper .field-name-field-asu-ap-example-careers p {
   margin: 0;
 }
-
-.node-type-asu-ap .asu-degree-banner-image img {
+body.node-type-asu-ap #main-wrapper .asu-degree-banner-image img {
   min-height: 288px;
 }
-
 .space-top-xl {
   margin-top: 48px;
 }
-
 .space-bot-xl {
   margin-bottom: 48px;
 }
-
-.node-type-asu-ap a.btn.btn-lg, .node-type-asu-ap .btn.btn-lg {
+body.node-type-asu-ap #main-wrapper a.btn.btn-lg, .node-type-asu-ap .btn.btn-lg {
   margin-top: 0;
 }
-
-.node-type-asu-ap .asu-degree-banner-image {
+body.node-type-asu-ap #main-wrapper .asu-degree-banner-image {
   /*background-image: url(/sites/default/files/asu_degree_banner_default.jpg);*/
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
   padding: 110px 0 20px 0;
 }
-
-.node-type-asu-ap #page-title {
+body.node-type-asu-ap #main-wrapper #page-title {
   color: white;
-  font-size: 50px;
+  font-size: 3.125em;
   margin-bottom: 0.625em;
   line-height: 1;
   font-weight: 900;
   text-shadow: 0 0 0.3125em rgba(0, 0, 0, 0.5);
 }
-
-.node-type-asu-ap .space-bot-md {
+body.node-type-asu-ap #main-wrapper .space-bot-md {
   padding-bottom: 0;
 }
 
 .asu-ap-short-description > p:first-child {
   margin-bottom: 0.625em;
 }
-
 .asu-ap-read-more {
   margin-bottom: 1.5625em;
 }
-
 .view-asu-ap-view .view-header .btn-group {
   padding: 1em 0 2em 0;
 }
-
 .view-asu-ap-view .table > thead > tr > th {
   white-space: nowrap;
 }
@@ -123,16 +107,14 @@
   margin-bottom: 1.5625em;
 }
 
-.node-type-asu-ap .pane-menu-tree {
+body.node-type-asu-ap #main-wrapper .pane-menu-tree {
   margin-top: 0.625em;
 }
-
-.node-type-asu-ap .pane-menu-tree a:first-child {
+body.node-type-asu-ap #main-wrapper .pane-menu-tree a:first-child {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 }
-
-.node-type-asu-ap .pane-menu-tree a {
+body.node-type-asu-ap #main-wrapper .pane-menu-tree a {
   position: relative;
   display: block;
   padding: 0.625em 0.3125em;
@@ -145,54 +127,21 @@
   border-left: 0;
 }
 
-i.fa.fa-location-arrow {
-  font-size: 1.5625em;
-  position: relative;
-  bottom: 8px;
-  margin-right: -0.625em;
-}
-
-i.fa.fa-star {
-  font-size: 1.5625em;
-  position: relative;
-  bottom: 8px;
-  margin-right: -0.625em;
-}
-
-i.fa.fa-retweet {
-  font-size: 1.5625em;
-  position: relative;
-  bottom: 8px;
-  margin-right: -0.625em;
-}
-
-span.asu-ap-program-flag {
-  font-size: 1.25em;
-  font-weight: normal;
-  vertical-align: middle;
-  padding-right: 0.3125em;
-}
-
 /* [NEW] PROGRAM REQUIREMENTS FIELD */
-
 .mm_section_note, .mm_notes {
   margin-top: 1.875em;
 }
-
 .mm_section_note_row, .mm_section_note_R {
   margin-top: 0.625em;
   margin-bottom: 0.3125em;
 }
-
 .mm_req_cat, .mm_req {
   margin-top: 0.625em;
   font-weight: 700;
 }
-
 .mm_reqUnderCat {
   margin: 0.625em 0.625em 0.625em 0;
 }
-
 a.ttCourse {
   border-bottom: none;
 }
@@ -201,7 +150,6 @@ a.ttCourse {
 .text-yellow {
   color: #ffc627;
 }
-
 .text-green {
   color: #006838;
 }
@@ -219,16 +167,47 @@ a.ttCourse {
   padding-right: 0.9375em;
 }
 
+
+/* Font Awesome icons */
+i.fa.fa-location-arrow,
+span.fa.fa-location-arrow {
+  font-size: 1.5625em;
+  position: relative;
+  bottom: 8px;
+  margin-right: -0.625em;
+}
+
+i.fa.fa-star,
+span.fa.fa-star {
+  font-size: 1.5625em;
+  position: relative;
+  bottom: 8px;
+  margin-right: -0.625em;
+}
+
+i.fa.fa-retweet,
+span.fa.fa-retweet {
+  font-size: 1.5625em;
+  position: relative;
+  bottom: 8px;
+  margin-right: -0.625em;
+}
+
+span.asu-ap-program-flag {
+  font-size: 1.25em;
+  font-weight: normal;
+  vertical-align: middle;
+  padding-right: 0.3125em;
+}
+
+/**
+ * Media Rules
+ */
+
 @media (min-width: 992px) and (max-width: 1200px) {
   .view-asu-ap-view .view-content .views-field.views-field-field-degree-image img {
     width: 212px;
     height: 152px;
-  }
-}
-
-@media (min-width: 767px) and (max-width: 992px) {
-  .view-asu-ap-view .view-content .views-field.views-field-field-degree-image {
-    width: 50%;
   }
 }
 
@@ -246,18 +225,24 @@ a.ttCourse {
 }
 
 @media (min-width: 768px) {
-  .node-type-asu-ap .field-name-body {
+  body.node-type-asu-ap #main-wrapper .field-name-body {
     font-size: 1.5em;
   }
-  .node-type-asu-ap .col-sm-6 {
+  body.node-type-asu-ap #main-wrapper .col-sm-6 {
     width: 50%;
     float: left;
   }
-  .node-type-asu-ap .asu-degree-banner-image img {
+  body.node-type-asu-ap #main-wrapper .asu-degree-banner-image img {
     min-height: 238px;
   }
-  .node-type-asu-ap h1#page-title {
+  body.node-type-asu-ap #main-wrapper h1#page-title {
     font-size: 3.75em;
+  }
+}
+
+@media (min-width: 767px) and (max-width: 992px) {
+  .view-asu-ap-view .view-content .views-field.views-field-field-degree-image {
+    width: 50%;
   }
 }
 
