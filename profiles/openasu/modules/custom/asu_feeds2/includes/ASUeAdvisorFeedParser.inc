@@ -248,6 +248,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       }
 
       // Filter out MediaAmp videos for now - @TODO add MediaAMP support
+      watchdog('asu_feeds2', print_r($data['Url4']));
       if (count($data['Url4'])) {
         $temp = ($data['Url4']);
         if (strpos($data['Url4'], 'mediaamp.org') !== FALSE) {
@@ -335,7 +336,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
     } // END FOREACH of all data
     // DEBUG
     //error_log(print_r($parsed_data, true));
-    watchdog('A2P Debug', '<pre>'. print_r($parsed_data, true) .'</pre>');
+   // watchdog('A2P Debug', '<pre>'. print_r($data, true) .'</pre>');
 
     return new FeedsParserResult($parsed_data);
   }
