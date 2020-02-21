@@ -296,8 +296,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
 
       // Clean up marketing text input for display in degree pages.
       if (isset($data['marketText'])) {
-
-        $parsed_data[$key]['marketText'] = filter_xss(html_entity_decode($data['marketText']));
+//        $parsed_data[$key]['marketText'] = filter_xss(html_entity_decode($data['marketText']));
       }
 
       // Sub-plan code and subplan major map url - [SubPlnMajorMaps]
