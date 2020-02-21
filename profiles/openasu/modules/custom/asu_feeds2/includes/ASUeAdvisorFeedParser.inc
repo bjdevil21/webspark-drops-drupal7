@@ -228,7 +228,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
           }
           if ($value == 'Online') {
             unset($parsed_data[$key]['CampusStringArray'][$campus_key]);
-            array_push($parsed_data[$key]['CampusStringArray'],$value);
+            array_push($parsed_data[$key]['CampusStringArray'], $value);
           } else {
             $parsed_data[$key]['CampusStringArray'][$campus_key] = $value;
           }
@@ -249,12 +249,16 @@ class ASUeAdvisorFeedParser extends FeedsParser {
 
       // Filter out MediaAmp videos for now - @TODO add MediaAMP support
       if (isset($data['Url4'])) {
-        watchdog('asu_feeds2', print_r($data['Url4']));
         if (strpos($data['Url4'], 'mediaamp.org') !== FALSE) {
           $parsed_data[$key]['Url4'] = '';
           drupal_set_message($data['Descr'] . ' - A MediaAMP URL was removed because'
           . ' they are not currently supported in Webspark.', 'notice');
+        } elseif (strpos($data['Url4'], 'player.vimeo.com') !== FALSE) {
+          // Vimeo refactoring for player.vimeo.com URLs
+          $data['Url4'] = preg_replace('|^(https?)://player.(vimeo.com)/video/(\d+)$|',
+            '$1://$2/$3', $data['Url4']);
         }
+        watchdog('asu_feeds2', print_r($data['Url4']));
       }
 
       // Transfer agreements
