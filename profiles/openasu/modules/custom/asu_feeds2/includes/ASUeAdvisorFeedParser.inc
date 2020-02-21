@@ -403,8 +403,8 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'HegisCode' => array('name' => t('Hegis code')), // NEW
       'Institution' => array('name' => t('Institution')), // NEW
       'InternalDegree' => array('name' => t('Internal Degree')), // NEW
-      'managedOnlineCampus' => array('name' => t('managed Online Campus')), // NEW
-      'marketText' => array('name' => t('marketText')), // NEW
+      'managedOnlineCampus' => array('name' => t('Managed Online campus')), // NEW
+      'marketText' => array('name' => t('Marketing Text')), // NEW
       'MathIntensity' => array('name' => t('Math Intensity')), // NEW
       'MinMathReq' => array('name' => t('Minimum math requirement')),
       'Notes' => array('name' => t('Notes')), // NEW
@@ -412,8 +412,8 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'planCatDescr' => array('name' => t('Plan category description')), // NEW
       'planDeadlines' => array('name' => t('Plan deadlines')), // NEW
       'PlanUrl' => array('name' => t('Plan URL')), // NEW
-      'PlnReqtrmDflt' => array('name' => t('PlanReqtrmDflt')), // NEW
-      'psDeadlines' => array('name' => t('psDeadlines')), // NEW
+      'PlnReqtrmDflt' => array('name' => t('Plan Req trm Dflt')), // NEW
+      'psDeadlines' => array('name' => t('PS deadlines')), // NEW
       'Reqdescr' => array('name' => t('Requirement description')),
       'secondMajors' => array('name' => t('Second majors')), // NEW
       'SMISUrl' => array('name' => t('SMIS Url')), // NEW
