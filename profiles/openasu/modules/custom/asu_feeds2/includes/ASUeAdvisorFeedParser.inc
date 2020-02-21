@@ -296,7 +296,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
 
       // Clean up marketing text input for display in degree pages.
       if (isset($data['marketText'])) {
-        watchdog('asu_feeds2', 'marketText - ' . print_r($data['marketText']));
+
         $parsed_data[$key]['marketText'] = filter_xss(html_entity_decode($data['marketText']));
       }
 
