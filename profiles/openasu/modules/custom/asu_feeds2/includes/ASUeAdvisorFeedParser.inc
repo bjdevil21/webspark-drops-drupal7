@@ -248,10 +248,9 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       }
 
       // Filter out MediaAmp videos for now - @TODO add MediaAMP support
-      watchdog('asu_feeds2', print_r($data['Url4']));
-      watchdog('asu_feeds2', print_r($parsed_data['Url4']));
-      if (count($data['Url4'])) {
-        $temp = ($data['Url4']);
+      if (isset($data['Url4'])) {
+        watchdog('asu_feeds2', print_r($parsed_data[$key]['Descr']));
+        watchdog('asu_feeds2', print_r($data['Url4']));
         if (strpos($data['Url4'], 'mediaamp.org') !== FALSE) {
           $parsed_data[$key]['Url4'] = '';
           drupal_set_message($data['Descr'] . ' - A MediaAMP URL was removed because'
@@ -293,7 +292,8 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       $parsed_data[$key]['cert'] = $cert;
 
       // Clean up marketing text input for display in degree pages.
-      if (count($data['marketText'])) {
+      if (isset($data['marketText'])) {
+        watchdog('asu_feeds2', print_r($data['marketText']));
         $parsed_data[$key]['marketText'] = filter_xss(html_entity_decode($data['marketText']));
       }
 
