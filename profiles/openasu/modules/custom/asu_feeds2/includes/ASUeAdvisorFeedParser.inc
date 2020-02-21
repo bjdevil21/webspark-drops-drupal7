@@ -249,6 +249,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
 
       // Filter out MediaAmp videos for now - @TODO add MediaAMP support
       watchdog('asu_feeds2', print_r($data['Url4']));
+      watchdog('asu_feeds2', print_r($parsed_data['Url4']));
       if (count($data['Url4'])) {
         $temp = ($data['Url4']);
         if (strpos($data['Url4'], 'mediaamp.org') !== FALSE) {
