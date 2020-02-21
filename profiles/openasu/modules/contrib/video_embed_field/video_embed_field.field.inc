@@ -204,6 +204,8 @@ function video_embed_field_field_validate($entity_type, $entity, $field, $instan
       }
       else {
         $host = $parts['host'];
+        dpm($host, __FUNCTION__);
+        watchdog('video_embed_field', print_r($host));
         if (stripos($host, 'www.') > -1) {
           $host = substr($host, 4);
         } elseif (stripos($host, 'player.vimeo') > -1) { // Vimeo refactoring for player.vimeo.com URLs
