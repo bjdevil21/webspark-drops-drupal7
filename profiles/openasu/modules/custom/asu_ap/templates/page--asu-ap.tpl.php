@@ -273,13 +273,18 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                   <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
                     <?php print render($node_info['field_asu_ap_market_text']); ?>
                   <?php endif; ?>
-                  <?php if (isset($node_info['body'])): ?>
+                  <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
                     <?php print render($node_info['body']); ?>
                   <?php endif; ?>
                 </div>
               </div>
-            <?php elseif (isset($node_info['body'])): ?>
-              <?php print render($node_info['body']); ?>
+            <?php else: ?>
+              <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
+                <?php print render($node_info['field_asu_ap_market_text']); ?>
+              <?php endif; ?>
+              <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+                <?php print render($node_info['body']); ?>
+              <?php endif; ?>
             <?php endif; ?>
 
           <?php elseif ($program_decider_value == 'graduate'): ?>
