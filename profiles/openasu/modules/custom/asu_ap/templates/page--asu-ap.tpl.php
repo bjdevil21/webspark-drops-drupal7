@@ -89,6 +89,16 @@ else {
 if (module_exists('metatag')) {
   print render($page['content']['metatags']);
 }
+// Resize Program description if no marketing text is available from the feed.
+if (!isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
+  echo <<<HEREDOC
+  <style type="text/css">
+    .node-type-asu-ap .field-name-body {
+      font-size: 1.25em;
+    }
+  </style>
+ HEREDOC;
+};
 ?>
 
 <div id="page-wrapper">
@@ -258,6 +268,7 @@ if (module_exists('metatag')) {
                     <?php print render($node_info['field_asu_ap_market_text']); ?>
                   <?php endif; ?>
                   <?php if (isset($node_info['body'])): ?>
+                    <h2>Program description</h2>
                     <?php print render($node_info['body']); ?>
                   <?php endif; ?>
                 </div>
