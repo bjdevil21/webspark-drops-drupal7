@@ -56,6 +56,9 @@ body.node-type-asu-ap #main-wrapper p {
   margin: 0 0 1.5em;
   font-weight: 200;
 }
+body.node-type-asu-ap #main-wrapper .field-name-field-asu-ap-market-text {
+  font-size: 1.3em;
+}
 body.node-type-asu-ap #main-wrapper .field-name-field-asu-ap-example-careers p {
   margin: 0;
 }
@@ -225,9 +228,6 @@ span.asu-ap-program-flag {
 }
 
 @media (min-width: 768px) {
-  body.node-type-asu-ap #main-wrapper .field-name-field-asu-ap-market-text {
-    font-size: 1.3em;
-  }
   body.node-type-asu-ap #main-wrapper .col-sm-6 {
     float: left;
   }
