@@ -80,8 +80,7 @@
 // Set node array in one place:
 if (is_numeric(arg(1))) {
   $node_info = $variables['page']['content']['system_main']['nodes'][arg(1)];
-  dpm($node_info);
-  watchdog('asu_ap', print_r($node_info));
+  dpm($node_info['field_asu_ap_market_text']['#items'][0]);
 }
 else {
   $node_info = array();
