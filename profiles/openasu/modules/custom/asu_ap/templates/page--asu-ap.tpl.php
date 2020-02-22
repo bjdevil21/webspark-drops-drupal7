@@ -467,6 +467,9 @@ if (module_exists('metatag')) {
                   <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
                 </div>
                 <div id="degree-collapse" class="collapse">
+                  <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
+                    <?php print render($node_info['field_asu_ap_market_text']['#items'][0]['safe_value']); ?>
+                  <?php endif; ?>
                   <?php if (isset($node_info['body'])): ?>
                     <?php print render($node_info['body']); ?>
                   <?php endif; ?>
@@ -529,15 +532,16 @@ if (module_exists('metatag')) {
                     <?php endif; ?>
                   </div>
                 </div>
+              <?php else: ?>
                 <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
                   <?php print render($node_info['field_asu_ap_market_text']['#items'][0]['safe_value']); ?>
                 <?php endif; ?>
-              <?php elseif (isset($node_info['body'])): // Program description (aka body field) ?>
-                <?php print render($node_info['body']); ?>
-
+                <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+                  <?php print render($node_info['body']); ?>
+                <?php endif; ?>
               <?php endif; ?>
-
             <?php endif; ?>
+
             <!-- End optional description video display -->
           <?php endif; ?>
 
