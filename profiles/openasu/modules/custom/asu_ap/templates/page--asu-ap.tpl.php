@@ -98,7 +98,7 @@ if (!isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
     }
   </style>
  HEREDOC;
-};
+}
 ?>
 
 <div id="page-wrapper">
