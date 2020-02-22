@@ -80,8 +80,6 @@
 // Set node array in one place:
 if (is_numeric(arg(1))) {
   $node_info = $variables['page']['content']['system_main']['nodes'][arg(1)];
-  dpm($node_info['field_asu_ap_market_text'], 'market_text');
-  dpm($node_info['body'], 'body');
 }
 else {
   $node_info = array();
@@ -103,7 +101,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
 }
 </style>';
 } else {
-  print '<style type="text/css">.field-name-body { font-size: 1.3em; }</style>';
+  print '<style type="text/css">.field-name-body div > p:first-of-type { font-size: 1.5em; }</style>';
 }
 ?>
 
