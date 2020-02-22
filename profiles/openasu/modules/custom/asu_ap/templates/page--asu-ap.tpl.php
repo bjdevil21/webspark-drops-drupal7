@@ -277,13 +277,21 @@ if (module_exists('metatag')) {
                           <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
                         </div>
                         <div id="degree-collapse" class="collapse">
-                          <?php if (isset($node_info['body'])): ?>
+                          <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
+                            <?php print render($node_info['field_asu_ap_market_text']); ?>
+                          <?php endif; ?>
+                          <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
                             <?php print render($node_info['body']); ?>
                           <?php endif; ?>
                         </div>
                       </div>
-                    <?php elseif (isset($node_info['body'])): ?>
-                      <?php print render($node_info['body']); ?>
+                    <?php else: ?>
+                      <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
+                        <?php print render($node_info['field_asu_ap_market_text']); ?>
+                      <?php endif; ?>
+                      <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+                        <?php print render($node_info['body']); ?>
+                      <?php endif; ?>
                     <?php endif; ?>
                   </div>
                   <div class="col-md-4">
@@ -292,8 +300,8 @@ if (module_exists('metatag')) {
               </div>
 
             <?php else: ?>
-
               <!-- IF VIDEO IS NOT PRESENT -->
+
               <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
                 <div class="asu-ap-short-description">
                   <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
@@ -301,18 +309,25 @@ if (module_exists('metatag')) {
                     <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
                   </div>
                   <div id="degree-collapse" class="collapse">
-                    <?php if (isset($node_info['body'])): ?>
+                    <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
+                      <?php print render($node_info['field_asu_ap_market_text']); ?>
+                    <?php endif; ?>
+                    <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
                       <?php print render($node_info['body']); ?>
                     <?php endif; ?>
                   </div>
                 </div>
-              <?php elseif (isset($node_info['body'])): ?>
+                <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
+                  <?php print render($node_info['field_asu_ap_market_text']); ?>
+                <?php endif; ?>
+              <?php elseif (isset($node_info['body'])): // Program description (aka body field) ?>
                 <?php print render($node_info['body']); ?>
               <?php endif; ?>
 
             <?php endif; ?>
             <!-- End optional description video display -->
           <?php endif; ?>
+
             <div class="row space-bot-lg">
               <div class="col-sm-6 col-md-4 space-bot-md">
                 <?php if (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url'])): ?>
@@ -343,58 +358,58 @@ if (module_exists('metatag')) {
               </div>
             </div>
         </div>
+
         <div class="asu-ap-grey-section">
           <div class="container">
             <div class="row">
               <div class="col-sm-6 col-md-4">
+
                 <h2>Program offered</h2>
 
                 <div class="asu-ap-page-degree-offered">
-                  <p>
-                    <strong>
-                      <?php if (isset($node_info['field_asu_ap_awarded']['#items'][0]['value'])): ?>
-                        <?php if ($program_decider_value == 'undergrad'): ?>
-                          <?php if (isset($node_info['field_asu_ap_cert']['#items'][0]['value'])): ?>
-                            <?php if ($cert_val == 'false'): ?>
-                              <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>,
-                              <?php if (isset($node_info['field_asu_ap']['#items'][0]['value'])): ?>
-                                <?php print render($node_info['field_asu_ap']['#items'][0]['value']); ?>
-                              <?php endif; ?>
-                            <?php elseif ($cert_val == 'true'): ?>
-                              <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>
-                              <?php if (isset($node_info['field_asu_ap']['#items'][0]['value'])): ?>
-                                (<?php print render($node_info['field_asu_ap']['#items'][0]['value']); ?>)
-                              <?php endif; ?>
+                  <h4>
+                    <?php if (isset($node_info['field_asu_ap_awarded']['#items'][0]['value'])): ?>
+                      <?php if ($program_decider_value == 'undergrad'): ?>
+                        <?php if (isset($node_info['field_asu_ap_cert']['#items'][0]['value'])): ?>
+                          <?php if ($cert_val == 'false'): ?>
+                            <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>,
+                            <?php if (isset($node_info['field_asu_ap']['#items'][0]['value'])): ?>
+                              <?php print render($node_info['field_asu_ap']['#items'][0]['value']); ?>
+                            <?php endif; ?>
+                          <?php elseif ($cert_val == 'true'): ?>
+                            <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>
+                            <?php if (isset($node_info['field_asu_ap']['#items'][0]['value'])): ?>
+                              (<?php print render($node_info['field_asu_ap']['#items'][0]['value']); ?>)
                             <?php endif; ?>
                           <?php endif; ?>
-                        <?php elseif ($program_decider_value == 'graduate'): ?>
-                          <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>
                         <?php endif; ?>
+                      <?php elseif ($program_decider_value == 'graduate'): ?>
+                        <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>
                       <?php endif; ?>
-                    </strong>
-                    <br><br>
-                    <b>Offered by</b><br>
-                    <?php
-                      if (isset($node_info['field_asu_ap_college_j']['#items'][0]['value'])) {
-                        // $cc --> college_count; $ci --> college_index; $cn --> college_name
-                        $cc = count($node_info['field_asu_ap_college_j']['#items']) - 1;
-                        $ci = 0;
-                        foreach ($node_info['field_asu_ap_college_j']['#items'] as $cn) {
-                          $asu_college_raw = $cn['value'];
-                          list($asu_college_suffix, $asu_college_prefix) = explode(", ", $asu_college_raw);
-                          $asu_college = $asu_college_prefix . " " . $asu_college_suffix;
-                          echo $asu_college;
-                          if ($ci < $cc) {
-                            echo ', ';
-                          }
-                          ++$ci;
+                    <?php endif; ?>
+                  </h4>
+                  <p><strong>Offered by</strong><br>
+                  <?php
+                    if (isset($node_info['field_asu_ap_college_j']['#items'][0]['value'])) {
+                      // $cc --> college_count; $ci --> college_index; $cn --> college_name
+                      $cc = count($node_info['field_asu_ap_college_j']['#items']) - 1;
+                      $ci = 0;
+                      foreach ($node_info['field_asu_ap_college_j']['#items'] as $cn) {
+                        $asu_college_raw = $cn['value'];
+                        list($asu_college_suffix, $asu_college_prefix) = explode(", ", $asu_college_raw);
+                        $asu_college = $asu_college_prefix . " " . $asu_college_suffix;
+                        echo $asu_college;
+                        if ($ci < $cc) {
+                          echo ', ';
                         }
+                        ++$ci;
                       }
-                    ?>
+                    }
+                  ?>
                   </p>
                 </div>
-                <p>
-                  <b>Location</b><br>
+
+                <p><strong>Location</strong><br>
                   <?php
                     if (isset($node_info['field_asu_ap_campus']['#items'][0]['value'])) {
                       $c = count($node_info['field_asu_ap_campus']['#items']) - 1;
@@ -483,13 +498,13 @@ if (module_exists('metatag')) {
 
                 <div class="asu-ap-subplans">
                 <?php if (isset($node_info['field_asu_ap_subplan_url']['#items'])): ?>
-                  <div class='asu-ap-sublplans'><p><b>Subplans</b><br/></div>
+                  <div class='asu-ap-sublplans'><p><b>Subplans</b><br /></div>
                     <?php foreach ($node_info['field_asu_ap_subplan_url']['#items'] as $sp) {
                       if ($sp['title'] != $sp['url']) {
-                        echo '<a href="'.$sp['url'].'">'.$sp['title'].'</a><br/>';
+                        echo '<a href="'.$sp['url'].'">'.$sp['title'].'</a><br />';
                       }
                       else {
-                        echo '<a href="'.$sp['url'].'">Online</a><br/>';
+                        echo '<a href="'.$sp['url'].'">Online</a><br />';
                       }
                     }
                   echo '</p>';
@@ -519,6 +534,7 @@ if (module_exists('metatag')) {
                   <?php endif ?>
                 <?php endif; ?>
               </div>
+
               <div class="col-sm-6 col-md-4">
                 <?php if ($program_decider_value == 'undergrad'): ?>
                   <h2>Affording college</h2>

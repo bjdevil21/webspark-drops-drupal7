@@ -225,7 +225,7 @@ span.asu-ap-program-flag {
 }
 
 @media (min-width: 768px) {
-  body.node-type-asu-ap #main-wrapper .field-name-body {
+  body.node-type-asu-ap #main-wrapper .field-name-field-asu-ap-market-text {
     font-size: 1.5em;
   }
   body.node-type-asu-ap #main-wrapper .col-sm-6 {
