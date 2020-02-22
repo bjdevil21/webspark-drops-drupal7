@@ -84,12 +84,10 @@ if (is_numeric(arg(1))) {
 else {
   $node_info = array();
 }
-
 // Add subsection of $page['content'] for metatags
 if (module_exists('metatag')) {
   print render($page['content']['metatags']);
 }
-
 ?>
 
 <div id="page-wrapper">
@@ -277,7 +275,7 @@ if (module_exists('metatag')) {
                           <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
                         </div>
                         <div id="degree-collapse" class="collapse">
-                          <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
+                          <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['value'])))):  // marketing text ?>
                             <?php print render($node_info['field_asu_ap_market_text']); ?>
                           <?php endif; ?>
                           <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
@@ -286,8 +284,8 @@ if (module_exists('metatag')) {
                         </div>
                       </div>
                     <?php else: ?>
-                      <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
-                        <?php print render($node_info['field_asu_ap_market_text']); ?>
+                      <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['value'])))):  // marketing text ?>
+                        <?php print render($node_info['field_asu_ap_market_text']['#items'][0]['value']))); ?>
                       <?php endif; ?>
                       <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
                         <?php print render($node_info['body']); ?>
@@ -309,16 +307,16 @@ if (module_exists('metatag')) {
                     <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
                   </div>
                   <div id="degree-collapse" class="collapse">
-                    <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
-                      <?php print render($node_info['field_asu_ap_market_text']); ?>
+                    <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['value'])))):  // marketing text ?>
+                      <?php print render($node_info['field_asu_ap_market_text']['#items'][0]['value']))); ?>
                     <?php endif; ?>
                     <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
                       <?php print render($node_info['body']); ?>
                     <?php endif; ?>
                   </div>
                 </div>
-                <?php if (isset($node_info['field_asu_ap_market_text'])):  // marketing text ?>
-                  <?php print render($node_info['field_asu_ap_market_text']); ?>
+                <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['value'])))):  // marketing text ?>
+                  <?php print render($node_info['field_asu_ap_market_text']['#items'][0]['value']))); ?>
                 <?php endif; ?>
               <?php elseif (isset($node_info['body'])): // Program description (aka body field) ?>
                 <?php print render($node_info['body']); ?>
