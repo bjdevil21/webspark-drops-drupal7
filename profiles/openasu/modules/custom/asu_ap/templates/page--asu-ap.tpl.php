@@ -92,14 +92,18 @@ if (module_exists('metatag')) {
 }
 // Resize Program description if no marketing text is available from the feed.
 if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
-  print '<style type="text/css">.field-name-body > .field-label::before {
-  content: "Program descriptionhn";
+  print '<style type="text/css">..field-name-body::before {
+  content: "Program description";
   font-size: 2.25em;
   margin: 1.5em 0 1em;
   font-weight: normal;
-  line-height: 1.44; }</style>';
+}
+.field-name-body > :first-child {
+  padding-top: 1.5em;
+}
+</style>';
 } else {
-  print '<style type="text/css">.field-name-body { font-size: 1.25em; }</style>';
+  print '<style type="text/css">.field-name-body { font-size: 1.3em; }</style>';
 }
 ?>
 
