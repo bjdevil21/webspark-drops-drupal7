@@ -91,13 +91,12 @@ if (module_exists('metatag')) {
 }
 // Resize Program description if no marketing text is available from the feed.
 if (!isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
-  echo <<<HEREDOC
-  <style type="text/css">
+echo '  <style type="text/css">
     .node-type-asu-ap .field-name-body {
       font-size: 1.25em;
     }
   </style>
- HEREDOC;
+';
 }
 ?>
 
