@@ -80,7 +80,8 @@
 // Set node array in one place:
 if (is_numeric(arg(1))) {
   $node_info = $variables['page']['content']['system_main']['nodes'][arg(1)];
-  dpm($node_info['field_asu_ap_market_text']);
+  dpm($node_info['field_asu_ap_market_text'], 'market_text');
+  dpm($node_info['body'], 'body');
 }
 else {
   $node_info = array();
@@ -90,13 +91,14 @@ if (module_exists('metatag')) {
   print render($page['content']['metatags']);
 }
 // Resize Program description if no marketing text is available from the feed.
-if (!isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
-echo '  <style type="text/css">
-    .node-type-asu-ap .field-name-body {
-      font-size: 1.25em;
-    }
-  </style>
-';
+if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
+  $node_info['body']['#label_display'] = 'above';
+  print '<style type="text/css">.field-name-body > .field-label { font-size: 36px;
+  margin: 1.5rem 0 1rem;
+  font-weight: normal;
+  line-height: 1.44; }</style>';
+} else {
+  print '<style type="text/css">.field-name-body { font-size: 1.25em; }</style>';
 }
 ?>
 
@@ -267,7 +269,6 @@ echo '  <style type="text/css">
                     <?php print render($node_info['field_asu_ap_market_text']); ?>
                   <?php endif; ?>
                   <?php if (isset($node_info['body'])): ?>
-                    <h2>Program description</h2>
                     <?php print render($node_info['body']); ?>
                   <?php endif; ?>
                 </div>
