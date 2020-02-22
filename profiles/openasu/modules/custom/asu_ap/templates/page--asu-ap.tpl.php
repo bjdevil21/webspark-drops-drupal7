@@ -92,7 +92,7 @@ if (module_exists('metatag')) {
 }
 // Resize Program description if no marketing text is available from the feed.
 if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
-  print '<style type="text/css">..field-name-body::before {
+  print '<style type="text/css">.field-name-body::before {
   content: "Program description";
   font-size: 2.25em;
   margin: 1.5em 0 1em;
