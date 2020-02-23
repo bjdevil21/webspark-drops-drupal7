@@ -149,6 +149,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
         <div id="main" class="clearfix">
           <a id="main-content"></a>
 
+          <!-- Top Banner image (TB) -->
           <!--suppress CssUnknownTarget -->
           <div class="asu-degree-banner-image"
                style="background-image:url(/sites/default/files/<?php echo $node_info['field_asu_banner_image']['#items'][0]['filename']; ?>)">
@@ -172,50 +173,41 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       <?php elseif ($program_decider_value == 'graduate'): ?>
                         <?php print $title; ?>
                       <?php endif; ?>
+                    </h1>
+
                       <!-- Displaying 'Accelerated Program' field if true, displaying nothing if false -->
+                    <div class="asu-ap-special-categories">
                       <?php if (isset($node_info['field_asu_ap_acc_program']['#items'][0]['value'])): ?>
                         <?php $accelerated_degree_value = ($node_info['field_asu_ap_acc_program']['#items'][0]['value']); ?>
                         <?php if (isset($accelerated_degree_value)): ?>
-                          <br>
-                          <i class="fa fa-location-arrow"></i>
-                          <span class="asu-ap-program-flag">Accelerated Program</span>
-                        <?php else: ?>
-                          <!-- do nothing, it's not an accelerated degree -->
+                          <div class="asu-ap-special-category">
+                            <i class="fa fa-location-arrow"></i>
+                            <span class="asu-ap-program-flag">Accelerated Program</span>
+                          </div>
                         <?php endif; ?>
                       <?php endif; ?>
                       <!-- Displaying 'Concurrent Program' field if true, displaying nothing if false -->
                       <?php if (isset($node_info['field_asu_ap_conc_program']['#items'][0]['value'])): ?>
                         <?php $concurrent_degree_value = ($node_info['field_asu_ap_conc_program']['#items'][0]['value']); ?>
                         <?php if ($concurrent_degree_value == '1'): ?>
-                          <?php if (isset($accelerated_degree_value)): ?>
+                          <div class="asu-ap-special-category">
                             <i class="fa fa-star"></i>
                             <span class="asu-ap-program-flag">Concurrent Program</span>
-                          <?php else: ?>
-                            <br>
-                            <i class="fa fa-star"></i>
-                            <span class="asu-ap-program-flag">Concurrent Program</span>
-                          <?php endif; ?>
-                        <?php else: ?>
-                          <!-- do nothing, it's not a concurrent degree -->
+                          </div>
                         <?php endif; ?>
                       <?php endif; ?>
                       <!-- Displaying 'New Program' field if true, displaying nothing if false -->
                       <?php if (isset($node_info['field_asu_ap_new_program']['#items'][0]['value'])): ?>
                         <?php $new_degree_value = ($node_info['field_asu_ap_new_program']['#items'][0]['value']); ?>
                         <?php if ($new_degree_value == '1'): ?>
-                          <?php if (isset($accelerated_degree_value) && isset($concurrent_degree_value)): ?>
+                          <div class="asu-ap-special-category">
                             <i class="fa fa-retweet"></i>
                             <span class="asu-ap-program-flag">New Program</span>
-                          <?php else: ?>
-                            <br>
-                            <i class="fa fa-retweet"></i>
-                            <span class="asu-ap-program-flag">New Program</span>
-                          <?php endif; ?>
-                        <?php else: ?>
-                          <!-- do nothing, it's not a new degree -->
+                          </div>
                         <?php endif; ?>
                       <?php endif; ?>
-                    </h1>
+                    </div>
+
                   <?php endif; ?>
                 </div>
               </div>
@@ -259,7 +251,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
         <!--Start degree content-->
 
         <div class="container">
-
+          <!-- Top white section - Marketing + body content MB -->
           <?php if ($program_decider_value == 'undergrad'): ?>
             <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
               <div class="asu-ap-short-description">
@@ -286,10 +278,10 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
             <?php endif; ?>
 
           <?php elseif ($program_decider_value == 'graduate'): ?>
-            <!-- Start optional description video display -->
+            <!-- MB - Start optional description video display -->
             <?php if (isset($node_info['field_asu_ap_grad_desc_video']['#items'][0]['safe_value'])): ?>
 
-              <!-- IF VIDEO IS PRESENT -->
+            <!-- IF VIDEO IS PRESENT -->
               <div class="row">
                 <div class="col-md-8">
                   <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
@@ -322,7 +314,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
               </div>
 
             <?php else: ?>
-              <!-- IF VIDEO IS NOT PRESENT -->
+            <!-- IF VIDEO IS NOT PRESENT -->
               <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
                 <div class="asu-ap-short-description">
                   <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
@@ -347,47 +339,38 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                 <?php endif; ?>
               <?php endif; ?>
             <?php endif; ?>
-
-            <!-- End optional description video display -->
+          <!-- End optional description video display -->
           <?php endif; ?>
 
-          <div class="row space-bot-lg">
+          <div class="row space-bot-lg asu-ap-page-buttons">
             <div class="col-sm-6 col-md-4 space-bot-md">
-              <?php if (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url'])): ?>
-                <a href="<?php echo $node_info['field_asu_ap_cta_information']['#items'][0]['url'] ?>"
-                   class="btn btn-gold btn-block btn-lg">Request information</a>
-              <?php else: ?>
-                <a href="#asu-rfi-form-data" id="take-me-to-rfi"
-                   class="btn btn-gold btn-block btn-lg">Request information</a>
-              <?php endif; ?>
+              <?php $cta_information = (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url']))
+                ? $node_info['field_asu_ap_cta_information']['#items'][0]['url']
+                : "#asu-rfi-form-data"; ?>
+                <a href="<?php echo $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</a>
             </div>
             <div class="col-sm-6 col-md-4 space-bot-md">
-              <?php if (isset($node_info['field_asu_ap_cta_visit']['#items'][0]['url'])): ?>
-                <a href="<?php echo $node_info['field_asu_ap_cta_visit']['#items'][0]['url'] ?>"
-                   class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
-              <?php else: ?>
-                <a href="https://visit.asu.edu/"
-                   class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
-              <?php endif; ?>
+              <?php $cta_visit = (isset($node_info['field_asu_ap_cta_visit']['#items'][0]['url']))
+                ? $node_info['field_asu_ap_cta_visit']['#items'][0]['url']
+                : 'https://visit.asu.edu/'; ?>
+                <a href="<?php echo $cta_visit ?>" class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
             </div>
             <div class="col-sm-6 col-md-4 space-bot-md">
-              <?php if (isset($node_info['field_asu_ap_cta_apply']['#items'][0]['url'])): ?>
-                <a href="<?php echo $node_info['field_asu_ap_cta_apply']['#items'][0]['url'] ?>"
-                   class="btn btn-gold btn-block btn-lg">How and when to apply</a>
-              <?php else: ?>
-                <a href="https://students.asu.edu/apply"
-                   class="btn btn-gold btn-block btn-lg">How and when to apply</a>
-              <?php endif; ?>
+              <?php $cta_apply = (isset($node_info['field_asu_ap_cta_apply']['#items'][0]['url']))
+                ? $node_info['field_asu_ap_cta_apply']['#items'][0]['url']
+                : "https://students.asu.edu/apply"; ?>
+              <a href="<?php print $cta_apply?>" class="btn btn-gold btn-block btn-lg">How and when to apply</a>
             </div>
           </div>
         </div>
 
+        <!-- Middle gray section (MG) -->
         <div class="asu-ap-grey-section">
           <div class="container">
             <div class="row">
               <div class="col-sm-6 col-md-4">
 
-                <h2>Program offered</h2>
+                <h2>At A Glance</h2>
 
                 <div class="asu-ap-page-degree-offered">
                   <h4>
@@ -596,6 +579,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
           </div>
         </div>
 
+        <!-- Bottom white section (BW) -->
         <div class="container">
           <?php //print render($page['asu_ap_marketing']); ?>
         </div>
