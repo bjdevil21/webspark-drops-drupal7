@@ -41,7 +41,7 @@
 }
 .asu-ap-grey-section {
   background: #f1f1f1;
-  padding: 48px 0;
+  padding: 2em 0;
 }
 .asu-ap-grey-section a {
   font-weight: 500;
@@ -66,11 +66,11 @@
   min-height: 288px;
 }
 
-.space-top-xl {
-  margin-top: 48px;
+.node-type-asu-ap .space-top-xl {
+  margin-top: 2em;
 }
-.space-bot-xl {
-  margin-bottom: 48px;
+.node-type-asu-ap .space-bot-xl {
+  margin-bottom: 2em;
 }
 
 .node-type-asu-ap #main-wrapper a.btn.btn-lg, .node-type-asu-ap .btn.btn-lg {
@@ -194,7 +194,7 @@ a.ttCourse {
 }
 
 .node-type-asu-ap #main-wrapper .asu-ap-page-buttons {
-  margin-top: 1em;
+  margin: 2em 0 1em;
 }
 
 /**
