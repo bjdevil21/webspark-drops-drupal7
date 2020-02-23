@@ -394,99 +394,109 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       <?php endif; ?>
                     <?php endif; ?>
                   </h4>
-                  <p><strong>Offered by</strong><br>
-                  <?php
-                    if (isset($node_info['field_asu_ap_college_j']['#items'][0]['value'])) {
-                      $college_count = count($node_info['field_asu_ap_college_j']['#items']) - 1;
-                      $college_index = 0;
-                      foreach ($node_info['field_asu_ap_college_j']['#items'] as $college_name) {
-                        $college_raw = $college_name['value'];
-                        list($college_suffix, $college_prefix) = explode(", ", $college_raw);
-                        $college = $college_prefix . " " . $college_suffix;
-                        // Build in college URL if it exists
-                        if (isset($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'])) {
-                          if (valid_url($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'], TRUE)) {
-                            $college = l(t($college), $node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'],
-                              array('attributes' => array('target' => '_blank')));
-                          }
+                  <ul>
+                  <?php if (isset($node_info['field_asu_ap_college_j']['#items'][0]['value'])) {
+                    print "<li><strong>Offered by</strong>: ";
+                    $college_count = count($node_info['field_asu_ap_college_j']['#items']) - 1;
+                    $college_index = 0;
+                    foreach ($node_info['field_asu_ap_college_j']['#items'] as $college_name) {
+                      $college_raw = $college_name['value'];
+                      list($college_suffix, $college_prefix) = explode(", ", $college_raw);
+                      $college = $college_prefix . " " . $college_suffix;
+                      // Build in college URL if it exists
+                      if (isset($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'])) {
+                        if (valid_url($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'], TRUE)) {
+                          $college = l(t($college), $node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'],
+                            array('attributes' => array('target' => '_blank')));
                         }
-                        echo $college;
-                        if ($college_index < $college_count) {
-                          echo ', ';
-                        }
-                        ++$college_index;
                       }
-                    }
-                  ?>
-                  </p>
-                </div>
-
-                <p><strong>Location</strong><br>
-                  <?php
-                    if (isset($node_info['field_asu_ap_campus']['#items'][0]['value'])) {
-                      $c = count($node_info['field_asu_ap_campus']['#items']) - 1;
-                      $i = 0;
-                      foreach ($node_info['field_asu_ap_campus']['#items'] as $campus) {
-                        $a = true;
-                        switch ($campus['value']) {
-                          case 'Downtown':
-                            echo '<a href="//tours.asu.edu/downtown">'.$campus['value'].'</a>';
-                            break;
-                          case 'Lake Havasu City':
-                            echo '<a href="//tours.asu.edu/havasu">'.$campus['value'].'</a>';
-                            break;
-                          case 'Polytechnic':
-                            echo '<a href="//tours.asu.edu/polytechnic">'.$campus['value'].'</a>';
-                            break;
-                          case 'Tempe':
-                            echo '<a href="//tours.asu.edu/tempe">'.$campus['value'].'</a>';
-                            break;
-                          case 'Thunderbird':
-                            echo '<a href="//tours.asu.edu/thunderbird">'.$campus['value'].'</a>';
-                            break;
-                          case 'West':
-                            echo '<a href="//tours.asu.edu/west">'.$campus['value'].'</a>';
-                            break;
-                          case 'ASU@TheGilaValley':
-                            echo '<a href="//admission.asu.edu/transfer/eastern-arizona">'.$campus['value'].'</a>';
-                            break;
-                          case 'ASU@Pinal':
-                            echo '<a href="//admission.asu.edu/transfer/central-arizona">'.$campus['value'].'</a>';
-                            break;
-                          case 'ASU@Tucson':
-                            echo '<a href="//transfer.asu.edu/asutucson'.$campus['value'].'</a>';
-                            break;
-                          case 'ASU@Yuma':
-                            echo '<a href="//admission.asu.edu/transfer/arizona-western">'.$campus['value'].'</a>';
-                            break;
-                          case 'ASU@Yavapai':
-                            echo '<a href="//admission.asu.edu/transfer/asuyavapai">'.$campus['value'].'</a>';
-                            break;
-                          case 'ASU@Cochise':
-                            echo '<a href="//admission.asu.edu/transfer/asu-cochise">'.$campus['value'].'</a>';
-                            break;
-                          case 'ASU@Pima':
-                            echo '<a href="//admission.asu.edu/transfer/pima">'.$campus['value'].'</a>';
-                            break;
-                          case 'Online':
-                            $online_url = (!empty($node_info['field_asu_ap_curriculum_url']['#items'][0]['url']))
-                              ? $node_info['field_asu_ap_curriculum_url']['#items'][0]['url']
-                              : '//asuonline.asu.edu/';
-                            echo '<a href="' . $online_url . '" target="_blank">'.$campus['value'].'</a>';
-                            break;
-                          // Check ASU Feeds Parser. The campus being used doesn't exist.
-                          default:
-                            echo $campus['value'];
-                            break;
-                        }
-                        if($i < $c && $a) {
-                          echo ', ';
-                        }
-                        ++$i;
+                      echo $college;
+                      if ($college_index < $college_count) {
+                        echo ', ';
                       }
+                      ++$college_index;
                     }
-                  ?>
-                </p>
+                    print "</li>";
+                  }
+                  if (isset($node_info['field_asu_ap_campus']['#items'][0]['value'])) {
+                    print "<li><strong>Location</strong>: ";
+                    $c = count($node_info['field_asu_ap_campus']['#items']) - 1;
+                    $i = 0;
+                    foreach ($node_info['field_asu_ap_campus']['#items'] as $campus) {
+                      $a = true;
+                      switch ($campus['value']) {
+                        case 'Downtown':
+                          echo '<a href="//tours.asu.edu/downtown">'.$campus['value'].'</a>';
+                          break;
+                        case 'Lake Havasu City':
+                          echo '<a href="//tours.asu.edu/havasu">'.$campus['value'].'</a>';
+                          break;
+                        case 'Polytechnic':
+                          echo '<a href="//tours.asu.edu/polytechnic">'.$campus['value'].'</a>';
+                          break;
+                        case 'Tempe':
+                          echo '<a href="//tours.asu.edu/tempe">'.$campus['value'].'</a>';
+                          break;
+                        case 'Thunderbird':
+                          echo '<a href="//tours.asu.edu/thunderbird">'.$campus['value'].'</a>';
+                          break;
+                        case 'West':
+                          echo '<a href="//tours.asu.edu/west">'.$campus['value'].'</a>';
+                          break;
+                        case 'ASU@TheGilaValley':
+                          echo '<a href="//admission.asu.edu/transfer/eastern-arizona">'.$campus['value'].'</a>';
+                          break;
+                        case 'ASU@Pinal':
+                          echo '<a href="//admission.asu.edu/transfer/central-arizona">'.$campus['value'].'</a>';
+                          break;
+                        case 'ASU@Tucson':
+                          echo '<a href="//transfer.asu.edu/asutucson'.$campus['value'].'</a>';
+                          break;
+                        case 'ASU@Yuma':
+                          echo '<a href="//admission.asu.edu/transfer/arizona-western">'.$campus['value'].'</a>';
+                          break;
+                        case 'ASU@Yavapai':
+                          echo '<a href="//admission.asu.edu/transfer/asuyavapai">'.$campus['value'].'</a>';
+                          break;
+                        case 'ASU@Cochise':
+                          echo '<a href="//admission.asu.edu/transfer/asu-cochise">'.$campus['value'].'</a>';
+                          break;
+                        case 'ASU@Pima':
+                          echo '<a href="//admission.asu.edu/transfer/pima">'.$campus['value'].'</a>';
+                          break;
+                        case 'Online':
+                          $online_url = (!empty($node_info['field_asu_ap_curriculum_url']['#items'][0]['url']))
+                            ? $node_info['field_asu_ap_curriculum_url']['#items'][0]['url']
+                            : '//asuonline.asu.edu/';
+                          echo '<a href="' . $online_url . '" target="_blank">'.$campus['value'].'</a>';
+                          break;
+                        // Check ASU Feeds Parser. The campus being used doesn't exist.
+                        default:
+                          echo $campus['value'];
+                          break;
+                      }
+                      if($i < $c && $a) {
+                        echo ', ';
+                      }
+                      ++$i;
+                    }
+                    print "</li>";
+                  } ?>
+                    <?php if (isset($node_info['field_asu_ap_program_fee']['#items'][0]['value'])
+                    && $node_info['field_asu_ap_program_fee']['#items'][0]['value'] === 'Y'): ?>
+                      <li><strong>Additional Program fees</strong>: Yes</li><?php endif; ?>
+                    <?php if (isset($node_info['field_asu_ap_second_language']['#items'][0]['value'])
+                      && $node_info['field_asu_ap_second_language']['#items'][0]['value'] === 'Y'): ?>
+                      <li><strong>Second Language requirement</strong>: Yes</li><?php endif; ?>
+                    <?php if (isset($node_info['field_asu_ap_min_math']['#items'][0]['value'])): ?>
+                      <li><strong>First Required Math Course</strong>:
+                      <?php print check_plain($node_info['field_asu_ap_min_math']['#items'][0]['value']) ?></li>
+                    <?php endif; ?>
+                    <?php if (isset($node_info['field_asu_ap_math_intensity']['#items'][0]['value'])): ?>
+                      <li><strong>Math Intensity</strong>:
+                      <?php print check_plain($node_info['field_asu_ap_math_intensity']['#items'][0]['value']) ?></li>
+                    <?php endif; ?>
+                  </ul>
 
                 <?php if ($program_decider_value == 'undergrad'): ?>
                   <?php if (isset($node_info['field_asu_ap_major_map_url'])): ?>
@@ -526,13 +536,9 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
               <div class="col-sm-6 col-md-4">
                 <?php if ($program_decider_value == 'undergrad'): ?>
                   <h2>Application requirements</h2>
-
                     <?php if (isset($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value'])): ?>
-                      <p>
-                        <?php print render($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value']); ?>
-                      </p>
+                      <p><?php print render($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value']); ?></p>
                     <?php endif; ?>
-
                     <p>All students are required to meet general university admission requirements:</p>
                     <ul>
                       <li><a href="https://students.asu.edu/freshman">Freshman</a></li>
