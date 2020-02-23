@@ -425,6 +425,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'MathIntensity' => array('name' => t('Math Intensity')), // NEW
       'MinMathReq' => array('name' => t('Minimum math requirement')),
       'Notes' => array('name' => t('Notes')), // NEW
+      'onlineMajorMapURL' => array('name' => t('Online Major Map URL')), // NEW
       'Phone' => array('name' => t('Phone')), // NEW
       'planCatDescr' => array('name' => t('Plan category description')), // NEW
       'planDeadlines' => array('name' => t('Plan deadlines')), // NEW
