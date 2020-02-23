@@ -496,8 +496,8 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       $math_intensity_label = check_plain($node_info['field_asu_ap_math_intensity'][0]['#markup']);
                       $math_intensity = check_plain($node_info['field_asu_ap_math_intensity']['#items'][0]['value']);
                       print $math_intensity_label . '<div class="asu-ap-math-intensity-graph">';
-                      print '<img src="' . drupal_get_path('module', 'asu_ap_feature')
-                        . '/images/images/math_intensity_' . $math_intensity . '.png" alt="Math intensity: '
+                      print '<img src="/' . drupal_get_path('module', 'asu_ap_feature')
+                        . '/images/math_intensity_' . $math_intensity . '.png" alt="Math intensity: '
                         . $math_intensity . '" /></div>';
                       ?></div>
                       </li>
