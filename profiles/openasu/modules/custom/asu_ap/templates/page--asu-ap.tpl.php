@@ -492,14 +492,14 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       <?php print check_plain($node_info['field_asu_ap_min_math']['#items'][0]['value']) ?></li>
                     <?php endif; ?>
                     <?php if (isset($node_info['field_asu_ap_math_intensity']['#items'][0]['value'])): ?>
-                      <li><strong>Math Intensity</strong>: <div class="asu-ap-math-intensity"><?php
+                      <li><strong>Math Intensity</strong>: <span class="asu-ap-math-intensity"><?php
                       $math_intensity_label = check_plain($node_info['field_asu_ap_math_intensity'][0]['#markup']);
                       $math_intensity = check_plain($node_info['field_asu_ap_math_intensity']['#items'][0]['value']);
-                      print $math_intensity_label . '<div class="asu-ap-math-intensity-graph">';
+                      print $math_intensity_label . '<span class="asu-ap-math-intensity-graph">';
                       print '<img src="/' . drupal_get_path('module', 'asu_ap_feature')
                         . '/images/math_intensity_' . $math_intensity . '.png" alt="Math intensity: '
-                        . $math_intensity . '" /></div>';
-                      ?></div>
+                        . $math_intensity . '" /></span>';
+                      ?></span>
                       </li>
                     <?php endif; ?>
                   </ul>
