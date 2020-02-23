@@ -506,8 +506,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
 
                 <?php if ($program_decider_value == 'undergrad'): ?>
                   <?php if (isset($node_info['field_asu_ap_major_map_url'])): ?>
-                    <h2>Major map</h2>
-                    <p>A major map outlines the degree’s requirements for graduation.</p>
+                    <h2>Required Courses (Major Map)</h2>
                     <p><a href="<?php echo $node_info['field_asu_ap_major_map_url']['#items'][0]['url']; ?>">View Major Map</a></p>
                   <?php else: ?>
                     <?php if (isset($node_info['field_asu_ap_asuds_url'])): ?>

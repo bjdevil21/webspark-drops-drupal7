@@ -126,6 +126,10 @@ span.fa {
 .node-type-asu-ap #main-wrapper .asu-ap-math-intensity-graph {
   margin-left: 0.75em;
 }
+.node-type-asu-ap #main-wrapper .asu-ap-math-intensity-graph img {
+  vertical-align: middle;
+}
+
 
 .view-asu-ap-view .view-header .btn-group {
   padding: 1em 0 2em 0;
