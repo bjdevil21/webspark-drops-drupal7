@@ -243,8 +243,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
               print theme('easy_breadcrumb');
             } else {
               print theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb()));
-            }
-          ?>
+            } ?>
         </div>
         <!-- /Breadcrumb -->
 
@@ -533,25 +532,26 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                 endif; ?>
                 </div>
               </div>
-              <div class="col-sm-6 col-md-4">
-                <?php if ($program_decider_value == 'undergrad'): ?>
-                  <h2>Application requirements</h2>
-                    <?php if (isset($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value'])): ?>
-                      <p><?php print render($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value']); ?></p>
-                    <?php endif; ?>
-                    <p>All students are required to meet general university admission requirements:</p>
-                    <ul>
-                      <li><a href="https://students.asu.edu/freshman">Freshman</a></li>
-                      <li><a href="https://transfer.asu.edu/">Transfer</a></li>
-                      <li><a href="https://students.asu.edu/international">International</a></li>
-                      <li><a href="https://students.asu.edu/readmission">Readmission</a></li>
-                    </ul>
-                <?php elseif ($program_decider_value == 'graduate'): ?>
-                  <?php if (isset($node_info['field_asu_ap_grad_app']['#items'][0]['safe_value'])): ?>
-                      <?php echo $node_info['field_asu_ap_grad_app']['#items'][0]['safe_value']; ?>
-                  <?php endif ?>
-                <?php endif; ?>
-              </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <?php if ($program_decider_value == 'undergrad'): ?>
+                <h2>Application requirements</h2>
+                  <?php if (isset($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value'])): ?>
+                    <p><?php print render($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value']); ?></p>
+                  <?php endif; ?>
+                  <p>All students are required to meet general university admission requirements:</p>
+                  <ul>
+                    <li><a href="https://students.asu.edu/freshman">Freshman</a></li>
+                    <li><a href="https://transfer.asu.edu/">Transfer</a></li>
+                    <li><a href="https://students.asu.edu/international">International</a></li>
+                    <li><a href="https://students.asu.edu/readmission">Readmission</a></li>
+                  </ul>
+              <?php elseif ($program_decider_value == 'graduate'): ?>
+                <?php if (isset($node_info['field_asu_ap_grad_app']['#items'][0]['safe_value'])): ?>
+                    <?php echo $node_info['field_asu_ap_grad_app']['#items'][0]['safe_value']; ?>
+                <?php endif ?>
+              <?php endif; ?>
+            </div>
 
               <div class="col-sm-6 col-md-4">
                 <?php if ($program_decider_value == 'undergrad'): ?>
