@@ -510,9 +510,11 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                   if ($program_decider_value === 'undergrad') {
                     if (isset($node_info['field_asu_ap_major_map_url'])) {
                       $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
-                      $year = preg_replace('|^.+/(20\d{2})$|', '$1', $major_map_url);
                       $year_prefix = ((int) $year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) : '' ;
-                      print '<h2>Required Courses (Major Map)</h2>';
+                      print '<h2>Required Courses (Major Maps)</h2>';
+                      $major_map_urls = array(
+
+                      );
                       print '<p><a href="' . $node_info['field_asu_ap_major_map_url']['#items'][0]['url']
                         . '" target="_blank">' . $year_prefix . ' Major Map</a></p>';
                     }
