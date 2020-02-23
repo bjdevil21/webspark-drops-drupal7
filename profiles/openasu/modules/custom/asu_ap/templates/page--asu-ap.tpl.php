@@ -397,18 +397,26 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                   <p><strong>Offered by</strong><br>
                   <?php
                     if (isset($node_info['field_asu_ap_college_j']['#items'][0]['value'])) {
-                      // $cc --> college_count; $ci --> college_index; $cn --> college_name
-                      $cc = count($node_info['field_asu_ap_college_j']['#items']) - 1;
-                      $ci = 0;
-                      foreach ($node_info['field_asu_ap_college_j']['#items'] as $cn) {
-                        $asu_college_raw = $cn['value'];
-                        list($asu_college_suffix, $asu_college_prefix) = explode(", ", $asu_college_raw);
-                        $asu_college = $asu_college_prefix . " " . $asu_college_suffix;
-                        echo $asu_college;
-                        if ($ci < $cc) {
+                      $college_count = count($node_info['field_asu_ap_college_j']['#items']) - 1;
+                      $college_index = 0;
+                      foreach ($node_info['field_asu_ap_college_j']['#items'] as $college_name) {
+                        $college_raw = $college_name['value'];
+                        list($college_suffix, $college_prefix) = explode(", ", $college_raw);
+                        $college = $college_prefix . " " . $college_suffix;
+                        // Build in college URL if it exists
+                        if (isset($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'])) {
+                          if (valid_url($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'])) {
+                            $college = l(t($college),
+                              $node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'],
+                              array('attributes' => array('target' => '_blank')),
+                            );
+                          }
+                        }
+                        echo $college;
+                        if ($college_index < $college_count) {
                           echo ', ';
                         }
-                        ++$ci;
+                        ++$college_index;
                       }
                     }
                   ?>
