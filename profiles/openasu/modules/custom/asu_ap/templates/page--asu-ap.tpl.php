@@ -242,52 +242,87 @@ if (module_exists('metatag')) {
         <!-- START degree content-->
 
         <div class="container">
+
           <!-- Top white section - Marketing + body content MB -->
-          <?php if ($program_decider_value == 'undergrad'): ?>
-            <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
-              <div class="asu-ap-short-description">
-                <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
-                <div class="asu-ap-read-more">
-                  <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
+          <div class="row">
+            <?php $col_width = (isset($node_info['field_asu_ap_url_4']['#items'][0]['url'])) ? 6 : 12; ?>
+
+              <?php if ($program_decider_value == 'undergrad'): ?>
+                <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
+                <div class="col-md-12">
+                  <div class="asu-ap-short-description">
+                  <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
+                    <div class="asu-ap-read-more">
+                      <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
+                    </div>
+                    <div id="degree-collapse" class="collapse">
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-md-<?php print $col_width; ?>">
+                  <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): ?>
+                    <?php print render($node_info['field_asu_ap_market_text']); ?>
+
+                    <?php if ($col_width === 6): // Degree Search URL-based video ?>
+                          </div>
+                          <div class="col-md-<?php print $col_width ?>">
+                      <?php print render($node_info['field_asu_ap_url_4']); ?>
+                    <?php endif; ?>
+
+                          </div>
+                  <?php endif; ?>
+                        </div>
+                  <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+                          <div class="row">
+                            <div class="col-md-12">
+                    <?php print render($node_info['body']); ?>
+                            </div>
+                          </div>
+                  <?php endif; ?>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div id="degree-collapse" class="collapse">
+                <?php else: ?>
+                <div class="col-md-<?php print $col_width; ?>">
                   <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
                     <?php print render($node_info['field_asu_ap_market_text']); ?>
-                  <?php endif; ?>
-                  <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-                    <?php print render($node_info['body']); ?>
+                    <?php if ($col_width === 6): // Degree Search URL-based video ?>
+                </div>
+                <div class="col-md-<?php print $col_width ?>">
+                      <?php print render($node_info['field_asu_ap_url_4']); ?>
+                    <?php endif; ?>
+                </div>
                   <?php endif; ?>
                 </div>
-              </div>
-            <?php else: ?>
-              <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
-                <?php print render($node_info['field_asu_ap_market_text']); ?>
+                  <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+                <div class="row">
+                  <div class="col-md-12">
+                    <?php print render($node_info['body']); ?>
+                  </div>
+                  <?php endif; ?>
+                </div>
               <?php endif; ?>
-              <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-                <?php print render($node_info['body']); ?>
-              <?php endif; ?>
-            <?php endif; ?>
 
-          <?php elseif ($program_decider_value === 'graduate'): ?>
+            <?php elseif ($program_decider_value === 'graduate'): ?>
             <!-- MB - Start optional description video display -->
-            <?php if (isset($node_info['field_asu_ap_grad_desc_video']['#items'][0]['safe_value'])): ?>
+              <?php if (isset($node_info['field_asu_ap_grad_desc_video']['#items'][0]['safe_value'])): ?>
 
             <!-- IF VIDEO IS PRESENT -->
               <div class="row">
                 <div class="col-md-8">
                   <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
                     <div class="asu-ap-short-description">
-                      <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
+                    <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
                       <div class="asu-ap-read-more">
                         <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
                       </div>
                       <div id="degree-collapse" class="collapse">
-                        <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
-                          <?php print render($node_info['field_asu_ap_market_text']); ?>
-                        <?php endif; ?>
-                        <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-                          <?php print render($node_info['body']); ?>
-                        <?php endif; ?>
+                    <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
+                      <?php print render($node_info['field_asu_ap_market_text']); ?>
+                    <?php endif; ?>
+                    <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+                      <?php print render($node_info['body']); ?>
+                    <?php endif; ?>
                       </div>
                     </div>
                   <?php else: ?>
@@ -338,13 +373,13 @@ if (module_exists('metatag')) {
               <?php $cta_information = (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url']))
                 ? $node_info['field_asu_ap_cta_information']['#items'][0]['url']
                 : "#asu-rfi-form-data"; ?>
-                <a href="<?php echo $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</a>
+                <a href="<?php print $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</a>
             </div>
             <div class="col-sm-6 col-md-4 space-bot-md">
               <?php $cta_visit = (isset($node_info['field_asu_ap_cta_visit']['#items'][0]['url']))
                 ? $node_info['field_asu_ap_cta_visit']['#items'][0]['url']
                 : 'https://visit.asu.edu/'; ?>
-                <a href="<?php echo $cta_visit ?>" class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
+                <a href="<?php print $cta_visit ?>" class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
             </div>
             <div class="col-sm-6 col-md-4 space-bot-md">
               <?php $cta_apply = (isset($node_info['field_asu_ap_cta_apply']['#items'][0]['url']))
