@@ -508,15 +508,21 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                   <?php
                   // Major maps or Plan of Study
                   if ($program_decider_value === 'undergrad') {
+                    $major_map_urls = array();
                     if (isset($node_info['field_asu_ap_major_map_url'])) {
-                      $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
-                      $year_prefix = ((int) $year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) : '' ;
                       print '<h2>Required Courses (Major Maps)</h2>';
-                      $major_map_urls = array(
-
-                      );
-                      print '<p><a href="' . $node_info['field_asu_ap_major_map_url']['#items'][0]['url']
-                        . '" target="_blank">' . $year_prefix . ' Major Map</a></p>';
+                      $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
+                      if (isset($node_info['field_asu_ap_major_map_year'])) {
+                        $year = (int) $node_info['field_asu_ap_major_map_year']['#items'][0]['value'];
+                        $year_prefix = ((int) $year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) : '' ;
+                      }
+                      $major_map_urls[] = l(t($year_prefix . ' Major Map'), $major_map_url,
+                        array('attributes' => array('target' => '_blank')));
+/*                      print '<ul class="asu-ap-major-map-urls">'
+                      foreach ($major_map_urls as $url) {
+                        print '<li>' . $url . '</li>';
+                      }*/
+                      print theme_item_list($major_map_urls);
                     }
                     elseif (isset($node_info['field_asu_ap_asuds_url'])) {
                       print '<h2>Plan of study</h2>';
