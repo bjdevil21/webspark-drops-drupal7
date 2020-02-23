@@ -88,19 +88,10 @@ function asu_ap_feature_field_default_field_instances_alter(&$fields) {
   }
 }
 
-function asu_ap_feature_page_alter(&$page) {
-  dpm($page['content'], __FUNCTION__);
-  /*  $page['content']['#attached']['css'] = array(
-      drupal_get_path('module', 'MODULE') . '/filename.css',
-    );
-  scripts[] = /js/asu_ap_feature.js
-  stylesheets[all][] = /css/asu_ap_feature.css
-  */
-}
-
-  /**
-   * Grab image within the Feature module. Then, create image in the new site to use for default image for the ASU Academic Programs Banner Image field.
-	 */
+/**
+ * Grab image within the Feature module.
+ * Then, create image in the new site to use for default image for the ASU Academic Programs Banner Image field.
+ */
 function _asu_ap_feature_image($image, $key) {
   $filename = $image;
   $origfile = drupal_get_path('module', 'asu_ap_feature') . '/images/' . $filename;
