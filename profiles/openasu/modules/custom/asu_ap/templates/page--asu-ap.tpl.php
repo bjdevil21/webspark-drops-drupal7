@@ -493,7 +493,9 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     <?php endif; ?>
                     <?php if (isset($node_info['field_asu_ap_math_intensity']['#items'][0]['value'])): ?>
                       <li><strong>Math Intensity</strong>:
-                      <?php print check_plain($node_info['field_asu_ap_math_intensity']['#items'][0]['value']) ?></li>
+                      <?php
+                      dpm($node_info['field_asu_ap_math_intensity']['#items'], 'math intensity');
+                      print check_plain($node_info['field_asu_ap_math_intensity']['#items'][0]['value']) ?></li>
                     <?php endif; ?>
                   </ul>
 
