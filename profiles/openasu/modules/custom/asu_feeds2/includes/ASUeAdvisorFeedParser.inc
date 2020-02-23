@@ -257,8 +257,9 @@ class ASUeAdvisorFeedParser extends FeedsParser {
           // Vimeo refactoring for player.vimeo.com URLs
           $parsed_data[$key]['Url4'] = preg_replace('|^(https?)://player.(vimeo.com)/video/(\d+)$|',
             '$1://$2/$3', $data['Url4']);
+          watchdog('asu_feeds2', 'Updated @old to @new on degree import.',
+            array('@old' => $data['Url4'], '@new' => $parsed_data[$key]['Url4']), WATCHDOG_NOTICE);
         }
-        watchdog('asu_feeds2', print_r($data['Url4']));
       }
 
       // Transfer agreements
