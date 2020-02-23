@@ -481,6 +481,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     }
                     print "</li>";
                   } ?>
+
                     <?php if (isset($node_info['field_asu_ap_program_fee']['#items'][0]['value'])
                     && $node_info['field_asu_ap_program_fee']['#items'][0]['value'] === 'Y'): ?>
                       <li><strong>Additional Program fees</strong>: Yes</li><?php endif; ?>
@@ -504,26 +505,35 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     <?php endif; ?>
                   </ul>
 
-                <?php if ($program_decider_value === 'undergrad'): ?>
-                  <?php if (isset($node_info['field_asu_ap_major_map_url'])): ?>
-                    <h2>Required Courses (Major Map)</h2>
-                    <p><a href="<?php echo $node_info['field_asu_ap_major_map_url']['#items'][0]['url']; ?>" target="_blank">View Major Map</a></p>
-                  <?php else: ?>
-                    <?php if (isset($node_info['field_asu_ap_asuds_url'])): ?>
-                      <h2>Plan of study</h2>
-                      <p>The Plan of study is the required curriculum to complete the program.</p>
-                      <p><a href="#plan-of-study">View Plan of Study</a></p>
-                        <?php // echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url'] . '#degreeReq">View Plan of Study</a></p>'; ?>
-                    <?php endif; ?>
-                  <?php endif; ?>
-                <?php elseif ($program_decider_value === 'graduate'): ?>
-                  <?php if (isset($node_info['field_asu_ap_asuds_url'])): ?>
-                    <h2>Plan of study</h2>
-                    <p>The Plan of study is the required curriculum to complete the program.</p>
-                    <p><a href="#plan-of-study">View Plan of Study</a></p>
-                    <?php // echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url'] . '#degreeReq">View Plan of Study</a></p>'; ?>
-                  <?php endif; ?>
-                <?php endif; ?>
+                  <?php
+                  // Major maps or Plan of Study
+                  if ($program_decider_value === 'undergrad') {
+                    if (isset($node_info['field_asu_ap_major_map_url'])) {
+                      $major_map_url = isset($node_info['field_asu_ap_major_map_url']);
+                      $matches = array();
+                      $major_map_year = preg_match('|^.+/(20\d{2})$|', $major_map_url, $matches);
+                      $year = (count($matches)) ? (int) $matches[1] : 0;
+                      print '<h2>Required Courses (Major Map)</h2>';
+                      print '<p><a href="' . $node_info['field_asu_ap_major_map_url']['#items'][0]['url']
+                        . '" target="_blank">' . $year . ' - ' . (++$year) . ' Major Map</a></p>';
+                    }
+                    elseif (isset($node_info['field_asu_ap_asuds_url'])) {
+                      print '<h2>Plan of study</h2>';
+                      print '<p>The Plan of study is the required curriculum to complete the program.</p>';
+                      print '<p><a href="#plan-of-study">View Plan of Study</a></p>';
+                      // echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url']
+                      // . '#degreeReq">View Plan of Study</a></p>';
+                    }
+                  }
+                  elseif ($program_decider_value === 'graduate') {
+                    if (isset($node_info['field_asu_ap_asuds_url'])) {
+                      print '<h2>Plan of study</h2>';
+                      print '<p>The Plan of study is the required curriculum to complete the program.</p>';
+                      print '<p><a href="#plan-of-study">View Plan of Study</a></p>';
+                      // echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url'] . '#degreeReq">View Plan of Study</a></p>';
+                    }
+                  }
+                  ?>
 
                 <div class="asu-ap-subplans">
                 <?php if (isset($node_info['field_asu_ap_subplan_url']['#items'])): ?>
