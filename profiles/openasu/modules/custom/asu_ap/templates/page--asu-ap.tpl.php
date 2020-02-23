@@ -360,7 +360,7 @@ if (module_exists('metatag')) {
           <div class="container">
             <div class="row">
               <div class="col-sm-6 col-md-4">
-                
+
                 <!-- Column 1 -->
                 <h2>At A Glance</h2>
                 <div class="asu-ap-page-degree-offered">
@@ -619,89 +619,106 @@ if (module_exists('metatag')) {
 
         <!-- Bottom white section (BW) -->
         <div class="container">
+          <div class="row">
           <?php //print render($page['asu_ap_marketing']); ?>
+          </div>
         </div>
+
+        <?php $related_programs = (isset($node_info['field_asu_ap_related_programs']));
+        $career_cols = ($related_programs) ? 8 : 6 ?>
 
         <div class="container space-top-xl space-bot-sm">
-          <div class="col-md-8" id="plan-of-study">
+          <div class="row">
+
+            <div class="col-md-'<?php print $career_cols ?>'" id="plan-of-study">
 
             <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
-                <h2>Program requirements</h2>
-                <?php print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']; ?>
+              <h2>Program requirements</h2>
+              <?php print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']; ?>
             <?php elseif (isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value'])): ?>
-                <h2>Program requirements</h2>
-                <?php print $node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']; ?>
+              <h2>Program requirements</h2>
+              <?php print $node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']; ?>
             <?php endif; ?>
+
             <?php if ($program_decider_value === 'undergrad'): ?>
-              <?php if (isset($node_info['field_asu_ap_career_opps'])): ?>
-                <h2>Career outlook</h2>
-                <?php if (isset($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value'])): ?>
-                    <?php print render($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value']); ?>
-                <?php elseif (isset($node_info['field_asu_ap_career_opps'])): ?>
-                  <?php print render($node_info['field_asu_ap_career_opps']); ?>
-                <?php endif; ?>
+
+            <?php if (isset($node_info['field_asu_ap_career_opps'])): ?>
+
+              <h2>Career outlook</h2>
+              <?php if (isset($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value'])): ?>
+                <?php print render($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value']); ?>
+              <?php elseif (isset($node_info['field_asu_ap_career_opps'])): ?>
+                <?php print render($node_info['field_asu_ap_career_opps']); ?>
               <?php endif; ?>
-              <?php if (isset($node_info['field_asu_ap_example_careers'])): ?>
-                <?php if (isset($node_info['field_asu_ap_ex_car_tf']['#items'][0]['value']) && $node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'] == 1): ?>
-                  <h2>Example careers</h2>
-                  <?php print render($node_info['field_asu_ap_example_careers']); ?>
-                <?php endif; ?>
-              <?php endif; ?>
-            <?php elseif ($program_decider_value === 'graduate'): ?>
-              <?php if (isset($node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value'])): ?>
-                  <?php echo $node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value']; ?>
+
+            <?php endif; ?>
+
+            <?php if (isset($node_info['field_asu_ap_example_careers'])): ?>
+              <?php if (isset($node_info['field_asu_ap_ex_car_tf']['#items'][0]['value']) && $node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'] == 1): ?>
+
+                <h2>Example careers</h2>
+                <?php print render($node_info['field_asu_ap_example_careers']); ?>
+
               <?php endif; ?>
             <?php endif; ?>
+
+          <?php elseif ($program_decider_value === 'graduate'): ?>
+            <?php if (isset($node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value'])): ?>
+                <?php echo $node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value']; ?>
+            <?php endif; ?>
+          <?php endif; ?>
           </div>
+
           <?php if (isset($node_info['field_asu_ap_related_programs'])): ?>
-            <div class="col-md-4">
-              <div class="pane-menu-tree">
-                <h4>Related Programs</h4>
-                <?php for ($it = 0; $it < count($node_info['field_asu_ap_related_programs']); $it++) {
-                  if (isset($node_info['field_asu_ap_related_programs'][$it]['#label'])) {
-                    $rp_result = $node_info['field_asu_ap_related_programs'][$it]['#label'];
-                  }
-                  if (!empty($rp_result)) {
-                    echo '<a href="/'.$node_info['field_asu_ap_related_programs'][$it]['#uri']['path'].'">'.$rp_result.'</a>';
-                    unset($rp_result);
-                  } else {
-                    break;
-                  }
-                ?>
-                <br>
-                <?php } ?>
-              </div>
+          <div class="col-md-4">
+            <div class="pane-menu-tree">
+              <h4>Related Programs</h4>
+              <?php for ($it = 0; $it < count($node_info['field_asu_ap_related_programs']); $it++) {
+                if (isset($node_info['field_asu_ap_related_programs'][$it]['#label'])) {
+                  $rp_result = $node_info['field_asu_ap_related_programs'][$it]['#label'];
+                }
+                if (!empty($rp_result)) {
+                  echo '<a href="/'.$node_info['field_asu_ap_related_programs'][$it]['#uri']['path'].'">'.$rp_result.'</a>';
+                  unset($rp_result);
+                } else {
+                  break;
+                }
+              ?>
+              <br>
+              <?php } ?>
             </div>
+          </div>
           <?php endif; ?>
 
-            <div class="col-md-4">
-              <?php //print render($page['asu_ap_sidebar']); ?>
-            </div>
+          <div class="col-md-4">
+            <?php //print render($page['asu_ap_sidebar']); ?>
           </div>
-
-          <div class="container">
-            <?php print render($page['prefooter']); ?>
-          </div>
-
         </div>
       </div>
-      <!-- /#main, /#main-wrapper -->
-      <?php endif; ?>
-    <?php endif; ?>
 
-
-    <!-- Page Footer -->
-    <footer id="page-footer">
       <div class="container">
-        <div class="row row-full">
-          <?php print render($page['footer']); ?>
+        <div class="row">
+        <?php print render($page['prefooter']); ?>
         </div>
       </div>
-    </footer>
-    <!-- /#footer -->
+
+    </div>
+  </div>
+    <!-- /#main, /#main-wrapper -->
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <!-- Page Footer -->
+  <footer id="page-footer">
+    <div class="container">
+      <div class="row row-full">
+        <?php print render($page['footer']); ?>
+      </div>
+    </div>
+  </footer>
+  <!-- /#footer -->
 
     <?php print render($page['closure']); ?>
 
   </div>
-</div>
 <!-- /#page, /#page-wrapper -->
