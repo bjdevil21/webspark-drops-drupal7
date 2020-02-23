@@ -393,7 +393,7 @@ if (module_exists('metatag')) {
         <!-- Middle gray section (MG) -->
         <div class="asu-ap-grey-section">
           <div class="container">
-            <div class="row">
+            <div class="row row-full">
               <div class="col-sm-6 col-md-4">
 
                 <!-- Column 1 -->
@@ -654,7 +654,7 @@ if (module_exists('metatag')) {
 
         <!-- Bottom white section (BW) -->
         <div class="container">
-          <div class="row">
+          <div class="row row-full">
           <?php //print render($page['asu_ap_marketing']); ?>
           </div>
         </div>
