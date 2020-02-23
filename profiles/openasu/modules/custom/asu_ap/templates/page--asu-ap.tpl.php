@@ -522,7 +522,11 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       foreach ($major_map_urls as $url) {
                         print '<li>' . $url . '</li>';
                       }*/
-                      print theme_item_list(array('items' => $major_map_urls, 'title' => '', 'type' => '', 'attributes' => ''));
+                      print theme_item_list(array(
+                        'items' => $major_map_urls,
+                        'title' => '',
+                        'type' => 'ul',
+                        'attributes' => array('class' => 'asu-ap-major-map-links')));
                     }
                     elseif (isset($node_info['field_asu_ap_asuds_url'])) {
                       print '<h2>Plan of study</h2>';
