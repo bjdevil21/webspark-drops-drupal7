@@ -176,8 +176,10 @@ a.ttCourse {
 
 .node-type-asu-ap .asu-ap-special-categories {
   display: block;
+  font-size: 1.3125em;
 }
 .node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category {
+  color: #fff;
   display: block;
   float: left;
   font-size: 1.25em;
@@ -185,38 +187,13 @@ a.ttCourse {
   vertical-align: middle;
   margin-right: 0.3125em;
 }
-
 /* Font Awesome icons */
-i.fa.fa-location-arrow,
-span.fa.fa-location-arrow {
-  font-size: 1.5625em;
-  position: relative;
-  bottom: 8px;
-  margin-right: -0.625em;
-}
-
-i.fa.fa-star,
-span.fa.fa-star {
-  font-size: 1.5625em;
-  position: relative;
-  bottom: 8px;
-  margin-right: -0.625em;
-}
-
-i.fa.fa-retweet,
-span.fa.fa-retweet {
-  font-size: 1.5625em;
-  position: relative;
-  bottom: 8px;
-  margin-right: -0.625em;
-}
-span.asu-ap-program-flag {
+span.fa {
 }
 
 /**
  * Media Rules
  */
-
 @media (min-width: 992px) and (max-width: 1200px) {
   .view-asu-ap-view .view-content .views-field.views-field-field-degree-image img {
     width: 212px;
