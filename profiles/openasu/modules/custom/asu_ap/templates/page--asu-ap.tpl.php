@@ -407,7 +407,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                         dpm($node_info['field_asu_ap_college_j']['#items'], 'college_j');
                         dpm($node_info['field_asu_ap_college_url_j']['#items'], 'url');
                         if (isset($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'])) {
-                          if (valid_url($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'])) {
+                          if (valid_url($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['url'], TRUE)) {
                             $college = l(t($college), $node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'],
                               array('attributes' => array('target' => '_blank')));
                           }
