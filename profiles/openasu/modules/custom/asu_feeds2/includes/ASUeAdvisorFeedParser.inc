@@ -420,6 +420,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'HegisCode' => array('name' => t('Hegis code')), // NEW
       'Institution' => array('name' => t('Institution')), // NEW
       'InternalDegree' => array('name' => t('Internal Degree')), // NEW
+      'majorMapDefaultYear' => array('name' => t('Major map default year')), // NEW
       'managedOnlineCampus' => array('name' => t('Managed Online campus')), // NEW
       'marketText' => array('name' => t('Marketing Text')), // NEW
       'MathIntensity' => array('name' => t('Math Intensity')), // NEW
