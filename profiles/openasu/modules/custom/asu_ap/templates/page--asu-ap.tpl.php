@@ -100,14 +100,10 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
   padding-top: 1.5em;
 }
 </style>';
-} else {
-  print '<style type="text/css">.field-name-body div > p:first-of-type { font-size: 1.5em; }</style>';
-}
-?>
+} ?>
 
 <div id="page-wrapper">
   <div id="page">
-
     <!-- Page Header -->
     <header id="header">
       <div class="container">
@@ -124,7 +120,6 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
       </div>
     </header>
     <!-- /.header -->
-
 
     <!-- Nav Bar -->
     <div id="ASUNavMenu" class="navmenu">
@@ -247,7 +242,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
         </div>
         <!-- /Breadcrumb -->
 
-        <!--Start degree content-->
+        <!-- START degree content-->
 
         <div class="container">
           <!-- Top white section - Marketing + body content MB -->
@@ -369,8 +364,8 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
             <div class="row">
               <div class="col-sm-6 col-md-4">
 
+                ><!-- Column 1 -->
                 <h2>At A Glance</h2>
-
                 <div class="asu-ap-page-degree-offered">
                   <h4>
                     <?php if (isset($node_info['field_asu_ap_awarded']['#items'][0]['value'])): ?>
@@ -416,8 +411,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       ++$college_index;
                     }
                     print "</li>";
-                  }
-                  if (isset($node_info['field_asu_ap_campus']['#items'][0]['value'])) {
+                  } if (isset($node_info['field_asu_ap_campus']['#items'][0]['value'])) {
                     print "<li><strong>Location</strong>: ";
                     $c = count($node_info['field_asu_ap_campus']['#items']) - 1;
                     $i = 0;
@@ -480,32 +474,31 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       ++$i;
                     }
                     print "</li>";
-                  } ?>
-
-                    <?php if (isset($node_info['field_asu_ap_program_fee']['#items'][0]['value'])
-                    && $node_info['field_asu_ap_program_fee']['#items'][0]['value'] === 'Y'): ?>
-                      <li><strong>Additional Program fees</strong>: Yes</li><?php endif; ?>
-                    <?php if (isset($node_info['field_asu_ap_second_language']['#items'][0]['value'])
-                      && $node_info['field_asu_ap_second_language']['#items'][0]['value'] === 'Y'): ?>
-                      <li><strong>Second Language requirement</strong>: Yes</li><?php endif; ?>
-                    <?php if (isset($node_info['field_asu_ap_min_math']['#items'][0]['value'])): ?>
-                      <li><strong>First Required Math Course</strong>:
-                      <?php print check_plain($node_info['field_asu_ap_min_math']['#items'][0]['value']) ?></li>
-                    <?php endif; ?>
-                    <?php if (isset($node_info['field_asu_ap_math_intensity']['#items'][0]['value'])): ?>
-                      <li><strong>Math Intensity</strong>: <span class="asu-ap-math-intensity"><?php
+                  }
+                    if (isset($node_info['field_asu_ap_program_fee']['#items'][0]['value'])
+                    && $node_info['field_asu_ap_program_fee']['#items'][0]['value'] === 'Y') {
+                      print "<li><strong>Additional Program fees</strong>: Yes</li>\n";
+                    }
+                    if (isset($node_info['field_asu_ap_second_language']['#items'][0]['value'])
+                      && $node_info['field_asu_ap_second_language']['#items'][0]['value'] === 'Y') {
+                      print "<li><strong>Second Language requirement</strong>: Yes</li>\n";
+                    }
+                    if (isset($node_info['field_asu_ap_min_math']['#items'][0]['value'])) {
+                      print "<li><strong>First Required Math Course</strong>:";
+                      print check_plain($node_info['field_asu_ap_min_math']['#items'][0]['value']) . '</li>';
+                    }
+                    if (isset($node_info['field_asu_ap_math_intensity']['#items'][0]['value'])) {
+                      print '<li><strong>Math Intensity</strong>: <span class="asu-ap-math-intensity">';
                       $math_intensity_label = check_plain($node_info['field_asu_ap_math_intensity'][0]['#markup']);
                       $math_intensity = check_plain($node_info['field_asu_ap_math_intensity']['#items'][0]['value']);
                       print $math_intensity_label . '<span class="asu-ap-math-intensity-graph">';
                       print '<img src="/' . drupal_get_path('module', 'asu_ap_feature')
                         . '/images/math_intensity_' . $math_intensity . '.png" alt="Math intensity: '
                         . $math_intensity . '" /></span>';
-                      ?></span>
-                      </li>
-                    <?php endif; ?>
-                  </ul>
+                      print '</span></li>';
+                    }
+                  print '</ul>';
 
-                  <?php
                   // Major maps or Plan of Study
                   if ($program_decider_value === 'undergrad') {
                     $major_map_urls = array();
@@ -568,7 +561,9 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
               </div>
             </div>
             <div class="col-sm-6 col-md-4">
-              <?php if ($program_decider_value === 'undergrad'): ?>
+              <?php
+              // Column 2
+              if ($program_decider_value === 'undergrad'): ?>
                 <h2>Application requirements</h2>
                   <?php if (isset($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value'])): ?>
                     <p><?php print render($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value']); ?></p>
@@ -586,11 +581,11 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                 <?php endif ?>
               <?php endif; ?>
             </div>
-
               <div class="col-sm-6 col-md-4">
-                <?php if ($program_decider_value === 'undergrad'): ?>
+                <?php
+                // Column 3
+                if ($program_decider_value === 'undergrad'): ?>
                   <h2>Affording college</h2>
-
                   <p>
                     <?php if (isset($node_info['field_asu_ap_sl']['#items'][0]['url'])): ?>
                       <a href="<?php echo $node_info['field_asu_ap_sl']['#items'][0]['url'] ?>">Scholarships</a><br>
@@ -607,7 +602,6 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       program are eligible for a discounted tuition rate.
                     </p>
                   <?php endif; ?>
-
                   <p>
                       <a href="<?php echo 'https://students.asu.edu/financialaid' ?>">Financial Aid</a><br>
                     ASU has many financial aid options. Almost everyone, regardless
@@ -615,6 +609,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     more than 70 percent of all ASU students receive some form of
                     financial assistance every year.
                   </p>
+
                 <?php elseif ($program_decider_value === 'graduate'): ?>
                   <?php if (isset($node_info['field_asu_ap_grad_financing']['#items'][0]['safe_value'])): ?>
                       <?php echo $node_info['field_asu_ap_grad_financing']['#items'][0]['safe_value']; ?>
