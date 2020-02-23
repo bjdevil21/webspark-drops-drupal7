@@ -107,15 +107,16 @@
 .node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category > .asu-ap-program-flag {
   margin-left: 0.3125em;
 }
-
 /* Font Awesome icons */
 span.fa {
 }
 
+.node-type-asu-ap #main-wrapper .asu-ap-grey-section ul {
+  padding-left: 1em;
+}
 .node-type-asu-ap #main-wrapper .space-bot-md {
   padding-bottom: 0;
 }
-
 .asu-ap-short-description > p:first-child {
   margin-bottom: 0.625em;
 }
