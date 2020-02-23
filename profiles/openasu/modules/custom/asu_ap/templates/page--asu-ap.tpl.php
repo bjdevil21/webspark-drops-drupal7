@@ -584,7 +584,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
           <?php //print render($page['asu_ap_marketing']); ?>
         </div>
 
-        <div class="container space-top-xl space-bot-xl">
+        <div class="container space-top-xl space-bot-sm">
           <div class="col-md-8">
 
             <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
