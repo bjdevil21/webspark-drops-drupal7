@@ -140,7 +140,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
     <!-- /.navmenu -->
 
     <?php if (isset($node_info['field_asu_ap_program']['#items'][0]['value'])): ?>
-	    <?php $program_decider_value = ($node_info['field_asu_ap_program']['#items'][0]['value']); ?>
+	    <?php $program_decider_value = (string) ($node_info['field_asu_ap_program']['#items'][0]['value']); ?>
       <?php if (isset($node_info['field_asu_ap_cert']['#items'][0]['value'])): ?>
         <?php $cert_val = ($node_info['field_asu_ap_cert']['#items'][0]['value']); ?>
 
@@ -170,7 +170,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                             (<?php print render($node_info['field_asu_ap']['#items'][0]['value']); ?>)
                           <?php endif; ?>
                         <?php endif; ?>
-                      <?php elseif ($program_decider_value == 'graduate'): ?>
+                      <?php elseif ($program_decider_value === 'graduate'): ?>
                         <?php print $title; ?>
                       <?php endif; ?>
                     </h1>
@@ -276,7 +276,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
               <?php endif; ?>
             <?php endif; ?>
 
-          <?php elseif ($program_decider_value == 'graduate'): ?>
+          <?php elseif ($program_decider_value === 'graduate'): ?>
             <!-- MB - Start optional description video display -->
             <?php if (isset($node_info['field_asu_ap_grad_desc_video']['#items'][0]['safe_value'])): ?>
 
@@ -388,7 +388,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                             <?php endif; ?>
                           <?php endif; ?>
                         <?php endif; ?>
-                      <?php elseif ($program_decider_value == 'graduate'): ?>
+                      <?php elseif ($program_decider_value === 'graduate'): ?>
                         <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>
                       <?php endif; ?>
                     <?php endif; ?>
@@ -504,22 +504,24 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     <?php endif; ?>
                   </ul>
 
-                <?php if ($program_decider_value == 'undergrad'): ?>
+                <?php if ($program_decider_value === 'undergrad'): ?>
                   <?php if (isset($node_info['field_asu_ap_major_map_url'])): ?>
                     <h2>Required Courses (Major Map)</h2>
-                    <p><a href="<?php echo $node_info['field_asu_ap_major_map_url']['#items'][0]['url']; ?>">View Major Map</a></p>
+                    <p><a href="<?php echo $node_info['field_asu_ap_major_map_url']['#items'][0]['url']; ?>" target="_blank">View Major Map</a></p>
                   <?php else: ?>
                     <?php if (isset($node_info['field_asu_ap_asuds_url'])): ?>
                       <h2>Plan of study</h2>
                       <p>The Plan of study is the required curriculum to complete the program.</p>
-                      <p><a href="<?php echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url']; ?>">View Plan of Study</a></p>
+                      <p><a href="#plan-of-study">View Plan of Study</a></p>
+                        <?php // echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url'] . '#degreeReq">View Plan of Study</a></p>'; ?>
                     <?php endif; ?>
                   <?php endif; ?>
-                <?php elseif ($program_decider_value == 'graduate'): ?>
+                <?php elseif ($program_decider_value === 'graduate'): ?>
                   <?php if (isset($node_info['field_asu_ap_asuds_url'])): ?>
                     <h2>Plan of study</h2>
                     <p>The Plan of study is the required curriculum to complete the program.</p>
-                    <p><a href="<?php echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url']; ?>">View Plan of Study</a></p>
+                    <p><a href="#plan-of-study">View Plan of Study</a></p>
+                    <?php // echo $node_info['field_asu_ap_asuds_url']['#items'][0]['url'] . '#degreeReq">View Plan of Study</a></p>'; ?>
                   <?php endif; ?>
                 <?php endif; ?>
 
@@ -540,7 +542,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
               </div>
             </div>
             <div class="col-sm-6 col-md-4">
-              <?php if ($program_decider_value == 'undergrad'): ?>
+              <?php if ($program_decider_value === 'undergrad'): ?>
                 <h2>Application requirements</h2>
                   <?php if (isset($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value'])): ?>
                     <p><?php print render($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value']); ?></p>
@@ -552,7 +554,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     <li><a href="https://students.asu.edu/international">International</a></li>
                     <li><a href="https://students.asu.edu/readmission">Readmission</a></li>
                   </ul>
-              <?php elseif ($program_decider_value == 'graduate'): ?>
+              <?php elseif ($program_decider_value === 'graduate'): ?>
                 <?php if (isset($node_info['field_asu_ap_grad_app']['#items'][0]['safe_value'])): ?>
                     <?php echo $node_info['field_asu_ap_grad_app']['#items'][0]['safe_value']; ?>
                 <?php endif ?>
@@ -560,7 +562,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
             </div>
 
               <div class="col-sm-6 col-md-4">
-                <?php if ($program_decider_value == 'undergrad'): ?>
+                <?php if ($program_decider_value === 'undergrad'): ?>
                   <h2>Affording college</h2>
 
                   <p>
@@ -587,7 +589,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     more than 70 percent of all ASU students receive some form of
                     financial assistance every year.
                   </p>
-                <?php elseif ($program_decider_value == 'graduate'): ?>
+                <?php elseif ($program_decider_value === 'graduate'): ?>
                   <?php if (isset($node_info['field_asu_ap_grad_financing']['#items'][0]['safe_value'])): ?>
                       <?php echo $node_info['field_asu_ap_grad_financing']['#items'][0]['safe_value']; ?>
                   <?php endif ?>
@@ -603,7 +605,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
         </div>
 
         <div class="container space-top-xl space-bot-sm">
-          <div class="col-md-8">
+          <div class="col-md-8" id="plan-of-study">
 
             <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
                 <h2>Program requirements</h2>
@@ -612,7 +614,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                 <h2>Program requirements</h2>
                 <?php print $node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']; ?>
             <?php endif; ?>
-            <?php if ($program_decider_value == 'undergrad'): ?>
+            <?php if ($program_decider_value === 'undergrad'): ?>
               <?php if (isset($node_info['field_asu_ap_career_opps'])): ?>
                 <h2>Career outlook</h2>
                 <?php if (isset($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value'])): ?>
@@ -627,7 +629,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                   <?php print render($node_info['field_asu_ap_example_careers']); ?>
                 <?php endif; ?>
               <?php endif; ?>
-            <?php elseif ($program_decider_value == 'graduate'): ?>
+            <?php elseif ($program_decider_value === 'graduate'): ?>
               <?php if (isset($node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value'])): ?>
                   <?php echo $node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value']; ?>
               <?php endif; ?>
