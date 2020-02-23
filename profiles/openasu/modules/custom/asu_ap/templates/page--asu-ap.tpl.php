@@ -404,6 +404,8 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                         list($college_suffix, $college_prefix) = explode(", ", $college_raw);
                         $college = $college_prefix . " " . $college_suffix;
                         // Build in college URL if it exists
+                        dpm($node_info['field_asu_ap_college_j']['#items'], 'college_j');
+                        dpm($node_info['field_asu_ap_college_url_j']['#items'], 'url');
                         if (isset($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'])) {
                           if (valid_url($node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'])) {
                             $college = l(t($college), $node_info['field_asu_ap_college_url_j']['#items'][$college_index]['value'],
