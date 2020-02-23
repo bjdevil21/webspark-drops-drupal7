@@ -85,15 +85,15 @@ body.node-type-asu-ap #main-wrapper .asu-degree-banner-image {
   background-size: cover;
   padding: 110px 0 20px 0;
 }
-body.node-type-asu-ap #main-wrapper #page-title {
+.node-type-asu-ap #main-wrapper #page-title {
   color: white;
   font-size: 3.125em;
-  margin-bottom: 0.625em;
+  margin-bottom: 0.4375em;
   line-height: 1;
   font-weight: 900;
   text-shadow: 0 0 0.3125em rgba(0, 0, 0, 0.5);
 }
-body.node-type-asu-ap #main-wrapper .space-bot-md {
+.node-type-asu-ap #main-wrapper .space-bot-md {
   padding-bottom: 0;
 }
 
@@ -114,14 +114,14 @@ body.node-type-asu-ap #main-wrapper .space-bot-md {
   margin-bottom: 1.5625em;
 }
 
-body.node-type-asu-ap #main-wrapper .pane-menu-tree {
+.node-type-asu-ap #main-wrapper .pane-menu-tree {
   margin-top: 0.625em;
 }
-body.node-type-asu-ap #main-wrapper .pane-menu-tree a:first-child {
+.node-type-asu-ap #main-wrapper .pane-menu-tree a:first-child {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 }
-body.node-type-asu-ap #main-wrapper .pane-menu-tree a {
+.node-type-asu-ap #main-wrapper .pane-menu-tree a {
   position: relative;
   display: block;
   padding: 0.625em 0.3125em;
@@ -187,6 +187,10 @@ a.ttCourse {
   vertical-align: middle;
   margin-right: 0.3125em;
 }
+.node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category > .asu-ap-program-flag {
+  margin-left: 0.3125em;
+}
+
 /* Font Awesome icons */
 span.fa {
 }
