@@ -360,8 +360,8 @@ if (module_exists('metatag')) {
           <div class="container">
             <div class="row">
               <div class="col-sm-6 col-md-4">
-
-                ><!-- Column 1 -->
+                
+                <!-- Column 1 -->
                 <h2>At A Glance</h2>
                 <div class="asu-ap-page-degree-offered">
                   <h4>
