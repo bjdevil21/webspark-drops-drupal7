@@ -512,16 +512,21 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                     if (isset($node_info['field_asu_ap_major_map_url'])) {
                       print '<h2>Required Courses (Major Maps)</h2>';
                       $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
-                      if (isset($node_info['field_asu_ap_major_map_year'])) {
-                        $year = (int) $node_info['field_asu_ap_major_map_year']['#items'][0]['value'];
-                        $year_prefix = ((int) $year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) : '' ;
+                      if (valid_url($major_map_url, TRUE)) {
+                        if (isset($node_info['field_asu_ap_major_map_year'])) {
+                          $year = (int) $node_info['field_asu_ap_major_map_year']['#items'][0]['value'];
+                          $year_prefix = ((int) $year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) : '';
+                        }
+                        $major_map_urls[] = l(t($year_prefix . ' Major Map (On-campus)'), $major_map_url,
+                          array('attributes' => array('target' => '_blank')));
                       }
-                      $major_map_urls[] = l(t($year_prefix . ' Major Map'), $major_map_url,
-                        array('attributes' => array('target' => '_blank')));
-/*                      print '<ul class="asu-ap-major-map-urls">'
-                      foreach ($major_map_urls as $url) {
-                        print '<li>' . $url . '</li>';
-                      }*/
+                      if (isset($node_info['field_asu_ap_online_mm_url']['#items'][0]['url'])) {
+                        $online_url = $node_info['field_asu_ap_online_mm_url']['#items'][0]['url'];
+                        if (valid_url($online_url, TRUE)) {
+                          $major_map_urls[] = l(t($year_prefix . ' Major Map (Online)'), $online_url,
+                            array('attributes' => array('target' => '_blank')));
+                        }
+                      }
                       print theme_item_list(array(
                         'items' => $major_map_urls,
                         'title' => '',
