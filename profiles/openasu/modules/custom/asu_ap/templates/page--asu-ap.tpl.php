@@ -512,7 +512,7 @@ if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])) {
                       $major_map_url = isset($node_info['field_asu_ap_major_map_url']);
                       $matches = array();
                       preg_match('|^.+/(20\d{2})$|', $major_map_url, $matches);
-                      $year = (count($matches)) ? (int) $matches[1] : 0;
+                      $year = (isset($matches[0])) ? (int) $matches[0] : 0;
                       print '<h2>Required Courses (Major Map)</h2>';
                       print '<p><a href="' . $node_info['field_asu_ap_major_map_url']['#items'][0]['url']
                         . '" target="_blank">' . $year . ' - ' . (++$year) . ' Major Map</a></p>';
