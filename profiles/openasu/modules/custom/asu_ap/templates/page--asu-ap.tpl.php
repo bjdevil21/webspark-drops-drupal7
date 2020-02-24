@@ -88,16 +88,6 @@ else {
 if (module_exists('metatag')) {
   print render($page['content']['metatags']);
 } ?>
-<style type="text/css">.field-name-body::before {
-  content: "Program description";
-  font-size: 2.25em;
-  margin: 1.5em 0 1em;
-  font-weight: normal;
-}
-.field-name-body > :first-child {
-  padding-top: 1.5em;
-}
-</style>
 
 <div id="page-wrapper">
   <div id="page">
