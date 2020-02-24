@@ -748,8 +748,7 @@ if (module_exists('metatag')) {
       </div>
   </footer>
   <!-- /#footer -->
-
-      <?php print render($page['closure']); ?>
-
-    </div>
+</div>
 <!-- /#page, /#page-wrapper -->
+
+<?php print render($page['closure']); ?>
