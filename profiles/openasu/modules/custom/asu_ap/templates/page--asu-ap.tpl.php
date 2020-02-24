@@ -101,6 +101,7 @@ if (module_exists('metatag')) {
 
 <div id="page-wrapper">
   <div id="page">
+
     <!-- Page Header -->
     <header id="header">
       <div class="container">
@@ -117,7 +118,6 @@ if (module_exists('metatag')) {
       </div>
     </header>
     <!-- /.header -->
-
     <!-- Nav Bar -->
     <div id="ASUNavMenu" class="navmenu">
       <div class="container">
@@ -244,7 +244,6 @@ if (module_exists('metatag')) {
         <div class="container">
 
           <!-- Top white section - Marketing + body content MB -->
-          <div class="row">
             <?php $col_width = (isset($node_info['field_asu_ap_url_4']['#items'][0]['url'])) ? 6 : 12; ?>
 
               <?php if ($program_decider_value == 'undergrad'): ?>
@@ -293,14 +292,15 @@ if (module_exists('metatag')) {
                     <?php endif; ?>
                 </div>
                   <?php endif; ?>
+              </div>
+
+                <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+              <div class="row">
+                <div class="col-md-12">
+                  <?php print render($node_info['body']); ?>
                 </div>
-                  <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-                <div class="row">
-                  <div class="col-md-12">
-                    <?php print render($node_info['body']); ?>
-                  </div>
-                  <?php endif; ?>
-                </div>
+                <?php endif; ?>
+              </div>
               <?php endif; ?>
 
             <?php elseif ($program_decider_value === 'graduate'): ?>
@@ -659,52 +659,54 @@ if (module_exists('metatag')) {
           </div>
         </div>
 
-        <?php $related_programs = (isset($node_info['field_asu_ap_related_programs']));
+        <?php $related_programs = (isset($node_info['field_asu_ap_related_programs'])) ? TRUE : FALSE;
         $career_cols = ($related_programs) ? 8 : 6 ?>
 
         <div class="container space-top-xl space-bot-sm">
           <div class="row">
-
-            <div class="col-md-'<?php print $career_cols ?>'" id="plan-of-study">
-
-            <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
+            <div class="col-md-12" id="plan-of-study">
+              <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
               <h2>Program requirements</h2>
               <?php print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']; ?>
             <?php elseif (isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value'])): ?>
               <h2>Program requirements</h2>
               <?php print $node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']; ?>
             <?php endif; ?>
+            </div>
+          </div>
 
             <?php if ($program_decider_value === 'undergrad'): ?>
-
-            <?php if (isset($node_info['field_asu_ap_career_opps'])): ?>
-
+          <div class="row">
+              <?php if (isset($node_info['field_asu_ap_career_opps'])): ?>
+            <div class="col-md-<?php print $career_cols ?> asu-ap-careers">
               <h2>Career outlook</h2>
-              <?php if (isset($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value'])): ?>
-                <?php print render($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value']); ?>
-              <?php elseif (isset($node_info['field_asu_ap_career_opps'])): ?>
-                <?php print render($node_info['field_asu_ap_career_opps']); ?>
+                <?php if (isset($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value'])): ?>
+                  <?php print render($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value']); ?>
+                <?php elseif (isset($node_info['field_asu_ap_career_opps'])): ?>
+                  <?php print render($node_info['field_asu_ap_career_opps']); ?>
+                <?php endif; ?>
+            </div>
               <?php endif; ?>
 
-            <?php endif; ?>
-
-            <?php if (isset($node_info['field_asu_ap_example_careers'])): ?>
-              <?php if (isset($node_info['field_asu_ap_ex_car_tf']['#items'][0]['value']) && $node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'] == 1): ?>
-
-                <h2>Example careers</h2>
-                <?php print render($node_info['field_asu_ap_example_careers']); ?>
-
+              <?php if (isset($node_info['field_asu_ap_example_careers'])): ?>
+            <div class="col-md-'<?php print $career_cols ?>' asu-ap-careers">
+                <?php if (isset($node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'])
+                  && $node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'] == 1): ?>
+              <h2>Example careers</h2>
+                  <?php print render($node_info['field_asu_ap_example_careers']); ?>
+                <?php endif; ?>
+            </div>
               <?php endif; ?>
-            <?php endif; ?>
+          </div>
 
-          <?php elseif ($program_decider_value === 'graduate'): ?>
+            <?php elseif ($program_decider_value === 'graduate'): ?>
             <?php if (isset($node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value'])): ?>
                 <?php echo $node_info['field_asu_ap_grad_text_area']['#items'][0]['safe_value']; ?>
             <?php endif; ?>
           <?php endif; ?>
           </div>
 
-          <?php if (isset($node_info['field_asu_ap_related_programs'])): ?>
+          <?php if ($related_programs === TRUE): ?>
           <div class="col-md-4">
             <div class="pane-menu-tree">
               <h4>Related Programs</h4>
@@ -725,9 +727,6 @@ if (module_exists('metatag')) {
           </div>
           <?php endif; ?>
 
-          <div class="col-md-4">
-            <?php //print render($page['asu_ap_sidebar']); ?>
-          </div>
         </div>
       </div>
 
