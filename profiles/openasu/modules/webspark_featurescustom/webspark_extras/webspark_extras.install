@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Update help links in the administration menu
+ */
+function webspark_extras_update_7000(&$sandbox) {
+  features_rebuild(array('webspark_extras' => array('content_menu_links', 'menu_custom')));
+}

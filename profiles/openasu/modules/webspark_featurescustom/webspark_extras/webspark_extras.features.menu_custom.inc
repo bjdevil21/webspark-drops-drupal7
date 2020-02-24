@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * webspark_extras.features.menu_custom.inc
@@ -20,7 +21,6 @@ function webspark_extras_menu_default_menu_custom() {
   // Included for use with string extractors like potx.
   t('Management');
   t('The <em>Management</em> menu contains links for administrative tasks.');
-
 
   return $menus;
 }

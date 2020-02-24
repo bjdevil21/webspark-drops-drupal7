@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * webspark_extras.features.defaultconfig.inc

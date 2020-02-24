@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * webspark_extras.file_default_displays.inc

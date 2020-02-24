@@ -2,12 +2,7 @@
 /**
  * Code for the Webspark Extras feature.
  */
-
 include_once 'webspark_extras.features.inc';
-
-/**
- * @file - Forces custom functionality on initial bootstrapping
- */
 
 /**
  * Implements hook_boot()
@@ -27,6 +22,104 @@ function webspark_extras_boot() {
       }
     }
   }
+}
+
+/*
+
+function features_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#features':
+      $output = file_get_contents(drupal_get_path('module', 'features') . '/README.txt');
+      return module_exists('markdown') ? filter_xss_admin(module_invoke('markdown', 'filter', 'process', 0, -1, $output)) : '<pre>' . check_plain($output) . '</pre>';
+    case 'admin/build/features':
+      return '<p>' . t('A "Feature" is a certain type of Drupal module which contains a package of configuration that, when enabled, provides a new set of functionality for your Drupal site. Enable features by selecting the checkboxes below and clicking the Save configuration button. If the configuration of the feature has been changed its "State" will be either "overridden" or "needs review", otherwise it will be "default", indicating that the configuration has not been changed. Click on the state to see more details about the feature and its components.') . '</p>';
+  }
+}
+
+function webform_help($section = 'admin/help#webform', $arg = NULL) {
+  $output = '';
+  switch ($section) {
+    case 'admin/config/content/webform':
+      module_load_include('inc', 'webform', 'includes/webform.admin');
+      $type_list = webform_admin_type_list();
+      $output = t('Webform enables nodes to have attached forms and questionnaires.');
+      if ($type_list) {
+        $output .= ' ' . t('To add one, create a !types piece of content.', array('!types' => $type_list));
+      }
+      else {
+        $output .= ' <strong>' . t('Webform is currently not enabled on any content types.') . '</strong> ' . t('To use Webform, please enable it on at least one <a href="!url">content type</a>.', array('!url' => url('admin/structure/types')));
+      }
+      $output = '<p>' . $output . '</p>';
+      break;
+
+    case 'admin/content/webform':
+      $output = '<p>' . t('This page lists all of the content on the site that may have a webform attached to it.') . '</p>';
+      break;
+
+    case 'admin/help#webform':
+      module_load_include('inc', 'webform', 'includes/webform.admin');
+      $types = webform_admin_type_list();
+      if (empty($types)) {
+        $types = t('Webform-enabled piece of content');
+        $types_message = t('Webform is currently not enabled on any content types.') . ' ' . t('Visit the <a href="!url">Webform settings</a> page and enable Webform on at least one content type.', array('!url' => url('admin/config/content/webform')));
+      }
+      else {
+        $types_message = t('Optional: Enable Webform on multiple types by visiting the <a href="!url">Webform settings</a> page.', array('!url' => url('admin/config/content/webform')));
+      }
+      $output = t("<p>This module lets you create forms or questionnaires and define their content. Submissions from these forms are stored in the database and optionally also sent by e-mail to a predefined address.</p>
+      <p>Here is how to create one:</p>
+      <ul>
+        <li>!webform-types-message</li>
+        <li>Go to <a href=\"!create-content\">Create content</a> and add a !types piece of content.</li>
+        <li>After saving the new content, you will be redirected to the main field list of the form that will be created. Add the fields you would like on your form.</li>
+        <li>Once finished adding fields, you may want to send e-mails to administrators or back to the user who filled out the form. Click on the <em>Emails</em> sub-tab underneath the <em>Webform</em> tab on the piece of content.</li>
+        <li>Finally, visit the <em>Form settings</em> sub-tab under the <em>Webform</em> tab to configure remaining configurations options for your form.
+          <ul>
+          <li>Add a confirmation message and/or redirect URL that is to be displayed after successful submission.</li>
+          <li>Set a submission limit.</li>
+          <li>Determine which roles may submit the form.</li>
+          <li>Advanced configuration options such as allowing drafts or show users a message indicating how they can edit their submissions.</li>
+          </ul>
+        </li>
+        <li>Your form is now ready for viewing. After receiving submissions, you can check the results users have submitted by visiting the <em>Results</em> tab on the piece of content.</li>
+      </ul>
+      <p>Help on adding and configuring the components will be shown after you add your first component.</p>
+      ", array(
+          '!webform-types-message' => $types_message,
+          '!create-content' => url('node/add'),
+          '!types' => $types,
+        )
+      );
+      break;
+
+    case 'node/%/webform/conditionals':
+      $output .= '<p>' . t('Conditionals may be used to hide or show certain components (or entire pages!) based on the value of other components.') . '</p>';
+      break;
+
+    case 'node/%/submission/%/resend':
+      $output .= '<p>' . t('This form may be used to resend e-mails configured for this webform. Check the e-mails that need to be sent and click <em>Resend e-mails</em> to send these e-mails again.') . '</p>';
+      break;
+  }
+
+  return $output;
+}
+*/
+
+
+/**
+ * Implements hook_help().
+ */
+function webspark_extras_help($section, $arg = NULL) {
+  $output = '';
+  switch ($section) {
+    case 'admin/reports/asu-rfi-submissions-report':
+      $output = "<h2>This will be the RFI sub report view's help text - is this in a block??</h2>";
+      break;
+    case 'admin/help#webspark-extras':
+      $output = "<p>admin/help#webspark-extras text.</p>";
+      break;
+  }
+  return $output;
 }
 
 /**
