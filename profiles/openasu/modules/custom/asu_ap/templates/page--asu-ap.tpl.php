@@ -188,59 +188,56 @@ if (module_exists('metatag')) {
       <?php endif; ?>
                   </div>
                 </div>
-    <?php else: ?>
-      <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
-        <?php print render($node_info['field_asu_ap_market_text']); ?>
-      <?php endif; ?>
-      <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-        <?php print render($node_info['body']); ?>
-                <!-- Displaying 'New Program' field if true, displaying nothing if false -->
-        <?php if (isset($node_info['field_asu_ap_new_program']['#items'][0]['value'])): ?>
-          <?php $new_degree_value = ($node_info['field_asu_ap_new_program']['#items'][0]['value']); ?>
-          <?php if ($new_degree_value == '1'): ?>
-                    <div class="asu-ap-special-category">
-                      <span class="fa fa-retweet"></span>
-                      <span class="asu-ap-program-flag">New Program</span>
-                    </div>
-          <?php endif; ?>
+    <?php endif ?>
+    <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
+      <?php print render($node_info['field_asu_ap_market_text']); ?>
+    <?php endif; ?>
+    <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+      <?php print render($node_info['body']); ?>
+              <!-- Displaying 'New Program' field if true, displaying nothing if false -->
+      <?php if (isset($node_info['field_asu_ap_new_program']['#items'][0]['value'])): ?>
+        <?php $new_degree_value = ($node_info['field_asu_ap_new_program']['#items'][0]['value']); ?>
+        <?php if ($new_degree_value == '1'): ?>
+                  <div class="asu-ap-special-category">
+                    <span class="fa fa-retweet"></span>
+                    <span class="asu-ap-program-flag">New Program</span>
+                  </div>
         <?php endif; ?>
       <?php endif; ?>
+    <?php endif; ?>
               </div>
             </div>
           </div>
         </div>
 
         <div id="top-content" class="column container">
-
         <?php if ($messages): ?>
           <div id="messages">
             <?php print $messages; ?>
           </div>
         <?php endif; ?>
-
         <?php if ($tabs): ?>
           <div id="tabs">
             <?php print render($tabs); ?>
           </div>
         <?php endif; ?>
-
         <?php if ($action_links): ?>
           <div id="action-links">
             <?php print render($action_links); ?>
           </div>
         <?php endif; ?>
-      </div>
+        </div>
       <!-- /#top-content -->
 
       <!-- Breadcrumb -->
-      <div class="asu-degrees-breadcrumb-container">
-        <?php
-        if (module_exists('easy_breadcrumb')) {
-          print theme('easy_breadcrumb');
-        } else {
-          print theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb()));
-        } ?>
-      </div>
+        <div class="asu-degrees-breadcrumb-container">
+      <?php
+      if (module_exists('easy_breadcrumb')) {
+        print theme('easy_breadcrumb');
+      } else {
+        print theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb()));
+      } ?>
+        </div>
       <!-- /Breadcrumb -->
 
       <!-- START #################################### degree content-->
