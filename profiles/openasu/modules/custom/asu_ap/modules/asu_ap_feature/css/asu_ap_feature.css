@@ -41,7 +41,7 @@
 }
 .asu-ap-grey-section {
   background: #f1f1f1;
-  padding: 2em 0;
+  padding: 1em 0 2em;
 }
 .asu-ap-grey-section a {
   font-weight: 500;
@@ -71,7 +71,7 @@
 }
 
 .node-type-asu-ap .space-top-xl {
-  margin-top: 2em;
+  margin-top: 1em;
 }
 .node-type-asu-ap .space-bot-xl {
   margin-bottom: 2em;
