@@ -235,7 +235,6 @@ if (module_exists('metatag')) {
           <div class="row">
           <!-- Top white section - Marketing + body content MB -->
           <?php $col_width = (isset($node_info['field_asu_ap_url_4']['#items'][0]['url'])) ? 6 : 12; ?>
-
           <?php if ($program_decider_value == 'undergrad'): ?>
 
             <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
@@ -243,7 +242,7 @@ if (module_exists('metatag')) {
               <div class="asu-ap-short-description">
               <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
                 <div class="asu-ap-read-more">
-                <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
+                  <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
                 </div>
                 <div id="degree-collapse" class="collapse">
                   <div class="container">
@@ -251,13 +250,12 @@ if (module_exists('metatag')) {
               <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): ?>
                       <div class="col-md-<?php print $col_width; ?>">
                 <?php print render($node_info['field_asu_ap_market_text']); ?>
-
-                <?php if ($col_width === 6): // Degree Search URL-based video ?>
                       </div>
+                <?php if ($col_width === 6): // Degree Search URL-based video ?>
                       <div class="col-md-<?php print $col_width ?>">
                   <?php print render($node_info['field_asu_ap_url_4']); ?>
-                <?php endif; ?>
                       </div>
+                <?php endif; ?>
               <?php endif; ?>
                     </div>
 
@@ -382,8 +380,8 @@ if (module_exists('metatag')) {
             : "https://students.asu.edu/apply"; ?>
                 <a href="<?php print $cta_apply?>" class="btn btn-gold btn-block btn-lg">How and when to apply</a>
               </div>
-              </div>
             </div>
+          </div>
 
           <!-- Middle gray section (MG) -->
             <div class="asu-ap-grey-section">
