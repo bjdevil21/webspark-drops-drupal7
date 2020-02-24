@@ -680,7 +680,7 @@ if (module_exists('metatag')) {
             <?php endif; ?>
 
             <?php if (isset($node_info['field_asu_ap_example_careers'])): ?>
-          <div class="col-md-'<?php print $career_cols ?>' asu-ap-careers">
+          <div class="col-md-<?php print $career_cols ?> asu-ap-careers">
               <?php if (isset($node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'])
                   && $node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'] == 1): ?>
             <h2>Example careers</h2>

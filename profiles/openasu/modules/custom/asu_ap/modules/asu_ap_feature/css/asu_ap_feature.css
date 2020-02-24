@@ -14,6 +14,9 @@
 .node-type-asu-ap .space-bot-xl {
   margin-bottom: 2em;
 }
+.node-type-asu-ap h2 {
+  size: 2em;
+}
 .col-md-8 h2:first-child {
   margin-top: 0;
 }
