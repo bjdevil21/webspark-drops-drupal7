@@ -163,7 +163,7 @@ if (module_exists('metatag')) {
               <?php $accelerated_degree_value = ($node_info['field_asu_ap_acc_program']['#items'][0]['value']); ?>
               <?php if (isset($accelerated_degree_value)): ?>
                   <div class="asu-ap-special-category">
-                    <i class="fa fa-location-arrow"></i>
+                    <span class="fa fa-location-arrow"></span>
                     <span class="asu-ap-program-flag">Accelerated Program</span>
                   </div>
               <?php endif; ?>
@@ -173,7 +173,7 @@ if (module_exists('metatag')) {
               <?php $concurrent_degree_value = ($node_info['field_asu_ap_conc_program']['#items'][0]['value']); ?>
               <?php if ($concurrent_degree_value == '1'): ?>
                   <div class="asu-ap-special-category">
-                    <i class="fa fa-star"></i>
+                    <span class="fa fa-star"></span>
                     <span class="asu-ap-program-flag">Concurrent Program</span>
                   </div>
               <?php endif; ?>
@@ -183,7 +183,7 @@ if (module_exists('metatag')) {
               <?php $new_degree_value = ($node_info['field_asu_ap_new_program']['#items'][0]['value']); ?>
               <?php if ($new_degree_value == '1'): ?>
                   <div class="asu-ap-special-category">
-                    <i class="fa fa-retweet"></i>
+                    <span class="fa fa-retweet"></span>
                     <span class="asu-ap-program-flag">New Program</span>
                   </div>
               <?php endif; ?>
