@@ -729,7 +729,6 @@ if (module_exists('metatag')) {
   </div>
 
         <?php endif; ?>
-      <?php endif; ?>
 
   <!-- Page Footer -->
   <footer id="page-footer">
