@@ -278,7 +278,7 @@ if (module_exists('metatag')) {
             <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
               <?php print render($node_info['field_asu_ap_market_text']); ?>
                 <?php if ($col_width === 6): // Degree Search URL-based video ?>
-          </div>
+            </div>
             <div class="col-md-<?php print $col_width ?>">
                   <?php print render($node_info['field_asu_ap_url_4']); ?>
                 <?php endif; ?>
@@ -332,19 +332,23 @@ if (module_exists('metatag')) {
 
                 <?php else: ?>
             <!-- IF VIDEO IS NOT PRESENT -->
+            <div class="row">
+              <div class="col-md-12">
                   <?php if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
-            <div class="asu-ap-short-description">
+                <div class="asu-ap-short-description">
                     <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
-              <div class="asu-degree-read-more">
-              <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
-              </div>
-              <div id="degree-collapse" class="collapse">
+                  <div class="asu-degree-read-more">
+                    <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
+                  </div>
+                  <div id="degree-collapse" class="collapse">
                     <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
                       <?php print render($node_info['field_asu_ap_market_text']); ?>
                     <?php endif; ?>
                     <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
                       <?php print render($node_info['body']); ?>
                     <?php endif; ?>
+                  </div>
+                </div>
               </div>
             </div>
                     <?php else: ?>
@@ -364,19 +368,19 @@ if (module_exists('metatag')) {
                 <?php $cta_information = (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url']))
             ? $node_info['field_asu_ap_cta_information']['#items'][0]['url']
             : "#asu-rfi-form-data"; ?>
-              <a href="<?php print $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</a>
+                <a href="<?php print $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</a>
               </div>
               <div class="col-sm-6 col-md-4 space-bot-md">
                 <?php $cta_visit = (isset($node_info['field_asu_ap_cta_visit']['#items'][0]['url']))
             ? $node_info['field_asu_ap_cta_visit']['#items'][0]['url']
             : 'https://visit.asu.edu/'; ?>
-              <a href="<?php print $cta_visit ?>" class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
+                <a href="<?php print $cta_visit ?>" class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
               </div>
               <div class="col-sm-6 col-md-4 space-bot-md">
                 <?php $cta_apply = (isset($node_info['field_asu_ap_cta_apply']['#items'][0]['url']))
             ? $node_info['field_asu_ap_cta_apply']['#items'][0]['url']
             : "https://students.asu.edu/apply"; ?>
-              <a href="<?php print $cta_apply?>" class="btn btn-gold btn-block btn-lg">How and when to apply</a>
+                <a href="<?php print $cta_apply?>" class="btn btn-gold btn-block btn-lg">How and when to apply</a>
               </div>
               </div>
             </div>
