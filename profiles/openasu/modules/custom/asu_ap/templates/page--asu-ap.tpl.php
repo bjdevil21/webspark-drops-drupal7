@@ -337,7 +337,6 @@ if (module_exists('metatag')) {
           </div>
         </div>
       <?php endif; ?>
-        <!-- End optional description video display -->
     <?php endif; ?>
 
         <div class="row space-bot-lg asu-ap-page-buttons">
