@@ -158,9 +158,8 @@ if (module_exists('metatag')) {
         <?php print $title; ?>
       <?php endif; ?>
                 </h1>
-                      <!-- Displaying 'Accelerated Program' field if true, displaying nothing if false -->
                 <div class="asu-ap-special-categories">
-      <?php if (isset($node_info['field_asu_ap_acc_program']['#items'][0]['value'])): ?>
+      <?php if (isset($node_info['field_asu_ap_acc_program']['#items'][0]['value'])): // Displaying 'Accelerated Program' field if true, displaying nothing if false  ?>
         <?php $accelerated_degree_value = ($node_info['field_asu_ap_acc_program']['#items'][0]['value']); ?>
         <?php if (isset($accelerated_degree_value)): ?>
                   <div class="asu-ap-special-category">
@@ -169,8 +168,7 @@ if (module_exists('metatag')) {
                   </div>
         <?php endif; ?>
       <?php endif; ?>
-      <!-- Displaying 'Concurrent Program' field if true, displaying nothing if false -->
-      <?php if (isset($node_info['field_asu_ap_conc_program']['#items'][0]['value'])): ?>
+      <?php if (isset($node_info['field_asu_ap_conc_program']['#items'][0]['value'])): // Displaying 'Concurrent Program' field if true, displaying nothing if false ?>
         <?php $concurrent_degree_value = ($node_info['field_asu_ap_conc_program']['#items'][0]['value']); ?>
         <?php if ($concurrent_degree_value == '1'): ?>
                   <div class="asu-ap-special-category">
@@ -179,23 +177,7 @@ if (module_exists('metatag')) {
                   </div>
         <?php endif; ?>
       <?php endif; ?>
-                  <div id="degree-collapse" class="collapse">
-      <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
-        <?php print render($node_info['field_asu_ap_market_text']); ?>
-      <?php endif; ?>
-      <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-        <?php print render($node_info['body']); ?>
-      <?php endif; ?>
-                  </div>
-                </div>
-    <?php endif ?>
-    <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
-      <?php print render($node_info['field_asu_ap_market_text']); ?>
-    <?php endif; ?>
-    <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-      <?php print render($node_info['body']); ?>
-              <!-- Displaying 'New Program' field if true, displaying nothing if false -->
-      <?php if (isset($node_info['field_asu_ap_new_program']['#items'][0]['value'])): ?>
+      <?php if (isset($node_info['field_asu_ap_new_program']['#items'][0]['value'])): // Displaying 'New Program' field if true, displaying nothing if false ?>
         <?php $new_degree_value = ($node_info['field_asu_ap_new_program']['#items'][0]['value']); ?>
         <?php if ($new_degree_value == '1'): ?>
                   <div class="asu-ap-special-category">
@@ -204,7 +186,8 @@ if (module_exists('metatag')) {
                   </div>
         <?php endif; ?>
       <?php endif; ?>
-    <?php endif; ?>
+                </div>
+    <?php endif ?>
               </div>
             </div>
           </div>
