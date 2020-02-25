@@ -216,6 +216,7 @@ if (module_exists('metatag')) {
       <!-- START degree content  #################################### -->
 
         <div class="container">
+
     <?php // Top white section - Marketing + body content MB
     $ds_video_cols = (isset($node_info['field_asu_ap_url_4']['#items'][0]['url'])) ? 6 : 12; ?>
 
@@ -362,30 +363,30 @@ if (module_exists('metatag')) {
           </div>
         <?php endif; ?>
       <?php endif; ?>
-
         </div>
 
-        <div class="row space-bot-lg asu-ap-page-buttons">
-          <div class="col-sm-6 col-md-4 space-bot-md">
+        <div class="container">
+          <div class="row space-bot-lg asu-ap-page-buttons">
+            <div class="col-sm-6 col-md-4 space-bot-md">
     <?php $cta_information = (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url']))
       ? $node_info['field_asu_ap_cta_information']['#items'][0]['url']
       : "#asu-rfi-form-data"; ?>
-            <a href="<?php print $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</a>
-          </div>
-          <div class="col-sm-6 col-md-4 space-bot-md">
+              <a href="<?php print $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</a>
+            </div>
+            <div class="col-sm-6 col-md-4 space-bot-md">
     <?php $cta_visit = (isset($node_info['field_asu_ap_cta_visit']['#items'][0]['url']))
       ? $node_info['field_asu_ap_cta_visit']['#items'][0]['url']
       : 'https://visit.asu.edu/'; ?>
-            <a href="<?php print $cta_visit ?>" class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
-          </div>
-          <div class="col-sm-6 col-md-4 space-bot-md">
+              <a href="<?php print $cta_visit ?>" class="btn btn-gold btn-block btn-lg">Schedule a visit</a>
+            </div>
+            <div class="col-sm-6 col-md-4 space-bot-md">
     <?php $cta_apply = (isset($node_info['field_asu_ap_cta_apply']['#items'][0]['url']))
       ? $node_info['field_asu_ap_cta_apply']['#items'][0]['url']
       : "https://students.asu.edu/apply"; ?>
-            <a href="<?php print $cta_apply?>" class="btn btn-gold btn-block btn-lg">How and when to apply</a>
+              <a href="<?php print $cta_apply?>" class="btn btn-gold btn-block btn-lg">How and when to apply</a>
+            </div>
           </div>
         </div>
-      </div>
 
           <!-- Middle gray section (MG) -->
             <div class="asu-ap-grey-section">
