@@ -15,7 +15,8 @@
   margin-bottom: 2em;
 }
 .node-type-asu-ap h2 {
-  font-size: 1.875em;
+  font-size: 1.6em;
+  font-weight: 600;
 }
 .col-md-8 h2:first-child {
   margin-top: 0;
