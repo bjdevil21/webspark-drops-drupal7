@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpUndefinedVariableInspection */
+<?php /** @noinspection PhpUnhandledExceptionInspection */
+/** @noinspection PhpUndefinedVariableInspection */
 
 /**
  * @file
@@ -120,6 +121,7 @@ if (module_exists('metatag')) {
 	<?php $program_decider_value = (string) ($node_info['field_asu_ap_program']['#items'][0]['value']); ?>
   <?php if (isset($node_info['field_asu_ap_cert']['#items'][0]['value'])): ?>
     <?php $cert_val = ($node_info['field_asu_ap_cert']['#items'][0]['value']); ?>
+  <?php endif; ?>
 
     <!-- Page Main -->
     <div id="main-wrapper" class="clearfix">
@@ -213,88 +215,83 @@ if (module_exists('metatag')) {
     } ?>
         </div>
 
-      <!-- START degree content  #################################### -->
-
-        <div class="container">
+          <!-- START degree content  #################################### -->
+        <div class="container container-top">
 
     <?php // Top white section - Marketing + body content MB
     $ds_video_cols = (isset($node_info['field_asu_ap_url_4']['#items'][0]['url'])) ? 6 : 12; ?>
 
-    <?php // UNDERGRAD
-    // if ($program_decider_value == 'undergrad'): ?>
-
-      <?php // LOCAL Marketing text (in Short Description YES
-      if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
-          <div class="row">
-        <?php $cols = array('short_desc' => 12, 'video' => 0); ?>
-        <?php // LOCAL video URL? YES
+    <?php // LOCAL Marketing text YES
+    if (isset($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value'])): ?>
+          <div class="row row-yes row-full row-local-market-data">
+      <?php $cols = array('short_desc' => 12, 'video' => 0); ?>
+      <?php // LOCAL video URL? YES
         if (isset($node_info['field_asu_ap_grad_desc_video']['#items'][0]['safe_value'])): ?>
-          <?php $cols = array('short_desc' => 8, 'video' => 4); ?>
-        <?php endif; ?>
+        <?php $cols = array('short_desc' => 8, 'video' => 4); ?>
+      <?php endif; ?>
             <div class="col-md-<?php print $cols['short_desc'] ?>">
               <div class="asu-ap-short-description">
         <?php print render($node_info['field_asu_ap_short_desc']['#items'][0]['safe_value']); ?>
               </div>
             </div>
-        <?php if ($cols['video'] === 4): ?>
+      <?php if ($cols['video'] === 4): ?>
               <div class="col-md-<?php echo $cols['video']; ?>">
-          <?php echo $node_info['field_asu_ap_grad_desc_video']['#items'][0]['safe_value']; ?>
+        <?php echo $node_info['field_asu_ap_grad_desc_video']['#items'][0]['safe_value']; ?>
               </div>
-        <?php endif; ?>
+      <?php endif; ?>
           </div>
           <!-- Degree Search data -->
-          <div class="row row-full">
+          <div class="row row-yes row-full row-ds-marketing-data">
             <div class="asu-ap-read-more">
               <a href="#degree-collapse" data-toggle="collapse" aria-expanded="false">Read More</a>
             </div>
             <div id="degree-collapse" class="collapse">
               <div class="container">
-                <div class="row">
-        <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): // @TODO togle visibility in config ?>
+                <div class="row row-yes-sub row-ds-marketing-video-text">
+      <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): // @TODO togle visibility in config ?>
                     <div class="col-md-<?php print $ds_video_cols; ?>">
-          <?php print render($node_info['field_asu_ap_market_text']); ?>
+        <?php print render($node_info['field_asu_ap_market_text']); ?>
                     </div>
-        <?php endif; ?>
-        <?php if ($ds_video_cols === 6): // SHOW Degree Search URL-based video @TODO toggle visibility in a config form ?>
+      <?php endif; ?>
+      <?php if ($ds_video_cols === 6): // SHOW Degree Search URL-based video @TODO toggle visibility in a config form ?>
                     <div class="col-md-<?php print $ds_video_cols ?>">
-          <?php print render($node_info['field_asu_ap_url_4']); ?>
+        <?php print render($node_info['field_asu_ap_url_4']); ?>
                     </div>
-        <?php endif; ?>
+      <?php endif; ?>
                 </div>
-        <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-                  <div class="row">
+      <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
+                  <div class="row row-yes-sub row-ds-body">
                     <div class="col-md-12">
-          <?php print render($node_info['body']); ?>
+        <?php print render($node_info['body']); ?>
                     </div>
                   </div>
-        <?php endif; ?>
+      <?php endif; ?>
               </div>
             </div>
           </div>
-      <?php endif; ?>
 
-      <?php else: // LOCAL marketing text NO ?>
-        <?php // Is there DS marketing text?
-        if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): // YES ?>
-          <div class="row">
-            <div class="col-md-<?php print $ds_video_cols; ?>">
-          <?php print render($node_info['field_asu_ap_market_text']); ?>
-            </div>
+    <?php else: // LOCAL marketing text NO ?>
+      <?php // Is there DS marketing text? YES
+      if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): ?>
+        <div class="row row-no row-ds-marketing-video-text">
+          <div class="col-md-<?php print $ds_video_cols; ?>">
+            <?php print render($node_info['field_asu_ap_market_text']); ?>
+          </div>
           <?php if ($ds_video_cols === 6): // Is there a DS URL-based video ?>
             <div class="col-md-<?php print $ds_video_cols ?>">
-            <?php print render($node_info['field_asu_ap_url_4']); ?>
+              <?php print render($node_info['field_asu_ap_url_4']); ?>
             </div>
           <?php endif; ?>
-          </div>
-        <?php endif; ?>
+        </div>
       <?php endif; ?>
       <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
-        <div class="row">
+        <div class="row row-no row-ds-body">
           <div class="col-md-12">
-        <?php print render($node_info['body']); ?>
+            <?php print render($node_info['body']); ?>
           </div>
         </div>
       <?php endif; ?>
+    <?php endif; ?>
 
       <?php else: // Local Marketing Text NO ?>
         <div class="col-md-12">
@@ -311,8 +308,8 @@ if (module_exists('metatag')) {
           <?php if (isset($node_info['body'])): // Program description (aka body field) ?>
             <?php print render($node_info['body']); ?>
           <?php endif; ?>
-                </div>
-              </div>
+            </div>
+          </div>
         <?php else: ?>
           <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])):  // marketing text ?>
             <?php print render($node_info['field_asu_ap_market_text']); ?>
@@ -321,13 +318,12 @@ if (module_exists('metatag')) {
             <?php print render($node_info['body']); ?>
           <?php endif; ?>
         <?php endif; ?>
-          </div>
-      <?php endif; ?>
         </div>
+      <?php endif; ?>
 
-    <?php // endif; // END UNDERGRAD ?>
+    <?php // endif; // END PRE-BUTTON Top section
+    // NEXT - CTA Buttons ?>
 
-        <div class="container">
           <div class="row space-bot-lg asu-ap-page-buttons">
             <div class="col-sm-6 col-md-4 space-bot-md">
     <?php $cta_information = (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url']))
@@ -348,17 +344,18 @@ if (module_exists('metatag')) {
               <a href="<?php print $cta_apply?>" class="btn btn-gold btn-block btn-lg">How and when to apply</a>
             </div>
           </div>
+
         </div>
 
           <!-- Middle gray section (MG) -->
-            <div class="asu-ap-grey-section">
-              <div class="container">
-                <div class="row row-full">
-                  <div class="col-sm-6 col-md-4">
-                  <!-- Column 1 -->
-                  <h2>At A Glance</h2>
-                    <div class="asu-ap-page-degree-offered">
-                    <h4>
+        <div class="asu-ap-grey-section">
+          <div class="container">
+            <div class="row row-full">
+              <div class="col-sm-6 col-md-4">
+              <!-- Column 1 -->
+              <h2>At A Glance</h2>
+                <div class="asu-ap-page-degree-offered">
+                <h4>
               <?php if (isset($node_info['field_asu_ap_awarded']['#items'][0]['value'])): ?>
                 <?php if ($program_decider_value == 'undergrad'): ?>
                   <?php if (isset($node_info['field_asu_ap_cert']['#items'][0]['value'])): ?>
@@ -378,8 +375,8 @@ if (module_exists('metatag')) {
                   <?php print render($node_info['field_asu_ap_awarded']['#items'][0]['value']); ?>
                 <?php endif; ?>
               <?php endif; ?>
-                    </h4>
-                    <ul>
+                </h4>
+                <ul>
               <?php if (isset($node_info['field_asu_ap_college_j']['#items'][0]['value'])) {
                 print "<li><strong>Offered by</strong>: ";
                 $college_count = count($node_info['field_asu_ap_college_j']['#items']) - 1;
@@ -536,9 +533,9 @@ if (module_exists('metatag')) {
               }
             ?>
 
-              <div class="asu-ap-subplans">
+            <div class="asu-ap-subplans">
             <?php if (isset($node_info['field_asu_ap_subplan_url']['#items'])): ?>
-                <div class='asu-ap-sublplans'><p><b>Subplans</b><br /></div>
+              <div class='asu-ap-sublplans'><p><b>Subplans</b><br /></div>
               <?php foreach ($node_info['field_asu_ap_subplan_url']['#items'] as $sp){
                   if ($sp['title'] != $sp['url']) {
                     echo '<a href="'.$sp['url'].'">'.$sp['title'].'</a><br />';
@@ -549,59 +546,57 @@ if (module_exists('metatag')) {
                 }
                 echo '</p>';
               endif; ?>
-              </div>
             </div>
           </div>
+              </div>
 
-          <div class="col-sm-6 col-md-4">
+              <div class="col-sm-6 col-md-4">
             <?php
-              // Column 2
-              if ($program_decider_value === 'undergrad'): ?>
-          <h2>Application requirements</h2>
-            <?php if (isset($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value'])): ?>
-            <p>
+            // Column 2
+            if ($program_decider_value === 'undergrad'): ?>
+                <h2>Application requirements</h2>
+              <?php if (isset($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value'])): ?>
+                <p>
               <?php print render($node_info['field_asu_ap_addl_req']['#items'][0]['safe_value']); ?>
-            </p>
+                </p>
             <?php endif; ?>
-            <p>All students are required to meet general university admission requirements:</p>
-            <ul>
-              <li><a href="https://students.asu.edu/freshman">Freshman</a></li>
-              <li><a href="https://transfer.asu.edu/">Transfer</a></li>
-              <li><a href="https://students.asu.edu/international">International</a></li>
-              <li><a href="https://students.asu.edu/readmission">Readmission</a></li>
-            </ul>
+                <p>All students are required to meet general university admission requirements:</p>
+                <ul>
+                  <li><a href="https://students.asu.edu/freshman">Freshman</a></li>
+                  <li><a href="https://transfer.asu.edu/">Transfer</a></li>
+                  <li><a href="https://students.asu.edu/international">International</a></li>
+                  <li><a href="https://students.asu.edu/readmission">Readmission</a></li>
+                </ul>
             <?php elseif ($program_decider_value === 'graduate'): ?>
               <?php if (isset($node_info['field_asu_ap_grad_app']['#items'][0]['safe_value'])): ?>
                 <?php echo $node_info['field_asu_ap_grad_app']['#items'][0]['safe_value']; ?>
               <?php endif ?>
             <?php endif; ?>
-            </div>
-            <div class="col-sm-6 col-md-4">
+              </div>
+
+              <div class="col-sm-6 col-md-4">
             <?php
                 // Column 3
               if ($program_decider_value === 'undergrad'): ?>
-            <h2>Affording college</h2>
-            <p>
+                <h2>Affording college</h2>
+                <p>
             <?php if (isset($node_info['field_asu_ap_sl']['#items'][0]['url'])): ?>
-              <a href="<?php echo $node_info['field_asu_ap_sl']['#items'][0]['url'] ?>">Scholarships</a><br>
+                  <a href="<?php echo $node_info['field_asu_ap_sl']['#items'][0]['url'] ?>">Scholarships</a><br>
             <?php else: ?>
-              <a href="<?php echo 'https://scholarships.asu.edu/colleges' ?>">Scholarships</a><br>
+                  <a href="<?php echo 'https://scholarships.asu.edu/colleges' ?>">Scholarships</a><br>
             <?php endif; ?>Find and apply for relevant scholarships.
-            </p>
+                </p>
 
             <?php if (isset($node_info['field_asu_ap_wue_available']['#items'][0]['value']) && $node_info['field_asu_ap_wue_available']['#items'][0]['value'] == 1): ?>
-            <p><a href="<?php echo 'https://students.asu.edu/admission/wue' ?>">WUE eligible program</a><br>
+                <p><a href="<?php echo 'https://students.asu.edu/admission/wue' ?>">WUE eligible program</a><br>
               Undergraduate students from western states who enroll in this
-              program are eligible for a discounted tuition rate.
-            </p>
+              program are eligible for a discounted tuition rate.</p>
             <?php endif; ?>
-            <p>
-                <a href="<?php echo 'https://students.asu.edu/financialaid' ?>">Financial Aid</a><br>
+                <p><a href="<?php echo 'https://students.asu.edu/financialaid' ?>">Financial Aid</a><br>
               ASU has many financial aid options. Almost everyone, regardless
               of income, can qualify for some form of financial aid. In fact,
               more than 70 percent of all ASU students receive some form of
-              financial assistance every year.
-            </p>
+              financial assistance every year.</p>
 
             <?php elseif ($program_decider_value === 'graduate'): ?>
               <?php if (isset($node_info['field_asu_ap_grad_financing']['#items'][0]['safe_value'])): ?>
@@ -619,10 +614,8 @@ if (module_exists('metatag')) {
             <?php //print render($page['asu_ap_marketing']); ?>
           </div>
         </div>
-
             <?php $related_programs = (isset($node_info['field_asu_ap_related_programs'])) ? TRUE : FALSE;
               $career_cols = ($related_programs) ? 8 : 6 ?>
-
         <div class="container space-top-xl space-bot-sm">
           <div class="row">
             <div class="col-md-12" id="plan-of-study">
