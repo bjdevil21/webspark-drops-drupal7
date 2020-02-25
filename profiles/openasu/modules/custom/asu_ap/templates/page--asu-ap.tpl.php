@@ -460,7 +460,7 @@ if (module_exists('metatag')) {
   if ($program_type === 'undergrad') {
     $major_map_urls = array();
     if (isset($node_info['field_asu_ap_major_map_url'])) {
-      print '<h2>Required Courses (Major Maps)</h2>';
+      print '<h2>Required Courses</h2>';
       $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
       if (valid_url($major_map_url, TRUE)) {
         if (isset($node_info['field_asu_ap_major_map_year'])) {
