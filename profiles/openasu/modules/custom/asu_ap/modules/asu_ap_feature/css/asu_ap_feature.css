@@ -15,13 +15,6 @@
 .node-type-asu-ap .space-bot-xl {
   margin-bottom: 2em;
 }
-
-.node-type-asu-ap #main .row > div[class*="col-"]:first-child {
-  padding-left: 0;
-}
-.node-type-asu-ap #main .row > div[class*="col-"]:last-child {
-  padding-right: 0;
-}
 .col-md-8 h2:first-child {
   margin-top: 0;
 }
@@ -265,10 +258,16 @@ a.ttCourse {
 }
 
 @media (min-width: 992px) {
-  body.node-type-asu-ap .col-md-4 {
+  .node-type-asu-ap .col-md-4 {
     width: 33.33333%;
   }
-  body.node-type-asu-ap .asu-degree-banner-image img {
+  .node-type-asu-ap .asu-degree-banner-image img {
     min-height: 200px;
+  }
+  .node-type-asu-ap #main .row > div[class*="col-"]:first-child {
+    padding-left: 0;
+  }
+  .node-type-asu-ap #main .row > div[class*="col-"]:last-child {
+    padding-right: 0;
   }
 }
