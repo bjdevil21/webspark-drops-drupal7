@@ -2,21 +2,25 @@
   * ASU AP styles ----------------------------------------
   **/
 
+/**
+ * Global Layout ---------
+ */
 .node-type-asu-ap .space-top-xl {
   margin-top: 1em;
 }
 .node-type-asu-ap .space-bot-md {
   margin-bottom: 1.5em;
 }
-.node-type-asu-ap .space-bot-lg {
-  margin-bottom: 2em;
-}
+.node-type-asu-ap .space-bot-lg,
 .node-type-asu-ap .space-bot-xl {
   margin-bottom: 2em;
 }
-.node-type-asu-ap .asu-ap-grey-section h2 {
-  font-size: 1.6em;
-  font-weight: 600;
+
+.node-type-asu-ap #main .row > div[class*="col-"]:first-child {
+  padding-left: 0;
+}
+.node-type-asu-ap #main .row > div[class*="col-"]:last-child {
+  padding-right: 0;
 }
 .col-md-8 h2:first-child {
   margin-top: 0;
@@ -72,7 +76,7 @@
 }
 
 /**
- * ASU AP page content stypling -----------------
+ * ASU AP page content styling -----------------
  */
 
 .node-type-asu-ap .field-name-body::before {
@@ -101,6 +105,10 @@
 .node-type-asu-ap #main-wrapper .asu-ap-grey-section {
   background: #f1f1f1;
   padding: 1em 0 2em;
+}
+.node-type-asu-ap .asu-ap-grey-section h2 {
+  font-size: 1.6em;
+  font-weight: 600;
 }
 .node-type-asu-ap #main-wrapper .asu-ap-grey-section a {
   font-weight: 500;
@@ -159,7 +167,6 @@
   font-size: 75%;
   margin: 0 0 1.5em 0 !important;
 }
-
 
 .node-type-asu-ap #main-wrapper .asu-ap-page-buttons {
   margin: 1em 0 1em;

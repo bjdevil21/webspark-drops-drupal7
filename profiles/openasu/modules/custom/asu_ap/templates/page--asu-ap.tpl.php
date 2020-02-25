@@ -126,7 +126,7 @@ if (module_exists('metatag')) {
 
     <!-- Page Main -->
     <div id="main-wrapper" class="clearfix">
-      <div id="main" class="clearfix">
+      <div id="main" class="clearfix main-asu-ap">
         <a id="main-content"></a>
         <!-- Top Banner image (TB) -->
         <!--suppress CssUnknownTarget -->
