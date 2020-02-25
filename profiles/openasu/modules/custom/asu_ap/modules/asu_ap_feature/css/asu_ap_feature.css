@@ -61,12 +61,6 @@
   font-weight: 900;
   text-shadow: 0 0 0.3125em rgba(0, 0, 0, 0.5);
 }
-.node-type-asu-ap .asu-degrees-breadcrumb-container {
-  max-width: 1170px;
-  margin: 0 auto;
-  padding-left: 0.9375em;
-  padding-right: 0.9375em;
-}
 .node-type-asu-ap .asu-ap-major-title {
   font-size: 1.3125em;
   color: #8C1D40;

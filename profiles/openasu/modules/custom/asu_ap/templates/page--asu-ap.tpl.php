@@ -206,13 +206,15 @@ if (module_exists('metatag')) {
           </div>
     <?php endif; ?>
         </div>
-        <div class="asu-degrees-breadcrumb-container">
+        <div class="container container-breadcrumb">
+          <div class="row row-full">
     <?php
     if (module_exists('easy_breadcrumb')) {
       print theme('easy_breadcrumb');
     } else {
       print theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb()));
     } ?>
+          </div>
         </div>
 
           <!-- START degree content  #################################### -->
