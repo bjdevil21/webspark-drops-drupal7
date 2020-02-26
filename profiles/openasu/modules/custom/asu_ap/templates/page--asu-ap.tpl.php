@@ -160,10 +160,10 @@ if (module_exists('metatag')) {
                 </h1>
                 <div class="asu-ap-special-categories">
       <?php if (isset($node_info['field_asu_ap_acc_program']['#items'][0]['value'])): // Displaying 'Accelerated Program' field if true, displaying nothing if false  ?>
-        <?php $accelerated_degree_value = ($node_info['field_asu_ap_acc_program']['#items'][0]['value']); ?>
-        <?php if (isset($accelerated_degree_value)): ?>
+        <?php $accelerated_degree_value = $node_info['field_asu_ap_acc_program']['#items'][0]['value']; ?>
+        <?php if (!empty($accelerated_degree_value)): ?>
                   <div class="asu-ap-special-category">
-                    <a id="asu-ap-accelerated-degree" href="#asu-ap-accelerated-degree">
+                    <a id="accelerated-degree" href="#asu-ap-accelerated-degree">
                       <span class="fa fa-location-arrow"></span>
                       <span class="asu-ap-program-flag" title="What is an accelerated program?">Accelerated Program</span>
                     </a>
@@ -172,10 +172,10 @@ if (module_exists('metatag')) {
         <?php endif; ?>
       <?php endif; ?>
       <?php if (isset($node_info['field_asu_ap_conc_program']['#items'][0]['value'])): // Displaying 'Concurrent Program' field if true, displaying nothing if false ?>
-        <?php $concurrent_degree_value = ($node_info['field_asu_ap_conc_program']['#items'][0]['value']); ?>
-        <?php if ($concurrent_degree_value == '1'): ?>
+        <?php $concurrent_degree_value = (int) $node_info['field_asu_ap_conc_program']['#items'][0]['value']; ?>
+        <?php if ($concurrent_degree_value === 1): ?>
                   <div class="asu-ap-special-category">
-                    <a id="asu-ap-concurrent-degree" href="#asu-ap-concurrent-degree">
+                    <a id="concurrent-degree" href="#asu-ap-concurrent-degree">
                       <span class="fa fa-star"></span>
                       <span class="asu-ap-program-flag" alt="What is a concurrent program?">Concurrent Program</span>
                     </a>
@@ -184,10 +184,10 @@ if (module_exists('metatag')) {
         <?php endif; ?>
       <?php endif; ?>
       <?php if (isset($node_info['field_asu_ap_new_program']['#items'][0]['value'])): // Displaying 'New Program' field if true, displaying nothing if false ?>
-        <?php $new_degree_value = ($node_info['field_asu_ap_new_program']['#items'][0]['value']); ?>
-        <?php if ($new_degree_value == '1'): ?>
+        <?php $new_degree_value = (int) $node_info['field_asu_ap_new_program']['#items'][0]['value']; ?>
+        <?php if ($new_degree_value === 1): ?>
                   <div class="asu-ap-special-category">
-                    <a id="asu-ap-new-program" href="#asu-ap-new-program">
+                    <a id="new-program" href="#asu-ap-new-program">
                       <span class="fa fa-retweet"></span>
                       <span class="asu-ap-program-flag" alt="What does this mean?">New Program</span>
                     </a>
@@ -714,7 +714,7 @@ if (module_exists('metatag')) {
     <?php endif; ?>
     <?php if ($concurrent_degree_value): ?>
                 <div id="asu-ap-concurrent-degree">
-                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Concurrent Programs?<span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
+                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Concurrent Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_concurrent">
                     Students pursuing concurrent degrees earn two distinct degrees and receive two diplomas. ASU offers students two ways to earn concurrent degrees: by choosing a predetermined combination or creating their own combination.  Predetermined combinations have a single admissions application and one easy to follow major map.  To add a concurrent degree to your existing degree, work with your academic advisor. Either way, concurrent degrees allow students to pursue their own personal or professional interests.
                   </div>
@@ -722,7 +722,7 @@ if (module_exists('metatag')) {
     <?php endif; ?>
     <?php if ($joint_programs_value): ?>
                 <div id="asu-ap-joint-programs">
-                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Joint Programs?<span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
+                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Joint Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_joint">
                     <p>Joint programs, or jointly conferred degrees, are offered by more than one college and provide opportunities for students to take advantage of the academic strengths of two academic units.  Upon graduation, students are awarded one degree and one diploma conferred by two colleges. </p>
                   </div>
@@ -730,7 +730,7 @@ if (module_exists('metatag')) {
     <?php endif; ?>
     <?php if ($new_degree_value): ?>
                 <div id="asu-ap-new-degree">
-                  <div class="programs_term ds_closed" tabindex="0" role="link">What constitutes a New Program?<span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
+                  <div class="programs_term ds_closed" tabindex="0" role="link">What constitutes a New Program? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_new">
                     <p>ASU adds new programs to Degree Search frequently. Come back often and look for the “New Programs” option.</p>
                   </div>
@@ -738,7 +738,7 @@ if (module_exists('metatag')) {
     <?php endif; ?>
     <?php if ($online_program_value): ?>
                 <div id="asu-ap-online-program">
-                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Online Programs?<span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
+                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Online Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_online">
                     <p><a href="http://asuonline.asu.edu/" target="_blank">ASU Online</a> offers programs in an entirely online format with multiple enrollment sessions throughout the year. See <a href="http://asuonline.asu.edu/" target="_blank">http://asuonline.asu.edu/</a> for more information.</p>
                   </div>
@@ -746,7 +746,7 @@ if (module_exists('metatag')) {
     <?php endif; ?>
     <?php if ($wue_program_value): ?>
                 <div id="asu-ap-wue-program">
-                  <div class="programs_term ds_closed" tabindex="0" role="link">What is the Western Undergraduate Exchange (WUE)?<span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
+                  <div class="programs_term ds_closed" tabindex="0" role="link">What is the Western Undergraduate Exchange (WUE)? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display">
                     <p>The Western Undergraduate Exchange (WUE) is a program in which residents of western states (other than Arizona) may be eligible for reduced nonresident tuition. See more information and eligibility requirements on the <a href="http://students.asu.edu/admission/wue" target="_blank">Western Undergraduate Exchange (WUE) program.</a></p>
                   </div>
