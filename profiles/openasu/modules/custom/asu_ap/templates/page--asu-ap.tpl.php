@@ -196,9 +196,9 @@ if (module_exists('metatag')) {
                       $anchor_title = ($campus_count > 1) ? 'Online option is available' : 'Online degree program';
                     }
                     ?>
-                    <a id="online-program" alt="<?php print $anchor_title; ?>" title="<?php print $anchor_title; ?>" href="#asu-ap-online-program">
+                    <a id="online-program" title="<?php print $anchor_title; ?>" href="#asu-ap-online-program">
                       <span class="fa fa-globe"></span>
-                      <span class="asu-ap-program-flag" alt="<?php print $anchor_title; ?>" title="<?php print $anchor_title; ?>">Online Program</span>
+                      <span class="asu-ap-program-flag" title="<?php print $anchor_title; ?>">Online Program</span>
                     </a>
                   </div>
           <?php $special_categories++; ?>
@@ -208,6 +208,7 @@ if (module_exists('metatag')) {
         <?php $new_degree_value = (int) $node_info['field_asu_ap_new_program']['#items'][0]['value']; ?>
         <?php if ($new_degree_value === 1): ?>
                   <div class="asu-ap-special-category">
+                    <!--suppress HtmlUnknownAnchorTarget -->
                     <a id="new-program" href="#asu-ap-new-program">
                       <span class="fa fa-retweet"></span>
                       <span class="asu-ap-program-flag" title="What does this mean?">New Program</span>
