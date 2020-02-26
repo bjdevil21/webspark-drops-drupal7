@@ -187,8 +187,8 @@ if (module_exists('metatag')) {
         <?php endif; ?>
       <?php endif; ?>
       <?php if (isset($node_info['field_asu_ap_online_mm_url']['#items'][0]['url'])): // Displaying 'Concurrent Program' field if true, displaying nothing if false ?>
-        <?php $online_degree_value = $node_info['field_asu_ap_conc_program']['#items'][0]['url']; ?>
-        <?php if ($online_degree_value): ?>
+        <?php $online_program_value = $node_info['field_asu_ap_conc_program']['#items'][0]['url']; ?>
+        <?php if ($online_program_value): ?>
                   <div class="asu-ap-special-category">
                     <?php
                     if (isset($node_info['field_asu_ap_campus']['#items'][0]['value'])) {
