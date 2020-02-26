@@ -163,9 +163,9 @@ if (module_exists('metatag')) {
         <?php $accelerated_degree_value = ($node_info['field_asu_ap_acc_program']['#items'][0]['value']); ?>
         <?php if (isset($accelerated_degree_value)): ?>
                   <div class="asu-ap-special-category">
-                    <a href="#asu-ap-accelerated-degree">
+                    <a id="asu-ap-accelerated-degree" href="#asu-ap-accelerated-degree">
                       <span class="fa fa-location-arrow"></span>
-                      <span class="asu-ap-program-flag" title="test title - accel">Accelerated Program</span>
+                      <span class="asu-ap-program-flag" title="What is an accelerated program?">Accelerated Program</span>
                     </a>
                   </div>
           <?php $special_categories++; ?>
@@ -175,8 +175,10 @@ if (module_exists('metatag')) {
         <?php $concurrent_degree_value = ($node_info['field_asu_ap_conc_program']['#items'][0]['value']); ?>
         <?php if ($concurrent_degree_value == '1'): ?>
                   <div class="asu-ap-special-category">
-                    <span class="fa fa-star"></span>
-                    <span class="asu-ap-program-flag" alt="test alt - concurrent">Concurrent Program</span>
+                    <a id="asu-ap-concurrent-degree" href="#asu-ap-concurrent-degree">
+                      <span class="fa fa-star"></span>
+                      <span class="asu-ap-program-flag" alt="What is a concurrent program?">Concurrent Program</span>
+                    </a>
                   </div>
           <?php $special_categories++; ?>
         <?php endif; ?>
@@ -185,8 +187,10 @@ if (module_exists('metatag')) {
         <?php $new_degree_value = ($node_info['field_asu_ap_new_program']['#items'][0]['value']); ?>
         <?php if ($new_degree_value == '1'): ?>
                   <div class="asu-ap-special-category">
-                    <span class="fa fa-retweet"></span>
-                    <span class="asu-ap-program-flag">New Program</span>
+                    <a id="asu-ap-new-program" href="#asu-ap-new-program">
+                      <span class="fa fa-retweet"></span>
+                      <span class="asu-ap-program-flag" alt="What does this mean?">New Program</span>
+                    </a>
                   </div>
           <?php $special_categories++; ?>
         <?php endif; ?>
