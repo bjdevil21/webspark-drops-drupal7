@@ -161,7 +161,7 @@ if (module_exists('metatag')) {
         <?php if (isset($accelerated_degree_value)): ?>
                   <div class="asu-ap-special-category">
                     <span class="fa fa-location-arrow"></span>
-                    <span class="asu-ap-program-flag">Accelerated Program</span>
+                    <span class="asu-ap-program-flag" title="test title - accel">Accelerated Program</span>
                   </div>
         <?php endif; ?>
       <?php endif; ?>
@@ -170,7 +170,7 @@ if (module_exists('metatag')) {
         <?php if ($concurrent_degree_value == '1'): ?>
                   <div class="asu-ap-special-category">
                     <span class="fa fa-star"></span>
-                    <span class="asu-ap-program-flag">Concurrent Program</span>
+                    <span class="asu-ap-program-flag" alt="test alt - concurrent">Concurrent Program</span>
                   </div>
         <?php endif; ?>
       <?php endif; ?>
