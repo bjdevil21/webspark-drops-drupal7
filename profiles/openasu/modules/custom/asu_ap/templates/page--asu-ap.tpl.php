@@ -615,7 +615,7 @@ if (module_exists('metatag')) {
   if ($related_programs === TRUE
     && (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])
     XOR isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']))): ?>
-              <div class="col-md-4 col-sm-12 asu-ap-related-programs-solo">
+              <div class="col-md-4 col-sm-12 asu-ap-related-programs asu-ap-related-programs-solo">
     <?php
     print $related_programs_output;
     $related_programs_status = "ok";
@@ -636,7 +636,7 @@ if (module_exists('metatag')) {
     <?php $career_cols = ($careers_half) ? 12 : 6; ?>
     <?php if ($related_programs_rendered !== 'ok'): ?>
           <div class="row">
-            <div class="col-md-12 col-sm-12">
+            <div class="col-md-12 col-sm-12 asu-ap-related-programs">
       <?php
       print $related_programs_output . "\n";
       $related_programs_status = "ok";
