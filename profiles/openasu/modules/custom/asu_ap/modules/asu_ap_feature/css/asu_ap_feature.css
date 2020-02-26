@@ -38,7 +38,7 @@
 }
 .node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category a {
   color: #fff;
-  text-decoration: none;
+  border-bottom: none;
 }
 .node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category > .asu-ap-program-flag {
   margin-left: 0.1em;

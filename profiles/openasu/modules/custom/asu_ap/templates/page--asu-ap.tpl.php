@@ -183,6 +183,24 @@ if (module_exists('metatag')) {
           <?php $special_categories++; ?>
         <?php endif; ?>
       <?php endif; ?>
+      <?php if (isset($node_info['field_asu_ap_conc_program']['#items'][0]['value'])): // Displaying 'Concurrent Program' field if true, displaying nothing if false ?>
+        <?php $concurrent_degree_value = (int) $node_info['field_asu_ap_conc_program']['#items'][0]['value']; ?>
+        <?php if ($concurrent_degree_value === 1): ?>
+                  <div class="asu-ap-special-category">
+                    <a id="online-program" href="#asu-ap-online-program">
+                      <span class="fa fa-star"></span>
+          <?php
+          if (isset($node_info['field_asu_ap_campus']['#items'][0]['value']))) {
+            $campus_count = count($node_info['field_asu_ap_campus']['#items']);
+            if $
+          }
+          ?>
+                      <span class="asu-ap-program-flag" alt="What is a concurrent program?">Concurrent Program</span>
+                    </a>
+                  </div>
+          <?php $special_categories++; ?>
+        <?php endif; ?>
+      <?php endif; ?>
       <?php if (isset($node_info['field_asu_ap_new_program']['#items'][0]['value'])): // Displaying 'New Program' field if true, displaying nothing if false ?>
         <?php $new_degree_value = (int) $node_info['field_asu_ap_new_program']['#items'][0]['value']; ?>
         <?php if ($new_degree_value === 1): ?>
@@ -704,7 +722,7 @@ if (module_exists('metatag')) {
         <div class="column col-md-12">
     <?php if ($accelerated_degree_value): ?>
                 <div id="asu-ap-accelerated-degree">
-                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Accelerated Programs?<span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
+                  <div class="programs_term ds_closed" tabindex="0" role="link">What are Accelerated Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_accelerate">
                     <p>ASU students may accelerate their studies by earning a bachelor’s and a master’s degree in as little as five years (for some programs) or by earning a bachelor’s degree in 2.5 or 3 years.</p>
                     <p>Accelerated bachelor's and master's degree programs are designed for high-achieving undergraduate students who want the opportunity to combine undergraduate coursework with graduate coursework to accelerate completion of their master’s degree. These programs, featuring the same high-quality curriculum taught by ASU's world-renowned faculty, allow students to obtain both a bachelor's and a master's degree in as little as five years.</p>
