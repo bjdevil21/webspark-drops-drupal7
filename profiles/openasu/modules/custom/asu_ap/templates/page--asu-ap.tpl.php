@@ -318,7 +318,9 @@ if (module_exists('metatag')) {
           </div>
         <?php if ($ds_video_cols === 6): // Is there a DS URL-based video ?>
             <div class="col-md-<?php print $ds_video_cols ?>">
-            <?php print render($node_info['field_asu_ap_url_4']); ?>
+              <h1>Video Before</h1>
+            AAA<?php print render($node_info['field_asu_ap_url_4']); ?>BBB
+              <h1>Video After</h1>
             </div>
         <?php endif; ?>
         </div>
