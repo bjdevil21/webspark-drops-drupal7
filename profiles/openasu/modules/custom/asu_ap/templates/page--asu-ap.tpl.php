@@ -288,9 +288,7 @@ if (module_exists('metatag')) {
                 <div class="row row-yes-sub row-ds-marketing-video-text">
       <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): // @TODO toggle visibility in config ?>
                     <div class="col-md-<?php print $ds_video_cols; ?>">
-                      <h1>Video Before</h1>
-        <?php print render($node_info['field_asu_ap_market_text']); ?>
-                      <h1>Video After</h1>
+        <?php print render($node_info['field_asu_ap_market_text']); ?>>
                     </div>
       <?php endif; ?>
       <?php if ($ds_video_cols === 6): // SHOW Degree Search URL-based video @TODO toggle visibility in a config form ?>
@@ -320,9 +318,7 @@ if (module_exists('metatag')) {
           </div>
         <?php if ($ds_video_cols === 6): // Is there a DS URL-based video ?>
             <div class="col-md-<?php print $ds_video_cols ?>">
-              <h1>Video Before</h1>
-            AAA<?php print render($node_info['field_asu_ap_url_4']); ?>BBB
-              <h1>Video After</h1>
+          <?php print render($node_info['field_asu_ap_url_4']); ?>
             </div>
         <?php endif; ?>
         </div>
