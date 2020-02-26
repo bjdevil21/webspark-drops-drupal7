@@ -123,8 +123,12 @@ if (module_exists('metatag')) {
   <?php
   $program_type = (string) ($node_info['field_asu_ap_program']['#items'][0]['value']);
   $special_categories = 0; // Degree have special classifications?
-  $wue_program_value = 0;
+  $accelerated_degree_value = 0;
+  $concurrent_degree_value = 0;
+  $online_program_value = '';
+  $new_degree_value = 0;
   $joint_programs_value = 0;
+  $wue_program_value = 0;
   ?>
   <?php if (isset($node_info['field_asu_ap_cert']['#items'][0]['value'])): ?>
     <?php $cert_val = ($node_info['field_asu_ap_cert']['#items'][0]['value']); ?>
@@ -163,7 +167,7 @@ if (module_exists('metatag')) {
                 </h1>
                 <div class="asu-ap-special-categories">
       <?php if (isset($node_info['field_asu_ap_acc_program']['#items'][0]['value'])): // Displaying 'Accelerated Program' field if true, displaying nothing if false  ?>
-        <?php $accelerated_degree_value = $node_info['field_asu_ap_acc_program']['#items'][0]['value']; ?>
+        <?php $accelerated_degree_value = (int) $node_info['field_asu_ap_acc_program']['#items'][0]['value']; ?>
         <?php if (!empty($accelerated_degree_value)): ?>
                   <div class="asu-ap-special-category">
                     <a id="accelerated-degree" href="#asu-ap-accelerated-degree">
@@ -187,7 +191,7 @@ if (module_exists('metatag')) {
         <?php endif; ?>
       <?php endif; ?>
       <?php if (isset($node_info['field_asu_ap_online_mm_url']['#items'][0]['url'])): // Displaying 'Concurrent Program' field if true, displaying nothing if false ?>
-        <?php $online_program_value = $node_info['field_asu_ap_conc_program']['#items'][0]['url']; ?>
+        <?php $online_program_value = $node_info['field_asu_ap_online_mm_url']['#items'][0]['url']; ?>
         <?php if ($online_program_value): ?>
                   <div class="asu-ap-special-category">
                     <?php
@@ -282,7 +286,7 @@ if (module_exists('metatag')) {
             <div id="degree-collapse" class="collapse">
               <div class="container">
                 <div class="row row-yes-sub row-ds-marketing-video-text">
-      <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): // @TODO togle visibility in config ?>
+      <?php if (isset($node_info['field_asu_ap_market_text']['#items'][0]['safe_value'])): // @TODO toggle visibility in config ?>
                     <div class="col-md-<?php print $ds_video_cols; ?>">
         <?php print render($node_info['field_asu_ap_market_text']); ?>
                     </div>
@@ -540,7 +544,7 @@ if (module_exists('metatag')) {
                   <div class="asu-ap-subplans">
   <?php
   if (isset($node_info['field_asu_ap_subplan_url']['#items'])): ?>
-              <div class='asu-ap-sublplans'>
+              <div class='asu-ap-subplans'>
                 <p><b>Subplans</b></p>
     <?php
     foreach ($node_info['field_asu_ap_subplan_url']['#items'] as $sp) {
@@ -734,7 +738,7 @@ if (module_exists('metatag')) {
                   </div>
                 </div>
     <?php endif; ?>
-    <?php if ($concurrent_degree_value): ?>
+    <?php if ($concurrent_degree_value === 1): ?>
                 <div id="asu-ap-concurrent-degree">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What are Concurrent Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_concurrent">
@@ -742,7 +746,7 @@ if (module_exists('metatag')) {
                   </div>
                 </div>
     <?php endif; ?>
-    <?php if ($joint_programs_value): ?>
+    <?php if ($joint_programs_value !== 0): ?>
                 <div id="asu-ap-joint-programs">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What are Joint Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_joint">
@@ -750,7 +754,7 @@ if (module_exists('metatag')) {
                   </div>
                 </div>
     <?php endif; ?>
-    <?php if ($new_degree_value): ?>
+    <?php if ($new_degree_value !== 0): ?>
                 <div id="asu-ap-new-degree">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What constitutes a New Program? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_new">
@@ -758,7 +762,7 @@ if (module_exists('metatag')) {
                   </div>
                 </div>
     <?php endif; ?>
-    <?php if ($online_program_value): ?>
+    <?php if (!empty($online_program_value)): ?>
                 <div id="asu-ap-online-program">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What are Online Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_online">
@@ -766,7 +770,7 @@ if (module_exists('metatag')) {
                   </div>
                 </div>
     <?php endif; ?>
-    <?php if ($wue_program_value): ?>
+    <?php if ($wue_program_value !== 0): ?>
                 <div id="asu-ap-wue-program">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What is the Western Undergraduate Exchange (WUE)? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display">
