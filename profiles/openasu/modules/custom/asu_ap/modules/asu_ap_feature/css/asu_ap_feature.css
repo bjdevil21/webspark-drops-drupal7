@@ -158,16 +158,20 @@
 .text-green {
   color: #006838;
 }
-
 .node-type-asu-ap .asu-degrees-example-careers-small {
   font-size: 75%;
   margin: 0 0 1.5em 0 !important;
 }
-
 .node-type-asu-ap #main-wrapper .asu-ap-page-buttons {
   margin: 1em 0 1em;
 }
-
+/**
+ * Degree QA
+ */
+.node-type-asu-ap .container-asu-ap-q-a h4 {
+  margin-bottom: 0.25em;
+  font-style: italic;
+}
 /**
  ASU AP admin CSS -------------------------------------
  */
