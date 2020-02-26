@@ -97,6 +97,10 @@
 .node-type-asu-ap #main-wrapper .field-name-field-asu-ap-example-careers p {
   margin: 0;
 }
+.node-type-asu-ap .ds-video-shell {
+  padding: 1em;
+  background-color: #f1f1f1;
+}
 
 .node-type-asu-ap #main-wrapper .asu-ap-grey-section {
   background: #f1f1f1;
