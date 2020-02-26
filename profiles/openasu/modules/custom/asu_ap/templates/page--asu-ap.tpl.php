@@ -634,7 +634,7 @@ if (module_exists('metatag')) {
 
   <?php if ($program_type === 'undergrad'): ?>
     <?php $career_cols = ($careers_half) ? 12 : 6; ?>
-    <?php if ($related_programs_rendered !== 'ok'): ?>
+    <?php if ($related_programs_status !== 'ok'): ?>
           <div class="row">
             <div class="col-md-12 col-sm-12 asu-ap-related-programs">
       <?php
