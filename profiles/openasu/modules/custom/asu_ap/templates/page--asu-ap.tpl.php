@@ -119,9 +119,12 @@ if (module_exists('metatag')) {
     </div>
 
 <?php if (isset($node_info['field_asu_ap_program']['#items'][0]['value'])): ?>
-	<?php
+
+  <?php
   $program_type = (string) ($node_info['field_asu_ap_program']['#items'][0]['value']);
   $special_categories = 0; // Degree have special classifications?
+  $wue_program_value = 0;
+  $joint_programs_value = 0;
   ?>
   <?php if (isset($node_info['field_asu_ap_cert']['#items'][0]['value'])): ?>
     <?php $cert_val = ($node_info['field_asu_ap_cert']['#items'][0]['value']); ?>
@@ -177,25 +180,25 @@ if (module_exists('metatag')) {
                   <div class="asu-ap-special-category">
                     <a id="concurrent-degree" href="#asu-ap-concurrent-degree">
                       <span class="fa fa-star"></span>
-                      <span class="asu-ap-program-flag" alt="What is a concurrent program?">Concurrent Program</span>
+                      <span class="asu-ap-program-flag" title="What is a concurrent program?">Concurrent Program</span>
                     </a>
                   </div>
           <?php $special_categories++; ?>
         <?php endif; ?>
       <?php endif; ?>
-      <?php if (isset($node_info['field_asu_ap_conc_program']['#items'][0]['value'])): // Displaying 'Concurrent Program' field if true, displaying nothing if false ?>
-        <?php $concurrent_degree_value = (int) $node_info['field_asu_ap_conc_program']['#items'][0]['value']; ?>
-        <?php if ($concurrent_degree_value === 1): ?>
+      <?php if (isset($node_info['field_asu_ap_online_mm_url']['#items'][0]['url'])): // Displaying 'Concurrent Program' field if true, displaying nothing if false ?>
+        <?php $online_degree_value = $node_info['field_asu_ap_conc_program']['#items'][0]['url']; ?>
+        <?php if ($online_degree_value): ?>
                   <div class="asu-ap-special-category">
-                    <a id="online-program" href="#asu-ap-online-program">
-                      <span class="fa fa-star"></span>
-          <?php
-          if (isset($node_info['field_asu_ap_campus']['#items'][0]['value']))) {
-            $campus_count = count($node_info['field_asu_ap_campus']['#items']);
-            if $
-          }
-          ?>
-                      <span class="asu-ap-program-flag" alt="What is a concurrent program?">Concurrent Program</span>
+                    <?php
+                    if (isset($node_info['field_asu_ap_campus']['#items'][0]['value'])) {
+                      $campus_count = count($node_info['field_asu_ap_campus']['#items']);
+                      $anchor_title = ($campus_count > 1) ? 'Online option is available' : 'Online degree program';
+                    }
+                    ?>
+                    <a id="online-program" alt="<?php print $anchor_title; ?>" title="<?php print $anchor_title; ?>" href="#asu-ap-online-program">
+                      <span class="fa fa-globe"></span>
+                      <span class="asu-ap-program-flag" alt="<?php print $anchor_title; ?>" title="<?php print $anchor_title; ?>">Online Program</span>
                     </a>
                   </div>
           <?php $special_categories++; ?>
@@ -207,7 +210,7 @@ if (module_exists('metatag')) {
                   <div class="asu-ap-special-category">
                     <a id="new-program" href="#asu-ap-new-program">
                       <span class="fa fa-retweet"></span>
-                      <span class="asu-ap-program-flag" alt="What does this mean?">New Program</span>
+                      <span class="asu-ap-program-flag" title="What does this mean?">New Program</span>
                     </a>
                   </div>
           <?php $special_categories++; ?>
