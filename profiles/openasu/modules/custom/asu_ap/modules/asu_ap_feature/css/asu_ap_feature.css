@@ -30,12 +30,15 @@
   font-size: 1.3125em;
 }
 .node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category {
-  color: #fff;
   display: block;
   float: left;
   font-weight: normal;
   vertical-align: middle;
   margin-right: 1.2em;
+}
+.node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category a {
+  color: #fff;
+  text-decoration: none;
 }
 .node-type-asu-ap .asu-ap-special-categories > .asu-ap-special-category > .asu-ap-program-flag {
   margin-left: 0.1em;
