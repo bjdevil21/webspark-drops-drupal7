@@ -732,9 +732,17 @@ if (module_exists('metatag')) {
                 <div id="asu-ap-accelerated-degree">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What are Accelerated Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_accelerate">
-                    <p>ASU students may accelerate their studies by earning a bachelor’s and a master’s degree in as little as five years (for some programs) or by earning a bachelor’s degree in 2.5 or 3 years.</p>
-                    <p>Accelerated bachelor's and master's degree programs are designed for high-achieving undergraduate students who want the opportunity to combine undergraduate coursework with graduate coursework to accelerate completion of their master’s degree. These programs, featuring the same high-quality curriculum taught by ASU's world-renowned faculty, allow students to obtain both a bachelor's and a master's degree in as little as five years.</p>
-                    <p>Accelerated bachelor’s degree programs allow students to choose either a 2.5- or a 3-year path while participating in the same high-quality educational experience of a 4-year option. Students can opt to fast-track their studies after acceptance into a participating program by connecting with their academic advisor.</p>
+                    <p>ASU students may accelerate their studies by earning a bachelor’s and a master’s degree
+                      in as little as five years (for some programs) or by earning a bachelor’s degree in 2.5 or 3 years.</p>
+                    <p>Accelerated bachelor's and master's degree programs are designed for high-achieving
+                      undergraduate students who want the opportunity to combine undergraduate coursework with
+                      graduate coursework to accelerate completion of their master’s degree. These programs, featuring the
+                      same high-quality curriculum taught by ASU's world-renowned faculty, allow students to obtain both
+                      a bachelor's and a master's degree in as little as five years.</p>
+                    <p>Accelerated bachelor’s degree programs allow students to choose either a 2.5- or a
+                      3-year path while participating in the same high-quality educational experience of a 4-year option.
+                      Students can opt to fast-track their studies after acceptance into a participating program by
+                      connecting with their academic advisor.</p>
                   </div>
                 </div>
     <?php endif; ?>
@@ -742,7 +750,12 @@ if (module_exists('metatag')) {
                 <div id="asu-ap-concurrent-degree">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What are Concurrent Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_concurrent">
-                    Students pursuing concurrent degrees earn two distinct degrees and receive two diplomas. ASU offers students two ways to earn concurrent degrees: by choosing a predetermined combination or creating their own combination.  Predetermined combinations have a single admissions application and one easy to follow major map.  To add a concurrent degree to your existing degree, work with your academic advisor. Either way, concurrent degrees allow students to pursue their own personal or professional interests.
+                    <p>Students pursuing concurrent degrees earn two distinct degrees and receive two diplomas.
+                      ASU offers students two ways to earn concurrent degrees: by choosing a predetermined combination
+                      or creating their own combination.  Predetermined combinations have a single admissions
+                      application and one easy to follow major map.  To add a concurrent degree to your existing
+                      degree, work with your academic advisor. Either way, concurrent degrees allow students to
+                      pursue their own personal or professional interests.</p>
                   </div>
                 </div>
     <?php endif; ?>
@@ -750,7 +763,9 @@ if (module_exists('metatag')) {
                 <div id="asu-ap-joint-programs">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What are Joint Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_joint">
-                    <p>Joint programs, or jointly conferred degrees, are offered by more than one college and provide opportunities for students to take advantage of the academic strengths of two academic units.  Upon graduation, students are awarded one degree and one diploma conferred by two colleges. </p>
+                    <p>Joint programs, or jointly conferred degrees, are offered by more than one college and provide
+                      opportunities for students to take advantage of the academic strengths of two academic units.
+                      Upon graduation, students are awarded one degree and one diploma conferred by two colleges. </p>
                   </div>
                 </div>
     <?php endif; ?>
@@ -766,7 +781,9 @@ if (module_exists('metatag')) {
                 <div id="asu-ap-online-program">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What are Online Programs? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display" id="programs_term_online">
-                    <p><a href="http://asuonline.asu.edu/" target="_blank">ASU Online</a> offers programs in an entirely online format with multiple enrollment sessions throughout the year. See <a href="http://asuonline.asu.edu/" target="_blank">http://asuonline.asu.edu/</a> for more information.</p>
+                    <p><a href="http://asuonline.asu.edu/" target="_blank">ASU Online</a> offers programs in an entirely
+                      online format with multiple enrollment sessions throughout the year.
+                      See <a href="http://asuonline.asu.edu/" target="_blank">http://asuonline.asu.edu/</a> for more information.</p>
                   </div>
                 </div>
     <?php endif; ?>
@@ -774,7 +791,10 @@ if (module_exists('metatag')) {
                 <div id="asu-ap-wue-program">
                   <div class="programs_term ds_closed" tabindex="0" role="link">What is the Western Undergraduate Exchange (WUE)? <span class="fa fa-caret-right fa-lg" aria-hidden="true"></span></div>
                   <div class="programs_term_content no-display">
-                    <p>The Western Undergraduate Exchange (WUE) is a program in which residents of western states (other than Arizona) may be eligible for reduced nonresident tuition. See more information and eligibility requirements on the <a href="http://students.asu.edu/admission/wue" target="_blank">Western Undergraduate Exchange (WUE) program.</a></p>
+                    <p>The Western Undergraduate Exchange (WUE) is a program in which residents of western states
+                      (other than Arizona) may be eligible for reduced nonresident tuition. See more information
+                      and eligibility requirements on the <a href="http://students.asu.edu/admission/wue" target="_blank">Western Undergraduate
+                        Exchange (WUE) program.</a></p>
                   </div>
                 </div>
     <?php endif; ?>
