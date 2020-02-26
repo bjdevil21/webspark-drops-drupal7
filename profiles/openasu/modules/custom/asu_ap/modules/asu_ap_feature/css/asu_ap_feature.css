@@ -212,6 +212,10 @@ a.ttCourse {
   border-bottom: none;
 }
 
+.node-type-asu-ap .asu-ap-related-programs .pane-menu-tree {
+  margin-bottom: 1em;
+}
+
 .node-type-asu-ap .asu-ap-related-programs-solo {
   float: right;
   margin: 1em 0 1em 1em;
@@ -250,9 +254,6 @@ a.ttCourse {
   .node-type-asu-ap #plan-of-study .asu-ap-related-programs-solo {
     margin: 0 0 2em 0;
     float: none;
-  }
-  .node-type-asu-ap .asu-ap-related-programs .pane-menu-tree {
-    margin-bottom: 1em;
   }
 }
 
