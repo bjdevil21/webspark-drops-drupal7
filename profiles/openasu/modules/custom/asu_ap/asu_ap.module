@@ -24,7 +24,7 @@ function asu_ap_menu() {
     'page arguments' => array('asu_ap_admin_settings'),
     'access arguments' => array('administer ap page output'),
     'options' => array('attributes' => array('class' => 'title')),
-    'file' => 'includes/asu_rfi.admin.inc'
+    'file' => 'includes/asu_ap.admin.inc'
   );
   return $items;
 }
