@@ -19,8 +19,7 @@ function asu_ap_admin_settings() {
   $form['ds']['video_handling'] = array(
     '#type' => 'select',
     '#title' => 'Display Degree Search marketing video',
-    '#description' => 'This only affect degree videos that may have pulled in from Degree Search."
-     . " It has no bearing on other video URLs entered in degree edit pages.',
+    '#description' => 'This only affects videos that have pulled in from the Degree Search feed. It has no bearing on other videos manually added in this site.',
     '#options' => array(
       'marketing_top' => 'Displayed',
       'none' => 'Hidden',
