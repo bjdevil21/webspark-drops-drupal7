@@ -27,6 +27,7 @@ function asu_ap_admin_settings() {
     ),
     '#default_value' => variable_get('asu_ap_ds_marketing_video', 'marketing_top'),
   );
+  $form['#submit'][] = 'asu_ap_admin_settings_submit';
   return system_settings_form($form);
 }
 
