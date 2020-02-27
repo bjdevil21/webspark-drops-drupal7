@@ -258,7 +258,8 @@ if (module_exists('metatag')) {
           <!-- START degree content  #################################### -->
         <div class="container container-top">
   <?php // Top white section - Marketing + body content MB
-  if (isset($node_info['field_asu_ap_url_4']['#items'][0]['video_url'])) {
+  if (isset($node_info['field_asu_ap_url_4']['#items'][0]['video_url'])
+    && variable_get('asu_ap_ds_marketing_video') === 'marketing_top') {
     $ds_marketing_text_cols = array(
       'text' => 7,
       'video' => 5);
