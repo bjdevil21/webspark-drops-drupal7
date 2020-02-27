@@ -54,6 +54,9 @@ function asu_ap_feature_update_7000(&$sandbox) {
 function asu_ap_feature_update_7001(&$sandbox) {
   features_revert_module('asu_ap_feature');
   feeds_cache_clear(); // Reset Feeds (ctools) cache of forms
+  flogger('update', "ASU AP module feature was reverted."
+  . " Please review any existing ASU AP degree pages you may have.",
+    array(), WATCHDOG_INFO, TRUE, TRUE);
 }
 
 /**
