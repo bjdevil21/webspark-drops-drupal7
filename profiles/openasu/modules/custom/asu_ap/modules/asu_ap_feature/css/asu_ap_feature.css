@@ -176,6 +176,8 @@
  */
 .node-type-asu-ap .region-prefooter .block-asu-rfi {
   margin-bottom: 1em;
+  padding-left: 0;
+  padding-right: 0;
 }
 /**
  * Degree QA
