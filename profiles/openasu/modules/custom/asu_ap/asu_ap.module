@@ -19,7 +19,7 @@ function asu_ap_menu() {
   );
   $items['admin/config/asu_ap/settings'] = array(
     'title' => 'AP (Degrees) Settings',
-    'description' => t('Administer the ASU Academic Programs and submission settings.'),
+    'description' => t('Administer the ASU Academic Programs degree page output.'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('asu_ap_admin_settings'),
     'access arguments' => array('administer ap page output'),
