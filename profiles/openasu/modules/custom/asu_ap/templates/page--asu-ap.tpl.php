@@ -516,6 +516,9 @@ if (module_exists('metatag')) {
     $major_map_urls = array();
     if (isset($node_info['field_asu_ap_major_map_url'])) {
       print '<h2>Required Courses</h2>';
+      print "<p>Every course listed in a major map is required to graduate. A major map outlines
+      a major's critical requirements, courses, and optimal course sequence and aids students in
+      remaining on track to graduation.</p>";
       $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
       if (valid_url($major_map_url, TRUE)) {
         if (isset($node_info['field_asu_ap_major_map_year'])) {
