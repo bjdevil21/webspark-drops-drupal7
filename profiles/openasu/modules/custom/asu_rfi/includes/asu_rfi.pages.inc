@@ -21,6 +21,7 @@ header("Pragma: no-cache");
  * INIT configs
  */
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi.form_elements');
+module_load_include('inc', 'asu_rfi', 'includes/asu_rfi.form_ajax');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_email');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_to_salesforce');
 
