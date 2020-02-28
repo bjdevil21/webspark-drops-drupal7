@@ -98,11 +98,12 @@ function asu_rfi_form_data($form, &$form_state) {
       ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '' ;
     dpm($grad_dates, __FUNCTION__ . ' - grad_dates');
     dpm($academic_plan, 'academic_plan');
-    dpm($degree_program);
+    dpm($degree_program[LANGUAGE_NONE][0]['value']);
     if (!empty($grad_dates)
-      && !empty($academic_plan)
-      && $degree_program === 'graduate') {
-      $start_dates = _asu_rfi_get_sem_dates_dynamic($academic_plan, $grad_dates);
+      && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
+      && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
+      $ap = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
+      $start_dates = _asu_rfi_get_sem_dates_dynamic($ap, $grad_dates);
       dpm('dynamic');
     } else {
       $start_dates = _asu_rfi_get_sem_dates_static();
