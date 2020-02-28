@@ -97,6 +97,7 @@ function asu_rfi_form_data($form, &$form_state) {
     $grad_dates = (isset($node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value']))
       ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '' ;
     dpm($grad_dates, __FUNCTION__ . ' - grad_dates');
+    dpm($academic_plan, 'academic_plan');
     if (!empty($grad_dates)
       && !empty($academic_plan)
       && $degree_program === 'graduate') {
