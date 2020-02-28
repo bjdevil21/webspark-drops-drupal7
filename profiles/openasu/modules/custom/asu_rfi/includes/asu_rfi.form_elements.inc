@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 /**
  * Generates a Form API element for a single field from pre-determined list of
@@ -66,6 +66,15 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#title' => t('My campus of choice is'),
         '#options' => array(),
         '#attributes' => array('class' => array('reqinfo_campus', 'chosen-disable')),
+        // For AJAX updates of fields
+        '#prefix' => '<div id="asu-ap-campus-ajax-wrapper">',
+        '#suffix' => '</div>',
+        '#ajax' => array(
+          'callback' => '_asu_rfi_campus_ajax_callback',
+          'wrapper' => 'asu-ap-campus-ajax-wrapper',
+          'method' => 'replace',
+          'effect' => 'fade',
+        ),
       );
       break;
     case 'student_type':
@@ -86,7 +95,10 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#type' => 'select',
         '#title' => t('My start date'),
         '#options' => $value,
-        '#attributes' => array('class' => array('chosen-disable'))
+        '#attributes' => array('class' => array('chosen-disable')),
+        // For AJAX updates
+        '#prefix' => '<div id="asu-rfi-start-date-ajax-wrapper">',
+        '#suffix' => '</div>',
       );
       break;
     case 'first_name':
@@ -414,4 +426,35 @@ function _asu_rfi_form_elements_multiple_keys($name, $sub_name, $session = FALSE
       return FALSE;
       break;
   }
+}
+
+
+/**
+ * Change of Major request form AJAX callback used to update specific AJAX fields listed below.
+ *
+ * @param $form
+ * @param $form_state
+ * @return array
+ */
+function _asu_rfi_campus_ajax_callback($form, &$form_state) {
+  $commands = array(
+    ajax_command_replace("#asu-rfi-start-date-ajax-wrapper", render($form['my_interests']['start_date'])),
+/*
+    ajax_command_replace("#asu-comrf-requirements-check-ajax-wrapper", render($form['asu_comrf_requirements_check'])),
+    ajax_command_replace("#asu-comrf-double-check-ajax-wrapper", render($form['asu_comrf_double_check'])),
+    ajax_command_replace("#asu-comrf-contact-phone-number-ajax-wrapper", render($form['asu_comrf_contact_phone_number'])),
+    ajax_command_replace("#asu-comrf-major-change-source-ajax-wrapper", render($form['asu_comrf_major_change_source'])),
+    ajax_command_replace("#asu-comrf-why-change-ajax-wrapper", render($form['asu_comrf_why_change'])),
+    ajax_command_replace("#asu-comrf-what-if-audit-text-ajax-wrapper", render($form['asu_comrf_what_if_audit_text'])),
+    ajax_command_replace("#asu-comrf-form-footer-text-ajax-wrapper", render($form['asu_comrf_form_footer_text'])),
+    ajax_command_replace("#asu-comrf-submit-ajax-wrapper", render($form['asu_comrf_submit'])),
+    ajax_command_replace("#asu-comrf-wpc-com-request-submit-ajax-wrapper", render($form['asu_comrf_wpc_com_request_submit'])),
+    ajax_command_replace("#asu-comrf-new-subplan-choice-ajax-wrapper", render($form['asu_comrf_new_subplan_choice'])),
+    ajax_command_replace("#asu-comrf-new-major-choice-ajax-wrapper", render($form['asu_comrf_new_major_choice'])),
+*/
+  );
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands,
+  );
 }
