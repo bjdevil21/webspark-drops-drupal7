@@ -37,8 +37,8 @@ define('ASU_RFI_EXPIRED_SUBMIT', variable_get('asu_rfi_expired_submit', 'all'));
 // require_once load at all times for AJAX calls (these should probably all be in .module,
 // if not for the size of the file)
 require_once 'includes/asu_rfi.pages.inc';
-require_once 'includes/asu_rfi.form_elements';
-require_once 'includes/asu_rfi.form_ajax';
+require_once 'includes/asu_rfi.form_elements.inc';
+require_once 'includes/asu_rfi.form_ajax.inc';
 
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi.online_logic');
 module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_email');
