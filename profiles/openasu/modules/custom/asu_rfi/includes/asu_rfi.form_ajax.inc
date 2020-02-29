@@ -8,6 +8,7 @@
  * @return array
  */
 function asu_rfi_campus_ajax_callback($form, &$form_state) {
+  dpm($form_state['values'], __FUNCTION__ . ' values');
   watchdog('asu_rfi', print_r($form['my_interests']['start_date']), array(), WATCHDOG_DEBUG);
   watchdog('asu_rfi', print_r($form_state['values']), array(), WATCHDOG_DEBUG);
   $commands = array(
