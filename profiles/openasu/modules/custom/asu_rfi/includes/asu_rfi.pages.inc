@@ -185,12 +185,15 @@ function asu_rfi_form_data($form, &$form_state) {
 
     // AJAX update for start dates
     if (!empty($form_state['values']['campus'])) {
+      dpm(__FUNCTION__ . ' form_state values campus is SET');
       $start_dates = _asu_rfi_get_sem_dates_dynamic(
         $form_state['values']['acad_plan'],
         $degree_assets['grad_dates'],
         $form_state['values']['campus']);
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', TRUE, $start_dates); // Addon(s)
       $form['my_interest']['start_date']['#required'] = TRUE;
+    } else {
+      dpm(__FUNCTION__ . ' form_state values campus is NOT SET');
     }
 
     return $form;
