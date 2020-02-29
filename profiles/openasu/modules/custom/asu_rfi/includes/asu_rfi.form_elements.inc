@@ -68,7 +68,7 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#options' => array(),
         '#attributes' => array('class' => array('reqinfo_campus', 'chosen-disable')),
         // For AJAX updates of fields
-        '#prefix' => '<div id="asu-ap-campus-ajax-wrapper">',
+        '#prefix' => '<div id="asu-rfi-campus-ajax-wrapper">',
         '#suffix' => '</div>',
         '#ajax' => array(
           'callback' => '_asu_rfi_campus_ajax_callback',
