@@ -450,7 +450,6 @@ function asu_rfi_get_block_instance_settings($multi_id = NULL, $endpoint_build =
 
   // Get multi_id value from array (no longer a string in Multiblock v1.1 -> 1.6)
   $multi_id = isset($multi_id['multiblock_delta']['#value']) ? '_' . $multi_id['multiblock_delta']['#value'] : NULL;
-
   $block_instance_settings = array();
   if (!$endpoint_build) {
     $block_instance_settings['programs'] = variable_get('asu_rfi_form_block_programs' . $multi_id, array());
