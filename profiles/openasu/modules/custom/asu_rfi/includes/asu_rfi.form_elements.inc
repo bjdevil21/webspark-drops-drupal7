@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpUnused */
+<?php /** @noinspection PhpUnusedLocalVariableInspection */
+/** @noinspection PhpUnused */
 
 /**
  * Generates a Form API element for a single field from pre-determined list of
@@ -184,7 +185,7 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
       // DEFAULT
       break;
     case 'zipcode':
-      $zipcode = array( // Addon
+      $zipcode = array( // Add-on
         '#type' => 'textfield',
         '#title' => t('Postal code'),
         '#size' => 30,
@@ -326,6 +327,7 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
     }
     return ${$name};
   }
+  return FALSE;
 }
 
 
@@ -426,4 +428,5 @@ function _asu_rfi_form_elements_multiple_keys($name, $sub_name, $session = FALSE
       return FALSE;
       break;
   }
+  return FALSE;
 }

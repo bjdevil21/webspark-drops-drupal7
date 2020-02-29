@@ -1,5 +1,6 @@
 <?php
 
+module_load_include('inc', 'asu_rfi', 'includes/asu_rfi.pages');
 
 /**
  * Change of Major request form AJAX callback used to update specific AJAX fields listed below.

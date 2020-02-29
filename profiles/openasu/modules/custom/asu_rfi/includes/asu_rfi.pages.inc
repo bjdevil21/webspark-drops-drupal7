@@ -1813,7 +1813,7 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     }
   }
 
-  dpm($all_dates, 'all_dates');
+  //dpm($all_dates, 'all_dates');
 
   $valid_semester_dates = array();
   // Filter by campus @TODO
@@ -1829,15 +1829,15 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     // Check dates against static list
     $final_dates = _asu_rfi_get_sem_dates_static(TRUE);
 
-    dpm($final_dates, 'final_dates - before');
-    dpm($valid_semester_dates, 'valid_semester_dates');
+    //dpm($final_dates, 'final_dates - before');
+    //dpm($valid_semester_dates, 'valid_semester_dates');
 
     foreach ($final_dates as $code => $date) {
       if (!in_array($date, $valid_semester_dates)) {
         unset($final_dates[$code]);
       }
     }
-    dpm($final_dates, 'final_dates - after');
+    //dpm($final_dates, 'final_dates - after');
   }
   else {
     return FALSE;
