@@ -71,7 +71,7 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#prefix' => '<div id="asu-rfi-campus-ajax-wrapper">',
         '#suffix' => '</div>',
         '#ajax' => array(
-          'callback' => '_asu_rfi_campus_ajax_callback',
+          'callback' => 'asu_rfi_campus_ajax_callback',
           'wrapper' => 'asu-rfi-campus-ajax-wrapper',
           'method' => 'replace',
           'effect' => 'fade',
