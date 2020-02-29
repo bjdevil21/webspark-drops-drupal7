@@ -18,14 +18,6 @@ header("Cache-Control: post-check=0, pre-check=0", FALSE);
 header("Pragma: no-cache");
 
 /**
- * INIT configs
- */
-module_load_include('inc', 'asu_rfi', 'includes/asu_rfi.form_elements');
-module_load_include('inc', 'asu_rfi', 'includes/asu_rfi.form_ajax');
-module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_email');
-module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_to_salesforce');
-
-/**
  * Implementation of hook_form().
  * @param $delta
  * @return array|mixed
@@ -529,6 +521,9 @@ function asu_rfi_second_form_validate($form, &$form_state) {
  * @throws \Exception
  */
 function asu_rfi_second_form_submit($form, &$form_state) {
+
+  module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_to_middleware');
+
   unset($_SESSION['rfi_data']);
 
   $zipcode = check_plain($form_state['values']['zipcode']);
@@ -1108,6 +1103,9 @@ function asu_rfi_long_form_data_validate($form, &$form_state) {
  * @noinspection PhpUnusedLocalVariableInspection
  */
 function asu_rfi_long_form_data_submit($form, &$form_state) {
+
+  module_load_include('inc', 'asu_rfi', 'includes/asu_rfi_post_to_middleware');
+
   global $user;
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 
