@@ -185,10 +185,12 @@ function asu_rfi_form_data($form, &$form_state) {
 
     // AJAX update for start dates
     if (!empty($form_state['values']['campus'])) {
-      $form['my_interest']['start_date'] = _asu_rfi_get_sem_dates_dynamic(
+      $start_dates = _asu_rfi_get_sem_dates_dynamic(
         $form_state['values']['acad_plan'],
         $degree_assets['grad_dates'],
         $form_state['values']['campus']);
+      $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', TRUE, $start_dates); // Addon(s)
+      $form['my_interest']['start_date']['#required'] = TRUE;
     }
 
     return $form;
@@ -1792,9 +1794,7 @@ function _asu_rfi_get_sem_dates_static($summer = FALSE) {
  * @return mixed
  */
 function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
-  if (!empty($campus)) {
-    dpm('called for ' . $campus . ' campus');
-  }
+  dpm(__FUNCTION__ . ' called for --' . $campus . '-- campus');
   $dates = unserialize($grad_dates);
   if ($dates === FALSE) { // Corrupted or missing serialized array
     flogger('asu_rfi', 'Dynamically generated start terms list for the RFI form from'
@@ -1823,10 +1823,8 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     }
   }
 
-  //dpm($all_dates, 'all_dates');
-
   $valid_semester_dates = array();
-  // Filter by campus @TODO
+  // Filter by campus
   if (count($all_dates)) {
     foreach ($all_dates as $code => $value) {
       if ($campus !== '') {
