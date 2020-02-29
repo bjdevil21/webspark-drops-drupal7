@@ -10,7 +10,8 @@
 function _asu_rfi_campus_ajax_callback($form, &$form_state) {
   $commands = array(
     dpm($form, __FUNCTION__ . ' form'),
-    ajax_command_replace("#asu-rfi-start-date-ajax-wrapper", render($form['my_interests']['start_date'])),
+    ajax_command_replace("#asu-rfi-start-date-ajax-wrapper", render($form['my_interests']['start_date']),
+    ajax_command_replace("#asu-rfi-start-date-ajax-wrapper", "<h1>HEY</h1>")),
   );
   return array(
     '#type' => 'ajax',
