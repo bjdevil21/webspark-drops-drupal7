@@ -182,6 +182,15 @@ function asu_rfi_form_data($form, &$form_state) {
       '#submit' => array('asu_rfi_form_data_submit'),
       '#value' => t('Next'),
     );
+
+    // AJAX update for start dates
+    if (!empty($form_state['values']['campus'])) {
+      $form['my_interest']['start_date'] = _asu_rfi_get_sem_dates_dynamic(
+        $form_state['values']['acad_plan'],
+        $degree_assets['grad_dates'],
+        $form_state['values']['campus']);
+    }
+
     return $form;
   }
 }
@@ -1778,16 +1787,19 @@ function _asu_rfi_get_sem_dates_static($summer = FALSE) {
  * </member>
  *
  * @param string $acad_plan - Academic plan of graduate degree
- * @param string $grad_dates - Serialized array from Graduate All Apply Datest (feed: graduateAllApplyDates) field.
+ * @param string $grad_dates - Serialized array from Graduate All Apply Dates (feed: graduateAllApplyDates) field.
  * @param string $campus - Filter by campus string (for when form is updated and called by AJAX)
  * @return mixed
  */
 function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
+  if (!empty($campus)) {
+    dpm('called for ' . $campus . ' campus');
+  }
   $dates = unserialize($grad_dates);
   if ($dates === FALSE) { // Corrupted or missing serialized array
     flogger('asu_rfi', 'Dynamically generated start terms list for the RFI form from'
       . ' @acad_plan not working. Returning static dates list.', array('@acad_plan' => $acad_plan), WATCHDOG_NOTICE, TRUE);
-    //return _asu_rfi_get_sem_dates_static();
+    return _asu_rfi_get_sem_dates_static();
   }
   // reformat data to use
   $all_dates = array();
