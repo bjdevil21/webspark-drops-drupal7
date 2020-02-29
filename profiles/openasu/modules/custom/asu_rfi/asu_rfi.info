@@ -16,5 +16,7 @@ version = 7.x-2.0-rc1
 scripts[] = js/asu_rfi_form.js
 
 files[] = includes/asu_rfi.pages.inc
+files[] = includes/asu_rfi.form_elements.inc
+files[] = includes/asu_rfi.form_ajax.inc
 files[] = includes/asu_rfi.theme.inc
 files[] = data/asu_rfi.form_options.inc
