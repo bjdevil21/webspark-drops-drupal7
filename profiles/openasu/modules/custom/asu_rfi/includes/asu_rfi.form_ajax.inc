@@ -6,7 +6,7 @@
  * @param $form
  * @param $form_state
  * @return array
- */
+
 function asu_rfi_campus_ajax_callback($form, &$form_state) {
   $commands = array(
     ajax_command_html("#edit-my-interest .form-item-prog-plan label", "<h2>_html - My interest" . time() . "</h2>"),
@@ -17,3 +17,4 @@ function asu_rfi_campus_ajax_callback($form, &$form_state) {
     '#commands' => $commands,
   );
 }
+*/
