@@ -1522,7 +1522,13 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
 function _asu_rfi_get_degree_specifics() {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
+
   $node = &drupal_static(__FUNCTION__);
+  if (!isset($node)) {
+    $node = menu_get_object();
+  }
+
+/*
   $node_cookie = (isset($_COOKIE['asu_rfi_node'])) ? $_COOKIE['asu_rfi_node'] : '';
   dpm($node_cookie, 'node_cookie is already set');
 
@@ -1549,6 +1555,7 @@ function _asu_rfi_get_degree_specifics() {
       }
     }
   }
+*/
 
   // Load the current node object, get program name and degree type
   if (!empty($node)) {
