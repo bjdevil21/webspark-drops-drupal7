@@ -8,8 +8,8 @@
  * @return array
  */
 function asu_rfi_campus_ajax_callback($form, &$form_state) {
-  dpm($form['address_info']['city']);
-  dpm(drupal_render($form['address_info']['city']));
+  dpm($form);
+  dpm(render($form['address_info']));
   $commands = array(
     ajax_command_html("#edit-my-interest .form-item-prog-plan label", "<h2>_html - My interest" . time() . "</h2>"),
     ajax_command_replace("#asu-rfi-start-date-ajax-wrapper", drupal_render($form['address_info']['city'])),
