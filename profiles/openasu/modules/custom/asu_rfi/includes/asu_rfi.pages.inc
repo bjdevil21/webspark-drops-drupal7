@@ -36,7 +36,7 @@ function asu_rfi_form($delta) {
  * @return array|mixed
  */
 function asu_rfi_form_data($form, &$form_state) {
-  dpm(__FUNCTION__);
+  dpm(__FUNCTION__ . ' BEGIN');
   // INIT form settings (JS, HTTP headers, etc.)
   _asu_rfi_form_initial_web_assets('multiform');
 
@@ -200,7 +200,7 @@ function asu_rfi_form_data($form, &$form_state) {
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET');
     }
-
+    dpm(__FUNCTION__ . ' END');
     return $form;
   }
 }
