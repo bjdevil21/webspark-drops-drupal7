@@ -60,7 +60,9 @@ function asu_rfi_form_data($form, &$form_state) {
   $country = _asu_rfi_get_country_list();
   dpm(__FUNCTION__ . ' MIDDLE -2');
   // Load the current node object and get various degree data
-  $degree_assets = _asu_rfi_get_degree_specifics();
+  $node = menu_get_object();
+  
+  $degree_assets = _asu_rfi_get_degree_specifics($node);
   dpm(__FUNCTION__ . ' MIDDLE -1');
   if (!empty($degree_assets)) {
     // Unknown why this old code existed...
@@ -1526,7 +1528,6 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
 function _asu_rfi_get_degree_specifics() {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
-  $node = menu_get_object();
 dpm($node, __FUNCTION__);
   // Load the current node object, get program name and degree type
   if (!empty($node)) {
