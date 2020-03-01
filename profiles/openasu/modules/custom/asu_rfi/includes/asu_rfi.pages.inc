@@ -1527,7 +1527,7 @@ function _asu_rfi_get_degree_specifics() {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
   $node = menu_get_object();
-
+dpm($node, __FUNCTION__);
   // Load the current node object, get program name and degree type
   if (!empty($node)) {
     if (!empty($degreeMappings)) {
