@@ -57,10 +57,10 @@ function asu_rfi_form_data($form, &$form_state) {
   }
 
   $country = _asu_rfi_get_country_list();
-  dpm(__FUNCTION__ . ' MIDDLE -2');
+
   // Load the current node object and get various degree data
   $degree_assets = _asu_rfi_get_degree_specifics();
-  dpm(__FUNCTION__ . ' MIDDLE -1');
+
   if (!empty($degree_assets)) {
     // Unknown why this old code existed...
     // $degree[$deg_code] = $deg_name; // ??
@@ -117,15 +117,11 @@ function asu_rfi_form_data($form, &$form_state) {
       '#size' => 30,
     );
 
-    dpm(__FUNCTION__ . ' MIDDLE 2 before campus');
-
     $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'campus');
       $form['my_interest']['campus']['#required'] = TRUE;
     $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', TRUE, $degree_assets['start_dates']); // Addon(s)
     $form['my_interest']['start_date']['#required'] = TRUE;
     //$form['my_interest']['start_date']['#default_value'] = isset($_SESSION['rfi_data']['start_date']) ? $_SESSION['rfi_data']['start_date'] : NULL;
-
-    dpm(__FUNCTION__ . ' MIDDLE 2 after start date');
 
     // ABOUT ME
     $form['about_me'] = _asu_rfi_form_base_components('about_me');
@@ -192,7 +188,7 @@ function asu_rfi_form_data($form, &$form_state) {
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET');
       $start_dates = _asu_rfi_get_sem_dates_dynamic(
-        $form_state['values']['acad_plan'],
+        $degree_assets['academic_plan'],
         $degree_assets['grad_dates'],
         $form_state['values']['campus']);
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
