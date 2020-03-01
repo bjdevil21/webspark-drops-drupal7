@@ -1521,16 +1521,31 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
 }
 
 /**
+ * Get degree-specific variables
+ *
+ * Note: Cache API is required for the AJAX functionality to work (AJAX doesn't
+ * do a full bootstrap, so $node is unavailable via menu_get_object()).
+ *
  * @return array
  */
 function _asu_rfi_get_degree_specifics() {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
   $node = &drupal_static(__FUNCTION__);
-  
+
   if (!isset($node)) {
-    $node = menu_get_object();
-    dpm($node, __FUNCTION__);
+    $time = time();
+    // check for cached version (REQUIRED FOR AJAX)
+      if ($cache = cache_get('asu_rfi_node_' . $time)) {
+        $node = $cache->data;
+      }
+      else {
+        $node = menu_get_object();
+        // Do your expensive calculations here, and populate $my_data
+        // with the correct stuff..
+        cache_set('asu_rfi_node_' . $time, $node, 'cache', time() + 86400);
+    }
+
     // Load the current node object, get program name and degree type
     if (!empty($node)) {
       if (!empty($degreeMappings)) {
