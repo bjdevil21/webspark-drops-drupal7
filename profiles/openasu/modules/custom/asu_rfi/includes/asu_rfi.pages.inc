@@ -57,7 +57,7 @@ function asu_rfi_form_data($form, &$form_state) {
   }
 
   $country = _asu_rfi_get_country_list();
-
+  dpm('pre-degree-specifics');
   $degree_assets = _asu_rfi_get_degree_specifics();
 
   if (!empty($degree_assets)) {
@@ -1527,13 +1527,22 @@ function _asu_rfi_get_degree_specifics() {
   foreach ($javascript['settings']['data'] as $key => $value) {
     if ($value === 'asu_fri' && isset($value['acadPlan'])) {
       $acad_plan = $value['acadPlan'];
+      dpm($acad_plan, 'acad_plan JS defined');
       break;
+    } else {
+      dpm('acad_plan JS NOT defined');
     }
   }
   if (!empty($acad_plan)) { // If so, get cached version with JS value
     $node = cache_get('asu_rfi_degree__' . $acad_plan);
-  }
-  if ($node === FALSE || empty($acad_plan)) { // Load the node for the first time and save it in the cache for that degree.
+    if ($node) {
+      dpm($node, 'cached version of $node here');
+    } else {
+      dpm('cache_get failed to load $node');
+    }
+  } else {
+    dpm('acad_plan STILL NOT DEFINED - menu_get_object needed');
+    // Load the node for the first time and save it in the cache for that degree.
     if ($node = menu_get_object()) {
       $acad_plan = (isset($node->field_asu_ap_acad_plan[LANGUAGE_NONE][0]['safe_value']))
         ? $node->field_asu_ap_acad_plan[LANGUAGE_NONE][0]['safe_value']
@@ -1542,7 +1551,9 @@ function _asu_rfi_get_degree_specifics() {
       dpm('initial cache set: cid asu_rfi_degree__' . $acad_plan);
       // Set acad_plan in Javascript
       drupal_add_js(array('asu_rfi' => (array('acadPlan' => $acad_plan))), 'setting');
+      dpm('Drupal.settings.asu_rfi.acadPlan should be set to ' . $acad_plan);
     } else {
+      dpm('$node could not be loaded by menu_get_object - FAIL');
       flogger('asu_rfi', 'Degree node object could not be loaded to'
         . 'generate RFI form.', array(), WATCHDOG_ERROR);
     }
