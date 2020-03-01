@@ -57,7 +57,7 @@ function asu_rfi_form_data($form, &$form_state) {
   }
 
   $country = _asu_rfi_get_country_list();
-  dpm('pre-degree-specifics');
+
   $degree_assets = _asu_rfi_get_degree_specifics();
 
   if (!empty($degree_assets)) {
@@ -1527,7 +1527,7 @@ function _asu_rfi_get_degree_specifics() {
   foreach ($javascript['settings']['data'] as $key => $value) {
     dpm('key - ' . $key);
     dpm($value, 'value');
-    if ($value === 'asu_fri' && isset($value['acadPlan'])) {
+    if (isset($value['acadPlan'])) {
       $acad_plan = $value['acadPlan'];
       dpm($acad_plan, 'acad_plan JS defined');
       break;
