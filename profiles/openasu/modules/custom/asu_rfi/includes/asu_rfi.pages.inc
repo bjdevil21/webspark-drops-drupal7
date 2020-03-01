@@ -190,7 +190,11 @@ function asu_rfi_form_data($form, &$form_state) {
         $form_state['values']['acad_plan'],
         $degree_assets['grad_dates'],
         $form_state['values']['campus']);
-      $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', TRUE, $start_dates); // Addon(s)
+      $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
+        'my_interest',
+        'start_date',
+        TRUE,
+        $start_dates); // Addon(s)
       $form['my_interest']['start_date']['#required'] = TRUE;
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET');
@@ -776,77 +780,6 @@ function _asu_rfi_update_multiform_submission_fields($entity, $form_state, $mult
  */
 function asu_rfi_long_form($delta, $programs, $form_type) {
   return drupal_get_form('asu_rfi_long_form_data', $programs, $form_type);
-}
-
-function _asu_rfi_get_degree_specifics() {
-
-  $degreeMappings = _asu_rfi_get_degree_field_mappings();
-  $node = menu_get_object();
-
-  // Load the current node object, get program name and degree type
-  if (!empty($node)) {
-    if (!empty($degreeMappings)) {
-      $field_academic_plan = $degreeMappings['field_academic_plan'];
-      $field_degree_awarded = $degreeMappings['field_degree_awarded'];
-      $field_degree_program = $degreeMappings['field_degree_program'];
-      $field_academic_program = $degreeMappings['field_academic_program'];
-      $field_diploma_description = $degreeMappings['field_diploma_description'];
-      $academic_plan = &$node->$field_academic_plan;
-      $degree_awarded = &$node->$field_degree_awarded;
-      $degree_program = &$node->$field_degree_program;
-      $academic_program = &$node->$field_academic_program;
-      $diploma_description = &$node->$field_diploma_description;
-    }
-    else {
-      $academic_plan = '';
-      $degree_awarded = '';
-      $degree_program = '';
-      $academic_program = '';
-      $diploma_description = '';
-    }
-    $deg_code = (!empty($academic_plan[LANGUAGE_NONE][0]['value']))
-      ? $academic_plan[LANGUAGE_NONE][0]['value'] : '';
-    $deg_name = (!empty($degree_awarded[LANGUAGE_NONE][0]['value']))
-      ? $degree_awarded[LANGUAGE_NONE][0]['value'] : '';
-    $college_code = (!empty($academic_program))
-      ? $academic_program[LANGUAGE_NONE][0]['value'] : "None";
-    $college_name = (!empty($diploma_description))
-      ? $diploma_description[LANGUAGE_NONE][0]['value'] : '';
-    $form_type = (!empty($degree_program[LANGUAGE_NONE][0]['value']))
-      ? $degree_program[LANGUAGE_NONE][0]['value'] : '';
-
-    // Pull in available start terms for Graduate programs; Static for all others
-    $grad_dates = (isset($node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value']))
-      ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '' ;
-    dpm($grad_dates, __FUNCTION__ . ' - grad_dates');
-    dpm($academic_plan, 'academic_plan');
-    dpm($degree_program[LANGUAGE_NONE][0]['value']);
-    if (!empty($grad_dates)
-      && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
-      && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
-      $ap = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
-      $start_dates = _asu_rfi_get_sem_dates_dynamic($ap, $grad_dates);
-      dpm('dynamic');
-    } else {
-      $start_dates = _asu_rfi_get_sem_dates_static();
-      dpm('static');
-    }
-
-    return array(
-      'academic_plan' => $academic_plan,
-      'academic_program' => $academic_program,
-      'degree_awarded' => $degree_awarded,
-      'degree_program' => $degree_program,
-      'diploma_description' => $diploma_description,
-      'deg_code' => $deg_code,
-      'deg_name' => $deg_name,
-      'college_code' => $college_code,
-      'college_name' => $college_name,
-      'form_type' => $form_type,
-      'grad_dates' => $grad_dates,
-      'start_dates' => $start_dates,
-    );
-  }
 }
 
 /**
@@ -1578,6 +1511,76 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
 }
 
 /**
+ * @return array
+ */
+function _asu_rfi_get_degree_specifics() {
+
+  $degreeMappings = _asu_rfi_get_degree_field_mappings();
+  $node = menu_get_object();
+
+  // Load the current node object, get program name and degree type
+  if (!empty($node)) {
+    if (!empty($degreeMappings)) {
+      $field_academic_plan = $degreeMappings['field_academic_plan'];
+      $field_degree_awarded = $degreeMappings['field_degree_awarded'];
+      $field_degree_program = $degreeMappings['field_degree_program'];
+      $field_academic_program = $degreeMappings['field_academic_program'];
+      $field_diploma_description = $degreeMappings['field_diploma_description'];
+      $academic_plan = &$node->$field_academic_plan;
+      $degree_awarded = &$node->$field_degree_awarded;
+      $degree_program = &$node->$field_degree_program;
+      $academic_program = &$node->$field_academic_program;
+      $diploma_description = &$node->$field_diploma_description;
+    }
+    else {
+      $academic_plan = '';
+      $degree_awarded = '';
+      $degree_program = '';
+      $academic_program = '';
+      $diploma_description = '';
+    }
+    $deg_code = (!empty($academic_plan[LANGUAGE_NONE][0]['value']))
+      ? $academic_plan[LANGUAGE_NONE][0]['value'] : '';
+    $deg_name = (!empty($degree_awarded[LANGUAGE_NONE][0]['value']))
+      ? $degree_awarded[LANGUAGE_NONE][0]['value'] : '';
+    $college_code = (!empty($academic_program))
+      ? $academic_program[LANGUAGE_NONE][0]['value'] : "None";
+    $college_name = (!empty($diploma_description))
+      ? $diploma_description[LANGUAGE_NONE][0]['value'] : '';
+    $form_type = (!empty($degree_program[LANGUAGE_NONE][0]['value']))
+      ? $degree_program[LANGUAGE_NONE][0]['value'] : '';
+
+    // Pull in available start terms for Graduate programs; Static for all others
+    $grad_dates = (isset($node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value']))
+      ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '' ;
+    dpm($grad_dates, __FUNCTION__ . ' - grad_dates');
+    if (!empty($grad_dates)
+      && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
+      && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
+      $ap = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
+      $start_dates = _asu_rfi_get_sem_dates_dynamic($ap, $grad_dates);
+    } else {
+      $start_dates = _asu_rfi_get_sem_dates_static();
+    }
+
+    return array(
+      'academic_plan' => $academic_plan,
+      'academic_program' => $academic_program,
+      'degree_awarded' => $degree_awarded,
+      'degree_program' => $degree_program,
+      'diploma_description' => $diploma_description,
+      'deg_code' => $deg_code,
+      'deg_name' => $deg_name,
+      'college_code' => $college_code,
+      'college_name' => $college_name,
+      'form_type' => $form_type,
+      'grad_dates' => $grad_dates,
+      'start_dates' => $start_dates,
+    );
+  }
+}
+
+/**
  * Confirms if the given locations available for a program?
  *
  * @param $prog - program
@@ -1625,41 +1628,6 @@ function _asu_rfi_program_location_confirm($prog, $campus, $loc) {
     }
   }
   return FALSE;
-}
-
-/**
- * Get countries list for forms
- */
-function _asu_rfi_get_country_list() {
-  $other_countries = &drupal_static(__FUNCTION__);
-  if (!isset($other_countries)) {
-    $countries = db_select('asu_rfi_countries', 'arc')
-      ->fields('arc', array('countryDesc'))
-      ->orderBy('countryDesc')
-      ->execute()
-      ->fetchAllKeyed(0,0);
-    $us_cont = array("United States" => "United States");
-    $other_countries = array_diff($countries, $us_cont);
-    $other_countries = $us_cont + $other_countries;
-  }
-  return $other_countries;
-}
-
-/**
- * Get states list for forms
- */
-function _asu_rfi_get_state_list() {
-  $all_state_options = &drupal_static(__FUNCTION__);
-  if (!isset($all_state_options)) {
-    $all_state_options = db_select('asu_rfi_states_list', 'arsl')
-      ->fields('arsl', array('stateDesc'))
-      ->orderBy('stateDesc')
-      ->execute()
-      ->fetchAllKeyed(0,0);
-    $option = 'None';
-    array_unshift($all_state_options, $option);
-  }
-  return $all_state_options;
 }
 
 /**
@@ -1857,6 +1825,49 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
 }
 
 /**
+ * Get countries list for forms
+ */
+function _asu_rfi_get_country_list() {
+  $other_countries = &drupal_static(__FUNCTION__);
+  if (!isset($other_countries)) {
+    $countries = db_select('asu_rfi_countries', 'arc')
+      ->fields('arc', array('countryDesc'))
+      ->orderBy('countryDesc')
+      ->execute()
+      ->fetchAllKeyed(0,0);
+    $us_cont = array("United States" => "United States");
+    $other_countries = array_diff($countries, $us_cont);
+    $other_countries = $us_cont + $other_countries;
+  }
+  return $other_countries;
+}
+
+/**
+ * Get states list for forms
+ */
+function _asu_rfi_get_state_list() {
+  $all_state_options = &drupal_static(__FUNCTION__);
+  if (!isset($all_state_options)) {
+    $all_state_options = db_select('asu_rfi_states_list', 'arsl')
+      ->fields('arsl', array('stateDesc'))
+      ->orderBy('stateDesc')
+      ->execute()
+      ->fetchAllKeyed(0,0);
+    $option = 'None';
+    array_unshift($all_state_options, $option);
+  }
+  return $all_state_options;
+}
+
+/**
+ * Get standardized form header for all forms (excluding part 2 of the multiform).
+ * @return string
+ */
+function _asu_rfi_form_header_text() {
+  return "<h4>Please complete and submit the form below, and a representative will contact you about enrolling at ASU.";
+}
+
+/**
  * ASU Get GDPR Markup - Creates simple HTML to append to end of all RFI forms to ensure GDPR compliance
  *
  * @return string - HTML containing all pertinent information and resources pertaining to GDPR
@@ -1873,12 +1884,4 @@ function _asu_rfi_get_gdpr_markup() {
             </li>
         </ol>
     </div>\n";
-}
-
-/**
- * Get standardized form header for all forms (excluding part 2 of the multiform).
- * @return string
- */
-function _asu_rfi_form_header_text() {
-  return "<h4>Please complete and submit the form below, and a representative will contact you about enrolling at ASU.";
 }
