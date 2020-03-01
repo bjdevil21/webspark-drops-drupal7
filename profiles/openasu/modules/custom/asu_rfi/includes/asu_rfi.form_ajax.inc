@@ -11,7 +11,7 @@ function asu_rfi_campus_ajax_callback($form, &$form_state) {
   dpm($form);
   $commands = array(
     ajax_command_html("#edit-my-interest .form-item-prog-plan label", "<h2>_html - My interest" . time() . "</h2>"),
-    ajax_command_insert("#asu-rfi-start-date-ajax-wrapper", '<h3>' . render($form['my_interest']['start_date']) . '</h3>'),
+    ajax_command_replace("#asu-rfi-start-date-ajax-wrapper .form-item-start-date", '<h3>' . render($form['my_interest']['start_date']) . '</h3>'),
     ajax_command_html("#edit-about-me .fieldset-legend", "<h2>_html - ABOUT ME - legend" . time() . "</h2>"),
   );
   return array(
