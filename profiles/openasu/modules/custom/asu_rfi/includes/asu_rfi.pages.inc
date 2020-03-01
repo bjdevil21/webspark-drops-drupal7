@@ -1534,83 +1534,84 @@ function _asu_rfi_get_degree_specifics() {
   $node = &drupal_static(__FUNCTION__);
 
   if (!isset($node)) {
-    $time = time();
     // check for cached version (REQUIRED FOR AJAX)
-      if ($cache = cache_get('asu_rfi_node')) {
-        $node = $cache->data;
+    $node_cookie = (isset($_COOKIE['asu_rfi_node'])) ? $_COOKIE['asu_rfi_node'] : '';
+    if ($cache = cache_get($node_cookie)) {
+      $node = $cache->data;
+    } else {
+      if ($node = menu_get_object()) {
+        $node_cache_id = 'asu_rfi__node_' . $node->nid . '_' . time();
+        setcookie('asu_rfi_node', $node_cache_id);
+        cache_set($node_cache_id, $node, 'cache', time());
+      } else {
+        flogger('asu_rfi', 'Degree node object could not be loaded to'
+          . 'generate RFI form.', array(), WATCHDOG_ERROR);
       }
-      else {
-        $node = menu_get_object();
-        // Do your expensive calculations here, and populate $my_data
-        // with the correct stuff..
-        cache_set('asu_rfi_node', $node, 'cache', time() + 86400);
+    }
+  }
+
+  dpm($node_cookie, 'node_cookie');
+  dpm($node, __FUNCTION__);
+
+  // Load the current node object, get program name and degree type
+  if (!empty($node)) {
+    if (!empty($degreeMappings)) {
+      $field_academic_plan = $degreeMappings['field_academic_plan'];
+      $field_degree_awarded = $degreeMappings['field_degree_awarded'];
+      $field_degree_program = $degreeMappings['field_degree_program'];
+      $field_academic_program = $degreeMappings['field_academic_program'];
+      $field_diploma_description = $degreeMappings['field_diploma_description'];
+      $academic_plan = &$node->$field_academic_plan;
+      $degree_awarded = &$node->$field_degree_awarded;
+      $degree_program = &$node->$field_degree_program;
+      $academic_program = &$node->$field_academic_program;
+      $diploma_description = &$node->$field_diploma_description;
+    }
+    else {
+      $academic_plan = '';
+      $degree_awarded = '';
+      $degree_program = '';
+      $academic_program = '';
+      $diploma_description = '';
+    }
+    $deg_code = (!empty($academic_plan[LANGUAGE_NONE][0]['value']))
+      ? $academic_plan[LANGUAGE_NONE][0]['value'] : '';
+    $deg_name = (!empty($degree_awarded[LANGUAGE_NONE][0]['value']))
+      ? $degree_awarded[LANGUAGE_NONE][0]['value'] : '';
+    $college_code = (!empty($academic_program))
+      ? $academic_program[LANGUAGE_NONE][0]['value'] : "None";
+    $college_name = (!empty($diploma_description))
+      ? $diploma_description[LANGUAGE_NONE][0]['value'] : '';
+    $form_type = (!empty($degree_program[LANGUAGE_NONE][0]['value']))
+      ? $degree_program[LANGUAGE_NONE][0]['value'] : '';
+
+    // Pull in available start terms for Graduate programs; Static for all others
+    $grad_dates = (isset($node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value']))
+      ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '';
+    if (!empty($grad_dates)
+      && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
+      && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
+      $ap = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
+      $start_dates = _asu_rfi_get_sem_dates_dynamic($ap, $grad_dates);
+    }
+    else {
+      $start_dates = _asu_rfi_get_sem_dates_static();
     }
 
-    dpm($node, __FUNCTION__);
-
-    // Load the current node object, get program name and degree type
-    if (!empty($node)) {
-      if (!empty($degreeMappings)) {
-        $field_academic_plan = $degreeMappings['field_academic_plan'];
-        $field_degree_awarded = $degreeMappings['field_degree_awarded'];
-        $field_degree_program = $degreeMappings['field_degree_program'];
-        $field_academic_program = $degreeMappings['field_academic_program'];
-        $field_diploma_description = $degreeMappings['field_diploma_description'];
-        $academic_plan = &$node->$field_academic_plan;
-        $degree_awarded = &$node->$field_degree_awarded;
-        $degree_program = &$node->$field_degree_program;
-        $academic_program = &$node->$field_academic_program;
-        $diploma_description = &$node->$field_diploma_description;
-      }
-      else {
-        $academic_plan = '';
-        $degree_awarded = '';
-        $degree_program = '';
-        $academic_program = '';
-        $diploma_description = '';
-      }
-      $deg_code = (!empty($academic_plan[LANGUAGE_NONE][0]['value']))
-        ? $academic_plan[LANGUAGE_NONE][0]['value'] : '';
-      $deg_name = (!empty($degree_awarded[LANGUAGE_NONE][0]['value']))
-        ? $degree_awarded[LANGUAGE_NONE][0]['value'] : '';
-      $college_code = (!empty($academic_program))
-        ? $academic_program[LANGUAGE_NONE][0]['value'] : "None";
-      $college_name = (!empty($diploma_description))
-        ? $diploma_description[LANGUAGE_NONE][0]['value'] : '';
-      $form_type = (!empty($degree_program[LANGUAGE_NONE][0]['value']))
-        ? $degree_program[LANGUAGE_NONE][0]['value'] : '';
-
-      // Pull in available start terms for Graduate programs; Static for all others
-      $grad_dates = (isset($node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value']))
-        ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '';
-
-      dpm($grad_dates, __FUNCTION__ . ' - grad_dates');
-
-      if (!empty($grad_dates)
-        && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
-        && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
-        $ap = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
-        $start_dates = _asu_rfi_get_sem_dates_dynamic($ap, $grad_dates);
-      }
-      else {
-        $start_dates = _asu_rfi_get_sem_dates_static();
-      }
-
-      return array(
-        'academic_plan' => $academic_plan,
-        'academic_program' => $academic_program,
-        'degree_awarded' => $degree_awarded,
-        'degree_program' => $degree_program,
-        'diploma_description' => $diploma_description,
-        'deg_code' => $deg_code,
-        'deg_name' => $deg_name,
-        'college_code' => $college_code,
-        'college_name' => $college_name,
-        'form_type' => $form_type,
-        'grad_dates' => $grad_dates,
-        'start_dates' => $start_dates,
-      );
-    }
+    return array(
+      'academic_plan' => $academic_plan,
+      'academic_program' => $academic_program,
+      'degree_awarded' => $degree_awarded,
+      'degree_program' => $degree_program,
+      'diploma_description' => $diploma_description,
+      'deg_code' => $deg_code,
+      'deg_name' => $deg_name,
+      'college_code' => $college_code,
+      'college_name' => $college_name,
+      'form_type' => $form_type,
+      'grad_dates' => $grad_dates,
+      'start_dates' => $start_dates,
+    );
   }
 }
 
