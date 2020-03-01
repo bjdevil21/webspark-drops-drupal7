@@ -58,10 +58,12 @@ function asu_rfi_form_data($form, &$form_state) {
   }
 
   $country = _asu_rfi_get_country_list();
+
   dpm(__FUNCTION__ . ' MIDDLE -2');
+
   // Load the current node object and get various degree data
   $node = menu_get_object();
-  
+
   $degree_assets = _asu_rfi_get_degree_specifics($node);
   dpm(__FUNCTION__ . ' MIDDLE -1');
   if (!empty($degree_assets)) {
@@ -1523,9 +1525,10 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
 }
 
 /**
+ * @param $node
  * @return array
  */
-function _asu_rfi_get_degree_specifics() {
+function _asu_rfi_get_degree_specifics($node) {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 dpm($node, __FUNCTION__);
