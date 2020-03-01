@@ -1526,19 +1526,23 @@ function _asu_rfi_get_degree_specifics() {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
   $node = &drupal_static(__FUNCTION__);
+  $node_cookie = (isset($_COOKIE['asu_rfi_node'])) ? $_COOKIE['asu_rfi_node'] : '';
+  dpm($node_cookie, 'node_cookie');
 
   if (!isset($node)) {
     // check for cached version (REQUIRED FOR AJAX)
-    $node_cookie = (isset($_COOKIE['asu_rfi_node'])) ? $_COOKIE['asu_rfi_node'] : '';
+    dpm('$node static not set');
     if ($cache = cache_get($node_cookie)) {
+      dpm('node_cookie found in cache');
       $node = $cache->data;
     } else {
       if ($node = menu_get_object()) {
         $node_cache_id = 'asu_rfi__node_' . $node->nid . '_' . time();
         $expire = time() + 3600;
         setcookie('asu_rfi_node', $node_cache_id);
+        dpm('set cookie ' . $node_cache_id);
         cache_set($node_cache_id, $node, 'cache', time() + 3600);
-        dpm('set cookie');
+        dpm('cache set - cid ' . $node_cache_id);
       } else {
         flogger('asu_rfi', 'Degree node object could not be loaded to'
           . 'generate RFI form.', array(), WATCHDOG_ERROR);
@@ -1546,7 +1550,7 @@ function _asu_rfi_get_degree_specifics() {
     }
   }
 
-  dpm($node_cookie, 'node_cookie');
+
   dpm($node, __FUNCTION__);
 
   // Load the current node object, get program name and degree type
