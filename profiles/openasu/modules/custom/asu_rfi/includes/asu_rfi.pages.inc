@@ -191,6 +191,7 @@ function asu_rfi_form_data($form, &$form_state) {
         $degree_assets['academic_plan'],
         $degree_assets['grad_dates'],
         $form_state['values']['campus']);
+      dpm($start_dates, 'start_dates AJAX updated');
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'start_date',

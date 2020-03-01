@@ -9,10 +9,9 @@
  */
 function asu_rfi_campus_ajax_callback($form, &$form_state) {
   dpm($form);
-  dpm(render($form['address_info']));
   $commands = array(
     ajax_command_html("#edit-my-interest .form-item-prog-plan label", "<h2>_html - My interest" . time() . "</h2>"),
-    ajax_command_replace("#asu-rfi-start-date-ajax-wrapper", drupal_render($form['address_info']['city'])),
+    ajax_command_replace("#asu-rfi-start-date-ajax-wrapper", render($form['address_info']['city'])),
     ajax_command_html("#edit-about-me .fieldset-legend", "<h2>_html - ABOUT ME - legend" . time() . "</h2>"),
   );
   return array(
