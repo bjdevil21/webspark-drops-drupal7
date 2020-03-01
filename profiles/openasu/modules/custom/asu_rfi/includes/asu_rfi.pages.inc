@@ -36,6 +36,7 @@ function asu_rfi_form($delta) {
  * @return array|mixed
  */
 function asu_rfi_form_data($form, &$form_state) {
+  dpm(__FUNCTION__);
   // INIT form settings (JS, HTTP headers, etc.)
   _asu_rfi_form_initial_web_assets('multiform');
 
@@ -1553,7 +1554,9 @@ function _asu_rfi_get_degree_specifics() {
     // Pull in available start terms for Graduate programs; Static for all others
     $grad_dates = (isset($node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value']))
       ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '' ;
+
     dpm($grad_dates, __FUNCTION__ . ' - grad_dates');
+
     if (!empty($grad_dates)
       && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
       && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
