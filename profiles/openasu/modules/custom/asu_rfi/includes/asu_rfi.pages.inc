@@ -1599,7 +1599,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
       && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
       $ap = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
-      $start_dates = _asu_rfi_get_sem_dates_dynamic($ap, $grad_dates);
+      $start_dates = _asu_rfi_get_sem_dates_dynamic($ap, $grad_dates, $campus);
     }
     else {
       $start_dates = _asu_rfi_get_sem_dates_static();
