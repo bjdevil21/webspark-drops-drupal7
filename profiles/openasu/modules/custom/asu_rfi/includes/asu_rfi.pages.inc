@@ -1553,6 +1553,7 @@ function _asu_rfi_get_degree_specifics() {
       dpm('initial cache set: cid asu_rfi_degree__' . $acad_plan);
       // Set acad_plan in Javascript
       drupal_add_js(array('asu_rfi' => (array('acadPlan' => $acad_plan))), 'setting');
+      drupal_get_js();
       dpm('Drupal.settings.asu_rfi.acadPlan should be set to ' . $acad_plan);
     } else {
       dpm('$node could not be loaded by menu_get_object - FAIL');
