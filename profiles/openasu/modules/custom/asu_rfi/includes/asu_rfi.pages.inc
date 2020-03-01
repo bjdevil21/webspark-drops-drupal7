@@ -58,7 +58,14 @@ function asu_rfi_form_data($form, &$form_state) {
 
   $country = _asu_rfi_get_country_list();
 
-  $degree_assets = _asu_rfi_get_degree_specifics();
+  // Load degree settings from node
+  // If AJAX, uses existing form_state value
+  if (isset($form_state['values']['nid'])) {
+    $campus = (isset($form_state['values']['campus'])) ? $form_state['values']['campus'] : '';
+    $degree_assets = _asu_rfi_get_degree_specifics($form_state['values']['nid'], $campus);
+  } else {
+    $degree_assets = _asu_rfi_get_degree_specifics();
+  }
 
   if (!empty($degree_assets)) {
     // Unknown why this old code existed...
@@ -182,22 +189,21 @@ function asu_rfi_form_data($form, &$form_state) {
       '#value' => t('Next'),
     );
     // TEST
-    $form['acad_plan'] = array( // Nope - single
+    $form['nid'] = array( // Nope - single
       '#type' => 'hidden',
       '#maxlength' => 16,
-      '#default_value' => $degree_assets['academic_plan'],
+      '#default_value' => $form_state['values']['nid'],
       '#size' => 16,
-      '#value' => $degree_assets['academic_plan'],
     );
 
     // AJAX update for start dates
+    /*
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET');
       $start_dates = _asu_rfi_get_sem_dates_dynamic(
         $degree_assets['academic_plan'],
         $degree_assets['grad_dates'],
         $form_state['values']['campus']);
-      dpm($start_dates, 'start_dates AJAX updated');
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'start_date',
@@ -207,6 +213,7 @@ function asu_rfi_form_data($form, &$form_state) {
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET');
     }
+    */
     return $form;
   }
 }
@@ -1524,47 +1531,29 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
  * do a full bootstrap, so $node is unavailable via menu_get_object()).
  * @return array
  */
-function _asu_rfi_get_degree_specifics() {
+function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 
-  $acad_plan = $node = '';
-  // FIRST, look for acad_plan if it exists in JS.
-  $javascript = drupal_add_js();
-  foreach ($javascript['settings']['data'] as $key => $value) {
-    if (isset($value['acadPlan'])) {
-      $acad_plan = $value['acadPlan'];
-      dpm($acad_plan, 'acad_plan JS defined');
-      break;
-    } else {
-      dpm('acad_plan JS NOT defined');
-    }
-  }
-  if (!empty($acad_plan)) { // If so, get cached version with JS value
-    $node = cache_get('asu_rfi_degree__' . $acad_plan);
+  if (!is_null($nid)) { // If cached version with JS value
+    $node = cache_get('asu_rfi_degree__' . $nid);
     if ($node) {
-      dpm($node, 'cached version of $node here');
+      dpm($node, 'SUCCESS - cached version of $node for nid ' . $nid);
     } else {
       dpm('cache_get failed to load $node');
     }
   } else {
-    dpm('acad_plan STILL NOT DEFINED - menu_get_object needed');
+    dpm('$nid NOT DEFINED - node_load needed');
     // Load the node for the first time and save it in the cache for that degree.
-    if ($node = menu_get_object()) {
-      $acad_plan = (isset($node->field_asu_ap_acad_plan[LANGUAGE_NONE][0]['safe_value']))
-        ? $node->field_asu_ap_acad_plan[LANGUAGE_NONE][0]['safe_value']
-        : '';
-      cache_set('asu_rfi_degree__' . $acad_plan, $node, 'cache', time() + 86400);
-      dpm('initial cache set: cid asu_rfi_degree__' . $acad_plan);
+    if ($node = node_load($nid)) {
+      cache_set('asu_rfi_degree__' . $nid, $node, 'cache', time() + 86400);
+      dpm('SUCCESS - $node loaded, initial cache set: cid asu_rfi_degree__' . $nid);
       // Set acad_plan in Javascript
-      drupal_add_js(array('asu_rfi' => (array('acadPlan' => $acad_plan))), 'setting');
-      dpm('Drupal.settings.asu_rfi.acadPlan should be set to ' . $acad_plan);
     } else {
-      dpm('$node could not be loaded by menu_get_object - FAIL');
+      dpm('FAIL! $node could not be loaded by node_load');
       flogger('asu_rfi', 'Degree node object could not be loaded to'
         . ' generate RFI form.', array(), WATCHDOG_ERROR);
     }
-    dpm(drupal_get_js(), 'end of logic');
   }
 
   // Load the current node object, get program name and degree type
