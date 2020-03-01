@@ -8,7 +8,7 @@
  * @return array
  */
 function asu_rfi_campus_ajax_callback($form, &$form_state) {
-  dpm(drupal_add_js(), 'drupal settings from ajax callback');
+  dpm(get_defined_vars(), 'get_defined_vars ajax callback');
   $commands = array(
     ajax_command_replace(
       "#asu-rfi-start-date-ajax-wrapper .form-item-start-date",

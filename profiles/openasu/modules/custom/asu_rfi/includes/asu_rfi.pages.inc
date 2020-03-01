@@ -181,8 +181,15 @@ function asu_rfi_form_data($form, &$form_state) {
       '#submit' => array('asu_rfi_form_data_submit'),
       '#value' => t('Next'),
     );
+    // TEST
+    $form['acad_plan'] = array( // Nope - single
+      '#type' => 'hidden',
+      '#maxlength' => 16,
+      '#default_value' => $degree_assets['academic_plan'],
+      '#size' => 16,
+      '#value' => $degree_assets['academic_plan'],
+    );
 
-    dpm(__FUNCTION__ . ' MIDDLE 4 - after submit, before AJAX code');
     // AJAX update for start dates
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET');
@@ -1525,8 +1532,6 @@ function _asu_rfi_get_degree_specifics() {
   // FIRST, look for acad_plan if it exists in JS.
   $javascript = drupal_add_js();
   foreach ($javascript['settings']['data'] as $key => $value) {
-    dpm('key - ' . $key);
-    dpm($value, 'value');
     if (isset($value['acadPlan'])) {
       $acad_plan = $value['acadPlan'];
       dpm($acad_plan, 'acad_plan JS defined');
