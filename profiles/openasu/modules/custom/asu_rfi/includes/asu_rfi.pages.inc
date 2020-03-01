@@ -1526,7 +1526,7 @@ function _asu_rfi_get_degree_specifics() {
   $javascript = drupal_add_js();
   foreach ($javascript['settings']['data'] as $key => $value) {
     dpm('key - ' . $key);
-    dpm('value - ' . $value);
+    dpm($value, 'value');
     if ($value === 'asu_fri' && isset($value['acadPlan'])) {
       $acad_plan = $value['acadPlan'];
       dpm($acad_plan, 'acad_plan JS defined');
