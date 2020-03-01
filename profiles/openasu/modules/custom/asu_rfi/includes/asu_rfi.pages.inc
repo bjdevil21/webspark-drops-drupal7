@@ -1545,7 +1545,8 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
   } else {
     dpm('$nid NOT DEFINED - node_load needed');
     // Load the node for the first time and save it in the cache for that degree.
-    if ($node = node_load($nid)) {
+    if ($node = menu_get_object()) {
+      $nid = $node->nid;
       cache_set('asu_rfi_degree__' . $nid, $node, 'cache', time() + 86400);
       dpm('SUCCESS - $node loaded, initial cache set: cid asu_rfi_degree__' . $nid);
       // Set acad_plan in Javascript
