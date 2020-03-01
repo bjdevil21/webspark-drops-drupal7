@@ -183,7 +183,7 @@ function asu_rfi_form_data($form, &$form_state) {
       '#submit' => array('asu_rfi_form_data_submit'),
       '#value' => t('Next'),
     );
-
+    dpm(__FUNCTION__ . ' END');
     // AJAX update for start dates
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET');
@@ -200,7 +200,6 @@ function asu_rfi_form_data($form, &$form_state) {
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET');
     }
-    dpm(__FUNCTION__ . ' END');
     return $form;
   }
 }
