@@ -1535,9 +1535,9 @@ function _asu_rfi_get_degree_specifics() {
     } else {
       if ($node = menu_get_object()) {
         $node_cache_id = 'asu_rfi__node_' . $node->nid . '_' . time();
-        $expire = time() + ASU_RFI_STALE_TIME_DEFAULT;
-        setcookie('asu_rfi_node', $node_cache_id, $expire, "", "", TRUE, FALSE);
-        cache_set($node_cache_id, $node, 'cache', time());
+        $expire = time() + 3600;
+        setcookie('asu_rfi_node', $node_cache_id);
+        cache_set($node_cache_id, $node, 'cache', time() + 3600);
         dpm('set cookie');
       } else {
         flogger('asu_rfi', 'Degree node object could not be loaded to'
