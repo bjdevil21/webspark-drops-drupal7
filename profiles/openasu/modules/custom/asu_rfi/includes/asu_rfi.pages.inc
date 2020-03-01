@@ -1524,21 +1524,25 @@ function _asu_rfi_get_degree_specifics() {
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
   $node = &drupal_static(__FUNCTION__);
   $node_cookie = (isset($_COOKIE['asu_rfi_node'])) ? $_COOKIE['asu_rfi_node'] : '';
-  dpm($node_cookie, 'node_cookie is set');
+  dpm($node_cookie, 'node_cookie is already set');
 
+  if (isset($node)) {
+    dpm('$node drupal_static -- SET');
+  }
   if (!isset($node)) {
     // check for cached version (REQUIRED FOR AJAX)
-    dpm('$node static not set');
+    dpm('$node drupal_static NOT SET');
     if ($cache = cache_get($node_cookie)) {
-      dpm('node_cookie found in cache');
+      dpm('$node FOUND in cache under cookie ID ' . $node_cookie);
       $node = $cache->data;
     } else {
+      dpm('$node NOT FOUND in cache under cookie ID ' . $node_cookie);
       if ($node = menu_get_object()) {
         $node_cache_id = 'asu_rfi__node_' . $node->nid . '_' . time();
         setcookie('asu_rfi_node', $node_cache_id, time() + 3600, '/', '.asu.edu');
-        dpm('set cookie ' . $node_cache_id);
+        dpm('initial set cookie ' . $node_cache_id);
         cache_set($node_cache_id, $node, 'cache', time() + 3600);
-        dpm('cache set - cid ' . $node_cache_id);
+        dpm('initial cache set - cid ' . $node_cache_id);
       } else {
         flogger('asu_rfi', 'Degree node object could not be loaded to'
           . 'generate RFI form.', array(), WATCHDOG_ERROR);
