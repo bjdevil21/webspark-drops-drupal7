@@ -1539,7 +1539,7 @@ function _asu_rfi_get_degree_specifics() {
       if ($node = menu_get_object()) {
         $node_cache_id = 'asu_rfi__node_' . $node->nid . '_' . time();
         $expire = time() + 3600;
-        setcookie('asu_rfi_node', $node_cache_id);
+        setcookie('asu_rfi_node', $node_cache_id, time() + 3600, '/', '.asu.edu');
         dpm('set cookie ' . $node_cache_id);
         cache_set($node_cache_id, $node, 'cache', time() + 3600);
         dpm('cache set - cid ' . $node_cache_id);
