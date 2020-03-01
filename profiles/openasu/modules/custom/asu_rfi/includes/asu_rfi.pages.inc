@@ -1524,7 +1524,7 @@ function _asu_rfi_get_degree_specifics() {
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
   $node = &drupal_static(__FUNCTION__);
   $node_cookie = (isset($_COOKIE['asu_rfi_node'])) ? $_COOKIE['asu_rfi_node'] : '';
-  dpm($node_cookie, 'node_cookie');
+  dpm($node_cookie, 'node_cookie is set');
 
   if (!isset($node)) {
     // check for cached version (REQUIRED FOR AJAX)
@@ -1535,7 +1535,6 @@ function _asu_rfi_get_degree_specifics() {
     } else {
       if ($node = menu_get_object()) {
         $node_cache_id = 'asu_rfi__node_' . $node->nid . '_' . time();
-        $expire = time() + 3600;
         setcookie('asu_rfi_node', $node_cache_id, time() + 3600, '/', '.asu.edu');
         dpm('set cookie ' . $node_cache_id);
         cache_set($node_cache_id, $node, 'cache', time() + 3600);
@@ -1546,9 +1545,6 @@ function _asu_rfi_get_degree_specifics() {
       }
     }
   }
-
-
-  dpm($node, __FUNCTION__);
 
   // Load the current node object, get program name and degree type
   if (!empty($node)) {
