@@ -73,7 +73,7 @@ function asu_rfi_form_data($form, &$form_state) {
       'honeypot',
       'time_restriction'
     ));
-
+    dpm(__FUNCTION__ . ' MIDDLE 0');
     // If the session is set for more than 3 min, clear the session data
     if (isset($_SESSION['rfi_data'])) {
       $current_time = time();
@@ -89,6 +89,8 @@ function asu_rfi_form_data($form, &$form_state) {
         );
       }
     }
+
+    dpm(__FUNCTION__ . ' MIDDLE 1');
 
     // Is the form in "Test Mode"? If so, add markup
     _asu_rfi_form_test_mode_markup($form, $form_state['build_info']['form_id']);
@@ -118,11 +120,16 @@ function asu_rfi_form_data($form, &$form_state) {
       '#disabled' => TRUE,
       '#size' => 30,
     );
+
+    dpm(__FUNCTION__ . ' MIDDLE 2 before campus');
+
     $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'campus');
       $form['my_interest']['campus']['#required'] = TRUE;
     $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', TRUE, $degree_assets['start_dates']); // Addon(s)
     $form['my_interest']['start_date']['#required'] = TRUE;
     //$form['my_interest']['start_date']['#default_value'] = isset($_SESSION['rfi_data']['start_date']) ? $_SESSION['rfi_data']['start_date'] : NULL;
+
+    dpm(__FUNCTION__ . ' MIDDLE 2 after start date');
 
     // ABOUT ME
     $form['about_me'] = _asu_rfi_form_base_components('about_me');
@@ -154,6 +161,8 @@ function asu_rfi_form_data($form, &$form_state) {
       //'#default_value' => isset($_SESSION['rfi_data']['birthdate']) ? $_SESSION['rfi_data']['birthdate'] : NULL,
       $form['about_me']['birthdate']['#required'] = TRUE;
 
+    dpm(__FUNCTION__ . ' MIDDLE 3 after about me');
+
     $form['ip_address'] = _asu_rfi_form_base_components('ip_address');
     // NOPE - Single
     $form['college'] = array(
@@ -176,6 +185,7 @@ function asu_rfi_form_data($form, &$form_state) {
       '#default_value' => $degree_assets['college_name'],
       '#size' => 50,
     );
+    dpm(__FUNCTION__ . ' MIDDLE 4 before enterprise');
     $form['enterpriseclientid'] = _asu_rfi_form_base_components('enterpriseclientid');
     $form['submit'] = array(
       '#type' => 'submit',
@@ -183,7 +193,7 @@ function asu_rfi_form_data($form, &$form_state) {
       '#submit' => array('asu_rfi_form_data_submit'),
       '#value' => t('Next'),
     );
-    dpm(__FUNCTION__ . ' END');
+
     // AJAX update for start dates
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET');
