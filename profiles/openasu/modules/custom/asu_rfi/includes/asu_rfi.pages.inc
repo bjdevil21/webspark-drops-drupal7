@@ -58,7 +58,6 @@ function asu_rfi_form_data($form, &$form_state) {
 
   $country = _asu_rfi_get_country_list();
 
-  // Load the current node object and get various degree data
   $degree_assets = _asu_rfi_get_degree_specifics();
 
   if (!empty($degree_assets)) {
@@ -1516,46 +1515,38 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
  *
  * Note: Cache API is required for the AJAX functionality to work (AJAX doesn't
  * do a full bootstrap, so $node is unavailable via menu_get_object()).
- *
  * @return array
  */
 function _asu_rfi_get_degree_specifics() {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 
-  $node = &drupal_static(__FUNCTION__);
-  if (!isset($node)) {
-    $node = menu_get_object();
-  }
-
-/*
-  $node_cookie = (isset($_COOKIE['asu_rfi_node'])) ? $_COOKIE['asu_rfi_node'] : '';
-  dpm($node_cookie, 'node_cookie is already set');
-
-  if (isset($node)) {
-    dpm('$node drupal_static -- SET');
-  }
-  if (!isset($node)) {
-    // check for cached version (REQUIRED FOR AJAX)
-    dpm('$node drupal_static NOT SET');
-    if ($cache = cache_get($node_cookie)) {
-      dpm('$node FOUND in cache under cookie ID ' . $node_cookie);
-      $node = $cache->data;
-    } else {
-      dpm('$node NOT FOUND in cache under cookie ID ' . $node_cookie);
-      if ($node = menu_get_object()) {
-        $node_cache_id = 'asu_rfi__node_' . $node->nid . '_' . time();
-        setcookie('asu_rfi_node', $node_cache_id, time() + 3600, '/', '.asu.edu');
-        dpm('initial set cookie ' . $node_cache_id);
-        cache_set($node_cache_id, $node, 'cache', time() + 3600);
-        dpm('initial cache set - cid ' . $node_cache_id);
-      } else {
-        flogger('asu_rfi', 'Degree node object could not be loaded to'
-          . 'generate RFI form.', array(), WATCHDOG_ERROR);
-      }
+  $acad_plan = $node = '';
+  // FIRST, look for acad_plan if it exists in JS.
+  $javascript = drupal_add_js();
+  foreach ($javascript['settings']['data'] as $key => $value) {
+    if ($value === 'asu_fri' && isset($value['acadPlan'])) {
+      $acad_plan = $value['acadPlan'];
+      break;
     }
   }
-*/
+  if (!empty($acad_plan)) { // If so, get cached version with JS value
+    $node = cache_get('asu_rfi_degree__' . $acad_plan);
+  }
+  if ($node === FALSE || empty($acad_plan)) { // Load the node for the first time and save it in the cache for that degree.
+    if ($node = menu_get_object()) {
+      $acad_plan = (isset($node->field_asu_ap_acad_plan[LANGUAGE_NONE][0]['safe_value']))
+        ? $node->field_asu_ap_acad_plan[LANGUAGE_NONE][0]['safe_value']
+        : '';
+      cache_set('asu_rfi_degree__' . $acad_plan, $node, 'cache', time() + 86400);
+      dpm('initial cache set: cid asu_rfi_degree__' . $acad_plan);
+      // Set acad_plan in Javascript
+      drupal_add_js(array('asu_rfi' => (array('acadPlan' => $acad_plan))), 'setting');
+    } else {
+      flogger('asu_rfi', 'Degree node object could not be loaded to'
+        . 'generate RFI form.', array(), WATCHDOG_ERROR);
+    }
+  }
 
   // Load the current node object, get program name and degree type
   if (!empty($node)) {
