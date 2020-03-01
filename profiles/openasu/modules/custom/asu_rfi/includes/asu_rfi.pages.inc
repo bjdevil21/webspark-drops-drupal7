@@ -47,7 +47,7 @@ function asu_rfi_form_data($form, &$form_state) {
       return asu_rfi_second_form($form, $form_state);
     }
   }
-  dpm(__FUNCTION__ . ' MIDDLE -3'
+  dpm(__FUNCTION__ . ' MIDDLE -3');
   ///////////////// Otherwise, we BUILD THE FIRST FORM below
 
   // INIT - Dates
@@ -61,7 +61,7 @@ function asu_rfi_form_data($form, &$form_state) {
   dpm(__FUNCTION__ . ' MIDDLE -2');
   // Load the current node object and get various degree data
   $degree_assets = _asu_rfi_get_degree_specifics();
-  dpm(__FUNCTION__ . ' MIDDLE -1'
+  dpm(__FUNCTION__ . ' MIDDLE -1');
   if (!empty($degree_assets)) {
     // Unknown why this old code existed...
     // $degree[$deg_code] = $deg_name; // ??
