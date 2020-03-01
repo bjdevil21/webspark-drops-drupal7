@@ -99,6 +99,14 @@ function asu_rfi_form_data($form, &$form_state) {
 
     /* Form field elements */
     /////////////////////////
+
+    $form['nid'] = array( // Nope - single
+      '#type' => 'hidden',
+      '#maxlength' => 16,
+      '#default_value' => (isset($form_state['values']['nid'])) ? $form_state['values']['nid'] : '',
+      '#size' => 16,
+    );
+
     $form['req_header_text'] = _asu_rfi_form_base_components('req_header_text');
     $form['req_helper'] = _asu_rfi_form_base_components('req_helper');
     $form['domain'] = _asu_rfi_form_base_components('domain');
@@ -187,13 +195,6 @@ function asu_rfi_form_data($form, &$form_state) {
       '#attributes' => array('class' => array('rfi-button')),
       '#submit' => array('asu_rfi_form_data_submit'),
       '#value' => t('Next'),
-    );
-    // TEST
-    $form['nid'] = array( // Nope - single
-      '#type' => 'hidden',
-      '#maxlength' => 16,
-      '#default_value' => $form_state['values']['nid'],
-      '#size' => 16,
     );
 
     // AJAX update for start dates
