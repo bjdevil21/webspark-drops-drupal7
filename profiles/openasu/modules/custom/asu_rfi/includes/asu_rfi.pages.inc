@@ -1536,15 +1536,17 @@ function _asu_rfi_get_degree_specifics() {
   if (!isset($node)) {
     $time = time();
     // check for cached version (REQUIRED FOR AJAX)
-      if ($cache = cache_get('asu_rfi_node_' . $time)) {
+      if ($cache = cache_get('asu_rfi_node')) {
         $node = $cache->data;
       }
       else {
         $node = menu_get_object();
         // Do your expensive calculations here, and populate $my_data
         // with the correct stuff..
-        cache_set('asu_rfi_node_' . $time, $node, 'cache', time() + 86400);
+        cache_set('asu_rfi_node', $node, 'cache', time() + 86400);
     }
+
+    dpm($node, __FUNCTION__);
 
     // Load the current node object, get program name and degree type
     if (!empty($node)) {
