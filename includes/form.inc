@@ -1361,6 +1361,7 @@ function _form_validate(&$elements, &$form_state, $form_id = NULL) {
       }
 
       if (isset($elements['#options']) && isset($elements['#value'])) {
+        dpm($elements, __FUNCTION__ . ' $elements');
         if ($elements['#type'] == 'select') {
           $options = form_options_flatten($elements['#options']);
         }
