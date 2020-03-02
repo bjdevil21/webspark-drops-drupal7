@@ -8,7 +8,8 @@
  * @return array
  */
 function asu_rfi_campus_ajax_callback($form, &$form_state) {
-  dpm(get_defined_vars(), 'get_defined_vars ajax callback');
+  dpm($form_state['values']['campus'], 'form_state=>campus - AJAX (before commands)');
+  dpm($form['form']['my_interest']['start_date']['#options'], 'form=>start_date->options - AJAX (before commands)');
   $commands = array(
     ajax_command_replace(
       "#asu-rfi-start-date-ajax-wrapper .form-item-start-date",

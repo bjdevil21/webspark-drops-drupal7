@@ -61,16 +61,16 @@ function asu_rfi_form_data($form, &$form_state) {
   // Load degree settings from node
   // If AJAX, uses existing form_state value
   if (isset($form_state['values']['nid'])) {
-    dpm('form_state nid is SET');
+    // dpm('form_state nid is SET');
     $campus = (isset($form_state['values']['campus'])) ? $form_state['values']['campus'] : '';
     $degree_assets = _asu_rfi_get_degree_specifics($form_state['values']['nid'], $campus);
   } else {
     $node = menu_get_object();
-    dpm('form_state nid is SET - using $node nid --'. $node->nid . '--');
+    // dpm('form_state nid is SET - using $node nid --'. $node->nid . '--');
     $degree_assets = _asu_rfi_get_degree_specifics($node->nid);
   }
 
-  dpm($degree_assets, __FUNCTION__ . ' -- degree_assets');
+  dpm($degree_assets['start_dates'], __FUNCTION__ . ' -- degree_assets=>start_dates');
 
   if (!empty($degree_assets)) {
     // Unknown why this old code existed...
@@ -204,7 +204,6 @@ function asu_rfi_form_data($form, &$form_state) {
     );
 
     // AJAX update for start dates
-    /*
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET');
       $start_dates = _asu_rfi_get_sem_dates_dynamic(
@@ -220,7 +219,7 @@ function asu_rfi_form_data($form, &$form_state) {
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET');
     }
-    */
+
     return $form;
   }
 }
