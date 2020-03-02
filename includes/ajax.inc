@@ -392,11 +392,7 @@ function ajax_get_form() {
  */
 function ajax_form_callback() {
 
-  watchdog('ajax', __FUNCTION__ . ' called');
-
   list($form, $form_state, $form_id, $form_build_id, $commands) = ajax_get_form();
-
-  watchdog('ajax', __FUNCTION__ . ' point 1');
 
   drupal_process_form($form['#form_id'], $form, $form_state);
 
@@ -406,7 +402,7 @@ function ajax_form_callback() {
   // up to the #ajax['callback'] function of the element (may or may not be a
   // button) that triggered the Ajax request to determine what needs to be
   // rendered.
-  watchdog('ajax', __FUNCTION__ . ' point 2');
+
   if (!empty($form_state['triggering_element'])) {
     $callback = $form_state['triggering_element']['#ajax']['callback'];
   }
@@ -422,8 +418,6 @@ function ajax_form_callback() {
       );
     }
     $result['#commands'] = array_merge($commands, $result['#commands']);
-
-    watchdog('ajax', __FUNCTION__ . ' finished');
 
     return $result;
   }

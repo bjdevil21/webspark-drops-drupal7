@@ -865,6 +865,8 @@ function drupal_retrieve_form($form_id, &$form_state) {
  *   data, is also accumulated here.
  */
 function drupal_process_form($form_id, &$form, &$form_state) {
+
+  watchdog('form', __FUNCTION__ . ' called');
   $form_state['values'] = array();
 
   // With $_GET, these forms are always submitted if requested.
@@ -880,6 +882,8 @@ function drupal_process_form($form_id, &$form, &$form_state) {
     }
   }
 
+  watchdog('form', __FUNCTION__ . ' point 1');
+
   // form_builder() finishes building the form by calling element #process
   // functions and mapping user input, if any, to #value properties, and also
   // storing the values in $form_state['values']. We need to retain the
@@ -887,10 +891,12 @@ function drupal_process_form($form_id, &$form, &$form_state) {
   $unprocessed_form = $form;
   $form = form_builder($form_id, $form, $form_state);
 
+  watchdog('form', __FUNCTION__ . ' point 2');
+
   // Only process the input if we have a correct form submission.
   if ($form_state['process_input']) {
     drupal_validate_form($form_id, $form, $form_state);
-
+    watchdog('form', __FUNCTION__ . ' point 3');
     // drupal_html_id() maintains a cache of element IDs it has seen,
     // so it can prevent duplicates. We want to be sure we reset that
     // cache when a form is processed, so scenarios that result in
@@ -900,7 +906,7 @@ function drupal_process_form($form_id, &$form, &$form_state) {
       // In case of errors, do not break HTML IDs of other forms.
       drupal_static_reset('drupal_html_id');
     }
-
+    watchdog('form', __FUNCTION__ . ' point 4');
     if ($form_state['submitted'] && !form_get_errors() && !$form_state['rebuild']) {
       // Execute form submit handlers.
       form_execute_handlers('submit', $form, $form_state);
@@ -912,7 +918,7 @@ function drupal_process_form($form_id, &$form, &$form_state) {
         cache_clear_all('form_' . $form_state['values']['form_build_id'], 'cache_form');
         cache_clear_all('form_state_' . $form_state['values']['form_build_id'], 'cache_form');
       }
-
+      watchdog('form', __FUNCTION__ . ' point 5');
       // If batches were set in the submit handlers, we process them now,
       // possibly ending execution. We make sure we do not react to the batch
       // that is already being processed (if a batch operation performs a
@@ -940,14 +946,14 @@ function drupal_process_form($form_id, &$form, &$form_state) {
         // page. Form redirection will be handled in _batch_finished(),
         // after the batch is processed.
       }
-
+      watchdog('form', __FUNCTION__ . ' point 6');
       // Set a flag to indicate that the form has been processed and executed.
       $form_state['executed'] = TRUE;
 
       // Redirect the form based on values in $form_state.
       drupal_redirect_form($form_state);
     }
-
+    watchdog('form', __FUNCTION__ . ' point 7');
     // Don't rebuild or cache form submissions invoked via drupal_form_submit().
     if (!empty($form_state['programmed'])) {
       return;
@@ -976,7 +982,7 @@ function drupal_process_form($form_id, &$form, &$form_state) {
       $form = drupal_rebuild_form($form_id, $form_state, $form);
     }
   }
-
+  watchdog('form', __FUNCTION__ . ' point 8');
   // After processing the form, the form builder or a #process callback may
   // have set $form_state['cache'] to indicate that the form and form state
   // shall be cached. But the form may only be cached if the 'no_cache' property
@@ -987,6 +993,7 @@ function drupal_process_form($form_id, &$form, &$form_state) {
   if (!$form_state['rebuild'] && $form_state['cache'] && empty($form_state['no_cache'])) {
     form_set_cache($form['#build_id'], $unprocessed_form, $form_state);
   }
+  watchdog('form', __FUNCTION__ . ' finished');
 }
 
 /**
