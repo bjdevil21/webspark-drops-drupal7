@@ -133,9 +133,9 @@ function asu_rfi_form_data($form, &$form_state) {
     $campus_options = $degree_assets['campus'];
     $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys(
       'my_interest',
-      'campus',
-      TRUE,
-      $campus_options,
+      'campus'
+      // TRUE,
+      // $campus_options,
     );
     $form['my_interest']['campus']['#default_value'] = $form_state['values']['campus'];
     $form['my_interest']['campus']['#required'] = TRUE;
