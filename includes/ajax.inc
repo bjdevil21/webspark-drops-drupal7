@@ -403,11 +403,17 @@ function ajax_form_callback() {
   // up to the #ajax['callback'] function of the element (may or may not be a
   // button) that triggered the Ajax request to determine what needs to be
   // rendered.
+  watchdog('ajax', __FUNCTION__ . ' point 0');
   if (!empty($form_state['triggering_element'])) {
     $callback = $form_state['triggering_element']['#ajax']['callback'];
   }
   if (!empty($callback) && is_callable($callback)) {
+
+    watchdog('ajax', __FUNCTION__ . ' point 1');
+
     $result = $callback($form, $form_state);
+
+    watchdog('ajax', __FUNCTION__ . ' point 2');
 
     if (!(is_array($result) && isset($result['#type']) && $result['#type'] == 'ajax')) {
       // Turn the response into a #type=ajax array if it isn't one already.
@@ -416,6 +422,8 @@ function ajax_form_callback() {
         '#commands' => ajax_prepare_response($result),
       );
     }
+
+    watchdog('ajax', __FUNCTION__ . ' point 3');
 
     $result['#commands'] = array_merge($commands, $result['#commands']);
 
