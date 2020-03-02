@@ -59,7 +59,7 @@ function asu_rfi_form_data($form, &$form_state) {
   $country = _asu_rfi_get_country_list();
 
 
-  dpm($form_state, __FUNCTION__);
+  dpm($form_state, __FUNCTION__ . ' form_state');
   // Load degree settings from node
   // If AJAX, uses existing form_state value
   if (isset($form_state['values']['nid'])) {
@@ -104,13 +104,6 @@ function asu_rfi_form_data($form, &$form_state) {
 
     /* Form field elements */
     /////////////////////////
-
-    $form['nid'] = array( // Nope - single
-      '#type' => 'hidden',
-      '#maxlength' => 16,
-      '#default_value' => (isset($form_state['values']['nid'])) ? $form_state['values']['nid'] : '',
-      '#size' => 16,
-    );
 
     $form['req_header_text'] = _asu_rfi_form_base_components('req_header_text');
     $form['req_helper'] = _asu_rfi_form_base_components('req_helper');
@@ -194,6 +187,14 @@ function asu_rfi_form_data($form, &$form_state) {
       '#default_value' => $degree_assets['college_name'],
       '#size' => 50,
     );
+    // Nope - single
+    $form['nid'] = array(
+      '#type' => 'hidden',
+      '#maxlength' => 16,
+      '#default_value' => (isset($form_state['values']['nid'])) ? $form_state['values']['nid'] : $node->nid,
+      '#size' => 16,
+    );
+
     $form['enterpriseclientid'] = _asu_rfi_form_base_components('enterpriseclientid');
     $form['submit'] = array(
       '#type' => 'submit',
@@ -1542,12 +1543,6 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 
   if (!is_null($nid)) { // If cached version with JS value
-    if (function_exists('cache_get')) {
-      dpm('cache_get exists');
-    }
-    else {
-      dpm('cache_get does not exist');
-    }
     $cache = cache_get('asu_rfi_degree__' . $nid);
     if (isset($cache->data)) {
       $node = $cache->data;
