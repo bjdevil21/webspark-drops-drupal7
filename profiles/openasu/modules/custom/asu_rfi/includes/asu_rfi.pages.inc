@@ -1543,8 +1543,8 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
 
   if (!is_null($nid)) { // If cached version with JS value
     $cache = cache_get('asu_rfi_degree__' . $nid);
-    if (isset($cache['data'])) {
-      $node = $cache['data'];
+    if (isset($cache->data)) {
+      $node = $cache->data;
       dpm($node, 'SUCCESS - cached version of $node for nid ' . $nid);
     } else {
       dpm('cache_get failed to load $node');
