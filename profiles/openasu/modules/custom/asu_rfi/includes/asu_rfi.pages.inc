@@ -152,6 +152,7 @@ function asu_rfi_form_data($form, &$form_state) {
       $form['my_interest']['start_date']['#required'] = TRUE;
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET - default (all) values');
+      dpm($degree_assets['campus'], __FUNCTION__ . ' - degree_assets[campus]');
       $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'campus',
@@ -166,6 +167,8 @@ function asu_rfi_form_data($form, &$form_state) {
     $form['my_interest']['campus']['#required'] = TRUE;
     $form['my_interest']['start_date']['#required'] = TRUE;
     //$form['my_interest']['start_date']['#default_value'] = isset($_SESSION['rfi_data']['start_date']) ? $_SESSION['rfi_data']['start_date'] : NULL;
+    // END AJAX start date updates
+    /////////////////////////////
 
     // ABOUT ME
     $form['about_me'] = _asu_rfi_form_base_components('about_me');
