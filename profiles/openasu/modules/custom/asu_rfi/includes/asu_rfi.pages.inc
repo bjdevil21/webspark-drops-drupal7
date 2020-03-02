@@ -1536,6 +1536,8 @@ function _asu_rfi_form_initial_web_assets($form_main_type) {
  *
  * Note: Cache API is required for the AJAX functionality to work (AJAX doesn't
  * do a full bootstrap, so $node is unavailable via menu_get_object()).
+ * @param null $nid - Node ID. Defaults to NULL if creating node for first time (including cache).
+ * @param string $campus - Human-friendly campus string.
  * @return array
  */
 function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
@@ -1548,21 +1550,12 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $node = $cache->data;
       dpm($node, 'SUCCESS - cached version of $node for nid ' . $nid);
     } else {
-      dpm('cache_get failed to load $node nid ' . $nid);
+      dpm('cache_get failed to load for $node nid ' . $nid);
+      $node = _asu_rfi_get_degree_specifics_init($nid);
     }
   } else {
-    dpm('$nid NOT DEFINED - node_load needed');
-    // Load the node for the first time and save it in the cache for that degree.
-    if ($node = menu_get_object()) {
-      $nid = $node->nid;
-      cache_set('asu_rfi_degree__' . $nid, $node, 'cache', time() + 86400);
-      dpm('SUCCESS - $node loaded, initial cache set: cid asu_rfi_degree__' . $nid);
-      // Set acad_plan in Javascript
-    } else {
-      dpm('FAIL! $node could not be loaded by node_load');
-      flogger('asu_rfi', 'Degree node object could not be loaded to'
-        . ' generate RFI form.', array(), WATCHDOG_ERROR);
-    }
+    dpm('Node ID ' . $nid . ' set but cache_get failed. Initializing node cache object.');
+    $node = _asu_rfi_get_degree_specifics_init($nid);
   }
 
   // Load the current node object, get program name and degree type
@@ -1624,6 +1617,29 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       'grad_dates' => $grad_dates,
       'start_dates' => $start_dates,
     );
+  }
+}
+
+/**
+ * Initial creating of $node object in cache for AJAX calls and better performance.
+ *
+ * @param $nid - Node ID
+ * @return mixed|string - Returns $node object, or empty string.
+ */
+function _asu_rfi_get_degree_specifics_init($nid) {
+  dpm('$nid NOT DEFINED - node_load needed');
+  // Load the node for the first time and save it in the cache for that degree.
+  if ($node = menu_get_object()) {
+    $nid = $node->nid;
+    cache_set('asu_rfi_degree__' . $nid, $node, 'cache', time() + 86400);
+    dpm('SUCCESS - $node loaded, initial cache set: cid asu_rfi_degree__' . $nid);
+    return $node;
+    // Set acad_plan in Javascript
+  } else {
+    dpm('FAIL! $node could not be loaded by node_load');
+    flogger('asu_rfi', 'Degree node object could not be loaded to'
+      . ' generate RFI form.', array(), WATCHDOG_ERROR);
+    return ''; // Empty string
   }
 }
 
