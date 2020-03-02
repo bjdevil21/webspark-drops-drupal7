@@ -1585,7 +1585,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $degree_program = &$node->$field_degree_program;
       $academic_program = &$node->$field_academic_program;
       $diploma_description = &$node->$field_diploma_description;
-      $campus = &$node->$field_campus;
+      $node_campus = &$node->$field_campus;
     }
     else {
       $academic_plan = '';
@@ -1593,7 +1593,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $degree_program = '';
       $academic_program = '';
       $diploma_description = '';
-      $campus = '';
+      $node_campus = '';
     }
     $deg_code = (!empty($academic_plan[LANGUAGE_NONE][0]['value']))
       ? $academic_plan[LANGUAGE_NONE][0]['value'] : '';
@@ -1625,7 +1625,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       'degree_awarded' => $degree_awarded,
       'degree_program' => $degree_program,
       'diploma_description' => $diploma_description,
-      'campus' => $campus,
+      'campus' => $node_campus,
       'deg_code' => $deg_code,
       'deg_name' => $deg_name,
       'college_code' => $college_code,
