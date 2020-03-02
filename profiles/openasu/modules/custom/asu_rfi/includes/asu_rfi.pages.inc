@@ -70,6 +70,8 @@ function asu_rfi_form_data($form, &$form_state) {
     $degree_assets = _asu_rfi_get_degree_specifics($node->nid);
   }
 
+  dpm($degree_assets, __FUNCTION__ . ' -- degree_assets');
+
   if (!empty($degree_assets)) {
     // Unknown why this old code existed...
     // $degree[$deg_code] = $deg_name; // ??
