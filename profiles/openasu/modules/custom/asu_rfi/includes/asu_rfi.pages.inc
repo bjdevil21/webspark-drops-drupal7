@@ -155,8 +155,7 @@ function asu_rfi_form_data($form, &$form_state) {
         'my_interest',
         'campus',
         TRUE,
-        $degree_assets['campus'],
-      );
+        $degree_assets['campus']);
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'start_date',
