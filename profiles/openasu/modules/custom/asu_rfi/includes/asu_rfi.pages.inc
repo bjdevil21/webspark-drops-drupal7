@@ -1579,6 +1579,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $field_degree_program = $degreeMappings['field_degree_program'];
       $field_academic_program = $degreeMappings['field_academic_program'];
       $field_diploma_description = $degreeMappings['field_diploma_description'];
+      $field_campus = $degreeMappings['field_degree_campus'];
       $academic_plan = &$node->$field_academic_plan;
       $degree_awarded = &$node->$field_degree_awarded;
       $degree_program = &$node->$field_degree_program;
