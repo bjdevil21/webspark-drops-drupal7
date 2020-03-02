@@ -159,7 +159,7 @@ function asu_rfi_form_data($form, &$form_state) {
       dpm(__FUNCTION__ . ' form_state[values][campus] is NOT SET - default start dates');
       $start_dates = _asu_rfi_get_sem_dates_dynamic(
         $degree_assets['academic_plan'],
-        $degree_assets['grad_dates'],
+        $degree_assets['grad_dates']
       );
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
