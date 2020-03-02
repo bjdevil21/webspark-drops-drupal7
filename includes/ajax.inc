@@ -391,6 +391,7 @@ function ajax_get_form() {
  * @see system_menu()
  */
 function ajax_form_callback() {
+  dpm(__FUNCTION__ . ' called');
   list($form, $form_state, $form_id, $form_build_id, $commands) = ajax_get_form();
   drupal_process_form($form['#form_id'], $form, $form_state);
 
@@ -415,6 +416,8 @@ function ajax_form_callback() {
     }
 
     $result['#commands'] = array_merge($commands, $result['#commands']);
+
+    dpm(__FUNCTION__ . ' finished');
 
     return $result;
   }
