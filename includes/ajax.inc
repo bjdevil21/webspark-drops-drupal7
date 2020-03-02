@@ -392,6 +392,8 @@ function ajax_get_form() {
  */
 function ajax_form_callback() {
 
+  watchdog('ajax', __FUNCTION__ . ' called');
+
   list($form, $form_state, $form_id, $form_build_id, $commands) = ajax_get_form();
 
   drupal_process_form($form['#form_id'], $form, $form_state);
