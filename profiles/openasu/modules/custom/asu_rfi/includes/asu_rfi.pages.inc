@@ -1552,7 +1552,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     $cache = cache_get('asu_rfi_degree__' . $nid);
     if (isset($cache->data)) {
       $node = $cache->data;
-      dpm($node, 'SUCCESS - cached version of $node for nid ' . $nid);
+      dpm('SUCCESS - cached version of $node for nid ' . $nid);
     } else {
       dpm('cache_get failed to load for $node nid ' . $nid);
       $node = _asu_rfi_get_degree_specifics_init($nid);
@@ -1625,7 +1625,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
 }
 
 /**
- * Initial creating of $node object in cache for AJAX calls and better performance.
+ * Initial creating of $node object (and in cache for AJAX calls and better performance.)
  *
  * @param $nid - Node ID
  * @return mixed|string - Returns $node object, or empty string.
