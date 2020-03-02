@@ -152,12 +152,13 @@ function asu_rfi_form_data($form, &$form_state) {
       $form['my_interest']['start_date']['#required'] = TRUE;
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET - default (all) values');
-      dpm($degree_assets['campus'], __FUNCTION__ . ' - degree_assets[campus] - INIT');
+      dpm($degree_assets['campus'], __FUNCTION__ . ' - degree_assets[campus] - INIT before');
       $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'campus',
         TRUE,
         $degree_assets['campus']);
+      dpm($degree_assets['campus'], __FUNCTION__ . ' - degree_assets[campus] - INIT after ');
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'start_date',
