@@ -891,10 +891,9 @@ function drupal_process_form($form_id, &$form, &$form_state) {
   $unprocessed_form = $form;
   $form = form_builder($form_id, $form, $form_state);
 
-  watchdog('form', __FUNCTION__ . ' point 2');
-
   // Only process the input if we have a correct form submission.
   if ($form_state['process_input']) {
+    watchdog('form', __FUNCTION__ . ' point 2');
     drupal_validate_form($form_id, $form, $form_state);
     watchdog('form', __FUNCTION__ . ' point 3');
     // drupal_html_id() maintains a cache of element IDs it has seen,
