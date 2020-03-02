@@ -151,7 +151,12 @@ function asu_rfi_form_data($form, &$form_state) {
       $form['my_interest']['start_date']['#required'] = TRUE;
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET - default (all) values');
-      $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'campus');
+      $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys(
+        'my_interest',
+        'campus',
+        TRUE,
+        $degree_assets['campus'],
+      );
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'start_date',
@@ -1575,11 +1580,13 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $field_degree_program = $degreeMappings['field_degree_program'];
       $field_academic_program = $degreeMappings['field_academic_program'];
       $field_diploma_description = $degreeMappings['field_diploma_description'];
+      $field_campus = $degreeMappings['field_campus'];
       $academic_plan = &$node->$field_academic_plan;
       $degree_awarded = &$node->$field_degree_awarded;
       $degree_program = &$node->$field_degree_program;
       $academic_program = &$node->$field_academic_program;
       $diploma_description = &$node->$field_diploma_description;
+      $campus = &$node->$field_campus;
     }
     else {
       $academic_plan = '';
@@ -1587,6 +1594,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $degree_program = '';
       $academic_program = '';
       $diploma_description = '';
+      $campus = '';
     }
     $deg_code = (!empty($academic_plan[LANGUAGE_NONE][0]['value']))
       ? $academic_plan[LANGUAGE_NONE][0]['value'] : '';
@@ -1618,6 +1626,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       'degree_awarded' => $degree_awarded,
       'degree_program' => $degree_program,
       'diploma_description' => $diploma_description,
+      'campus' => $campus,
       'deg_code' => $deg_code,
       'deg_name' => $deg_name,
       'college_code' => $college_code,
@@ -1636,7 +1645,6 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
  * @return mixed|string - Returns $node object, or empty string.
  */
 function _asu_rfi_get_degree_specifics_init($nid) {
-  dpm('$nid NOT DEFINED - node_load needed');
   // Load the node for the first time and save it in the cache for that degree.
   if ($node = menu_get_object()) {
     $nid = $node->nid;
