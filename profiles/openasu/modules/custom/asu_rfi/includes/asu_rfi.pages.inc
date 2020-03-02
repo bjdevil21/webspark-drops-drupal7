@@ -63,6 +63,7 @@ function asu_rfi_form_data($form, &$form_state) {
   if (isset($form_state['values']['nid'])) {
     dpm('form_state nid is SET');
     $campus = (isset($form_state['values']['campus'])) ? $form_state['values']['campus'] : '';
+    dpm($campus, __FUNCTION__ . ' $campus value when nid is set (probably AJAx call)');
     $degree_assets = _asu_rfi_get_degree_specifics($form_state['values']['nid'], $campus);
   } else {
     $node = menu_get_object();
