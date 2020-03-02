@@ -1542,12 +1542,18 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 
   if (!is_null($nid)) { // If cached version with JS value
+    if (function_exists('cache_get')) {
+      dpm('cache_get exists');
+    }
+    else {
+      dpm('cache_get does not exist');
+    }
     $cache = cache_get('asu_rfi_degree__' . $nid);
     if (isset($cache->data)) {
       $node = $cache->data;
       dpm($node, 'SUCCESS - cached version of $node for nid ' . $nid);
     } else {
-      dpm('cache_get failed to load $node');
+      dpm('cache_get failed to load $node nid ' . $nid);
     }
   } else {
     dpm('$nid NOT DEFINED - node_load needed');
