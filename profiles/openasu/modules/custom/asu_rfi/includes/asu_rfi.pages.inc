@@ -58,15 +58,15 @@ function asu_rfi_form_data($form, &$form_state) {
 
   $country = _asu_rfi_get_country_list();
 
-
-  dpm($form_state, __FUNCTION__ . ' form_state');
   // Load degree settings from node
   // If AJAX, uses existing form_state value
   if (isset($form_state['values']['nid'])) {
+    dpm('form_state nid is SET');
     $campus = (isset($form_state['values']['campus'])) ? $form_state['values']['campus'] : '';
     $degree_assets = _asu_rfi_get_degree_specifics($form_state['values']['nid'], $campus);
   } else {
     $node = menu_get_object();
+    dpm('form_state nid is SET - using $node nid --'. $node->nid . '--');
     $degree_assets = _asu_rfi_get_degree_specifics($node->nid);
   }
 
