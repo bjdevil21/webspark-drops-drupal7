@@ -68,7 +68,6 @@ function asu_rfi_form_data($form, &$form_state) {
   } else {
     $node = menu_get_object();
     $degree_assets = _asu_rfi_get_degree_specifics($node->nid);
-    unset($node);
   }
 
   if (!empty($degree_assets)) {
