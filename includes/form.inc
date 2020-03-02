@@ -1368,7 +1368,7 @@ function _form_validate(&$elements, &$form_state, $form_id = NULL) {
           $options = $elements['#options'];
         }
         //if (strpos($elements['#id'], 'start-date')) {
-          dpm($options, __FUNCTION__ . ' start-date $options');
+          dpm($options, __FUNCTION__ . ' ' . $elements['#id'] . ' $options');
         //}
         if (is_array($elements['#value'])) {
           $value = in_array($elements['#type'], array('checkboxes', 'tableselect')) ? array_keys($elements['#value']) : $elements['#value'];
