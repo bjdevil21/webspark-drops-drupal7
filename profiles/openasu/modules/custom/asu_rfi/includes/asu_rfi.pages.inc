@@ -131,7 +131,29 @@ function asu_rfi_form_data($form, &$form_state) {
 
     $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'campus');
       $form['my_interest']['campus']['#required'] = TRUE;
-    $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'start_date', TRUE, $degree_assets['start_dates']); // Addon(s)
+
+    // AJAX update for start dates
+    if (!empty($form_state['values']['campus'])) {
+      dpm(__FUNCTION__ . ' form_state values campus is SET. Getting dates for ' . $form_state['values']['campus']);
+      $start_dates = _asu_rfi_get_sem_dates_dynamic(
+        $degree_assets['academic_plan'],
+        $degree_assets['grad_dates'],
+        $form_state['values']['campus']
+      );
+      $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
+        'my_interest',
+        'start_date',
+        TRUE,
+        $start_dates); // Addon(s)
+      $form['my_interest']['start_date']['#required'] = TRUE;
+    } else {
+      dpm(__FUNCTION__ . ' form_state values campus is NOT SET - default (all) values');
+      $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
+        'my_interest',
+        'start_date',
+        TRUE,
+        $degree_assets['start_dates']); // Addon(s)
+    }
     $form['my_interest']['start_date']['#required'] = TRUE;
     //$form['my_interest']['start_date']['#default_value'] = isset($_SESSION['rfi_data']['start_date']) ? $_SESSION['rfi_data']['start_date'] : NULL;
 
@@ -202,23 +224,6 @@ function asu_rfi_form_data($form, &$form_state) {
       '#submit' => array('asu_rfi_form_data_submit'),
       '#value' => t('Next'),
     );
-
-    // AJAX update for start dates
-    if (!empty($form_state['values']['campus'])) {
-      dpm(__FUNCTION__ . ' form_state values campus is SET');
-      $start_dates = _asu_rfi_get_sem_dates_dynamic(
-        $degree_assets['academic_plan'],
-        $degree_assets['grad_dates'],
-        $form_state['values']['campus']);
-      $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
-        'my_interest',
-        'start_date',
-        TRUE,
-        $start_dates); // Addon(s)
-      $form['my_interest']['start_date']['#required'] = TRUE;
-    } else {
-      dpm(__FUNCTION__ . ' form_state values campus is NOT SET');
-    }
 
     return $form;
   }
