@@ -58,6 +58,8 @@ function asu_rfi_form_data($form, &$form_state) {
 
   $country = _asu_rfi_get_country_list();
 
+
+  dpm($form_state, __FUNCTION__);
   // Load degree settings from node
   // If AJAX, uses existing form_state value
   if (isset($form_state['values']['nid'])) {
