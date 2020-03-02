@@ -134,7 +134,7 @@ function asu_rfi_form_data($form, &$form_state) {
     ////////////////////////////////
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET. Getting dates for ' . $form_state['values']['campus']);
-
+      dpm($degree_assets['campus'], __FUNCTION__ . ' - degree_assets[campus] - AJAX');
       $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys('my_interest', 'campus');
       $form['my_interest']['campus']['#default_value'] = $form_state['values']['campus'];
       $form['my_interest']['campus']['#required'] = TRUE;
@@ -152,7 +152,7 @@ function asu_rfi_form_data($form, &$form_state) {
       $form['my_interest']['start_date']['#required'] = TRUE;
     } else {
       dpm(__FUNCTION__ . ' form_state values campus is NOT SET - default (all) values');
-      dpm($degree_assets['campus'], __FUNCTION__ . ' - degree_assets[campus]');
+      dpm($degree_assets['campus'], __FUNCTION__ . ' - degree_assets[campus] - INIT');
       $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'campus',
