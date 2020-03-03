@@ -65,7 +65,6 @@ function asu_rfi_form_data($form, &$form_state) {
     $degree_assets = _asu_rfi_get_degree_specifics($form_state['values']['nid'], $campus);
   } else {
     $node = menu_get_object();
-    dpm($node, __FUNCTION__ . ' - node menu_get_object');
     $degree_assets = _asu_rfi_get_degree_specifics($node->nid);
   }
 
@@ -1933,7 +1932,6 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
       }
     }
     if (count($final_dates) > 0) {
-      dpm($final_dates, 'final_dates');
       return $final_dates;
     }
   }

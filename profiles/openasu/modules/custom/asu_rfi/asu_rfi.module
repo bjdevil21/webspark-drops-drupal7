@@ -1237,26 +1237,35 @@ function _asu_rfi_get_campus_location_options($pcodes) {
 
 /**
  * Returns correct campusID string for Salesforce compatibility
+ *
  * @param $campus - Human-readable campus name (or PeopleSoft/Salesforce IDs if $reverse)
- * @return string campus code (or human name, if $reverse). Returns empty string if no match is found.
+ * @return string - The campus code (or human name, if $reverse). Returns empty string if no match is found.
  * @TODO pull in from feed to stay up to date
  */
 function _asu_rfi_get_campus_info($campus, $reverse = FALSE) {
   $campuses = array(
     "Tempe" => "TEMPE",
-    "Online" => "ONLNE",
-    "East Arizona College" => "EAC",
-    "Polytechnic" => "POLY",
-    "Lake Havasu" => "CALHC",
     "West" => "WEST",
     "Downtown" => "DTPHX",
-    "Arizona Western College" => "AWC",
+    "Online" => "ONLNE",
+    "Polytechnic" => "POLY",
+    'ASU@Lake Havasu' => 'CALHC',
+    'ASU@The Gila Valley' => 'EAC',
+    'ASU@Tucson' => 'TUCSN',
+    'ASU@Pinal' => 'CAC',
+    'ASU@Yavapai' => 'YAVAP',
+    'ASU@Yuma' => 'AWC',
+    'ASU@MexicoCity' => 'MXCTY',
+    'ASU@Cochise' => 'COCHS',
+    'ASU@Washington, D.C.' => 'WASHD',
+    'ASU@Pima' => 'PIMA',
   );
+  // Flip campus keys + values if desired
   if ($reverse === TRUE) {
     $campuses = array_flip($campuses);
   }
   foreach ($campuses as $key => $value) {
-    if ($key === $campus) {
+    if (stristr($key, $campus) !== FALSE) {
       return $value;
       break;
     }
