@@ -178,7 +178,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       if (count($data['CampusStringArray'])) {
         foreach ($data['CampusStringArray'] as $campus_key => $value) {
           $value = trim(strtoupper($value));
-          $value = $this->getCampusMappings($value);
+          $value = $this->getCampusMappings($value, TRUE);
           if ($value == 'Online') {
             unset($parsed_data[$key]['CampusStringArray'][$campus_key]);
             array_push($parsed_data[$key]['CampusStringArray'], $value);
