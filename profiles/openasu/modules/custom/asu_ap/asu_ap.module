@@ -132,10 +132,7 @@ function asu_ap_menu_alter(&$items) {
  * Implements hook_html_head_alter().
  */
 function asu_ap_html_head_alter(&$head_elements) {
-  $a = microtime(TRUE);
   $node = menu_get_object();
-  $b = microtime(TRUE);
-  dpm(sprintf("Elapsed:  %f", $b - $a), 'menu_get_object: exec time');
   if ($node->type === 'asu_ap') {
     foreach ($head_elements as $key => $element) {
       if (isset($element['#attributes']['rel']) && $element['#attributes']['rel'] == 'canonical') {
@@ -167,12 +164,6 @@ function asu_ap_preprocess_page(&$variables) {
   if (!empty($ds_url) && valid_url($ds_url) && $variables['node']->type === 'asu_ap') {
     // Remove other canonical URL set by Drupal core IF type === asu_ap
     module_invoke('system', 'html_head');
-    // Then add this one
-    drupal_add_html_head_link(array(
-        'rel' => 'canonical',
-        'href' => $ds_url
-      )
-    );
   }
 }
 
