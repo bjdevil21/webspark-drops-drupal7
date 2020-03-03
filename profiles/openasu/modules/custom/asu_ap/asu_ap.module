@@ -142,6 +142,7 @@ function asu_ap_preprocess_page(&$variables) {
       }
     }
   }
+  // Add canonical URL for Degree Search SEO improvements
   $ds_url = (isset($variables['node']->field_asu_ap_asuds_url['und'][0]['url']))
     ? $variables['node']->field_asu_ap_asuds_url['und'][0]['url'] : '';
   if (!empty($ds_url) && valid_url($ds_url)) {
@@ -150,6 +151,7 @@ function asu_ap_preprocess_page(&$variables) {
         'href' => $ds_url
       )
     );
+    dpm(drupal_get_html_head());
   }
 }
 
