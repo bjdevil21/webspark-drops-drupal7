@@ -60,7 +60,6 @@ function asu_rfi_form_data($form, &$form_state) {
 
   // Load degree settings from node
   // If AJAX, uses existing form_state value
-  dpm($form_state['values'], __FUNCTION__ . ' - form_state[values]');
   if (isset($form_state['values']['nid'])) {
     dpm($node, __FUNCTION__ . ' - form_state[values][nid] is set (AJAX)');
     $campus = (isset($form_state['values']['campus'])) ? $form_state['values']['campus'] : '';
@@ -1645,6 +1644,11 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
 
     $campus_options = array();
     if ($possible_locations !== FALSE) {
+/*
+      if (count($possible_locations) === 1) {
+        $campus_options[' - Select - '] = '';
+      }
+      */
       foreach ($possible_locations as $key => $value) {
         $campus_options[$value] = $value;
       }
