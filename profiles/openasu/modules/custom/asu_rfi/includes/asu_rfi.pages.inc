@@ -1638,7 +1638,6 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $acad_plan_code => $degree_awarded,
     );
     $possible_locations = _asu_rfi_get_campus_location_options($academic_plans);
-    dpm($possible_locations);
     asu_rfi_disable_form($form, $possible_locations);
 
     $campus_options = array();
@@ -1911,7 +1910,6 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     }
   }
 
-  dpm($all_dates, __FUNCTION__ . ' - all_dates');
   $valid_semester_dates = array();
   // Filter by campus
   if (count($all_dates)) {
@@ -1923,18 +1921,19 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
       }
       $valid_semester_dates[] = $value['semester_check'];
     }
-    // Check dates against static list
+    // Filter against all possible dates in static list
     $final_dates = _asu_rfi_get_sem_dates_static(TRUE);
+    dpm($valid_semester_dates, 'valid_semester_dates');
+    dpm($final_dates, 'final_dates');
     foreach ($final_dates as $code => $date) {
       if (!in_array($date, $valid_semester_dates)) {
         unset($final_dates[$code]);
       }
     }
-  }
-  else {
+    return $final_dates;
+  } else {
     return FALSE;
   }
-  return $final_dates;
 }
 
 /**
