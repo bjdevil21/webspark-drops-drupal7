@@ -61,7 +61,6 @@ function asu_rfi_form_data($form, &$form_state) {
   // Load degree settings from node
   // If AJAX, uses existing form_state value
   if (isset($form_state['values']['nid'])) {
-    dpm($node, __FUNCTION__ . ' - form_state[values][nid] is set (AJAX)');
     $campus = (isset($form_state['values']['campus'])) ? $form_state['values']['campus'] : '';
     $degree_assets = _asu_rfi_get_degree_specifics($form_state['values']['nid'], $campus);
   } else {
@@ -92,7 +91,7 @@ function asu_rfi_form_data($form, &$form_state) {
         unset($form_state['values']);
         $form['sess_expire_message'] = array(
           '#type' => 'item',
-          '#markup' => '<div class="alert alert-danger" style="padding: 2%;">Your session has expired. Please fill out the form again.</div>',
+          '#markup' => '<div class="alert alert-danger" style="padding: 2%;">We\'re sorry, but your session has expired. Please fill out the form again.</div>',
         );
       }
     }
@@ -1887,6 +1886,9 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     flogger('asu_rfi', 'Dynamically generated start terms list for the RFI form from'
       . ' @acad_plan not working. Returning static dates list.', array('@acad_plan' => $acad_plan), WATCHDOG_NOTICE, TRUE);
     return _asu_rfi_get_sem_dates_static();
+  } else {
+    ksort($dates);
+    dpm($dates, __FUNCTION__);
   }
   // reformat data to use
   $all_dates = array();
@@ -1923,16 +1925,11 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     }
     // Check dates against static list
     $final_dates = _asu_rfi_get_sem_dates_static(TRUE);
-
-    //dpm($final_dates, 'final_dates - before');
-    //dpm($valid_semester_dates, 'valid_semester_dates');
-
     foreach ($final_dates as $code => $date) {
       if (!in_array($date, $valid_semester_dates)) {
         unset($final_dates[$code]);
       }
     }
-    //dpm($final_dates, 'final_dates - after');
   }
   else {
     return FALSE;
