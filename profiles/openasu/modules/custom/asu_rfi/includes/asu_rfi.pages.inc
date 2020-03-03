@@ -1888,12 +1888,13 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     return _asu_rfi_get_sem_dates_static();
   } else {
     ksort($dates);
-    dpm($dates, __FUNCTION__);
   }
   // reformat data to use
   $all_dates = array();
+  dpm($dates, __FUNCTION__);
   foreach ($dates as $key => $value) {
     $campus_dates = explode(':', $value, 2);
+    dpm($campus_dates, __FUNCTION__ . ' - campus_dates');
     if (count($campus_dates) === 2) {
       preg_match('|([A-Z]{3,5}):([A-Z]+?):\d(\d{2})(\d)|', $key, $matches);
       if (count($matches) === 5) {
