@@ -45,6 +45,7 @@ form[id^="asu-rfi-"] .chosen-search input[type="text"] {
 form[id^="asu-rfi-"] .chosen-container.error {
   background: none !important;
 }
+/*
 form[id^="asu-rfi-"] .form-type-checkbox {
   padding-left: 0;
 }
@@ -54,6 +55,7 @@ form[id^="asu-rfi-"] .form-type-checkbox input[type="checkbox"] {
 form[id^="asu-rfi-"] .form-type-checkbox label {
   margin-left: 2em;
 }
+*/
 form[id^="asu-rfi-"] .form-type-radios.form-item-location > #edit-location {
   overflow: auto;
 }
@@ -95,8 +97,8 @@ form[id^="asu-rfi-"] .form-item-country label,
 form[id^="asu-rfi-"] .form-item-state label,
 form[id^="asu-rfi-"] .form-item-program-code label,
 #asu-rfi-form-data .form-type-textfield label,
-#asu-rfi-form-data .form-type-item label,
-#asu-rfi-form-data .form-item label,
+  /*#asu-rfi-form-data .form-type-item label,
+  #asu-rfi-form-data .form-item label, */
 #asu-rfi-current-form-data label {
   display: block !important;
   font-weight: normal;
@@ -111,9 +113,11 @@ form[id^="asu-rfi-"] .form-item-program-code label,
 #asu-rfi-long-form-data .form-item-citizenship {
   padding-left: 0 !important;
 }
+/*
 form[id^=asu-rfi-] .form-item-mobile-check .fa-check {
   position: relative !important;
 }
+*/
 #edit-dob-field {
   margin-bottom: -17px;
 }
