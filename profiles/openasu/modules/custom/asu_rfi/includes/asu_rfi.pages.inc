@@ -1878,7 +1878,6 @@ function _asu_rfi_get_sem_dates_static($summer = FALSE) {
  * @return mixed $final_dates - If TRUE, array of ('semesterCode' => 'Fall YYYY'), etc. Returns FALSE if empty.
  */
 function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
-  dpm(__FUNCTION__ . ' called for --' . $campus . '-- campus');
   $dates = unserialize($grad_dates);
   if ($dates === FALSE) { // Corrupted or missing serialized array
     flogger('asu_rfi', 'Dynamically generated start terms list for the RFI form from'

@@ -142,6 +142,7 @@ function asu_ap_preprocess_page(&$variables) {
       }
     }
   }
+  dpm($variables['node'], __FUNCTION__);
 }
 
 /**
