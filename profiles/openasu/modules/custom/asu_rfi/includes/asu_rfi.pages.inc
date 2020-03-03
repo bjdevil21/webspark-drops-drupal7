@@ -1876,7 +1876,7 @@ function _asu_rfi_get_sem_dates_static($summer = FALSE) {
  * @param string $acad_plan - Academic plan of graduate degree
  * @param string $grad_dates - Serialized array from Graduate All Apply Dates (feed: graduateAllApplyDates) field.
  * @param string $campus - Filter by campus string (for when form is updated and called by AJAX)
- * @return mixed
+ * @return mixed $final_dates - If TRUE, array of ('semesterCode' => 'Fall YYYY'), etc. Returns FALSE if empty.
  */
 function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
   dpm(__FUNCTION__ . ' called for --' . $campus . '-- campus');
@@ -1911,6 +1911,7 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
   }
 
   $valid_semester_dates = array();
+  $final_dates = array();
   // Filter by campus
   if (count($all_dates)) {
     foreach ($all_dates as $code => $value) {
@@ -1922,18 +1923,21 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
       $valid_semester_dates[] = $value['semester_check'];
     }
     // Filter against all possible dates in static list
-    $final_dates = _asu_rfi_get_sem_dates_static(TRUE);
-    dpm($valid_semester_dates, 'valid_semester_dates');
-    dpm($final_dates, 'final_dates');
-    foreach ($final_dates as $code => $date) {
-      if (!in_array($date, $valid_semester_dates)) {
-        unset($final_dates[$code]);
+    $static_dates = _asu_rfi_get_sem_dates_static(TRUE);
+    foreach ($valid_semester_dates as $date) {
+      if (in_array($date, $static_dates)) {
+        $key = array_search($date, $static_dates, TRUE);
+        if ($key !== FALSE) {
+          $final_dates[$key] = $date;
+        }
       }
     }
-    return $final_dates;
-  } else {
-    return FALSE;
+    if (count($final_dates) > 0) {
+      dpm($final_dates, 'final_dates');
+      return $final_dates;
+    }
   }
+  return FALSE;
 }
 
 /**
