@@ -1580,6 +1580,8 @@ function _asu_rfi_form_initial_web_assets($type) {
  */
 function _asu_rfi_get_degree_specifics(&$form, $nid = NULL, $campus = '') {
 
+  dpm($form, __FUNCTION__ . ' - $form');
+
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 
   if (!is_null($nid)) { // If cached version with JS value
@@ -1940,6 +1942,7 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
  * @return array Options list ready for form select element
  */
 function _asu_rfi_get_campus_select($form, $program_code = array()) {
+  dpm($form, __FUNCTION__ . ' - $form');
   if ($form['#id'] === 'asu-rfi-form-data') {
     if (isset($form['program_code']['#default_value']) && !empty($form['program_code']['#default_value'])) {
       $program_codes = array(
