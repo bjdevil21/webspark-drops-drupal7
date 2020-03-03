@@ -137,10 +137,11 @@ function asu_ap_html_head_alter(&$head_elements) {
   $b = microtime(TRUE);
   dpm($a - $b, 'menu_get_object: exec time');
   if ($node->type === 'asu_ap') {
-  foreach ($head_elements as $key => $element) {
-    if (isset($element['#attributes']['rel']) && $element['#attributes']['rel'] == 'canonical') {
-      // I want a custom canonical URL.
-      $head_elements[$key]['#attributes']['href'] = $node->field_asu_ap_asuds_url['und'][0]['url'];
+    foreach ($head_elements as $key => $element) {
+      if (isset($element['#attributes']['rel']) && $element['#attributes']['rel'] == 'canonical') {
+        // I want a custom canonical URL.
+        $head_elements[$key]['#attributes']['href'] = $node->field_asu_ap_asuds_url['und'][0]['url'];
+      }
     }
   }
 }
