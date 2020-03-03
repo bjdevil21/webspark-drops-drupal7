@@ -131,19 +131,18 @@ function asu_ap_menu_alter(&$items) {
 /**
  * Implements hook_html_head_alter().
  */
-function asu_ap_html_head_alter(&$head_elements, $url) {
+function asu_ap_html_head_alter(&$head_elements) {
+  $a = microtime(TRUE);
+  $node = menu_get_object();
+  $b = microtime(TRUE);
+  dpm($a - $b, 'menu_get_object: exec time');
+  if ($node->type === 'asu_ap') {
   foreach ($head_elements as $key => $element) {
     if (isset($element['#attributes']['rel']) && $element['#attributes']['rel'] == 'canonical') {
       // I want a custom canonical URL.
-      $head_elements[$key]['#attributes']['href'] = $url;
+      $head_elements[$key]['#attributes']['href'] = $node->field_asu_ap_asuds_url['und'][0]['url'];
     }
   }
-  dpm(get_defined_vars(), __FUNCTION__);
-}
-
-function _asu_ap_html_head_alter($url) {
-  dpm($url, __FUNCTION__ . ' url');
-  module_invoke('system', 'html_head_alter', $url);
 }
 
 /**
@@ -165,9 +164,8 @@ function asu_ap_preprocess_page(&$variables) {
   $ds_url = (isset($variables['node']->field_asu_ap_asuds_url['und'][0]['url']))
     ? $variables['node']->field_asu_ap_asuds_url['und'][0]['url'] : '';
   if (!empty($ds_url) && valid_url($ds_url) && $variables['node']->type === 'asu_ap') {
-    dpm('YESSSS');
     // Remove other canonical URL set by Drupal core IF type === asu_ap
-    _asu_ap_html_head_alter($ds_url);
+    module_invoke('system', 'html_head');
     // Then add this one
     drupal_add_html_head_link(array(
         'rel' => 'canonical',
