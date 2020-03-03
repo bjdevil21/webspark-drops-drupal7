@@ -142,21 +142,9 @@ function asu_ap_preprocess_page(&$variables) {
       }
     }
   }
-  dpm($variables['node'], __FUNCTION__);
   $ds_url = (isset($variables['node']->field_asu_ap_asuds_url['und'][0]['url']))
     ? $variables['node']->field_asu_ap_asuds_url['und'][0]['url'] : '';
   if (!empty($ds_url) && valid_url($ds_url)) {
-    $ds_url_meta = array(
-      '#type' => 'html_tag',
-      '#tag' => 'meta',
-      '#attributes' => array(
-        'rel' => 'canonical',
-        'content' => $ds_url,
-      )
-    );
-
-    // Add header meta tag for IE to head
-    drupal_add_html_head($ds_url_meta, 'meta_ds_url_canonical');
     drupal_add_html_head_link(array(
         'rel' => 'canonical',
         'href' => $ds_url
