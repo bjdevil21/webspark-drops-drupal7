@@ -142,7 +142,7 @@ function asu_ap_html_head_alter(&$head_elements, $url) {
 }
 
 function _asu_ap_html_head_alter($url) {
-  dpm($url, __FUNCTION__ . ' url';
+  dpm($url, __FUNCTION__ . ' url');
   module_invoke('system', 'html_head_alter', $url);
 }
 
