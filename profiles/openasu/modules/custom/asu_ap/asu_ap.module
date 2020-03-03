@@ -165,6 +165,7 @@ function asu_ap_preprocess_page(&$variables) {
   $ds_url = (isset($variables['node']->field_asu_ap_asuds_url['und'][0]['url']))
     ? $variables['node']->field_asu_ap_asuds_url['und'][0]['url'] : '';
   if (!empty($ds_url) && valid_url($ds_url) && $variables['node']->type === 'asu_ap') {
+    dpm('YESSSS');
     // Remove other canonical URL set by Drupal core IF type === asu_ap
     _asu_ap_html_head_alter($ds_url);
     // Then add this one
