@@ -132,13 +132,13 @@ function asu_ap_menu_alter(&$items) {
  * Implements hook_html_head_alter().
  */
 function asu_ap_html_head_alter(&$head_elements, $url) {
-  dpm(get_defined_vars(), __FUNCTION__);
   foreach ($head_elements as $key => $element) {
     if (isset($element['#attributes']['rel']) && $element['#attributes']['rel'] == 'canonical') {
       // I want a custom canonical URL.
       $head_elements[$key]['#attributes']['href'] = $url;
     }
   }
+  dpm(get_defined_vars(), __FUNCTION__);
 }
 
 function _asu_ap_html_head_alter($url) {
