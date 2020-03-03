@@ -135,7 +135,7 @@ function asu_ap_html_head_alter(&$head_elements) {
   $a = microtime(TRUE);
   $node = menu_get_object();
   $b = microtime(TRUE);
-  dpm($a - $b, 'menu_get_object: exec time');
+  dpm(sprintf("Elapsed:  %f", $b - $a), 'menu_get_object: exec time');
   if ($node->type === 'asu_ap') {
     foreach ($head_elements as $key => $element) {
       if (isset($element['#attributes']['rel']) && $element['#attributes']['rel'] == 'canonical') {
