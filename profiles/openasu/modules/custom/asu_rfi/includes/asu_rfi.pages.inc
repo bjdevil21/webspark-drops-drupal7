@@ -62,16 +62,14 @@ function asu_rfi_form_data($form, &$form_state) {
   // If AJAX, uses existing form_state value
   if (isset($form_state['values']['nid'])) {
     $campus = (isset($form_state['values']['campus'])) ? $form_state['values']['campus'] : '';
-    $degree_assets = _asu_rfi_get_degree_specifics($form, $form_state['values']['nid'], $campus);
+    $degree_assets = _asu_rfi_get_degree_specifics($form_state['values']['nid'], $campus);
   } else {
     $node = menu_get_object();
-    $degree_assets = _asu_rfi_get_degree_specifics($form, $node->nid);
+    $degree_assets = _asu_rfi_get_degree_specifics($node->nid);
   }
 
-  //dpm($degree_assets['start_dates'], __FUNCTION__ . ' -- degree_assets=>start_dates');
-
   if (!empty($degree_assets)) {
-    // Unknown why this old code existed...
+    // Unknown why this old code existed... leaving refactored version of the logic below (to do nothing?)
     // $degree[$deg_code] = $deg_name; // ??
     $dc = $degree_assets['deg_code'];
     $degree[$dc] = $degree_assets['deg_name'];
@@ -127,21 +125,18 @@ function asu_rfi_form_data($form, &$form_state) {
       '#size' => 30,
     );
 
-    // @TODO dynamic build of campus options here before
-
-    $campus_options = $degree_assets['campus'];
-
+    // Campus options prebuilt from _asu_rfi_get_degree_specifics()
     $form['my_interest']['campus'] = _asu_rfi_form_elements_multiple_keys(
       'my_interest',
-      'campus'
-      // TRUE,
-      // $campus_options,
+      'campus',
+      TRUE,
+      $degree_assets['campus']
     );
       $form['my_interest']['campus']['#default_value'] = (isset($form_state['values']['campus']))
         ? $form_state['values']['campus'] : '';
       $form['my_interest']['campus']['#required'] = TRUE;
 
-    // AJAX update for start dates
+    // start dates - INIT and AJAX updates
     ////////////////////////////////
     if (!empty($form_state['values']['campus'])) {
       dpm(__FUNCTION__ . ' form_state values campus is SET. Getting dates for ' . $form_state['values']['campus']);
@@ -170,7 +165,6 @@ function asu_rfi_form_data($form, &$form_state) {
     }
     $form['my_interest']['campus']['#required'] = TRUE;
     $form['my_interest']['start_date']['#required'] = TRUE;
-    //$form['my_interest']['start_date']['#default_value'] = isset($_SESSION['rfi_data']['start_date']) ? $_SESSION['rfi_data']['start_date'] : NULL;
     // END AJAX start date updates
     /////////////////////////////
 
@@ -178,17 +172,11 @@ function asu_rfi_form_data($form, &$form_state) {
     $form['about_me'] = _asu_rfi_form_base_components('about_me');
     $form['about_me']['first_name'] = _asu_rfi_form_elements_multiple_keys('about_me', 'first_name');
     $form['about_me']['last_name'] = _asu_rfi_form_elements_multiple_keys('about_me', 'last_name', TRUE);
-      //#default_value' => isset($_SESSION['rfi_data']['last_name']) ? $_SESSION['rfi_data']['last_name'] : NULL,
     $form['about_me']['email'] = _asu_rfi_form_elements_multiple_keys('about_me', 'email', TRUE);
-      //'#default_value' => isset($_SESSION['rfi_data']['email']) ? $_SESSION['rfi_data']['email'] : NULL,
     $form['about_me']['phone'] = _asu_rfi_form_elements_multiple_keys('about_me', 'phone', TRUE);
-      //'#default_value' => isset($_SESSION['rfi_data']['phone']) ? $_SESSION['rfi_data']['phone'] : NULL,
     $form['about_me']['mobile_check'] = _asu_rfi_form_elements_multiple_keys('about_me', 'mobile_check', TRUE);
-      //'#default_value' => isset($_SESSION['rfi_data']['mobile_check']) ? $_SESSION['rfi_data']['mobile_check'] : NULL,
     $form['about_me']['country'] = _asu_rfi_form_elements_multiple_keys('about_me', 'country', TRUE, $country);
-      //'#default_value' => isset($_SESSION['rfi_data']['country']) ? $_SESSION['rfi_data']['country'] : NULL,
     $form['about_me']['zipcode'] = _asu_rfi_form_elements_multiple_keys('about_me', 'zipcode', TRUE);
-      //'#default_value' => isset($_SESSION['rfi_data']['zipcode']) ? $_SESSION['rfi_data']['zipcode'] : NULL,
       $form['about_me']['zipcode']['#states'] = array(
       'required' => array(
         ':input[name="country"]' => array('value' => 'United States'),
@@ -201,8 +189,7 @@ function asu_rfi_form_data($form, &$form_state) {
       '#markup' => '<label><strong>Date of birth <span class="form-required">*</span></strong></label>' . _asu_rfi_get_birthday_explanation(),
     );
     $form['about_me']['birthdate'] = _asu_rfi_form_elements_multiple_keys('about_me', 'birthdate', TRUE);
-      //'#default_value' => isset($_SESSION['rfi_data']['birthdate']) ? $_SESSION['rfi_data']['birthdate'] : NULL,
-      $form['about_me']['birthdate']['#required'] = TRUE;
+       $form['about_me']['birthdate']['#required'] = TRUE;
 
     $form['ip_address'] = _asu_rfi_form_base_components('ip_address');
     // NOPE - Single
@@ -1565,6 +1552,7 @@ function _asu_rfi_form_initial_web_assets($type) {
 
   if ($type === 'long_form') {
     drupal_page_is_cacheable(FALSE);
+    drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/js/asu_rfi.js');
   }
 }
 
@@ -1578,9 +1566,7 @@ function _asu_rfi_form_initial_web_assets($type) {
  * @param string $campus - Human-friendly campus string.
  * @return array
  */
-function _asu_rfi_get_degree_specifics(&$form, $nid = NULL, $campus = '') {
-
-  dpm($form, __FUNCTION__ . ' - $form');
+function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
 
   $degreeMappings = _asu_rfi_get_degree_field_mappings();
 
@@ -1643,13 +1629,25 @@ function _asu_rfi_get_degree_specifics(&$form, $nid = NULL, $campus = '') {
       $start_dates = _asu_rfi_get_sem_dates_static();
     }
 
-    // Get dynamic campus list
-    $node_campus = _asu_rfi_get_campus_select($form);
+    // Pull in available campus options (works for _form_alter for multistep...
+    $acad_plan_code = ((isset($academic_plan[LANGUAGE_NONE][0]['value']))
+      ? $academic_plan[LANGUAGE_NONE][0]['value'] : '');
+    $academic_plans = array(
+      // 'acad_plan code' => 'Human readable programs name'
+      $acad_plan_code => $degree_awarded,
+    );
+    $possible_locations = _asu_rfi_get_campus_location_options($academic_plans);
+    dpm($possible_locations);
+    asu_rfi_disable_form($form, $possible_locations);
 
-    if ($form['#id'] == "asu-rfi-form-data") {
-      // Build possible locations for this degree
-      $form['my_interest']['campus']['#options'] = $node_campus;
+    $campus_options = array();
+    if ($possible_locations !== FALSE) {
+      foreach ($possible_locations as $key => $value) {
+        $campus_options[$value] = $value;
+      }
     }
+
+    // ... @TODO - alter form LONG FORM circumstances
 
     return array(
       'academic_plan' => $academic_plan,
@@ -1657,7 +1655,7 @@ function _asu_rfi_get_degree_specifics(&$form, $nid = NULL, $campus = '') {
       'degree_awarded' => $degree_awarded,
       'degree_program' => $degree_program,
       'diploma_description' => $diploma_description,
-      'campus' => $node_campus,
+      'campus' => $campus_options,
       'deg_code' => $deg_code,
       'deg_name' => $deg_name,
       'college_code' => $college_code,
@@ -1933,39 +1931,6 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     return FALSE;
   }
   return $final_dates;
-}
-
-/**
- * Get campus list for a degree
- * @param $form
- * @param array $program_code
- * @return array Options list ready for form select element
- */
-function _asu_rfi_get_campus_select($form, $program_code = array()) {
-  dpm($form, __FUNCTION__ . ' - $form');
-  if ($form['#id'] === 'asu-rfi-form-data') {
-    if (isset($form['program_code']['#default_value']) && !empty($form['program_code']['#default_value'])) {
-      $program_codes = array(
-        $form['program_code']['#default_value'] => $form['my_interest']['prog_plan']['#default_value'],
-      );
-      $possible_locations = _asu_rfi_get_campus_location_options($program_codes);
-      asu_rfi_disable_form($form, $possible_locations);
-
-      $new_locations = array();
-      if ($possible_locations !== FALSE) {
-        foreach ($possible_locations as $key => $value) {
-          $new_locations[$value] = $value;
-        }
-      }
-      return $new_locations;
-    }
-  }
-
-  elseif ($form['#id'] === 'asu-rfi-long-form-data') {
-    $program_codes = $form['my_interest']['program_code']['#options'];
-    $possible_locations = _asu_rfi_get_campus_location_options($program_codes);
-    asu_rfi_disable_form($form, $possible_locations);
-  }
 }
 
 /**
