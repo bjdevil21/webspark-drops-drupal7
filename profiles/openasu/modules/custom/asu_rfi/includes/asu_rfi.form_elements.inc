@@ -52,6 +52,7 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
     case 'req_header_text':
       return array(
         '#value' => _asu_rfi_form_header_text(),
+        '#attributes' => array('class' => array('alert', 'alert-success')),
       );
       break;
     case 'req_helper':

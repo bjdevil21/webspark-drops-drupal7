@@ -19,13 +19,14 @@
 form[id^="asu-rfi-"] div.fieldset-wrapper {
   overflow: visible !important;
 }
-form[id^="asu-rfi-"] legend {
+form[id^="asu-rfi-"] fieldset legend {
   margin-bottom: inherit;
+  font-size: 1.3em;
+  font-weight: 600;
 }
 form[id^="asu-rfi-"] fieldset:not(:first-of-type) legend {
   margin-top: 1em;
 }
-
 /* DOM elements */
 form[id^="asu-rfi-"] input[type="text"] {
   width: 230px;
@@ -82,6 +83,9 @@ form[id^="asu-rfi-"] .form-type-radios.form-item-location > #edit-location .radi
 form[id^="asu-rfi-"] #edit-req-helper {
   font-style: italic;
   font-size: 0.9em;
+}
+form[id^="asu-rfi-"] #edit-req-helper p {
+  margin: 0;
 }
 form[id^="asu-rfi-"] .form-item-birthdate label {
   display: none !important;
