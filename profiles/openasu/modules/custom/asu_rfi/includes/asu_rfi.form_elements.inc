@@ -57,9 +57,10 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
       break;
     case 'req_helper':
       return array(
-        '#type' => 'item',
+        '#type' => 'markup',
         '#markup' => '<p>Fields marked with <span class="form-required">*</span> are required.</p>',
-
+        '#prefix' => '<div id="edit-req-helper" class="alert alert-success form-type-item form-item form-group">',
+        '#suffix' => '</div>',
       );
       break;
     case 'campus':
