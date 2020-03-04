@@ -262,16 +262,20 @@ function asu_rfi_admin_settings() {
 }
 
 /**
- *
+ * Validation handler for ASU RFI admin configuration form
+ * @param $form
+ * @param $form_state
  */
 function _asu_rfi_admin_settings_validate($form, &$form_state) {
-  if (!valid_url($form_state['values']['asu_rfi_from_email_field'])) {
+  if (!valid_url($form_state['values']['asu_rfi_online_url'])) {
     form_set_error('asu_rfi_online_url',
       'A valid JSON feed URL for pulling in Online campus degrees is required.');
   }
   if (isset($form_state['values']['asu_rfi_from_email_field'])
     && (!empty($form_state['values']['asu_rfi_from_email_field']))) {
-    _asu_rfi_validate_electronic_contacts($form_state['values']['asu_rfi_from_email_field']);
+    _asu_rfi_validate_electronic_contacts($form_state['values']['asu_rfi_from_email_field'],
+      '',
+      'asu_rfi_from_email_field');
   }
 }
 
