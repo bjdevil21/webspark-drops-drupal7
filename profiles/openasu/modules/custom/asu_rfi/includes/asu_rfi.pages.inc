@@ -819,7 +819,6 @@ function asu_rfi_long_form($delta, $programs, $form_type) {
  * @return array
  */
 function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
-  dpm(__FUNCTION__ . ' BEGIN');
   _asu_rfi_form_initial_web_assets('long_form');
 
   $form = array();
@@ -1913,21 +1912,20 @@ function _asu_rfi_get_sem_dates_static($summer = FALSE) {
  * @return mixed $final_dates - If TRUE, array of ('semesterCode' => 'Fall YYYY'), etc. Returns FALSE if empty.
  */
 function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
-  if (empty($grad_dates)) {
-    flogger('asu_rfi', 'No grad_dates set. Returning static dates list.',
-      array(), WATCHDOG_NOTICE, TRUE);
+  if (empty($grad_dates)) { // either an undergrad degree or field hasn't been updated.
     return _asu_rfi_get_sem_dates_static();
   }
   // Move on
   $dates = unserialize($grad_dates);
   if ($dates === FALSE) { // Corrupted or missing serialized array
-    flogger('asu_rfi', 'Corrupted/missing grad_dates list. Returning static dates list.',
-      array(), WATCHDOG_NOTICE, TRUE);
+    flogger('asu_rfi', 'Corrupted/missing grad_dates list. Returning static'
+      . ' dates list for @acad_plan.',
+      array('@acad_plan' => $acad_plan), WATCHDOG_NOTICE);
     return _asu_rfi_get_sem_dates_static();
   } else {
     ksort($dates);
   }
-  // reformat data to use
+  // Reformat graduate data
   $all_dates = array();
   foreach ($dates as $key => $value) {
     $campus_dates = explode(':', $value, 2);
