@@ -87,21 +87,6 @@ form[id^="asu-rfi-"] .form-required {
 form[id^="asu-rfi-"] .form-item-birthdate label {
   display: none !important;
 }
-form[id^="asu-rfi-"] .form-item-campus label,
-form[id^="asu-rfi-"] .form-item-prog-plan label,
-form[id^="asu-rfi-"] .form-item-start-date label,
-form[id^="asu-rfi-"] .form-item-student-type label,
-form[id^="asu-rfi-"] .form-item-country label,
-form[id^="asu-rfi-"] .form-item-state label,
-form[id^="asu-rfi-"] .form-item-program-code label,
-#asu-rfi-form-data .form-type-textfield label,
-#asu-rfi-form-data .form-type-item label,
-#asu-rfi-form-data .form-item label,
-#asu-rfi-current-form-data label {
-  display: block !important;
-  font-weight: normal;
-  font-size: smaller;
-}
 #asu-rfi-second-form .form-item-military.form-group {
   border-bottom: 1px solid grey;
 }
