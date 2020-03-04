@@ -51,15 +51,16 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
     //////////////////////
     case 'req_header_text':
       return array(
-        '#type' => 'item',
+        '#type' => 'markup',
         '#markup' => _asu_rfi_form_header_text(),
       );
       break;
     case 'req_helper':
       return array(
-        '#type' => 'item',
+        '#type' => 'markup',
         '#markup' => '<p>Fields marked with <span class="form-required">*</span> are required.</p>',
-        '#attributes' => array('class' => array('alert', 'alert-success')),
+        '#prefix' => '<div class="alert alert-success">',
+        '#suffix' => '</div>',
       );
       break;
     case 'campus':
