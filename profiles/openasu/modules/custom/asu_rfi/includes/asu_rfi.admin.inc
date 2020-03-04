@@ -50,7 +50,7 @@ function asu_rfi_admin_settings() {
     '#collapsed' => FALSE,
     '#attributes' => array('class' => array('asu-rfi-admin-field asu_rfi_form_access')),
   );
-  $form['asu_rfi_form_access']['online_url'] = array(
+  $form['asu_rfi_form_access']['asu_rfi_online_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Online programs feed URL'),
     '#description' => t('The URL for the asuonline.asu.edu JSON feed that'
