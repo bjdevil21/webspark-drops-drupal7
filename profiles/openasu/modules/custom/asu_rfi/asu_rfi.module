@@ -605,10 +605,9 @@ function asu_rfi_form_after_build($form, &$form_state) {
       $form['my_interest']['student_type']['#needs_validation'] = FALSE;
     }
   }
-  dpm($form, __FUNCTION__ . ' form');
-  dpm($form_state, __FUNCTION__ . ' form_state');
-  if ($form['#form_id'] !== 'asu_rfi_form_data') { // load for all except multiform step 1
+  if ($form['#form_id'] !== 'asu_rfi_form_data' XOR isset($form_state['storage'])) { // load for all except multiform step 1
     drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/theme/session_clear.js');
+    dpm('session_clear.js');
   }
   drupal_add_css(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css');
   return $form;
