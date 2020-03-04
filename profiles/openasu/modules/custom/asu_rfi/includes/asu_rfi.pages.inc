@@ -1611,13 +1611,13 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     $cache = cache_get('asu_rfi_degree__' . $nid);
     if (isset($cache->data)) {
       $node = $cache->data;
-      dpm('FOUND - Using cached version of $node for nid ' . $nid);
+      //dpm('FOUND - Using cached version of $node for nid ' . $nid);
     } else {
-      dpm('Node ID ' . $nid . ' set, but cache_get failed to find cached version. Initializing node cache object.');
+      //dpm('Node ID ' . $nid . ' set, but cache_get failed to find cached version. Initializing node cache object.');
       $node = _asu_rfi_get_degree_specifics_init($nid);
     }
   } else {
-    dpm('Node ID ' . $nid . ' not set. Initializing node cache object.');
+    //dpm('Node ID ' . $nid . ' not set. Initializing node cache object.');
     $node = _asu_rfi_get_degree_specifics_init($nid);
   }
 
@@ -1659,12 +1659,10 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     if (!empty($grad_dates)
       && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
       && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
-      dpm('dynamic dates', __FUNCTION__);
       $acad_plan = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
       $start_dates = _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus);
     }
     else {
-      dpm('static dates', __FUNCTION__);
       $start_dates = _asu_rfi_get_sem_dates_static();
     }
 
