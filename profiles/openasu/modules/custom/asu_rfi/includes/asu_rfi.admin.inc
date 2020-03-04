@@ -269,6 +269,7 @@ function _asu_rfi_admin_settings_submit($form, $form_state) {
     'asu_rfi_undergrad_confirm' => 1,
     'asu_rfi_expired_delete' => 0,
     'asu_rfi_expired_submit' => 0,
+    'asu_rfi_online_url' => 0,
   );
   foreach ($keys as $element => $is_entity) {
     $value = ($is_entity === 1)
