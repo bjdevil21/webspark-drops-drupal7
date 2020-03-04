@@ -156,14 +156,13 @@ function asu_ap_preprocess_page(&$variables) {
         $variables['theme_hook_suggestions'][] = 'page__asu_ap';
       }
     }
-  }
-
-  // Add custom, canonical URL for Degree Search SEO improvements
-  $ds_url = (isset($variables['node']->field_asu_ap_asuds_url['und'][0]['url']))
-    ? $variables['node']->field_asu_ap_asuds_url['und'][0]['url'] : '';
-  if (!empty($ds_url) && valid_url($ds_url) && $variables['node']->type === 'asu_ap') {
-    // Remove other canonical URL set by Drupal core IF type === asu_ap
-    module_invoke('system', 'html_head');
+    // Add custom, canonical URL for Degree Search SEO improvements
+    $ds_url = (isset($variables['node']->field_asu_ap_asuds_url['und'][0]['url']))
+      ? $variables['node']->field_asu_ap_asuds_url['und'][0]['url'] : '';
+    if (!empty($ds_url) && valid_url($ds_url) && $variables['node']->type === 'asu_ap') {
+      // Remove other canonical URL set by Drupal core IF type === asu_ap
+      module_invoke('system', 'html_head');
+    }
   }
 }
 
