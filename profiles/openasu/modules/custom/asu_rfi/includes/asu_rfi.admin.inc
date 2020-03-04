@@ -58,6 +58,7 @@ function asu_rfi_admin_settings() {
     '#default_value' => variable_get('asu_rfi_online_url'),
     '#size' => 60,
     '#maxlength' => 128,
+    '#required' => TRUE,
   );
   $form['asu_rfi_form_access']['asu_rfi_form_mode'] = array(
     '#type' => 'select',
@@ -253,9 +254,24 @@ function asu_rfi_admin_settings() {
   );
 
   // EXTRA submission actions for confirmation pages
+  $form['#validate'][] = '_asu_rfi_admin_settings_validate';
   $form['#submit'][] = '_asu_rfi_admin_settings_submit';
 
   return system_settings_form($form);
+}
+
+/**
+ *
+ */
+function _asu_rfi_admin_settings_validate($form, &$form_state) {
+  if (!valid_url($form_state['values']['asu_rfi_from_email_field'])) {
+    form_set_error('asu_rfi_online_url',
+      'A valid JSON feed URL for pulling in Online campus degrees is required.');
+  }
+  if (isset($form_state['values']['asu_rfi_from_email_field'])
+    && (!empty($form_state['values']['asu_rfi_from_email_field']))) {
+    _asu_rfi_validate_electronic_contacts($form_state['values']['asu_rfi_from_email_field']);
+  }
 }
 
 /**
