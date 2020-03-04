@@ -153,11 +153,7 @@ function asu_rfi_form_data($form, &$form_state) {
         $start_dates); // Addon(s)
       $form['my_interest']['start_date']['#required'] = TRUE;
     } else {
-      dpm(__FUNCTION__ . ' form_state[values][campus] is NOT SET - default start dates');
-      $start_dates = _asu_rfi_get_sem_dates_dynamic(
-        $degree_assets['academic_plan'],
-        $degree_assets['grad_dates']
-      );
+      dpm(__FUNCTION__ . ' form_state[values][campus] is NOT SET - use degree_specific start dates');
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'start_date',
@@ -1620,13 +1616,13 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     $cache = cache_get('asu_rfi_degree__' . $nid);
     if (isset($cache->data)) {
       $node = $cache->data;
-      dpm('SUCCESS - cached version of $node for nid ' . $nid);
+      dpm('FOUND - Using cached version of $node for nid ' . $nid);
     } else {
-      dpm('cache_get failed to load for $node nid ' . $nid);
+      dpm('Node ID ' . $nid . ' set, but cache_get failed to find cached version. Initializing node cache object.');
       $node = _asu_rfi_get_degree_specifics_init($nid);
     }
   } else {
-    dpm('Node ID ' . $nid . ' set but cache_get failed. Initializing node cache object.');
+    dpm('Node ID ' . $nid . ' not set. Initializing node cache object.');
     $node = _asu_rfi_get_degree_specifics_init($nid);
   }
 
@@ -1689,17 +1685,12 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
 
     $campus_options = array();
     if ($possible_locations !== FALSE) {
-/*
-      if (count($possible_locations) === 1) {
-        $campus_options[' - Select - '] = '';
-      }
-      */
       foreach ($possible_locations as $key => $value) {
         $campus_options[$value] = $value;
       }
     }
 
-    // ... @TODO - alter form LONG FORM circumstances
+    // ... @TODO - move alter form LONG FORM circumstances to here
 
     return array(
       'academic_plan' => $academic_plan,
@@ -1926,10 +1917,16 @@ function _asu_rfi_get_sem_dates_static($summer = FALSE) {
  * @return mixed $final_dates - If TRUE, array of ('semesterCode' => 'Fall YYYY'), etc. Returns FALSE if empty.
  */
 function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
+  if (empty($grad_dates)) {
+    flogger('asu_rfi', 'No grad_dates set. Returning static dates list.',
+      array(), WATCHDOG_NOTICE, TRUE);
+    return _asu_rfi_get_sem_dates_static();
+  }
+  // Move on
   $dates = unserialize($grad_dates);
   if ($dates === FALSE) { // Corrupted or missing serialized array
-    flogger('asu_rfi', 'Dynamically generated start terms list for the RFI form from'
-      . ' @acad_plan not working. Returning static dates list.', array('@acad_plan' => $acad_plan), WATCHDOG_NOTICE, TRUE);
+    flogger('asu_rfi', 'Corrupted/missing grad_dates list. Returning static dates list.',
+      array(), WATCHDOG_NOTICE, TRUE);
     return _asu_rfi_get_sem_dates_static();
   } else {
     ksort($dates);
@@ -1956,9 +1953,9 @@ function _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus = '') {
     }
   }
 
-  $valid_semester_dates = array();
   $final_dates = array();
   // Filter by campus
+  $valid_semester_dates = array();
   if (count($all_dates)) {
     foreach ($all_dates as $code => $value) {
       if ($campus !== '') {
