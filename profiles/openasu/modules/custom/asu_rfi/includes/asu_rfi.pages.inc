@@ -225,9 +225,6 @@ function asu_rfi_form_data($form, &$form_state) {
       '#value' => t('Next'),
     );
 
-    $form['#attach']['js'] = array(drupal_get_path('module', 'asu_rfi') . '/theme/session_clear.js');
-    $form['#attach']['css'] = array(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css');
-    
     $form['#after_build'][] = 'asu_rfi_form_after_build';
 
     return $form;
@@ -1019,8 +1016,6 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
     '#value' => t('I Agree / Submit'),
     '#attributes' => array('class' => array('rfi-button')),
   );
-  $form['#attach']['js'] = array(drupal_get_path('module', 'asu_rfi') . '/theme/session_clear.js');
-  $form['#attach']['css'] = array(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css');
 
   $form['#after_build'][] = 'asu_rfi_form_after_build';
   return $form;
@@ -1434,8 +1429,7 @@ function asu_rfi_current_form_data($form, &$form_state, $programs, $form_type) {
     '#attributes' => array('class' => array('rfi-button')),
     '#value' => t('I Agree / Submit'),
   );
-  $form['#attach']['js'] = array(drupal_get_path('module', 'asu_rfi') . '/theme/session_clear.js');
-  $form['#attach']['css'] = array(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css');
+
   $form['#after_build'][] = 'asu_rfi_form_after_build';
   return $form;
 }
