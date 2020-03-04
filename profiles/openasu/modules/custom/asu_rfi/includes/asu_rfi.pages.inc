@@ -1424,6 +1424,7 @@ function asu_rfi_current_form_data($form, &$form_state, $programs, $form_type) {
     '#attributes' => array('class' => array('rfi-button')),
     '#value' => t('I Agree / Submit'),
   );
+  $form['#after_build'][] = 'asu_rfi_form_after_build';
   return $form;
 }
 
@@ -1565,10 +1566,6 @@ function asu_rfi_current_form_data_submit($form, &$form_state) {
  * @param string $type - multiform, long_form, or current_form
  */
 function _asu_rfi_form_initial_web_assets($type) {
-  // ALL
-  drupal_add_css(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css', 'file');
-  drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/theme/session_clear.js', 'file');
-
   if ($type === 'multiform' || $type === 'long_form') {
     // Add no-store in Cache-Control to clear all data when browser back button is clicked
     drupal_add_http_header(
