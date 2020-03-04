@@ -44,6 +44,7 @@ function asu_rfi_form_data($form, &$form_state) {
   /// from asu_rfi_second_form
   if (isset($form_state['storage'])) {
     if ($form_state['storage']['step'] == 'asu_rfi_second_form') {
+        drupal_add_js(drupal_get_path('module', 'asu_rfi') . '/theme/session_clear.js');
       return asu_rfi_second_form($form, $form_state);
     }
   }
