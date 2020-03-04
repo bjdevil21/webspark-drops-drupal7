@@ -22,7 +22,7 @@ form[id^="asu-rfi-"] div.fieldset-wrapper {
 form[id^="asu-rfi-"] legend {
   margin-bottom: inherit;
 }
-form[id^="asu-rfi-"] label .form-required {
+form[id^="asu-rfi-"] .form-required {
   color: #ad0005;
 }
 form[id^="asu-rfi-"] fieldset:not(:first-of-type) legend {
