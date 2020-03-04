@@ -921,16 +921,12 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
       $start_dates); // Addon(s)
     $form['my_interest']['start_date']['#required'] = TRUE;
   } else {
-    dpm(__FUNCTION__ . ' form_state[values][campus] is NOT SET - default start dates');
-    $start_dates = _asu_rfi_get_sem_dates_dynamic(
-      $degree_assets['academic_plan'],
-      $degree_assets['grad_dates']
-    );
+    dpm(__FUNCTION__ . ' form_state[values][campus] is NOT SET - use degree_specific start dates');
     $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
       'my_interest',
       'start_date',
       TRUE,
-      $start_dates); // Addon(s)
+      $degree_assets['start_dates']); // Addon(s)
   }
   // END AJAX start date updates
   /////////////////////////////
