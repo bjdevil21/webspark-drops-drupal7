@@ -57,7 +57,7 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
     case 'req_helper':
       return array(
         '#type' => 'item',
-        '#markup' => '<p>Fields marked with <span style = "color:black;">*</span> are required.</p>',
+        '#markup' => '<p>Fields marked with <span class="form-required">*</span> are required.</p>',
         '#size' => 10,
       );
       break;
