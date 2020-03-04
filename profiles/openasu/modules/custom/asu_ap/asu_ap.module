@@ -133,6 +133,7 @@ function asu_ap_menu_alter(&$items) {
  */
 function asu_ap_html_head_alter(&$head_elements) {
   $node = menu_get_object();
+  dpm($node);
   if ($node->type === 'asu_ap') {
     foreach ($head_elements as $key => $element) {
       if (isset($element['#attributes']['rel']) && $element['#attributes']['rel'] == 'canonical') {
