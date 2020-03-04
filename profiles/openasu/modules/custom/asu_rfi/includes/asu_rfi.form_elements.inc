@@ -276,6 +276,13 @@ function _asu_rfi_form_base_components($name, $session = FALSE, $value = '') {
         '#default_value' => (string) $_SERVER['HTTP_HOST'],
       );
       break;
+    case 'nid':
+      return array(
+        '#type' => 'hidden',
+        '#maxlength' => 16,
+        '#default_value' => (isset($value)) ? (string) $value : '',
+        '#size' => 16,
+      );
     case 'enterpriseclientid':
       // Will be filled in using JS to obtain from GA, per EdPlus.
       // See WEBSPARK-1198.
