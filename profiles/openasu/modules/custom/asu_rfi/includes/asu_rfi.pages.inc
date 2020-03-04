@@ -822,7 +822,7 @@ function asu_rfi_long_form($delta, $programs, $form_type) {
  * @return array
  */
 function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
-
+  dpm(__FUNCTION__ . ' BEGIN');
   _asu_rfi_form_initial_web_assets('long_form');
 
   $form = array();
