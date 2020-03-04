@@ -605,8 +605,6 @@ function asu_rfi_form_after_build($form, &$form_state) {
       $form['my_interest']['student_type']['#needs_validation'] = FALSE;
     }
   }
-  $form['#attach']['js'][] = array(drupal_get_path('module', 'asu_rfi') . '/theme/session_clear.js');
-  $form['#attach']['css'][] = array(drupal_get_path('module', 'asu_rfi') . '/theme/asu_rfi.css');
   return $form;
 }
 
