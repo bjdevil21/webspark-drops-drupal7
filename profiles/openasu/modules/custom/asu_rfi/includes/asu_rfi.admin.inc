@@ -54,7 +54,8 @@ function asu_rfi_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('Online programs feed URL'),
     '#description' => t('The URL for the asuonline.asu.edu JSON feed that'
-      . ' lists all Online campus programs. This should have been set when this module was enabled.'),
+      . ' lists all Online campus programs. This should have been set when this module'
+      . ' was enabled, and will rarely be changed.'),
     '#default_value' => variable_get('asu_rfi_online_url'),
     '#size' => 60,
     '#maxlength' => 128,
