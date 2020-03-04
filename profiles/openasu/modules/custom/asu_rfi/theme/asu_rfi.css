@@ -87,6 +87,10 @@ form[id^="asu-rfi-"] .form-required {
 }
 
 /* Field-specific mods */
+form[id^="asu-rfi-"] #edit-req-helper {
+  font-style: italic;
+  font-size: 0.9em;
+}
 form[id^="asu-rfi-"] .form-item-birthdate label {
   display: none !important;
 }
