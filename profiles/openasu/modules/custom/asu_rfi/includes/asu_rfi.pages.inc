@@ -158,7 +158,7 @@ function asu_rfi_form_data($form, &$form_state) {
         'my_interest',
         'start_date',
         TRUE,
-        $start_dates); // Addon(s)
+        $degree_assets['start_dates']); // Addon(s)
     }
     // END AJAX start date updates
     /////////////////////////////
