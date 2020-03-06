@@ -2062,7 +2062,9 @@ function _asu_rfi_get_gdpr_markup() {
  */
 function _asu_rfi_form_closure(&$form, $name = '') {
   $form['#after_build'][] = 'asu_rfi_form_after_build';
-  $form['#attributes'][] = array('name' => array($name));
+  dpm($form, __FUNCTION__);
+  $form['#attributes'] = array('name' => array($name));
+  dpm($form, __FUNCTION__ . ' after');
   $form['#prefix'] = '<div id="rfi-form">';
   $form['#suffix'] = '</div>';
 }
