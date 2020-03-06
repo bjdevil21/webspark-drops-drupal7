@@ -52,7 +52,7 @@
     }
 
     function setRequired(val) {
-        let form = document.getElementById("asu-rfi-long-form-data");
+        let form = document.getElementsByName("asu-rfi-long-form-data");
         let grad = form.querySelector('input[value=graduate_longform]');
         if (!grad) {
             let label = form.querySelector('label[for=edit-program-code]');
