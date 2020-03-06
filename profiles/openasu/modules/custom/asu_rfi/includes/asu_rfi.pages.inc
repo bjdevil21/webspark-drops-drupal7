@@ -1681,6 +1681,7 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     }
     elseif (empty($grad_dates && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate')) {
       dpm('no dates - graduate');
+      $start_dates = '';
     }
     else {
       dpm('static dates - undergrad');
