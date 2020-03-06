@@ -49,6 +49,10 @@ function asu_rfi_form_data($form, &$form_state) {
   }
   ///////////////// Otherwise, we BUILD THE FIRST FORM below
 
+  $form = array();
+  $form['#prefix'] = '<div id="long-form-head">';
+  $form['#suffix'] = '</div>';
+
   // INIT - Dates
   for ($idate = 0; $idate < 4; $idate++) {
     $date = date('Y') + $idate;
@@ -74,7 +78,6 @@ function asu_rfi_form_data($form, &$form_state) {
     $dc = $degree_assets['deg_code'];
     $degree[$dc] = $degree_assets['deg_name'];
 
-    $form = array();
     honeypot_add_form_protection($form, $form_state, array(
       'honeypot',
       'time_restriction'
