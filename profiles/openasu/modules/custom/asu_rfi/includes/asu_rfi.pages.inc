@@ -1668,7 +1668,10 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     // Pull in available start terms for Graduate programs; Static for all others
     $grad_dates = (isset($node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value']))
       ? $node->field_asu_ap_grad_all_app_dates[LANGUAGE_NONE][0]['value'] : '';
-    dpm($academic_plan[LANGUAGE_NONE][0]['safe_value'], 'academic_plan');
+    dpm($grad_dates, 'grad_dates');
+    dpm($academic_plan[LANGUAGE_NONE][0]['safe_value'], '$academic_plan[LANGUAGE_NONE][0][safe_value]');
+    dpm($degree_program[LANGUAGE_NONE][0]['safe_value'], '$degree_program[LANGUAGE_NONE][0][safe_value]');
+    dpm($academic_program, '$academic_program');
     if (!empty($grad_dates)
       && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
       && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
