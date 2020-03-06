@@ -72,6 +72,16 @@ function asu_rfi_form_data($form, &$form_state) {
 
   if (!empty($degree_assets)) {
 
+    // If no grad_dates for graduate degrees, kill the form and return messaging
+    if (empty($degree_assets['grad_dates']) && $degree_assets['degree_program'] === 'graduate') {
+      $form = array();
+      $form['message'] = array(
+        '#type' => 'markup',
+        '#markup' => '<p>This program is not accepting new students at this time.</p>',
+      );
+      return $form;
+    }
+
     // Unknown why this old code existed... leaving refactored version of the logic below (to do nothing?)
     // $degree[$deg_code] = $deg_name; // ??
     $dc = $degree_assets['deg_code'];
