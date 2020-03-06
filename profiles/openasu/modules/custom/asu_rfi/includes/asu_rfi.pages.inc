@@ -1685,8 +1685,8 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     }
 
     // Pull in available campus options (works for _form_alter for multistep...
-    $acad_plan_code = ((isset($academic_plan[LANGUAGE_NONE][0]['value']))
-      ? $academic_plan[LANGUAGE_NONE][0]['value'] : '');
+    $acad_plan_code = ((isset($academic_plan[LANGUAGE_NONE][0]['safe_value']))
+      ? $academic_plan[LANGUAGE_NONE][0]['safe_value'] : '');
     $academic_plans = array(
       // 'acad_plan code' => 'Human readable programs name'
       $acad_plan_code => $degree_awarded,
