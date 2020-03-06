@@ -73,7 +73,7 @@ function asu_rfi_form_data($form, &$form_state) {
   if (!empty($degree_assets)) {
     dpm($degree_assets, 'degree_assets');
     // If no grad_dates for graduate degrees, kill the form and return messaging
-    if (empty($degree_assets['grad_dates']) && $degree_assets['degree_program'] === 'graduate') {
+    if (empty($degree_assets['grad_dates']) && $degree_assets['degree_program']['und'][0]['safe_value'] === 'graduate') {
       $form = array();
       $form['message'] = array(
         '#type' => 'markup',
