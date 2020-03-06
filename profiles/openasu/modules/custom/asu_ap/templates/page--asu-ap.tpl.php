@@ -349,7 +349,7 @@ if (module_exists('metatag')) {
             <div class="col-sm-6 col-md-4 space-bot-md">
     <?php $cta_information = (isset($node_info['field_asu_ap_cta_information']['#items'][0]['url']))
       ? $node_info['field_asu_ap_cta_information']['#items'][0]['url']
-      : "#asu-rfi-form-data"; ?>
+      : "#rfi-form"; ?>
               <form><button type="submit" formaction="<?php print $cta_information; ?>" class="btn btn-gold btn-block btn-lg">Request information</button></form>
             </div>
             <div class="col-sm-6 col-md-4 space-bot-md">
