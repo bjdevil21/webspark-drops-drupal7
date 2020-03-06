@@ -233,12 +233,7 @@ function asu_rfi_form_data($form, &$form_state) {
       '#value' => t('Next'),
     );
 
-    $form['#after_build'][] = 'asu_rfi_form_after_build';
-
-    $form['#attributes'][] = array('class' => array('asu-rfi-long-form-data'));
-    $form['#prefix'] = '<div id="rfi-form">';
-    $form['#suffix'] = '</div>';
-
+    _asu_rfi_form_closure($form, 'asu-rfi-form-data');
     return $form;
   }
 }
@@ -521,11 +516,7 @@ function asu_rfi_second_form($form, &$form_state) {
     '#submit' => array('asu_rfi_form_data'),
   );
 
-  $form['#after_build'][] = 'asu_rfi_form_after_build';
-
-  $form['#prefix'] = '<div id="rfi-form">';
-  $form['#suffix'] = '</div>';
-
+  _asu_rfi_form_closure($form, 'asu-rfi-second-form-data');
   return $form;
 }
 
@@ -1025,11 +1016,8 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
     '#value' => t('I Agree / Submit'),
     '#attributes' => array('class' => array('rfi-button')),
   );
-  $form['#after_build'][] = 'asu_rfi_form_after_build';
 
-  $form['#prefix'] = '<div id="rfi-form">';
-  $form['#suffix'] = '</div>';
-
+  _asu_rfi_form_closure($form, 'asu-rfi-long-form-data');
   return $form;
 }
 
@@ -1442,10 +1430,7 @@ function asu_rfi_current_form_data($form, &$form_state, $programs, $form_type) {
     '#value' => t('I Agree / Submit'),
   );
 
-  $form['#after_build'][] = 'asu_rfi_form_after_build';
-
-  $form['#prefix'] = '<div id="rfi-form">';
-  $form['#suffix'] = '</div>';
+  _asu_rfi_form_closure($form, 'asu-rfi-current-form-data');
   return $form;
 }
 
@@ -2067,4 +2052,17 @@ function _asu_rfi_get_gdpr_markup() {
             </li>
         </ol>
     </div>\n";
+}
+
+/**
+ * Add common $form elements at the close/end of the form
+ *
+ * @param $form - Current form array
+ * @param string $name - <form> 'name' attribute for dgetElementById call
+ */
+function _asu_rfi_form_closure(&$form, $name = '') {
+  $form['#after_build'][] = 'asu_rfi_form_after_build';
+  $form['#attributes'][] = array('name' => array($name));
+  $form['#prefix'] = '<div id="rfi-form">';
+  $form['#suffix'] = '</div>';
 }
