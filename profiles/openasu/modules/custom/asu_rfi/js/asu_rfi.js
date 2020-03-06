@@ -9,13 +9,15 @@
     }
 
     /* -- If there is only one item, automatically select it -- */
+  /*
     function setDefaultSingle(count) {
-        if (count == 1) {
+        if (count === 1) {
             var selectList = document.getElementById('edit-program-code');
             selectList.selectedIndex = 1;
             selectList.firstChild.style.display = 'none';
         }
     }
+    */
 
     /* -- Bind the Online/Offline Selection -- */
     function bindLocation() {
@@ -104,11 +106,11 @@
             for (var k = 0; k < locations.length; k++) {
                 var location = locations[k].value.toLowerCase();
 
-                if (loc == 'no_preference') {
+                if (loc === 'no_preference') {
                     status = false;
-                } else if (loc == 'online' && loc == location) {
+                } else if (loc === 'online' && loc === location) {
                     status = false;
-                } else if (loc == 'on_campus' && location !== 'online') {
+                } else if (loc === 'on_campus' && location !== 'online') {
                     status = false;
                 }
             }
@@ -126,7 +128,7 @@
         var campuses = campusSelect.childNodes;
         for (var i = 0; i < campuses.length; i++) {
             var campus = campuses[i];
-            if (campus.text.toLowerCase() == 'online') {
+            if (campus.text.toLowerCase() === 'online') {
                 campus.setAttribute('style', 'display: none;');
                 campus.setAttribute('disabled', 'disabled');
             }
@@ -150,19 +152,19 @@
             for (var i = 0; i < degrees.length; i++) {
                 var degree = degrees[i];
 
-                if (degree.code == reg) {
+                if (degree.code === reg) {
                     for (var k = 0; k < campuses.length; k++) {
                         var location = campuses[k];
                         var status = true;
                         for (var p = 0; p < degree.locations.length; p++) {
                             var degLoc = degree.locations[p].value;
-                            if (degLoc == location.text || k == 0) {
+                            if (degLoc === location.text || k === 0) {
                                 status = false;
                             }
-                            if (location.text.toLowerCase() == 'online' && oncampus == true) {
+                            if (location.text.toLowerCase() === 'online' && oncampus === true) {
                                 status = true;
                             }
-                            if (location.text.toLowerCase() == 'online' && either == true) {
+                            if (location.text.toLowerCase() === 'online' && either === true) {
                                 status = false;
                             }
 
@@ -192,7 +194,7 @@
     function checkAddressArea() {
         var onlineRadio = document.getElementById('edit-location-online');
         var country = document.getElementById('rfi-country');
-        if (onlineRadio.checked || !(country.options[country.selectedIndex].text == "United States" || country.options[country.selectedIndex].text == "Canada")) {
+        if (onlineRadio.checked || !(country.options[country.selectedIndex].text === "United States" || country.options[country.selectedIndex].text == "Canada")) {
             document.getElementById('edit-address-info').setAttribute('style', 'display: none;');
         } else {
             document.getElementById('edit-address-info').setAttribute('style', 'display: block;');
@@ -210,13 +212,13 @@
         unbound.setAttribute('disabled', 'disabled');
         country.addEventListener('change', function () {
 
-            var index = country.selectedIndex;
+            //var index = country.selectedIndex;
 
-            document.getElementById('rfi-bound-country').selectedIndex = index;
+            document.getElementById('rfi-bound-country').selectedIndex = country.selectedIndex;
 
-            if (!onlineRadio.checked && (country.options[country.selectedIndex].text == "United States" || country.options[country.selectedIndex].text == "Canada")) {
+            if (!onlineRadio.checked && (country.options[country.selectedIndex].text === "United States" || country.options[country.selectedIndex].text === "Canada")) {
                 addressArea.setAttribute('style', 'display: block;');
-            } else if (onlineRadio.checked || !(country.options[country.selectedIndex].text == "United States" || country.options[country.selectedIndex].text == "Canada")) {
+            } else if (onlineRadio.checked || !(country.options[country.selectedIndex].text === "United States" || country.options[country.selectedIndex].text === "Canada")) {
                 addressArea.setAttribute('style', 'display: none;');
             }
 
