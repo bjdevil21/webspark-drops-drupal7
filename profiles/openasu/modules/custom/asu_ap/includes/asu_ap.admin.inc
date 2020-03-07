@@ -12,7 +12,7 @@ function asu_ap_admin_settings() {
   $form = array();
   $form['ds'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Degree Search content',
+    '#title' => 'AP content from Degree Search',
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
@@ -28,7 +28,7 @@ function asu_ap_admin_settings() {
   );
   $form['local'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Locally maintained content',
+    '#title' => 'AP content created locally',
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
