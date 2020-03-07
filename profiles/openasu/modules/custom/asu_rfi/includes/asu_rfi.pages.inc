@@ -71,7 +71,6 @@ function asu_rfi_form_data($form, &$form_state) {
   }
 
   if (!empty($degree_assets)) {
-    dpm($degree_assets, 'degree_assets');
     // If no grad_dates for graduate degrees, kill the form and return messaging
     if (empty($degree_assets['grad_dates']) && $degree_assets['degree_program']['und'][0]['safe_value'] === 'graduate') {
       $form = array();
@@ -151,7 +150,6 @@ function asu_rfi_form_data($form, &$form_state) {
     // start dates - INIT and AJAX updates
     ////////////////////////////////
     if (!empty($form_state['values']['campus'])) {
-      dpm(__FUNCTION__ . ' form_state values campus is SET. Getting dates for ' . $form_state['values']['campus']);
       $start_dates = _asu_rfi_get_sem_dates_dynamic(
         $degree_assets['academic_plan'],
         $degree_assets['grad_dates'],
@@ -164,7 +162,6 @@ function asu_rfi_form_data($form, &$form_state) {
         $start_dates); // Addon(s)
       $form['my_interest']['start_date']['#required'] = TRUE;
     } else {
-      dpm(__FUNCTION__ . ' form_state[values][campus] is NOT SET - use degree_specific start dates');
       $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
         'my_interest',
         'start_date',
@@ -915,7 +912,6 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
   // start dates - INIT and AJAX updates
   ////////////////////////////////
   if (!empty($form_state['values']['campus'])) {
-    //dpm(__FUNCTION__ . ' form_state values campus is SET. Getting dates for ' . $form_state['values']['campus']);
     $start_dates = _asu_rfi_get_sem_dates_dynamic(
       $degree_assets['academic_plan'],
       $degree_assets['grad_dates'],
@@ -928,7 +924,6 @@ function asu_rfi_long_form_data($form, &$form_state, $programs, $form_type) {
       $start_dates); // Addon(s)
     $form['my_interest']['start_date']['#required'] = TRUE;
   } else {
-    //dpm(__FUNCTION__ . ' form_state[values][campus] is NOT SET - use degree_specific start dates');
     $form['my_interest']['start_date'] = _asu_rfi_form_elements_multiple_keys(
       'my_interest',
       'start_date',
@@ -1667,16 +1662,16 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
     if (!empty($grad_dates)
       && !empty($academic_plan[LANGUAGE_NONE][0]['safe_value'])
       && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
+      // dpm('dynamic dates - graduate');
       $acad_plan = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
       $start_dates = _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus);
-      dpm('dynamic dates - graduate');
     } else {
-      dpm($degree_program[LANGUAGE_NONE][0]['safe_value'], '$degree_program[LANGUAGE_NONE][0][safe_value] 2');
+      // dpm($degree_program[LANGUAGE_NONE][0]['safe_value'], '$degree_program[LANGUAGE_NONE][0][safe_value] 2');
       if ($degree_program[LANGUAGE_NONE][0]['safe_value'] !== 'graduate') {
-        dpm('static dates - undergrad');
+        // dpm('static dates - undergrad');
         $start_dates = _asu_rfi_get_sem_dates_static();
       } else {
-        dpm('no dates - graduate');
+        // dpm('no dates - graduate');
         $start_dates = array();
       }
     }
@@ -2059,9 +2054,7 @@ function _asu_rfi_get_gdpr_markup() {
  */
 function _asu_rfi_form_closure(&$form, $name) {
   $form['#after_build'][] = 'asu_rfi_form_after_build';
-  dpm($form, __FUNCTION__);
   $form['#attributes'] = array('name' => array($name));
-  dpm($form, __FUNCTION__ . ' after');
   $form['#prefix'] = '<div id="rfi-form">';
   $form['#suffix'] = '</div>';
 }
