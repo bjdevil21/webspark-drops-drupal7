@@ -12,7 +12,7 @@ function asu_ap_admin_settings() {
   $form = array();
   $form['ds'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Degree Search content',
+    '#title' => 'Degree Search data',
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
