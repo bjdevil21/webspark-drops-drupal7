@@ -2060,7 +2060,7 @@ function _asu_rfi_get_gdpr_markup() {
  * @param $form - Current form array
  * @param string $name - <form> 'name' attribute for dgetElementById call
  */
-function _asu_rfi_form_closure(&$form, $name = '') {
+function _asu_rfi_form_closure(&$form, $name) {
   $form['#after_build'][] = 'asu_rfi_form_after_build';
   dpm($form, __FUNCTION__);
   $form['#attributes'] = array('name' => array($name));
