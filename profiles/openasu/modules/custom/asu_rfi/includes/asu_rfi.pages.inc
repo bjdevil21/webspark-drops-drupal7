@@ -1674,12 +1674,11 @@ function _asu_rfi_get_degree_specifics($nid = NULL, $campus = '') {
       $acad_plan = $academic_plan[LANGUAGE_NONE][0]['safe_value'];
       $start_dates = _asu_rfi_get_sem_dates_dynamic($acad_plan, $grad_dates, $campus);
       dpm('dynamic dates');
-    }
-    elseif (empty($grad_dates && $degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate')) {
-      dpm('no dates - graduate');
-      $start_dates = array();
-    }
-    else {
+    } else {
+      if ($degree_program[LANGUAGE_NONE][0]['safe_value'] === 'graduate') {
+        dpm('no dates - graduate');
+        $start_dates = array();
+      }
       dpm('static dates - undergrad');
       $start_dates = _asu_rfi_get_sem_dates_static();
     }
