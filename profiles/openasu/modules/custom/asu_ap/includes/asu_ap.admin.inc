@@ -28,7 +28,7 @@ function asu_ap_admin_settings() {
   );
   $form['local'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Locally created AP content',
+    '#title' => 'Locally managed AP content',
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
