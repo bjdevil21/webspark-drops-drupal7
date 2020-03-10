@@ -90,7 +90,9 @@ function asu_ap_feature_field_default_field_instances_alter(&$fields) {
 
 /**
  * Grab image within the Feature module.
- * Then, create image in the new site to use for default image for the ASU Academic Programs Banner Image field.
+ * Then create image in the new site to use for default image for the ASU
+ * Academic Programs Banner Image field.
+ * @throws \FieldException
  */
 function _asu_ap_feature_image($image, $key) {
   $filename = $image;
