@@ -7,6 +7,7 @@ function asu_ap_feature_install() {
   _asu_ap_feature_image('asu_degree_banner_default.jpg', 'banner');
   _asu_ap_feature_image('asu_ap_image.png', 'image');
   variable_set('asu_ap_ds_marketing_video', 'marketing_top');
+  variable_set('asu_ap_degree_image_filename', 'asu_ap_image.png');
 }
 
 /**
@@ -84,48 +85,41 @@ function asu_ap_feature_update_7002(&$sandbox) {
 }
 
 /**
+ * Revert ASU AP Feature
  * Update default image for AP degree outputs.
  */
 function asu_ap_feature_update_7003(&$sandbox) {
+  features_revert_module('asu_ap_feature');
+
   // 1 - Find old image and delete it.
+  $old_filename = (string) variable_get('asu_ap_degree_image_filename', 'asu_ap_image.jpg');
   $old_fid = Database::getConnection('default', 'default')
     ->select('file_managed', 'fm')
     ->fields('fm', array('fid'))
-    ->condition('fm.filename', 'asu_ap_image.jpg', 'LIKE')
+    ->condition('fm.filename', $old_filename, 'LIKE')
     ->execute()
     ->fetchField();
   if (!empty($old_fid)) {
     $file_old = file_load($old_fid);
     $action = file_delete($file_old, TRUE);
     if ($action === TRUE) {
-      flogger('asu_ap_feature', 'Deleted old ASU AP image file.',
-        array(), WATCHDOG_INFO);
-    } else { flogger('asu_ap_feature', 'Could NOT delete ASU AP image file.',
+      flogger('asu_ap_feature', 'Deleted old, default ASU AP image file.',
+        array(), WATCHDOG_INFO, TRUE, TRUE);
+    } else { flogger('asu_ap_feature', 'Could NOT delete old ASU AP image file.',
       array(), WATCHDOG_INFO); }
   } else {
     flogger('asu_ap_feature', 'Could not find deprecated ASU AP image entry in file_managed DB table.'
       . ' Will delete the actual file from public://images directory if it exists.',
       array(), WATCHDOG_NOTICE);
-    if (file_unmanaged_delete($uri = 'public://images/asu_ap_image.jpg') === FALSE) {
+    $file_old_uri = 'public://images/' . $old_filename;
+    if (file_unmanaged_delete($file_old_uri) === FALSE) {
       flogger('asu_ap_feature', 'Could not find old ASU AP image in'
         . ' file_managed table or its copy in the public:// directory to delete.', array(), WATCHDOG_NOTICE);
     }
   }
   variable_del('asu_ap_feature_image_fid');
+  variable_del('asu_ap_degree_image_filename');
 
   // 2 - Update to new ASU AP image and copy it over to files directory
   _asu_ap_feature_image('asu_ap_image.png', 'image');
-  $new_fid = variable_get('asu_ap_feature_image_fid');
-
-  // Update ASU AP field instance of field_degree_image settings
-  $instance = field_info_instance('node', 'field_degree_image', 'asu_ap');
-  $instance['settings']['default_image'] = (int) $new_fid;
-  field_update_instance($instance);
-
-  // Update global field settings
-  $field = field_info_field('field_degree_image');
-  $field['settings']['default_image'] = (int) $new_fid;
-  field_update_field($field);
-
-  features_revert_module('asu_ap_feature');
 }
