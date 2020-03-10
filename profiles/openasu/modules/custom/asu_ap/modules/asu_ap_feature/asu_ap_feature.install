@@ -96,16 +96,19 @@ function asu_ap_feature_update_7003(&$sandbox) {
     ->fetchField();
   if (!empty($old_fid)) {
     $file_old = file_load($old_fid);
-    file_delete($file_old);
-    flogger('asu_ap_feature', 'Deleted old ASU AP image file.',
-      array(), WATCHDOG_INFO);
+    $action = file_delete($file_old, TRUE);
+    if ($action === TRUE) {
+      flogger('asu_ap_feature', 'Deleted old ASU AP image file.',
+        array(), WATCHDOG_INFO);
+    } else { flogger('asu_ap_feature', 'Could NOT delete ASU AP image file.',
+      array(), WATCHDOG_INFO); }
   } else {
-    flogger('asu_ap_feature', 'Could not find deprecated ASU AP image entity in Drupal DB.'
-      . ' Will delete file from public://images directory if it exists.',
+    flogger('asu_ap_feature', 'Could not find deprecated ASU AP image entry in file_managed DB table.'
+      . ' Will delete the actual file from public://images directory if it exists.',
       array(), WATCHDOG_NOTICE);
     if (file_unmanaged_delete($uri = 'public://images/asu_ap_image.jpg') === FALSE) {
-      flogger('asu_ap_feature', 'Could not find old ASU AP image (asu_ap_image.jpg) in'
-        . ' file_managed table or files directory to delete.', array(), WATCHDOG_NOTICE);
+      flogger('asu_ap_feature', 'Could not find old ASU AP image in'
+        . ' file_managed table or its copy in the public:// directory to delete.', array(), WATCHDOG_NOTICE);
     }
   }
   variable_del('asu_ap_feature_image_fid');
