@@ -516,9 +516,9 @@ if (module_exists('metatag')) {
   ///////////////////
   /// ONLY show if a certificate/minor
   if ($cert_val === 'true') {
-    if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['value'])) {
+    if (isset($node_info['field_asu_ap_major_map_url'])) {
       print '<h2>Program Requirements</h2>';
-      print render($node_info['field_asu_ap_prog_req']);
+      print _asu_ap_feature_map_urls_create($node_info, $cert_val);
     }
   } else { // Show if not a cert/minor
     if ($program_type === 'undergrad') {
@@ -532,29 +532,7 @@ if (module_exists('metatag')) {
         courses, fulfilling multiple General Studies requirements with one course,
         etc.), completing the courses listed in a major map fulfills all of the
         requirements for graduation.</p>";
-        $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
-        if (valid_url($major_map_url, TRUE)) {
-          if (isset($node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'])) {
-            $year = (int)$node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'];
-            $year_prefix = ((int)$year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) . ' ' : '';
-          } else {
-            $year_prefix = '';
-          }
-          $major_map_urls[] = l(t($year_prefix . 'Major Map (On-campus)'), $major_map_url,
-            array('attributes' => array('target' => '_blank')));
-        }
-        if (isset($node_info['field_asu_ap_online_mm_url']['#items'][0]['url'])) {
-          $online_url = $node_info['field_asu_ap_online_mm_url']['#items'][0]['url'];
-          if (valid_url($online_url, TRUE)) {
-            $major_map_urls[] = l(t($year_prefix . ' Major Map (Online)'), $online_url,
-              array('attributes' => array('target' => '_blank')));
-          }
-        }
-        print theme_item_list(array(
-          'items' => $major_map_urls,
-          'title' => '',
-          'type' => 'ul',
-          'attributes' => array('class' => array('asu-ap-major-map-links'))));
+        print _asu_ap_feature_map_urls_create($node_info);
       } elseif (isset($node_info['field_asu_ap_asuds_url'])) {
         print '<h2>Plan of study</h2>';
         print '<p>The Plan of study is the required curriculum to complete the program.</p>';
