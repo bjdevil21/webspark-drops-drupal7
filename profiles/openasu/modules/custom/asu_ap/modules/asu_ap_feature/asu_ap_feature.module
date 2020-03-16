@@ -200,8 +200,8 @@ function _asu_ap_feature_map_urls_create($node_info, $cert_val = 'false') {
   $major_map_urls = array();
   $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
   if (valid_url($major_map_url, TRUE)) {
-    if (isset($node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'])) {
-      $year = (int)$node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'];
+    if (isset($node_info['field_asu_ap_major_map_year']['#items'][0]['safe_value'])) {
+      $year = (int)$node_info['field_asu_ap_major_map_year']['#items'][0]['safe_value'];
       $year_prefix = ((int)$year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) . ' ' : '';
     } else {
       $year_prefix = '';
