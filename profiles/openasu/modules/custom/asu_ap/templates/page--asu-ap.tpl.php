@@ -86,8 +86,6 @@ else {
   $node_info = array();
 }
 
-dpm($node_info['field_asu_ap_cert'], 'cert');
-
 // Add subsection of $page['content'] for metatags
 if (module_exists('metatag')) {
   print render($page['content']['metatags']);
@@ -517,8 +515,8 @@ if (module_exists('metatag')) {
   // Major maps or Plan of Study - undergrad
   ///////////////////
   /// ONLY show if a certificate/minor
-  if (isset($node_info['field_asu_ap_cert']) && $node_info['field_asu_ap_cert'] === 'true') {
-    if (isset($node_info['field_asu_ap_prog_req'][LANGUAGE_NONE][0]['value'])) {
+  if ($cert_val === 'true') {
+    if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['value'])) {
       print '<h2>Program Requirements</h2>';
       print render($node_info['field_asu_ap_prog_req']);
     }
