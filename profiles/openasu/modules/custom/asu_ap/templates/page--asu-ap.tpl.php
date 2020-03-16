@@ -515,12 +515,7 @@ if (module_exists('metatag')) {
   // Major maps or Plan of Study - undergrad
   ///////////////////
   /// ONLY show if a certificate/minor
-  if ($cert_val === 'true') {
-    if (isset($node_info['field_asu_ap_major_map_url'])) {
-      print '<h2>Program Requirements</h2>';
-      print _asu_ap_feature_map_urls_create($node_info, $cert_val);
-    }
-  } else { // Show if not a cert/minor
+  if ($cert_val !== 'true') { // Show if not a cert/minor
     if ($program_type === 'undergrad') {
       $major_map_urls = array();
       if (isset($node_info['field_asu_ap_major_map_url'])) {
@@ -673,6 +668,9 @@ if (module_exists('metatag')) {
   <?php endif; ?>
   <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
               <h2>Program requirements</h2>
+    <?php if ($cert_val === 'true'): ?>
+      <?php print _asu_ap_feature_map_urls_create($node_info, $cert_val); ?>
+    <?php endif; ?>
     <?php print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']; ?>
   <?php elseif (isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value'])): ?>
               <h2>Admission requirements</h2>
