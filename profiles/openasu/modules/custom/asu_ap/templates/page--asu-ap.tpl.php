@@ -85,6 +85,9 @@ if (is_numeric(arg(1))) {
 else {
   $node_info = array();
 }
+
+dpm($node_info['field_asu_ap_cert'], 'cert');
+
 // Add subsection of $page['content'] for metatags
 if (module_exists('metatag')) {
   print render($page['content']['metatags']);
@@ -511,54 +514,65 @@ if (module_exists('metatag')) {
   }
   print '</ul>';
 
-  // Major maps or Plan of Study
-  if ($program_type === 'undergrad') {
-    $major_map_urls = array();
-    if (isset($node_info['field_asu_ap_major_map_url'])) {
-      print '<h2>Required Courses</h2>';
-      print "<p>A major map outlines a major's critical requirements, courses, and optimal course
+  // Major maps or Plan of Study - undergrad
+  ///////////////////
+  /// ONLY show if a certificate/minor
+  if (isset($node_info['field_asu_ap_cert']) && $node_info['field_asu_ap_cert'] === 'true') {
+    if (isset($node_info['field_asu_ap_prog_req'][LANGUAGE_NONE][0]['value'])) {
+      print '<h2>Program Requirements</h2>';
+      print render($node_info['field_asu_ap_prog_req']);
+    }
+  } else { // Show if not a cert/minor
+    if ($program_type === 'undergrad') {
+      $major_map_urls = array();
+      if (isset($node_info['field_asu_ap_major_map_url'])) {
+        print '<h2>Required Courses</h2>';
+        print "<p>A major map outlines a major's critical requirements, courses, and optimal course
         sequence and aids students in remaining on track to graduation.</p>
         <p>While circumstances vary between students and their paths towards graduation
-        (utilizing placement testing to fulfill required math or foreign language courses,
-        fulfilling multiple General Studies requirements with one course, etc.),
-        completing the courses listed in a major map fulfills all of the requirements for graduation.</p>";
-      $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
-      if (valid_url($major_map_url, TRUE)) {
-        if (isset($node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'])) {
-          $year = (int) $node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'];
-          $year_prefix = ((int) $year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) . ' ' : '';
-        } else {
-          $year_prefix = '';
-        }
-        $major_map_urls[] = l(t($year_prefix . 'Major Map (On-campus)'), $major_map_url,
-          array('attributes' => array('target' => '_blank')));
-      }
-      if (isset($node_info['field_asu_ap_online_mm_url']['#items'][0]['url'])) {
-        $online_url = $node_info['field_asu_ap_online_mm_url']['#items'][0]['url'];
-        if (valid_url($online_url, TRUE)) {
-          $major_map_urls[] = l(t($year_prefix . ' Major Map (Online)'), $online_url,
+        (utilizing placement testing to fulfill required math or foreign language
+        courses, fulfilling multiple General Studies requirements with one course,
+        etc.), completing the courses listed in a major map fulfills all of the
+        requirements for graduation.</p>";
+        $major_map_url = $node_info['field_asu_ap_major_map_url']['#items'][0]['url'];
+        if (valid_url($major_map_url, TRUE)) {
+          if (isset($node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'])) {
+            $year = (int)$node_info['field_asu_ap_major_map_year']['und'][0]['safe_value'];
+            $year_prefix = ((int)$year < 2100 && $year > 1999) ? $year . ' - ' . (++$year) . ' ' : '';
+          } else {
+            $year_prefix = '';
+          }
+          $major_map_urls[] = l(t($year_prefix . 'Major Map (On-campus)'), $major_map_url,
             array('attributes' => array('target' => '_blank')));
         }
+        if (isset($node_info['field_asu_ap_online_mm_url']['#items'][0]['url'])) {
+          $online_url = $node_info['field_asu_ap_online_mm_url']['#items'][0]['url'];
+          if (valid_url($online_url, TRUE)) {
+            $major_map_urls[] = l(t($year_prefix . ' Major Map (Online)'), $online_url,
+              array('attributes' => array('target' => '_blank')));
+          }
+        }
+        print theme_item_list(array(
+          'items' => $major_map_urls,
+          'title' => '',
+          'type' => 'ul',
+          'attributes' => array('class' => array('asu-ap-major-map-links'))));
+      } elseif (isset($node_info['field_asu_ap_asuds_url'])) {
+        print '<h2>Plan of study</h2>';
+        print '<p>The Plan of study is the required curriculum to complete the program.</p>';
+        /** @noinspection HtmlUnknownAnchorTarget */
+        print '<p><a href="#plan-of-study">View Plan of Study</a></p>';
       }
-      print theme_item_list(array(
-        'items' => $major_map_urls,
-        'title' => '',
-        'type' => 'ul',
-        'attributes' => array('class' => array('asu-ap-major-map-links'))));
     }
-    elseif (isset($node_info['field_asu_ap_asuds_url'])) {
-      print '<h2>Plan of study</h2>';
-      print '<p>The Plan of study is the required curriculum to complete the program.</p>';
-      /** @noinspection HtmlUnknownAnchorTarget */
-      print '<p><a href="#plan-of-study">View Plan of Study</a></p>';
-    }
-  }
-  elseif ($program_type === 'graduate') {
-    if (isset($node_info['field_asu_ap_asuds_url'])) {
-      print '<h2>Plan of study</h2>';
-      print '<p>The Plan of study is the required curriculum to complete the program.</p>';
-      /** @noinspection HtmlUnknownAnchorTarget */
-      print '<p><a href="#plan-of-study">View Plan of Study</a></p>';
+    // Major maps or Plan of Study -- Graduated
+    //////
+    elseif ($program_type === 'graduate') {
+      if (isset($node_info['field_asu_ap_asuds_url'])) {
+        print '<h2>Plan of study</h2>';
+        print '<p>The Plan of study is the required curriculum to complete the program.</p>';
+        /** @noinspection HtmlUnknownAnchorTarget */
+        print '<p><a href="#plan-of-study">View Plan of Study</a></p>';
+      }
     }
   }
 ?>

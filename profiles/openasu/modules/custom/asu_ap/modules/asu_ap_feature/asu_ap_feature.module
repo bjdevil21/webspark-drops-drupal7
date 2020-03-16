@@ -17,6 +17,9 @@ function asu_ap_feature_form_alter(&$form, &$form_state, $form_id) {
       $form['body']['#access'] = FALSE;
       $form['field_asu_ap_acad_plan']['#access'] = FALSE;
       $form['field_asu_ap_acad_prog']['#access'] = FALSE;
+      $form['field_asu_ap_acc_program']['#access'] = FALSE;
+      $form['field_asu_ap_conc_program']['#access'] = FALSE;
+      $form['field_asu_ap_new_program']['#access'] = FALSE;
       $form['field_asu_ap_college']['#access'] = FALSE;
       $form['field_asu_ap_college_j']['#access'] = FALSE;
       $form['field_asu_ap_college_url']['#access'] = FALSE;

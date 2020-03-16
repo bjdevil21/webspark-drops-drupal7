@@ -382,7 +382,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'DegreeDescrlong' => array('name' => t('Degree Description - long')), // NEW
       'DegreeDescrshort' => array('name' => t('Degree Description - short')), // NEW
       'DegreeEducationLvl' => array('name' => t('Degree Education level')), // NEW
-      'degreeMajorMap' => array('name' => t('Program Requirements')),
+      'degreeMajorMap' => array('name' => t('Program Requirements - Minors-Certificates (aka degreeMajorMap)')),
       'DegreeNew' => array('name' => t('New degree')), // NEW - replaces newDegree
       'DepartmentCode' => array('name' => t('Department code')),
       'DepartmentCodeJoint' => array('name' => t('Department code (joint)')),
@@ -392,7 +392,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'Descr100' => array('name' => t('Description (100)')),
       'Descr254' => array('name' => t('Description (254)')), // NEW
       'Descrlong' => array('name' => t('Description (long)')), // NEW
-      'DescrlongExtn5' => array('name' => t('Description long (Extn5)')), // NEW
+      'DescrlongExtn5' => array('name' => t('Requirements description (aka Description long (Extn5))')), // NEW
       'DescrlongExtns' => array('name' => t('Degree description (extended)')),
       'Descrshort' => array('name' => t('Description (short)')), // NEW
       'DiplomaDescr' => array('name' => t('Diploma description')),
