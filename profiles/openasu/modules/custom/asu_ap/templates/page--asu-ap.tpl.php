@@ -431,50 +431,57 @@ if (module_exists('metatag')) {
     foreach ($node_info['field_asu_ap_campus']['#items'] as $campus) {
       $a = true;
       switch ($campus['value']) {
+
+        case 'Tempe':
+          echo '<a href="//tours.asu.edu/tempe">' . $campus['value'] . '</a>';
+          break;
         case 'Downtown':
           echo '<a href="//tours.asu.edu/downtown">' . $campus['value'] . '</a>';
-          break;
-        case 'Lake Havasu City':
-          echo '<a href="//tours.asu.edu/havasu">' . $campus['value'] . '</a>';
           break;
         case 'Polytechnic':
           echo '<a href="//tours.asu.edu/polytechnic">' . $campus['value'] . '</a>';
           break;
-        case 'Tempe':
-          echo '<a href="//tours.asu.edu/tempe">' . $campus['value'] . '</a>';
-          break;
-        case 'Thunderbird':
+        case 'Thunderbird': // legacy
           echo '<a href="//tours.asu.edu/thunderbird">' . $campus['value'] . '</a>';
           break;
         case 'West':
           echo '<a href="//tours.asu.edu/west">' . $campus['value'] . '</a>';
-          break;
-        case 'ASU@TheGilaValley':
-          echo '<a href="//admission.asu.edu/transfer/eastern-arizona">' . $campus['value'] . '</a>';
-          break;
-        case 'ASU@Pinal':
-          echo '<a href="//admission.asu.edu/transfer/central-arizona">' . $campus['value'] . '</a>';
-          break;
-        case 'ASU@Tucson':
-          echo '<a href="//transfer.asu.edu/asutucson">' . $campus['value'] . '</a>';
-          break;
-        case 'ASU@Yuma':
-          echo '<a href="//admission.asu.edu/transfer/arizona-western">' . $campus['value'] . '</a>';
-          break;
-        case 'ASU@Yavapai':
-          echo '<a href="//admission.asu.edu/transfer/asuyavapai">' . $campus['value'] . '</a>';
-          break;
-        case 'ASU@Cochise':
-          echo '<a href="//admission.asu.edu/transfer/asu-cochise">' . $campus['value'] . '</a>';
-          break;
-        case 'ASU@Pima':
-          echo '<a href="//admission.asu.edu/transfer/pima">' . $campus['value'] . '</a>';
           break;
         case 'Online':
           $online_url = (!empty($node_info['field_asu_ap_curriculum_url']['#items'][0]['url']))
             ? $node_info['field_asu_ap_curriculum_url']['#items'][0]['url']
             : '//asuonline.asu.edu/';
           echo '<a href="' . $online_url . '" target="_blank">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@Cochise':
+          echo '<a href="//admission.asu.edu/transfer/asu-cochise">' . $campus['value'] . '</a>';
+          break;
+        case 'Lake Havasu City':
+          echo '<a href="//tours.asu.edu/havasu">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@MexicoCity':
+          echo '<a href="//mexico.asu.edu">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@Pima':
+          echo '<a href="//admission.asu.edu/transfer/pima">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@Pinal':
+          echo '<a href="//admission.asu.edu/transfer/central-arizona">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@TheGilaValley':
+          echo '<a href="//admission.asu.edu/transfer/eastern-arizona">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@Tucson':
+          echo '<a href="//transfer.asu.edu/asutucson">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@Washington, D.C.':
+          echo '<a href="//washingtondc.asu.edu/facilities">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@Yavapai':
+          echo '<a href="//admission.asu.edu/transfer/asuyavapai">' . $campus['value'] . '</a>';
+          break;
+        case 'ASU@Yuma':
+          echo '<a href="//admission.asu.edu/transfer/arizona-western">' . $campus['value'] . '</a>';
           break;
         // Check ASU Feeds Parser. The campus being used doesn't exist.
         default:
