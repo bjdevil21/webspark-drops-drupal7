@@ -69,7 +69,7 @@ function asu_ap_feature_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 36,
+      'weight' => 37,
     ),
   );
 
@@ -340,7 +340,7 @@ function asu_ap_feature_field_default_field_instances() {
     'bundle' => 'asu_ap',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Requirements to earn your degree - (Formerly "Admissions requirements") - Maps to AdmissionsDegRequirements) in feed',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -364,12 +364,13 @@ function asu_ap_feature_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_asu_ap_admission_req',
-    'label' => 'Admission requirements',
+    'label' => 'Degree requirements',
     'required' => 0,
     'settings' => array(
       'linkit' => array(
+        'button_text' => 'Search',
         'enable' => 0,
-        'insert_plugin' => '',
+        'profile' => '',
       ),
       'text_processing' => 1,
       'user_register_form' => FALSE,
@@ -385,7 +386,7 @@ function asu_ap_feature_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 12,
+      'weight' => 23,
     ),
   );
 
@@ -1339,7 +1340,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 23,
+      'weight' => 24,
     ),
   );
 
@@ -1391,7 +1392,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 25,
+      'weight' => 26,
     ),
   );
 
@@ -1444,7 +1445,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 26,
+      'weight' => 27,
     ),
   );
 
@@ -1497,7 +1498,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 24,
+      'weight' => 25,
     ),
   );
 
@@ -1549,7 +1550,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 27,
+      'weight' => 28,
     ),
   );
 
@@ -1654,7 +1655,7 @@ function asu_ap_feature_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 28,
+      'weight' => 29,
     ),
   );
 
@@ -1709,7 +1710,7 @@ function asu_ap_feature_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 29,
+      'weight' => 30,
     ),
   );
 
@@ -1997,7 +1998,7 @@ function asu_ap_feature_field_default_field_instances() {
         'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
       ),
       'type' => 'link_field',
-      'weight' => 30,
+      'weight' => 31,
     ),
   );
 
@@ -2049,7 +2050,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 31,
+      'weight' => 32,
     ),
   );
 
@@ -2104,7 +2105,7 @@ function asu_ap_feature_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 32,
+      'weight' => 33,
     ),
   );
 
@@ -2149,7 +2150,7 @@ function asu_ap_feature_field_default_field_instances() {
         'apply_chosen' => '',
       ),
       'type' => 'options_select',
-      'weight' => 34,
+      'weight' => 35,
     ),
   );
 
@@ -2201,7 +2202,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 33,
+      'weight' => 34,
     ),
   );
 
@@ -2321,7 +2322,7 @@ function asu_ap_feature_field_default_field_instances() {
       'module' => 'link',
       'settings' => array(),
       'type' => 'link_field',
-      'weight' => 35,
+      'weight' => 36,
     ),
   );
 
@@ -2376,7 +2377,7 @@ function asu_ap_feature_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 37,
+      'weight' => 38,
     ),
   );
 
@@ -2428,7 +2429,7 @@ function asu_ap_feature_field_default_field_instances() {
         'size' => 10,
       ),
       'type' => 'text_textfield',
-      'weight' => 38,
+      'weight' => 39,
     ),
   );
 
@@ -2536,7 +2537,7 @@ function asu_ap_feature_field_default_field_instances() {
     'bundle' => 'asu_ap',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Admissions requirements. Formerly labeled as "Requirement description". Mapped to DescrlongExtn5 in the feed.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -2560,12 +2561,13 @@ function asu_ap_feature_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_asu_ap_req_desc',
-    'label' => 'Requirement description',
+    'label' => 'Admissions Requirements',
     'required' => 0,
     'settings' => array(
       'linkit' => array(
+        'button_text' => 'Search',
         'enable' => 0,
-        'insert_plugin' => '',
+        'profile' => '',
       ),
       'text_processing' => 1,
       'user_register_form' => FALSE,
@@ -2581,7 +2583,7 @@ function asu_ap_feature_field_default_field_instances() {
         'rows' => 5,
       ),
       'type' => 'text_textarea',
-      'weight' => 39,
+      'weight' => 12,
     ),
   );
 
@@ -3376,9 +3378,11 @@ function asu_ap_feature_field_default_field_instances() {
   t('Additional program fee');
   t('Additional requirements');
   t('Additional requirements for the program can be entered in to display at the top of the "Application requirements" region on undergraduate program nodes.');
-  t('Admission requirements');
+  t('Admissions Requirements');
+  t('Admissions requirements. Formerly labeled as "Requirement description". Mapped to DescrlongExtn5 in the feed.');
   t('All future available terms and their application dates - by campus. MUST be a serialized array from the Degree Search feed (or at least the same serialized structure).');
   t('Application deadline');
+  t('Banner image across the top of the academic programs pages. Recommended size image is 1170x380px by default, though this may vary depending on the image. A default image is provided if left empty.');
   t('CTA button - How and when to apply');
   t('CTA button - Request information');
   t('CTA button - Schedule a visit');
@@ -3395,6 +3399,7 @@ function asu_ap_feature_field_default_field_instances() {
   t('Degree');
   t('Degree awarded');
   t('Degree image');
+  t('Degree requirements');
   t('Denotes the ASU catalog value (on/off) for "accelerated program" with respect to this degree program.<br>
 <i>NOTE:</i> This field can be overridden, but will reapply the official catalog value to the degree program if the ASU Academic Program feed is updated.');
   t('Denotes the ASU catalog value (on/off) for "concurrent program" with respect to this degree program.<br>
@@ -3423,6 +3428,7 @@ function asu_ap_feature_field_default_field_instances() {
   t('Marketing video URL for this degree. Youtube or Vimeo videos only.');
   t('Math Intensity');
   t('Minimum math requirement');
+  t('NOTE: This image only shows up on the grid layout listing of degrees (generated by Drupal Views). Horizontal images work best.');
   t('New program');
   t('Not being used by Degree Search at the moment.');
   t('Online Major Map URL');
@@ -3435,7 +3441,7 @@ function asu_ap_feature_field_default_field_instances() {
   t('Program requirements');
   t('Program: Undergrad or Graduate');
   t('Related programs');
-  t('Requirement description');
+  t('Requirements to earn your degree - (Formerly "Admissions requirements") - Maps to AdmissionsDegRequirements) in feed');
   t('Scholarship link');
   t('Second language requirement');
   t('Short description');
@@ -3443,8 +3449,6 @@ function asu_ap_feature_field_default_field_instances() {
   t('Subplan: URL');
   t('Text to appear at top of degree page before catalog text begins.');
   t('The primary department/college URL for more information about this degree from their site (except for asuonline.asu.edu URLs - which are in Url4)');
-  t('This image only shows up on the view page.  Horizontal images work best.');
-  t('This is the banner image across the top of the academic programs pages.');
   t('Turn the "Example Careers" section on and off; check the box to show the example careers, and uncheck it to hide them.');
   t('URL 1');
   t('URL 2');
