@@ -342,7 +342,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'AcadPlan' => array('name' => t('Academic plan')),
       'AcadProg' => array('name' => t('Academic program')),
       'accelerateDegrees' => array('name' => t('Accelerated Degrees')), // NEW - Replaces acceleratedDegree
-      'AdmissionsDegRequirements' => array('name' => t('Admission requirements')),
+      'AdmissionsDegRequirements' => array('name' => t('Degree admission requirements')),
       'applyInfo' => array('name' => t('Apply Information')), // NEW -- @TODO Needs processing
       'asuAcadpLrfText' => array('name' => t('AcadpLrfText')), // NEW
       'asuAcadpMrfText' => array('name' => t('AcadpMrfText')), // NEW
@@ -392,7 +392,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'Descr100' => array('name' => t('Description (100)')),
       'Descr254' => array('name' => t('Description (254)')), // NEW
       'Descrlong' => array('name' => t('Description (long)')), // NEW
-      'DescrlongExtn5' => array('name' => t('Requirements description (aka Description long (Extn5))')), // NEW
+      'DescrlongExtn5' => array('name' => t('Admission requirements (aka Description long (Extn5))')), // NEW
       'DescrlongExtns' => array('name' => t('Degree description (extended)')),
       'Descrshort' => array('name' => t('Description (short)')), // NEW
       'DiplomaDescr' => array('name' => t('Diploma description')),
