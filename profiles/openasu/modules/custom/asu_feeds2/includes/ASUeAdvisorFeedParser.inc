@@ -382,7 +382,7 @@ class ASUeAdvisorFeedParser extends FeedsParser {
       'DegreeDescrlong' => array('name' => t('Degree Description - long')), // NEW
       'DegreeDescrshort' => array('name' => t('Degree Description - short')), // NEW
       'DegreeEducationLvl' => array('name' => t('Degree Education level')), // NEW
-      'degreeMajorMap' => array('name' => t('Program Requirements - Minors-Certificates (aka degreeMajorMap)')),
+      'degreeMajorMap' => array('name' => t('Minor/Certificates Requirements (aka degreeMajorMap)')),
       'DegreeNew' => array('name' => t('New degree')), // NEW - replaces newDegree
       'DepartmentCode' => array('name' => t('Department code')),
       'DepartmentCodeJoint' => array('name' => t('Department code (joint)')),

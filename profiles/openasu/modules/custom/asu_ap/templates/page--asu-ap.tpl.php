@@ -667,15 +667,20 @@ if (module_exists('metatag')) {
     ?>
               </div>
   <?php endif; ?>
-  <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
-              <h2>Program requirements</h2>
-    <?php if ($cert_val === 'true'): ?>
-      <?php print _asu_ap_feature_map_urls_create($node_info, $cert_val); ?>
+  <?php $label = 'Admission';
+  if ($cert_val === 'true'): ?>
+    <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
+      <h2>Program requirements</h2>
+      <?php
+      print _asu_ap_feature_map_urls_create($node_info, $cert_val);
+      print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'];
+      $label = 'Enrollment';
+      ?>
     <?php endif; ?>
-    <?php print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']; ?>
-  <?php elseif (isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value'])): ?>
-              <h2>Admission requirements</h2>
-    <?php print $node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']; ?>
+  <?php endif; ?>
+  <?php if (isset($node_info['field_asu_ap_req_desc']['#items'][0]['safe_value'])): ?>
+              <h2><?php print $label ?> requirements</h2>
+    <?php print $node_info['field_asu_ap_req_desc']['#items'][0]['safe_value']; ?>
   <?php endif; ?>
             </div>
           </div>
