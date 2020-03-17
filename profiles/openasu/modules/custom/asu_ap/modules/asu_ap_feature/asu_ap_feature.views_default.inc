@@ -77,7 +77,7 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['text'] = '<a href="/node/[nid]">[field_asu_ap_awarded]</a>';
   $handler->display->display_options['fields']['field_asu_ap_awarded']['element_label_colon'] = FALSE;
-  /* Field: Content: Body */
+  /* Field: Content: Program description */
   $handler->display->display_options['fields']['body']['id'] = 'body';
   $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['body']['field'] = 'body';
@@ -119,13 +119,9 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap']['label'] = '';
   $handler->display->display_options['fields']['field_asu_ap']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap']['alter']['text'] = '<div class="asu-ap-rewritten-fields">
-
     <div class="asu-ap-major-title">[field_asu_ap_awarded] ([field_asu_ap])</div>
-
     [body]
-
     <div class="asu-ap-field-title">Location:</div> [field_asu_ap_campus]<br>
-
 </div>';
   $handler->display->display_options['fields']['field_asu_ap']['element_label_colon'] = FALSE;
   /* Field: Content: Nid */
@@ -363,7 +359,7 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['text'] = '<a href="/node/[nid]">[field_asu_ap_awarded]</a>';
   $handler->display->display_options['fields']['field_asu_ap_awarded']['element_label_colon'] = FALSE;
-  /* Field: Content: Body */
+  /* Field: Content: Program description */
   $handler->display->display_options['fields']['body']['id'] = 'body';
   $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['body']['field'] = 'body';
@@ -405,13 +401,7 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap']['label'] = '';
   $handler->display->display_options['fields']['field_asu_ap']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap']['alter']['text'] = '<div class="asu-ap-rewritten-fields">
-
-    <div class="asu-ap-major-title">[field_asu_ap_awarded], [field_asu_ap]</div>
-
-    [body]
-
-    <div class="asu-ap-field-location"><div class="asu-ap-field-title">Location:</div>[field_asu_ap_campus]</div>
-
+    <div class="asu-ap-major-title">[field_asu_ap_awarded], [field_asu_ap]</div>[body]<div class="asu-ap-field-location"><div class="asu-ap-field-title">Location:</div>[field_asu_ap_campus]</div>
 </div>';
   $handler->display->display_options['fields']['field_asu_ap']['element_label_colon'] = FALSE;
   /* Field: Content: Nid */
@@ -478,7 +468,7 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['text'] = '<a href="/node/[nid]">[field_asu_ap_awarded]</a>';
   $handler->display->display_options['fields']['field_asu_ap_awarded']['element_label_colon'] = FALSE;
-  /* Field: Content: Body */
+  /* Field: Content: Program description */
   $handler->display->display_options['fields']['body']['id'] = 'body';
   $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['body']['field'] = 'body';
@@ -520,13 +510,9 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap']['label'] = '';
   $handler->display->display_options['fields']['field_asu_ap']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap']['alter']['text'] = '<div class="asu-ap-rewritten-fields">
-
     <div class="asu-ap-major-title">[field_asu_ap_awarded], [field_asu_ap]</div>
-
     [body]
-
     <div class="asu-ap-field-title">Location:</div> [field_asu_ap_campus]<br>
-
 </div>';
   $handler->display->display_options['fields']['field_asu_ap']['element_label_colon'] = FALSE;
   /* Field: Content: Nid */
@@ -1583,7 +1569,7 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap_awarded']['alter']['text'] = '<a href="/node/[nid]">[field_asu_ap_awarded]</a>';
   $handler->display->display_options['fields']['field_asu_ap_awarded']['element_label_colon'] = FALSE;
-  /* Field: Content: Body */
+  /* Field: Content: Program description */
   $handler->display->display_options['fields']['body']['id'] = 'body';
   $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['body']['field'] = 'body';
@@ -1625,13 +1611,9 @@ function asu_ap_feature_views_default_views() {
   $handler->display->display_options['fields']['field_asu_ap']['label'] = '';
   $handler->display->display_options['fields']['field_asu_ap']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['field_asu_ap']['alter']['text'] = '<div class="asu-ap-rewritten-fields">
-
     <div class="asu-ap-major-title">[field_asu_ap_awarded]</div>
-
     [body]
-
     <div class="asu-ap-field-title">Location:</div> [field_asu_ap_campus]
-
 </div>';
   $handler->display->display_options['fields']['field_asu_ap']['element_label_colon'] = FALSE;
   /* Field: Content: Nid */
