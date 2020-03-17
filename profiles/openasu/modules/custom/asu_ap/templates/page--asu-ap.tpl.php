@@ -628,6 +628,7 @@ if (module_exists('metatag')) {
       <!-- Bottom white section (BW) -->
 
         <div class="container space-top-xl space-bot-sm">
+
   <?php
   // Which content to show and how.
   $careers_half = ((isset($node_info['field_asu_ap_example_careers']))
@@ -656,31 +657,47 @@ if (module_exists('metatag')) {
   } ?>
           <div class="row">
             <div class="col-md-12" id="plan-of-study">
-  <?php
-  if ($related_programs === TRUE
-    && (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])
-    XOR isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']))): ?>
-              <div class="col-md-4 col-sm-12 asu-ap-related-programs asu-ap-related-programs-solo">
     <?php
-    print $related_programs_output;
-    $related_programs_status = "ok";
-    ?>
+    if ($related_programs === TRUE
+      && (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']))): ?>
+              <div class="col-md-4 col-sm-12 asu-ap-related-programs asu-ap-related-programs-solo">
+      <?php
+      print $related_programs_output;
+      $related_programs_status = "ok";
+      ?>
               </div>
-  <?php endif; ?>
-  <?php $label = 'Admission';
-  if ($cert_val === 'true'): ?>
+    <?php endif; ?>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12" id="ap-degree-requirements">
+    <?php $label = 'Admission';
+    if ($cert_val === 'true'): ?>
     <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
-      <h2>Program requirements</h2>
+              <h3>Program requirements</h3>
       <?php
       print _asu_ap_feature_map_urls_create($node_info, $cert_val);
       print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'];
       $label = 'Enrollment';
       ?>
+    <?php else: ?>
+      <?php if (isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value'])): ?>
+              <h3>Degree requirements</h3>
+        <?php print $node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']; ?>
+      <?php endif; ?>
     <?php endif; ?>
   <?php endif; ?>
   <?php if (isset($node_info['field_asu_ap_req_desc']['#items'][0]['safe_value'])): ?>
-              <h2><?php print $label ?> requirements</h2>
+            <h3><?php print $label ?> requirements</h3>
     <?php print $node_info['field_asu_ap_req_desc']['#items'][0]['safe_value']; ?>
+  <?php endif; ?>
+
+  <?php if ($program_type === 'graduate'): ?>
+    <?php if (isset($node_info['field_asu_ap_grad_addl_req']['#items'][0]['safe_value'])): ?>
+            <h4>Additional requirements</h4>
+      <?php print $node_info['field_asu_ap_grad_addl_req']['#items'][0]['safe_value']; ?>
+    <?php endif; ?>
   <?php endif; ?>
             </div>
           </div>
