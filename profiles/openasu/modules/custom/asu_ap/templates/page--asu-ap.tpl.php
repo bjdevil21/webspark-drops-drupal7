@@ -587,9 +587,7 @@ if (module_exists('metatag')) {
       <?php // Show manually entered data if exists; otherwise, show info from Degree Search
         if (isset($node_info['field_asu_ap_grad_app']['#items'][0]['safe_value'])): ?>
         <?php echo $node_info['field_asu_ap_grad_app']['#items'][0]['safe_value']; ?>
-      <?php else: ?>
-        <?php if (isset($node_info['field_asu_ap_grad_text_area'])): ?>
-        <?php endif ?>
+      <?php endif; ?>
     <?php endif; ?>
               </div>
 
