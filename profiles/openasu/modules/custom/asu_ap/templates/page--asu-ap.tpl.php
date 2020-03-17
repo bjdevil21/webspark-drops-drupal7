@@ -736,7 +736,7 @@ if (module_exists('metatag')) {
           <div class="row">
     <?php if (isset($node_info['field_asu_ap_career_opps'])): ?>
             <div class="col-md-<?php print $career_cols ?> asu-ap-careers">
-              <h2>Career outlook</h2>
+              <h3>Career outlook</h3>
       <?php if (isset($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value'])): ?>
         <?php print render($node_info['field_asu_ap_career_outlook']['#items'][0]['safe_value']); ?>
       <?php elseif (isset($node_info['field_asu_ap_career_opps'])): ?>
@@ -748,7 +748,7 @@ if (module_exists('metatag')) {
             <div class="col-md-<?php print $career_cols ?> asu-ap-careers">
       <?php if (isset($node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'])
                   && $node_info['field_asu_ap_ex_car_tf']['#items'][0]['value'] == 1): ?>
-              <h2>Example careers</h2>
+              <h3>Example careers</h3>
         <?php print render($node_info['field_asu_ap_example_careers']); ?>
       <?php endif; ?>
             </div>
