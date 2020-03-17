@@ -664,32 +664,35 @@ if (module_exists('metatag')) {
   } ?>
           <div class="row">
             <div class="col-md-12" id="plan-of-study">
-    <?php
-    if ($related_programs === TRUE
-      && (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']))): ?>
+  <?php if ($related_programs === TRUE
+    && (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value']))): ?>
               <div class="col-md-4 col-sm-12 asu-ap-related-programs asu-ap-related-programs-solo">
-      <?php
+    <?php
       print $related_programs_output;
       $related_programs_status = "ok";
-      ?>
+    ?>
               </div>
-    <?php endif; ?>
+  <?php endif; ?>
             </div>
           </div>
 
           <div class="row">
             <div class="col-md-12" id="ap-degree-requirements">
-    <?php $label = 'Admission';
-    if ($cert_val === 'true'): ?>
+
+  <?php // Program requirements (minors/certs)
+  // Degree (or Enrollment for minors/certs) requirements
+  $label = 'Admission';
+  if ($cert_val === 'true'): ?>
     <?php if (isset($node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'])): ?>
               <h3>Program requirements</h3>
       <?php
-      print _asu_ap_feature_map_urls_create($node_info, $cert_val);
-      print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'];
-      $label = 'Enrollment';
+        print _asu_ap_feature_map_urls_create($node_info, $cert_val);
+        print $node_info['field_asu_ap_prog_req']['#items'][0]['safe_value'];
+        $label = 'Enrollment';
       ?>
     <?php else: ?>
-      <?php if (isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value'])): ?>
+      <?php // Degree requirements
+      if (isset($node_info['field_asu_ap_admission_req']['#items'][0]['safe_value'])): ?>
               <h3>Degree requirements</h3>
         <?php print $node_info['field_asu_ap_admission_req']['#items'][0]['safe_value']; ?>
       <?php endif; ?>
@@ -700,7 +703,16 @@ if (module_exists('metatag')) {
     <?php print $node_info['field_asu_ap_req_desc']['#items'][0]['safe_value']; ?>
   <?php endif; ?>
 
-  <?php if ($program_type === 'graduate'): ?>
+  <?php // Transfer admission requirements
+  if ($program_type === 'undergrad'): ?>
+    <?php if (isset($node_info['asu_ap_transfer_admis_req']['#items'][0]['safe_value'])): ?>
+            <h4>Transfer admission requirements</h4>
+      <?php print $node_info['asu_ap_transfer_admis_req']['#items'][0]['safe_value']; ?>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?php // Grad Additional requirement
+  if ($program_type === 'graduate'): ?>
     <?php if (isset($node_info['field_asu_ap_grad_addl_req']['#items'][0]['safe_value'])): ?>
             <h4>Additional requirements</h4>
       <?php print $node_info['field_asu_ap_grad_addl_req']['#items'][0]['safe_value']; ?>
