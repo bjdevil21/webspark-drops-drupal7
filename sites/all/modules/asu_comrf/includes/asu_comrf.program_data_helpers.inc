@@ -271,6 +271,12 @@ function _asu_comrf_translate_campus_code_options($new_campus_choice_raw) {
       case 'COCHS':
         $new_campus_choice[$key] = 'ASU@Cochise';
         break;
+      case 'MXCTY':
+        $new_campus_choice[$key] = 'ASU@MexicoCity';
+        break;
+      case 'WASHD':
+        $new_campus_choice[$key] = 'ASU@Washington, D.C.';
+        break;
       default:
         $new_campus_choice[$key] = $campus_raw;
         break;
