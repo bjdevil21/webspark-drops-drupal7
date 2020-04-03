@@ -129,34 +129,18 @@ function asu_comrf_cron() {
 
   $degree_search_env = variable_get('asu_comrf_degree_search_env', 'dev');
 
-  // For production, run only if
-  // 1) School is in the off-season (May, June, July, August, December)
-  // 2) At least 24 hours since its last run.
-  if (_asu_comrf_cron_period_check() && $degree_search_env == 'prod') {
+  // Only run in prod if at least one week since the last pull. In dev, pull with every cron run.
+  if ($degree_search_env === 'dev' || (_asu_comrf_cron_period_check() && $degree_search_env === 'prod')) {
     // Get the list of degree programs
     $list_of_degrees = _asu_comrf_get_degree_list_data();
     $no_of_degrees = (is_array($list_of_degrees)) ? count($list_of_degrees) : 0;
     // Process the list of degree programs for relevant information
     $successful_data_storage = _asu_comrf_store_degree_list($list_of_degrees);
-    if ($successful_data_storage == TRUE) {
+    if ($successful_data_storage === TRUE) {
+      // Reset last time successful data update was performed.
+      variable_set('asu_comrf_check_time', time());
       // Log successful degree programs pull and save attempt
       watchdog('asu_comrf', __FUNCTION__ . ' - Successfully pulled and saved list of ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
-    } else {
-      // Log failed degree programs pull and save attempt
-      watchdog('asu_comrf', __FUNCTION__ . ' - Failed to generate and store updated list of degrees from Degree Search web service.', array(), WATCHDOG_ALERT);
-    }
-  }
-
-  // If Degree Search is set to dev, and its been at least one week since a data pull, perform one
-  if ($degree_search_env == 'dev') {
-    // Get the list of degree programs
-    $list_of_degrees = _asu_comrf_get_degree_list_data();
-    $no_of_degrees = (is_array($list_of_degrees)) ? count($list_of_degrees) : 0;
-    // Process the list of degree programs for relevant information
-    $successful_data_storage = _asu_comrf_store_degree_list($list_of_degrees);
-    if ($successful_data_storage == TRUE) {
-      // Log successful degree programs pull and save attempt
-      watchdog('asu_comrf', 'Successfully pulled and saved a list of  ' . $no_of_degrees . ' degrees from Degree Search.', array(), WATCHDOG_INFO);
     } else {
       // Log failed degree programs pull and save attempt
       watchdog('asu_comrf', __FUNCTION__ . ' - Failed to generate and store updated list of degrees from Degree Search web service.', array(), WATCHDOG_ALERT);
@@ -754,7 +738,7 @@ function asu_comrf_form_submit($form, &$form_state) {
       // Send request to start What If audit if enabled
       $successful_what_if_audit_submission = asu_comrf_start_what_if_audit($emplid, $dprog);
       if (!$successful_what_if_audit_submission) {
-        watchdog('asu_comrf', 'Form was not able to start a What If audit. Nonetheless, data may have been saved 
+        watchdog('asu_comrf', 'Form was not able to start a What If audit. Nonetheless, data may have been saved
         in Drupal and sent to Salesforce.', array(), WATCHDOG_ERROR);
       }
     } else {

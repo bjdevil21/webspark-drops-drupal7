@@ -284,3 +284,10 @@ function asu_comrf_update_7001(&$sandbox) {
   variable_set('asu_comrf_degree_search_result_subplans_array_result_index', 6);
   variable_set('asu_comrf_degree_search_result_campus_string_array_index', 7);
 }
+
+/**
+ * Resetting the "last degree data check" variable to ensure at least one run with the next cron job.
+ */
+function asu_rfi_update_7002(){
+  variable_set('asu_comrf_check_time', 1);
+}

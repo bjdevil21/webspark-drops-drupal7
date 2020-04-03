@@ -14,27 +14,15 @@ function _asu_comrf_cron_period_check() {
   define('DAY_IN_SECONDS', 86400);
   define('WEEK_IN_SECONDS', 604800);
 
-  // Creates a temporary variable that verifies time line
-  $check_val = FALSE;
+  // Gets difference between time stamp of last cron check and current time stamp.
+  // Run the update if last check time can't be found
+  $time_lapse = time() - variable_get('asu_comrf_check_time', 1);
 
-  // Gets difference between time stamp of last cron check and current time stamp
-  $time_lapse = time() - variable_get('asu_comrf_check_time', DAY_IN_SECONDS);
-
-  // 1) Was last cron run more than 24 hours ago
-  if ($time_lapse >= DAY_IN_SECONDS) {
-    // 2) And is it before 7AM local time (AZ/PHX) or hasn't run in a week?
-    $tz_obj = new DateTimeZone('America/Phoenix');
-    $today = new DateTime("now", $tz_obj);
-    $current_hour = (int) $today->format('H');
-    if ($current_hour < 7 || $time_lapse > WEEK_IN_SECONDS) {
-      $check_val = TRUE;
-    }
-  }
-  // Sets new timestamp as global variable
-  variable_set('asu_comrf_check_time', time());
-
-  // Returns TRUE if last cron was run more than a week ago
-  return $check_val;
+  // Returns TRUE if last cron was run more than a week ago and it is before 7AM local AZ time.
+  $tz_obj = new DateTimeZone('America/Phoenix');
+  $today = new DateTime("now", $tz_obj);
+  $current_hour = (int) $today->format('H');
+  return ($current_hour < 7 || $time_lapse > WEEK_IN_SECONDS) ? TRUE : FALSE;
 }
 
 /**
