@@ -22,7 +22,10 @@ function _asu_comrf_cron_period_check() {
   $tz_obj = new DateTimeZone('America/Phoenix');
   $today = new DateTime("now", $tz_obj);
   $current_hour = (int) $today->format('H');
-  return ($current_hour < 7 || $time_lapse > WEEK_IN_SECONDS) ? TRUE : FALSE;
+
+  // Set to daily run
+  //return ($current_hour < 7 && $time_lapse > WEEK_IN_SECONDS) ? TRUE : FALSE;
+  return ($current_hour < 7 && $time_lapse > DAY_IN_SECONDS) ? TRUE : FALSE;
 }
 
 /**
