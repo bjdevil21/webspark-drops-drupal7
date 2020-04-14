@@ -26,7 +26,8 @@ Feature: Add media using the rich text editor
     When I type "Testing body" in the "edit-body-und-0-value" WYSIWYG editor
     # Upload the file.
     When I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaBrowser"
+    # And I switch to the frame "mediaBrowser"
+      And I switch to the frame 1
       And I attach the file "test-sm.png" to "files[upload]"
       And I press "Next"
     Then I should see "Destination"
@@ -43,7 +44,8 @@ Feature: Add media using the rich text editor
       And I press "Save"
     # The media style selector.
     When I wait 2 seconds
-      And I switch to the frame "mediaStyleSelector"
+      # And I switch to the frame "mediaStyleSelector"
+      And I switch to the frame 1
       And I select "Quarter Size" from "format"
     Then the "Alt Text" field should contain "Sample Alt text"
       And the "Title Text" field should contain "Sample Title text"
@@ -62,7 +64,8 @@ Feature: Add media using the rich text editor
   Scenario: The second alt/title text sticks
     When I type "Testing body" in the "edit-body-und-0-value" WYSIWYG editor
     When I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaBrowser"
+      # And I switch to the frame "mediaBrowser"
+      And I switch to the frame 1
       And I attach the file "test-sm.png" to "files[upload]"
       And I press "Next"
     Then I should see "Destination"
@@ -77,7 +80,8 @@ Feature: Add media using the rich text editor
         | Title Text | First title text |
       And I press "Save"
     When I wait 2 seconds
-      And I switch to the frame "mediaStyleSelector"
+      # And I switch to the frame "mediaStyleSelector"
+      And I switch to the frame 1
     Then the "Alt Text" field should contain "First Alt text"
       And the "Title Text" field should contain "First Title text"
     When I fill in the following:
@@ -95,7 +99,8 @@ Feature: Add media using the rich text editor
     When I click "Edit" in the "Tabs" region
       And I click the "img" element in the "edit-body-und-0-value" WYSIWYG editor
       And I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaStyleSelector"
+      # And I switch to the frame "mediaStyleSelector"
+    And I switch to the frame 1
     Then the "Alt Text" field should contain "Second Alt text"
       And the "Title Text" field should contain "Second Title text"
       And I switch out of all frames
@@ -106,7 +111,8 @@ Feature: Add media using the rich text editor
   Scenario: HTML entities in alt/title text get decoded/encoded correctly
     When I type "Testing body" in the "edit-body-und-0-value" WYSIWYG editor
     When I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaBrowser"
+      # And I switch to the frame "mediaBrowser"
+      And I switch to the frame 1
       And I attach the file "test-sm.png" to "files[upload]"
       And I press "Next"
     Then I should see "Destination"
@@ -121,7 +127,8 @@ Feature: Add media using the rich text editor
         | Title Text | Title & some > "character's" < |
       And I press "Save"
     When I wait 2 seconds
-      And I switch to the frame "mediaStyleSelector"
+      # And I switch to the frame "mediaStyleSelector"
+      And I switch to the frame 1
     When I click the fake "Submit" button
       And I switch out of all frames
     # Save the whole node.
@@ -134,7 +141,8 @@ Feature: Add media using the rich text editor
     When I click "Edit" in the "Tabs" region
       And I click the "img" element in the "edit-body-und-0-value" WYSIWYG editor
       And I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaStyleSelector"
+      # And I switch to the frame "mediaStyleSelector"
+      And I switch to the frame 1
     Then the "Alt Text" field should contain "Alt & some > \"character's\" <"
       And the "Title Text" field should contain "Title & some > \"character's\" <"
       And I switch out of all frames
@@ -143,7 +151,8 @@ Feature: Add media using the rich text editor
   Scenario: Use an image from elsewhere on the web
     When I type "Testing body" in the "edit-body-und-0-value" WYSIWYG editor
       And I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaBrowser"
+      # And I switch to the frame "mediaBrowser"
+      And I switch to the frame 1
       And I click "Web"
     Then I should see "File URL or media resource"
     When I fill in "File URL or media resource" with "https://www.drupal.org/files/drupal_logo-blue.png"
@@ -162,7 +171,8 @@ Feature: Add media using the rich text editor
       And I press "Save"
     # The media style selector.
     When I wait 2 seconds
-      And I switch to the frame "mediaStyleSelector"
+      # And I switch to the frame "mediaStyleSelector"
+      And I switch to the frame 1
       And I select "Quarter Size" from "format"
     Then the "Alt Text" field should contain "Sample Alt text"
       And the "Title Text" field should contain "Sample Title text"
@@ -180,7 +190,8 @@ Feature: Add media using the rich text editor
     When I type "Testing body" in the "edit-body-und-0-value" WYSIWYG editor
     # Upload the file.
     When I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaBrowser"
+      # And I switch to the frame "mediaBrowser"
+      And I switch to the frame 1
       And I click "Web"
       And I fill in "File URL or media resource" with "https://www.youtube.com/watch?v=W_-vFa-IyB8"
       And I press "Next" in the "Media web tab" region
@@ -203,7 +214,8 @@ Feature: Add media using the rich text editor
     When I type "Testing body" in the "edit-body-und-0-value" WYSIWYG editor
     # Upload the file.
     When I click the "Media browser" button in the "edit-body-und-0-value" WYSIWYG editor
-      And I switch to the frame "mediaBrowser"
+      # And I switch to the frame "mediaBrowser"
+      And I switch to the frame 1
       And I click "Web"
       And I fill in "File URL or media resource" with "http://vimeo.com/59482983"
       And I press "Next" in the "Media web tab" region

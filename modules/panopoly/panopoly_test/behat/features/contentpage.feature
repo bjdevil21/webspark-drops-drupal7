@@ -14,7 +14,7 @@ Feature: Add content page
 
   @api @panopoly_pages
   Scenario: Add a content page
-    # Normally, here we'd press "Publish", however some child distribtions
+    # Normally, here we'd press "Publish", however some child distributions
     # don't use 'save_draft', and this makes this test compatible with them.
     #When I press "Publish"
     When I press "edit-submit"
@@ -27,7 +27,7 @@ Feature: Add content page
 
   @api @javascript @panopoly_pages @local_files
   Scenario: Add a Featured image
-    # Revisting the page will not be necessary when https://drupal.org/node/2281709 is resolved
+    # Revisiting the page will not be necessary when https://drupal.org/node/2281709 is resolved
     When I visit "/node/add/panopoly-page"
       And I fill in the following:
       | Title               | Testing title |

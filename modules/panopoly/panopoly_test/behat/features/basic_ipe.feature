@@ -15,4 +15,3 @@ Feature: Make basic changes with the IPE
       And I press "Save" in the "CTools modal" region
       And I wait for the Panels IPE to deactivate
     Then I should see "Testing title"
-

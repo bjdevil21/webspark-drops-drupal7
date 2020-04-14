@@ -9,20 +9,33 @@ default:
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
         - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\RawDrupalContext
   extensions:
-    Behat\MinkExtension:
+    Drupal\MinkExtension:
       goutte: ~
       selenium2:
-        browser: chrome
+#        browser: chrome
+        wd_host: http://localhost:4444/wd/hub
         capabilities:
-          browser: chrome
-          browserName: chrome
-          browserVersion: ANY
+#          browser: chrome
+#          browserName: chrome
+#          browserVersion: ANY
+          extra_capabilities:
+            chromeOptions:
+              w3c: false
+              args:
+                - "--start-maximized"
+                - "--headless"
+                - "--disable-gpu"
           chrome:
             switches:
               - "--headless"
               - "--disable-gpu"
+              - "--window-size=3840,2160"
+              - "--no-sandbox"
           version: ANY
+      javascript_session: selenium2
       #base_url: http://mydrupalsite.com
       #files_path: './profiles/panopoly/modules/panopoly/panopoly_test/tests'
     Drupal\DrupalExtension:
@@ -32,6 +45,10 @@ default:
       #drupal:
       #  drupal_root: '/path/to/drupal/root'
       api_driver: 'drupal'
+      # Look in the profile modules directory and pull in module subcontexts.
+      subcontexts:
+        paths:
+          - "./profiles/panopoly/modules/panopoly/panopoly_test"
       region_map:
         # The region on panopoly_page where the body appears (frequently
         # customized on child distributions).
