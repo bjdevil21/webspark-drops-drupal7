@@ -11,8 +11,9 @@ dependencies[] = views_bulk_operations
 dependencies[] = honeypot
 dependencies[] = flogger
 dependencies[] = entityreference_autocomplete
+dependencies[] = asu_libs
 
-version = 7.x-3.0
+version = 7.x-3.1
 scripts[] = js/asu_rfi_form.js
 ;scripts[] = theme/session_clear.js
 
