@@ -51,6 +51,54 @@
  * @see example.sites.php
  * @see conf_path()
  */
+/* Before anything else, block all likely bad PHP request strings */
+
+$bad_url_fragments = array(
+  '.asp',
+  'wp-login.php',
+  'config/database.yml',
+  'wlwmanifest.xml',
+);
+foreach ($bad_url_fragments as $frag) {
+  if (strrpos($_SERVER['REQUEST_URI'], $frag) !== FALSE) {
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+  }
+}
+$bad_url_fragments = array(
+  'wp-includes',
+  '.svn',
+  '.ssh',
+  'alert(',
+  'md5(',
+  "/etc/passwd",
+  '\\WINDOWS\\system32',
+  '\`',
+  '\=\"javascript\:',
+  '<% ',
+  'win.ini',
+  '\../\../\../\../',
+  '..\..\..\..\..\..\..\..',
+  '<iframe',
+);
+foreach ($bad_url_fragments as $frag) {
+  if (stripos($frag, $_SERVER['REQUEST_URI']) !== FALSE) {
+    header('HTTP/1.0 404 Forbiddan ' . $frag);
+    exit;
+  }
+}
+$bad_url_fragments = array(
+  '&lt;script',
+  '<img/src=">"',
+  "' OR",
+  "' AND",
+);
+foreach ($bad_url_fragments as $frag) {
+  if (stristr($frag, $_SERVER['REQUEST_URI']) !== FALSE) {
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+  }
+}
 
 /**
  * Database settings:
