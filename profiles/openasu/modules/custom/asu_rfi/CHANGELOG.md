@@ -1,5 +1,10 @@
 # ASU Request for Information Changelog
 
+### ASU RFI 7.x-3.3, 2020-06-05
+- Fixed bug keeping the RFI admin form from setting the blocking of resubmissions of older, locally-saved RFI submissions.
+- Increased deletion window to 45 days (up from 14 days) to allow for more extensive investigations during RFI -> Salesforce processing.
+- Added ability to select deletion period length options in RFI admin form.
+
 ### ASU RFI 7.x-3.2, 2020-05-28
 - Fixed issue that was blocking the processing of production RFI submissions on sites hosted outside the ASU network
  (e.g., Pantheon hosted sites). All RFI form submissions once again submit to the RFI middleware when the module is set
