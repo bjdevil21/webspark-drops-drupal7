@@ -276,8 +276,6 @@ $databases = array(
 //        PDO::MYSQL_ATTR_SSL_CERT => '/etc/httpd/conf/ssl.crt/server.crt',
 //        PDO::MYSQL_ATTR_SSL_KEY => '/etc/httpd/conf/ssl.key/server.key',
       ),
-
->>>>>>> 5b110c1601280276f2cd01f8b570624b27198697
     ),
   ),
 );
