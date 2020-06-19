@@ -1,0 +1,334 @@
+<?php
+
+/**
+ * Create node IDs, component IDs mapping tables between src and dst databases.
+ * Add uuid field to webform components
+ *
+ * Implements hook_schema().
+ */
+function eoss_webforms_followup_schema() {
+  $schema['migrate_map_custom_nid'] = array(
+    'description' => 'Webform node ID (nid) mapping for source and destination nodes.',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'Destination node ID',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'src_nid' => array(
+        'description' => 'Source node ID',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'title' => array(
+        'description' => 'The webform node title (src + dst)',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+      ),
+      'uuid' => array(
+        'description' => 'The node UUID (matches in src and dst).',
+        'type' => 'varchar',
+        'length' => '64',
+        'not null' => TRUE,
+      ),
+      'migration_class' => array(
+        'description' => 'The Migrate API class that needs this data.',
+        'type' => 'varchar',
+        'length' => '128',
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'description' => 'Timestamp for the creation time of this record.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('nid'),
+    'unique keys' => array(
+      'nid_UNIQUE' => array('nid'),
+      'src_nid_UNIQUE' => array('src_nid'),
+      'uuid_UNIQUE' => array('uuid')
+    ),
+  );
+  $schema['migrate_map_custom_cid'] = array(
+    'description' => 'Webform component ID (nid) mapping for source and destination components.',
+    'fields' => array(
+      'machine_name' => array(
+        'description' => 'The component machine_name.',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+      ),
+      'cid' => array(
+        'description' => 'New destination component ID.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'src_cid' => array(
+        'description' => 'Source component ID.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'nid' => array(
+        'description' => 'Destination webform nid.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'src_nid' => array(
+        'description' => 'Source webform nid.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'migration_class' => array(
+        'description' => 'The Migrate API class(es) that needs this data.',
+        'type' => 'varchar',
+        'length' => '128',
+        'not null' => TRUE,
+      ),
+      'created' => array(
+        'description' => 'Timestamp for the creation time of this record.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('machine_name'),
+    'unique keys' => array(
+      'machine_name_UNIQUE' => array('machine_name'),
+    ),
+  );
+  $schema['migrate_map_custom_files_dirs'] = array(
+    'description' => 'List of all added files/webform subdirectories during migration.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'Simple, numerical ID.',
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ),
+      'nid' => array(
+        'description' => 'Webform node ID related to the directory.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'cid' => array(
+        'description' => 'Webform component ID uploading to the directory.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'default' => 0,
+      ),
+      'directory' => array(
+        'description' => 'New files directory (URI path)',
+        'type' => 'varchar',
+        'length' => '128',
+        'not null' => TRUE,
+      ),
+      'directory_full' => array(
+        'description' => 'New files directory (full/absolute path)',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'directory_full_UNIQUE' => array('directory_full'),
+    ),
+  );
+
+  $schema['migrate_map_custom_orphaned_ws_data'] = array(
+    'description' => 'Orphaned submission data for possible later reference. Includes src fields for future mapping.',
+    'fields' => array(
+      'src_nid' => array(
+        'description' => 'The SRC node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'nid' => array(
+        'description' => 'The DST node identifier of a webform.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'src_sid' => array(
+        'description' => 'The SRC unique identifier for this submission.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'sid' => array(
+        'description' => 'The DST unique identifier for this submission.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'src_cid' => array(
+        'description' => 'The SRC identifier for this component within this node, starts at 0 for each node.',
+        'type' => 'int',
+        'size' => 'small',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cid' => array(
+        'description' => 'The DST identifier for this component within this node. Likely ZERO if here.',
+        'type' => 'int',
+        'size' => 'small',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'no' => array( // No need for duplicate column, since this is the same data.
+        'description' => 'Usually this value is 0, but if a field has multiple values (such as a time or date), it may require multiple rows in the database.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'data' => array( // No need for duplicate column, since this is the same data.
+        'description' => 'The submitted value of this field, may be serialized for some components.',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('src_nid', 'src_sid', 'src_cid', 'no', 'sid'),
+    'indexes' => array(
+      'nid' => array('src_nid'),
+      'sid_nid' => array('src_sid', 'src_nid'),
+      'sid' => array('sid'),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Generate required mappings for Migrate API:
+ * - Node IDs
+ * - Component IDs
+ * Clean up data issues in eoss-migrate()
+ *
+ * Implements hook_install().
+ */
+function eoss_webforms_followup_install() {
+
+  $nid_table = _eoss_webforms_followup_migration_data('table_nid');
+  $cid_table = _eoss_webforms_followup_migration_data('table_cid');
+  $cid_class = _eoss_webforms_followup_migration_data('class_cid');
+  $nid_class = _eoss_webforms_followup_migration_data('class_nid');
+
+  $tables = array($cid_table, $nid_table);
+  foreach($tables as $table) {
+    $table_check = Database::getConnection('default')
+      ->schema()->tableExists($table);
+    if (!$table_check) {
+      throw new MigrateException(t("The migration table @table in the @conn database does not exist.",
+        array('@table' => $table, '@conn' => 'eossMigrate')));
+    }
+  }
+
+  /** Populate custom NID mappings table */
+
+  $src_query = Database::getConnection('default', 'eossMigrate')
+    ->select('node', 'n1')
+    ->fields('n1', array('nid', 'uuid'))
+    ->condition('n1.type', 'webform')
+    ->orderBy('n1.nid');
+  $results_src = $src_query->execute()->fetchAllKeyed();
+  $results = array();
+  foreach ($results_src as $src_nid => $src_uuid) {
+    $query = Database::getConnection('default')
+      ->select('node', 'n2')
+      ->fields('n2', array('nid', 'title', 'uuid'))
+      ->condition('n2.type', 'webform')
+      ->condition('n2.uuid', $src_uuid)
+      ->orderBy('n2.nid');
+    $result = $query->execute()->fetchAll(); // only one UUID
+    $result[0]->src_nid = $src_nid;
+    $results[$src_uuid] = $result;
+  }
+  foreach ($results as $key => $resultObj) {
+    db_insert(_eoss_webforms_followup_migration_data('table_nid'))
+      ->fields(array(
+        'nid' => $resultObj[0]->nid,
+        'title' => $resultObj[0]->title,
+        'uuid' => $resultObj[0]->uuid,
+        'migration_class' => $nid_class,
+        'created' => REQUEST_TIME,
+        'src_nid' => $resultObj[0]->src_nid,
+      ))
+      ->execute();
+  }
+
+  /** Populate custom CID mappings table */
+
+  // Grab ALL components from eoss-migrate -- ~1500...
+  $src_query = Database::getConnection('default',  'eossMigrate')
+    ->select('webform_component', 'wc')
+    ->fields('wc', array('nid', 'cid', 'form_key', 'machine_name'))
+    ->orderBy('wc.nid', 'wc.machine_name');
+  $results = $src_query->execute()->fetchAll();
+
+  foreach ($results as $result) {
+    // Major data cleanup related to Features bugs, duplicate component machine names, etc.
+    $result = _eoss_webforms_followup_cid_import_pre_insert($result);
+
+      // Prep work: Get destination NID for insertion
+    $subquery = db_select($nid_table, 'n')
+      ->fields('n', array('nid'))
+      ->condition('n.src_nid', $result->nid);
+    $dst_nid = $subquery->execute()->fetchField(); // get first column data from single result
+
+    // Main "stub" data inserted into cid_table. Still missing the new CID, but has everything else.
+    db_insert($cid_table)
+      ->fields(array(
+        'machine_name' => $result->machine_name,
+        'cid' => $result->cid,
+        'src_cid' => $result->cid,
+        'src_nid' => $result->nid,
+        'nid' => (!empty($dst_nid)) ? (int) $dst_nid : 0,
+        'migration_class' => $cid_class,
+        'created' => REQUEST_TIME,
+      ))->execute();
+  }
+
+  // Finally, update with the new destination CID values
+  $subquery = Database::getConnection('default')
+    ->select('webform_component', 'wc')
+    ->fields('wc', array('machine_name', 'cid'))
+    ->isNotNull('wc.machine_name');
+  $results = $subquery->execute()->fetchAll();
+  foreach ($results as $result) {
+    $dst_query = Database::getConnection('default')
+      ->update($cid_table)
+      ->fields(array(
+        'cid' => $result->cid,
+      ))
+      ->condition('machine_name', $result->machine_name, 'LIKE');
+    $dst_query->execute();
+  }
+
+}

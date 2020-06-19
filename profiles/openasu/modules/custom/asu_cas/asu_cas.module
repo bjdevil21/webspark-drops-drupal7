@@ -29,18 +29,25 @@ function asu_cas_boot() {
 }
 
 /*
+ * Implements hook_menu_alter()
+ */
+function asu_cas_menu_alter(&$items) {
+  $items['admin/people/cas/create']['title'] = 'Add ASURITE User';
+  $items['user/%user/cas']['access callback'] = FALSE;
+}
+
+/*
  * Implements hook_form_alter()
- *
- * This properly sets the default admin role to 'administrator' and disables
- * all the other roles from being assigned.
  */
 function asu_cas_form_alter(&$form, &$form_state, $form_id) {
 
+  // Sets the default admin role to 'administrator' and disables
+  // all the other roles from being assigned.
   if ($form_id == "user_admin_settings") {
     $roles = array_map('check_plain', user_roles(TRUE));
   }
 
-  // This function was added to fix CAS role issue by adding CAS role enabled
+  // Fixes the "CAS role is the default admin role" by adding CAS role enabled
   // by default and disable it from being unchecked
   if ($form_id == "cas_admin_settings") {
     $roles = array_map('check_plain', user_roles(TRUE));
@@ -86,11 +93,84 @@ function asu_cas_form_alter(&$form, &$form_state, $form_id) {
 /*
  * Implements hook_FORM_ID_form_alter()
  */
-function asu_cas_form_cas_add_user_form_alter(&$form, &$form_state) {
-  $form['account']['cas_name']['#title'] = ASU_CAS_USERNAME_LABEL;
-  $form['account']['cas_name']['#description'] = t("Registration will proceed as if the user with the specified @label just logged in.", array('@label' => ASU_CAS_USERNAME_LABEL));
+function asu_cas_form_user_profile_form_alter(&$form, &$form_state) {
+  if (user_access('administer users')) {
+    $form['account']['cas_name']['#title'] = ASU_CAS_USERNAME_LABEL;
+    $form['account']['cas_name']['#description'] = '';
+  }
 }
 
+/*
+ * Implements hook_FORM_ID_form_alter()
+ */
+function asu_cas_form_cas_add_user_form_alter(&$form, &$form_state) {
+
+  // Delete last ASU CAS roles value before proceeding.
+  variable_set('asu_cas_batch_user_add_roles', '');
+
+  $form['account']['cas_name']['#title'] = ASU_CAS_USERNAME_LABEL;
+  $form['account']['cas_name']['#description'] = t("Registration will proceed as if the user with the specified @label just logged in.", array('@label' => ASU_CAS_USERNAME_LABEL));
+
+  // Add eligible roles to list - excluding CAS and authenticated roles
+  // They're required and cannot be disabled.
+  // @adapted from user_account_form()
+  $roles = array_map('check_plain', user_roles(TRUE));
+
+  // The disabled checkbox sub-element for roles must be generated separately
+  // and added to the checkboxes element, because of a limitation in Form API
+  // not supporting a single disabled checkbox within a set of checkboxes.
+  // See issue #119038.
+
+  // Authenticated Role - TRUE
+  $checkbox_authenticated = array(
+    '#type' => 'checkbox',
+    '#title' => $roles[DRUPAL_AUTHENTICATED_RID],
+    '#default_value' => TRUE,
+    '#disabled' => TRUE,
+  );
+
+  // CAS Role - TRUE
+  $cas_auto_assigned_role = user_role_load_by_name('cas')->rid;
+  $checkbox_cas_rid = (isset($cas_auto_assigned_role) && !empty($cas_auto_assigned_role)) ? $cas_auto_assigned_role : '';
+  if (isset($checkbox_cas_rid) && !empty($checkbox_cas_rid)) {
+    $checkbox_cas = array(
+      '#type' => 'checkbox',
+      '#title' => $roles[$checkbox_cas_rid],
+      '#default_value' => TRUE,
+      '#disabled' => TRUE,
+    );
+    unset($roles[$checkbox_cas_rid]);
+  }
+  unset($roles[DRUPAL_AUTHENTICATED_RID]);
+
+  $form['account']['role_description'] = array(
+    '#type' => 'markup',
+    '#markup' => '<p>Select the roles you would like to assign to the users being added.</p>',
+  );
+  $form['account']['roles'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Roles'),
+    '#options' => $roles,
+    '#access' => $roles && user_access('administer permissions'),
+    DRUPAL_AUTHENTICATED_RID => $checkbox_authenticated,
+  );
+  // Separately add CAS role if set
+  if (isset($checkbox_cas) && is_array($checkbox_cas)) {
+    $form['account']['roles'][$checkbox_cas_rid] = $checkbox_cas;
+  }
+
+  // Replace CAS module's submit callback with our custom version
+  $submit_callbacks = (is_array($form['#submit'])) ? $form['#submit'] : array();
+  if (!empty($submit_callbacks)) {
+    foreach ($submit_callbacks as $key => $value) {
+      if ($value === 'cas_add_user_form_submit') {
+        unset($form['#submit'][$key]);
+        $form['#submit'][$key] = 'asu_cas_bulk_add_submit';
+        $form['#submit'][] = 'cas_add_user_form_submit';
+      }
+    }
+  }
+}
 /*
  * Implements hook_FORM_ID_form_alter()
  */
@@ -112,20 +192,36 @@ function asu_cas_form_cas_user_add_alter(&$form, &$form_state) {
   );
 }
 
-/*
- * Implements hook_FORM_ID_form_alter()
- */
-function asu_cas_form_user_profile_form_alter(&$form, &$form_state) {
-  if (user_access('administer users')) {
-    $form['account']['cas_name']['#title'] = ASU_CAS_USERNAME_LABEL;
-    $form['account']['cas_name']['#description'] = '';
-  }
-}
 
 /*
- * Implements hook_menu_alter()
+ * Replaced CAS submit callback (cas_bulk_add_submit). Had to be done here (vs. batch_alter)
+ * because the added roles were not available.
  */
-function asu_cas_menu_alter(&$items) {
-  $items['admin/people/cas/create']['title'] = 'Add ASURITE User';
-  $items['user/%user/cas']['access callback'] = FALSE;
+function asu_cas_bulk_add_submit($form, &$form_state) {
+  // Set new requested roles info and set into variables table temporarily (stateful info)
+  $roles = $form_state['values']['roles'];
+  foreach ($roles as $key => $value) {
+    if ($value == 0) {
+      unset($roles[$key]);
+    }
+  }
+  variable_set('asu_cas_batch_user_add_roles', serialize($roles));
+}
+
+/**
+ * Implements hook_batch_alter().
+ */
+function asu_cas_batch_alter(&$batch) {
+  $batch['title'] = t('Creating users and adding roles...');
+}
+
+/**
+ * Implements hook_cas_user_presave().
+ */
+function asu_cas_cas_user_presave(&$edit, $account) {
+  // Get roles info and inject into $edit
+  $roles = (variable_get('asu_cas_batch_user_add_roles', '')) ? unserialize(variable_get('asu_cas_batch_user_add_roles')) : '';
+  if (!empty($roles) && is_array($roles)) {
+    $edit['roles'] = $roles;
+  }
 }

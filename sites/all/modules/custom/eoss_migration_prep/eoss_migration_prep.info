@@ -1,0 +1,9 @@
+name = EOSS Migration Preparation
+description = "Generates supplemental UID mapping for the Migrate API BEFORE any migrations are executed."
+core = 7.x
+package = EOSS Webform Migration
+version = 7.x-1.0
+
+dependencies[] = eoss_migration
+
+no autodetect = 1

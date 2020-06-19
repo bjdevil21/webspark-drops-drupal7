@@ -1,0 +1,207 @@
+Migrate API - Notes from https://youtu.be/3fG4wBvLrOI (Denver 2012 DrupalCon presentation)
+
+* hook_migrate_api
+  - Values available to __construct($arguments) in your Migrate classes are ultimately
+set in $api['migrations'] array.
+
+* Migration maps
+  - Allows you to look up the old, source IDs based on the destination IDs - AFTER the migration
+    that created the map is completed. Allows rollbacks, etc.
+
+###############
+Non-video notes:
+
+* To do a basic migration, you need a source class and a destination class (a destination handler).
+* There are examples of both online.
+
+  ** Find a destination handler class that someone has already created for the type of node/entity that you're
+    planning on migrating into. See migrate_examples as a good starting point.
+    - Destination classes will always come out of MigrateDestination.
+
+  ** Also look for a source class online for a starting point. Many of these exist in the Migrate and Migrate Extras
+    module(s).
+    Back to video...
+###############
+
+  You only need to set the following in your source class:
+
+  * __construct:
+    - $this->source
+      - Pass in a Database API-written $query into the source class of choice
+      - (usually MigrateSourceSQL($query))
+
+    - $this->destination
+      - Pass in a new class instantiation - new MigrateDestinationNode('<contentType'), etc.
+      - Not all classes here need arguments... Look at the class in question for more info.
+
+    - $this->map
+      - Used for passing in schema of your keyed rows (usually IDs - uid, nid, etc.)
+      - Ex. $this->map = new MigrateSQLMap(
+
+#################
+Non-video notes
+
+* In the migrate_map_<yourMigrationTable> DB table:
+  - The number of array elements being passed into MigrateSQLMap (in array $source_key - 2nd param)
+    corresponds with the number of srcid<X> keys
+  - The number of array elements being passed into MigrateSQLMap (in array $source_key - 3nd param)
+    corresponds with the number of destid<X> keys
+* The sourceid<X> and destid<X> elements should be equally mapped. If you have four keyed columns in
+  the source, then there needs to be four destid columns (that are primary keys by
+  MigrateDestinationTable, for example,) that are identified by the destination handler as a primary key.
+* If the destid has fewer keys than source, then the rest of the values MUST be populated in prepare(), in the
+  $entity object (not $row... in prepare(), $row == src, $entity == dest).
+* When creating custom maps outside of Migrate (not smart), you should add their mappings into both
+  the import and rollback sides of the process.
+
+Back to video...
+#################
+
+      Parameters:
+      - $this->machineName, - set this in the arguments array.
+      - array(), - array with the SOURCE DB schema (see hook_schema) for your IDs
+      - array(), - Contains the DESTINATION DB schema (see hook schema)
+        - There's usually a helper function provided by destination code
+        - Ex. MigrateDestinationTerm::getKeySchema()
+
+    - $this->addFieldMapping('dest', 'src');
+      - Maps an individual src field to the dest. field
+      - This can take ->arguments($arguments)... This is used when multiple source fields
+      - or values need to be passed into a single destination field. (Ex. body->summary,
+      - body->format, etc. - all part of node->body.
+      - Workaround: pass an array into arguments() and use key => value pairs to pass in that data.
+      - See https://www.drupal.org/node/1012810 for more possible workarounds for this.
+      - https://youtu.be/3fG4wBvLrOI?t=1257
+      - Advanced functions that help utilize mappings
+        - https://www.drupal.org/node/1133448
+
+(These values generally coincide with the four top level Migrate classes (alongside Migration and MigrationBase])
+  - MigrateSource
+  - MigrateDestination
+  - MigrateMap
+  - MigrateFieldMapping)
+
+* Dependencies
+
+When you set a migration dependency, you have to run that migration BEFORE the current migration can be run.
+(Set this in $arguments.)
+  - Ex. You have the old IDs from the source and you want to get new IDs for users in the destination:
+    - $this->addFieldMapping('uid', 'old_id')->sourceMigration('<previousMigration>');
+    - $this->dependencies = array('<previousMigration>');
+
+* Circular dependencies (need the user profile that doesn't exist yet for that billing table,
+and you need the billing info for the user profile).
+
+    - SOLUTION FOR THESE: Add a sourceMigration('<otherMigration>') method call to your <currentMigration> class
+    (like above), then add createStub($currentMigration, $source_key) method call to your
+    <otherMigration> class.
+
+    - Primary purpose is to create a new value and pass it back to the migration that needs it.
+    It does this by 1) creating a DB record in createStub() call that doesn't exist yet that you need (including
+    the new primary key you need), and 2) return the new value (ex. destination ID - destid1) via return
+    $new_value from the createStub function.
+
+    - Flow: currentMigration runs before otherMigration. When currentMigration comes to the fieldMapping step,
+     it can temporarily jump to otherMigration via a chained createStub call.
+
+     This runs for one iteration and ONLY creates a database stub (as manually defined -> ex. new stdClass,
+     $foo->destid = bar, etc.).
+     It then immediately jumps back to currentMigration (with return $foo->destid value) to continue its
+     iteration in currentMigration. The created stub that will be
+
+     This step is repeated with each currentMigration iteration.
+
+     The newly minted stubs are fully populated as an update (vs create/insert) when otherMigration runs later.
+
+     - Alternative flow: Instead of using ->createStub('otherMigration') in __construct, call handleSourceMigration
+     method in prepareRow. This does the createStub in a more dynamic manner (you can modify values in prepareRow
+     or in createStub method in otherMigration class.
+
+     Ex.
+           $destination_ids = $this->handleSourceMigration(array(
+             'MigrateWebformFileManagedEOSS',
+             'MigrateWebformFileUsageEOSS',
+           ),
+             $source_ids);
+
+    (Denver video time: https://youtu.be/3fG4wBvLrOI?t=1503)
+    * Drupal.org further explanation (along with alternate way to do this) - https://www.drupal.org/node/1013506
+
+##############
+non-video notes:
+Great stubs resource:
+https://www.drupal.org/node/1013506
+back to video
+##############
+
+* Additional, important methods in your Migrate source class (after __construct method)
+  - These are presented in execution order):
+
+  1 prepareRow($row) -- Add or change values by editing the $row object properties, which
+    contains your raw SQL data for that record (keyed by SQL col name by default)
+    - Can skip this record by return FALSE based on any if/then PHP logic you want to use.
+    ..THEN..
+
+  2 the field handlers modify the values into a more Drupal-friendly value (nested arrays, etc.), by calling its
+    own field-level prepare() methods,
+
+##############
+Non-video notes:
+* Field handlers are invoked once per node, for each field detected.
+  - Existing, default field handler classes are in plugins/destinations/fields.inc (in Migrate module).
+  - Good for Field API, but not for non-fields.
+  - See https://www.drupal.org/node/1429096 for examples.
+##############
+
+    ..THEN..
+
+  3 prepare($entity, $row) -- Can edit the now Drupal-generated entity ($entity) before
+  - Drupal finally saves it.
+    - The $row object is available for reference, but editing it does nothing.
+    - The $entity object here is your last chance to manipulate the data to be saved into Drupal.
+      - Good time to add any custom data (like fields that aren't defined elsewhere, etc.)
+
+    ..THEN the destination handler class takes over from the source class, and the data is saved..
+
+##############
+Non-video notes:
+Saved by:
+    - import() - the $entity is saved into the destination (usually DB table(s)). This method
+    is defined in your destination handler (class), as defined by $this->destination in your
+    source class constructor.
+##############
+
+    ..THEN..
+
+  4 complete($ent, $row) -- Post-import processing for doing other work RELATED TO the
+    newly-minted entity $ent, like adding roles to a new user, etc.
+    - The new $entity ID is now available for viewing, if needed.
+    - You shouldn't have to save anything related to the data being migrated. If so, you're
+      doing it wrong.
+
+    ..THEN..
+
+  5 The migration map is updated with the old and new IDs (based on what schema is defined
+    in the map).
+
+##############
+Non-video notes:
+* Each migration's map is stored in a newly-minted DB table, named "migrate_map_<className>".
+* There's also an accompanying "migrate_message_<className>" table that you can put custom log entries into with methods in the Migrate + MigrateBase classes:
+  - In prepareRow(), use queueMessage().
+  - In prepare(), use saveMessage().
+  See https://www.drupal.org/node/1132582 for more information.
+ * Messages to be saved in DB table: use $migration->saveMessage(), $migration->queueMessage(), etc.
+   - Migration class-defined message CONSTANTS (ex. MigrationBase::MESSAGE_INFORMATIONAL) set error codes in the database.
+ * Messages to be output to screen: use MigrationBase::saveMessage, ::displayMessage, etc.
+   - Migration
+
+##############
+
+    ..then PROFIT!
+
+  - There are other methods that are required by the process, but they are USUALLY set and handled in
+    parent classes.
+
+END OF VIDEO
+#########################

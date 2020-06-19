@@ -1,0 +1,15 @@
+/* Removal of Upload button */
+
+#edit-submitted-file-upload-button, 
+#edit-submitted-file-upload-button--2 {
+  display: none;
+}
+
+#edit-submitted-attach-a-copy-of-your-unofficial-transcript-here-upload-button--2, 
+#edit-submitted-attach-a-copy-of-your-unofficial-transcript-here-upload-button {
+  display: none;
+}
+
+.file-upload-btn input[type=submit] {
+  display: none;
+}

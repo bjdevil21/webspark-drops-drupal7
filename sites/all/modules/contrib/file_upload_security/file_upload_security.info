@@ -1,0 +1,7 @@
+name = File Upload Security
+description = Warns about or prevents insecure file upload settings in content.
+core = 7.x
+
+dependencies[] = entity
+
+configure = admin/config/media/file_upload_security

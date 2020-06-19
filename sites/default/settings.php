@@ -243,7 +243,6 @@
  *   );
  * @endcode
  */
-
 $databases = array(
   'default' => array(
     'default' => array(
@@ -257,6 +256,28 @@ $databases = array(
       'pdo' => array(
         PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle',
       ),
+
+// SSL related files copied from drupaldbdev to webhost100
+/*
+      'pdo' => array(
+        PDO::MYSQL_ATTR_SSL_CIPHER => 'DHE-RSA-AES256-SHA',
+        PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle',
+//        PDO::MYSQL_ATTR_SSL_CERT => '/etc/pki/tls/certs/servers-star2018-sha256.asu.edu.crt',
+//        PDO::MYSQL_ATTR_SSL_KEY => '/etc/pki/tls/private/servers-star2018-sha256.asu.edu.key',
+      ),
+*/
+
+// Stock on Webhost100, webhost340, other webhosting servers
+
+      'pdo' => array(
+//        PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/ca-bundle.crt',
+        PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle', # latest from drup-dev.asu.edu
+//        PDO::MYSQL_ATTR_SSL_CA => '/etc/pki/tls/certs/latest.ca-bundle',
+//        PDO::MYSQL_ATTR_SSL_CERT => '/etc/httpd/conf/ssl.crt/server.crt',
+//        PDO::MYSQL_ATTR_SSL_KEY => '/etc/httpd/conf/ssl.key/server.key',
+      ),
+
+>>>>>>> 5b110c1601280276f2cd01f8b570624b27198697
     ),
   ),
 );
@@ -291,7 +312,7 @@ $update_free_access = FALSE;
  *   $drupal_hash_salt = file_get_contents('/home/example/salt.txt');
  *
  */
-$drupal_hash_salt = '';
+$drupal_hash_salt = 'WGbio-LNXLxEesodgd1SRz_3Wn3LkHflRF4woCEgSBc';
 
 /**
  * Base URL (optional).
@@ -704,3 +725,6 @@ if (isset($_SERVER['PANTHEON_ENVIRONMENT'])) {
     error_reporting(E_ALL);
   }
 }
+
+// Increase memory for execution issues
+ini_set('memory_limit', '768M');

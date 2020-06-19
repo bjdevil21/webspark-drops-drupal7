@@ -299,7 +299,7 @@ function asu_rfi_update_7202(&$sandbox) {
 }
 
 /**
- * Delete ALL RFI form submissions that have been sent to Salesforce or are expired (14 days old).
+ * Delete ALL RFI form submissions that have been sent to Salesforce or are expired (more than X days old).
  */
 function asu_rfi_update_7203(&$sandbox) {
 
@@ -307,7 +307,7 @@ function asu_rfi_update_7203(&$sandbox) {
 
   // First update run ONLY (Initialize update counters, data)
   if (!isset($sandbox['total'])) {
-    $total_count = _asu_rfi_get_submissions_to_delete(0, TRUE);
+    $total_count = _asu_rfi_get_submissions_to_delete(0, TRUE, TRUE);
     $sandbox['total'] = $total_count;
     $sandbox['max'] = $nids_per_pass;
     $sandbox['progress'] = 0;
@@ -319,7 +319,7 @@ function asu_rfi_update_7203(&$sandbox) {
     }
 
   // Actual batch operation to delete
-  $all_nids = _asu_rfi_get_submissions_to_delete($nids_per_pass);
+  $all_nids = _asu_rfi_get_submissions_to_delete($nids_per_pass, FALSE, TRUE);
 
   foreach ($all_nids as $nid) {
     node_delete($nid);
@@ -494,6 +494,9 @@ function asu_rfi_update_7208(&$sandbox) {
  * Set middleware access value (T/F) for checking access, middleware env selection
  */
 function asu_rfi_update_7209(&$sandbox) {
+  if (!module_exists('asu_libs')) {
+    module_enable(array('asu_libs'));
+  }
   asu_libs_set_asset_access_value('asu_rfi');
   variable_set('asu_rfi_middleware_env', 'prod');
   variable_set('asu_rfi_hide_online_alerts', 1);
@@ -506,4 +509,84 @@ function asu_rfi_update_7209(&$sandbox) {
  */
 function asu_rfi_update_7210(&$sandbox) {
   _asu_rfi_update_form_options();
+}
+
+/**
+ * Set middleware access value (T/F) for checking access again.
+ */
+function asu_rfi_update_7211(&$sandbox) {
+  if (!module_exists('asu_libs')) {
+    module_enable(array('asu_libs'));
+  }
+  asu_libs_set_asset_access_value('asu_rfi');
+}
+
+/**
+ * Reapply updates for 7210, 7211
+ */
+function asu_rfi_update_7212(&$sandbox) {
+  if (!module_exists('asu_libs')) {
+    module_enable(array('asu_libs'));
+  }
+  variable_set('asu_rfi_middleware_env', 'prod');
+  variable_set('asu_rfi_hide_online_alerts', 1);
+  variable_set('asu_rfi_online_url', 'https://asuonline.asu.edu/lead-submissions-v3.3/programs');
+  features_revert_module('asu_rfi_feature');
+  asu_libs_set_asset_access_value('asu_rfi');
+}
+
+/**
+ * Extend deletion period of RFI submissions out to 45 days
+ */
+function asu_rfi_update_7213(&$sandbox) {
+  variable_set('asu_rfi_expired_period', 45);
+  variable_set('asu_rfi_use_jr_js', 0);
+}
+
+/**
+ * Repeat of 7203 with addendum to delete ALL RFI form submissions - REGARDLESS OF STATUS - that are expired (45 days old).
+ */
+function asu_rfi_update_7214(&$sandbox) {
+
+  $nids_per_pass = 50;
+  // First update run ONLY (Initialize update counters, data)
+  if (!isset($sandbox['total'])) {
+    $total_count = _asu_rfi_get_submissions_to_delete(0, TRUE, TRUE);
+    $sandbox['total'] = $total_count;
+    $sandbox['max'] = $nids_per_pass;
+    $sandbox['progress'] = 0;
+    $sandbox['messages'] = array();
+    $sandbox['current'] = -1; // Last node ID read (starts at -1)
+
+    $message = t(__FUNCTION__ . ' - There are @count nodes to delete.', array('@count' => $total_count));
+    flogger('asu_rfi', $message);
+  }
+
+  // Actual batch operation to delete
+  $all_nids = _asu_rfi_get_submissions_to_delete($nids_per_pass, FALSE, TRUE);
+  foreach ($all_nids as $nid) {
+    node_delete($nid);
+    $sandbox['progress']++;
+    $sandbox['current'] = $nid;
+  }
+
+  // Check to see if finished.
+  $sandbox['#finished'] = ($sandbox['progress'] >= $sandbox['total'])
+    ? TRUE : ($sandbox['progress'] / $sandbox['total']);
+
+  if ($sandbox['#finished'] === TRUE) {
+    return "\n" . t('The expired/completed RFI form submissions have been deleted.');
+  }
+  else {
+    $percentage = $sandbox['#finished'];
+    $percentage = round((float) $percentage * 100, 1) . '%';
+    $message = t('Deleted ' . $sandbox['progress'] . ' of '
+      . $sandbox['total'] . " submissions (" . $percentage . " complete). "
+      . "Last node deleted: @nid...",
+      array('@nid' => (isset($nid)) ? $nid : 'unknown'));
+
+    // Set message and add for final report.
+    //$sandbox['messages'][] = $message . "\n";
+    return $message;
+  }
 }

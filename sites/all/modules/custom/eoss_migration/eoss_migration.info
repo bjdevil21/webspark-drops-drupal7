@@ -1,0 +1,39 @@
+name = Migration Webform Submissions EOSS
+description = "Migration of webform submissions for EOSS"
+version = 7.x-1.0-alpha6
+core = 7.x
+package = EOSS Webform Migration
+
+dependencies[] = migrate
+dependencies[] = migrate_d2d
+dependencies[] = webform
+dependencies[] = webform_submission_uuid
+
+; Include the files that contain your Migrate classes
+
+; Base API class + arguments data
+files[] = eoss_migration.migrate.inc
+
+; Helper class to manage fields
+files[] = includes/MigrateFieldsEOSS.inc
+files[] = includes/MigrateWebformFilesLibrary.inc
+
+; MIGRATIONS
+; Users (Webform submitters not already in eoss-forms)
+files[] = includes/src/DrupalUser7MigrationEOSS.inc
+files[] = includes/dst/DrupalDestinationUserEOSS.inc
+
+; Webform Submissions
+files[] = includes/src/MigrateWebformSubmissionEOSS.inc
+
+; Submitted files (managed, usage)
+files[] = includes/src/MigrateWebformFileManagedEOSS.inc
+files[] = includes/dst/MigrateDestinationFileManagedEOSS.inc
+files[] = includes/src/MigrateWebformFileUsageEOSS.inc
+
+; Submitted data records (webform_submitted_data)
+files[] = includes/src/MigrateWebformSubmittedDataEOSS.inc
+files[] = includes/dst/MigrateDestinationWebformSubmittedDataEOSS.inc
+
+; Last Download records
+files[] = includes/src/MigrateWebformLastDownloadEOSS.inc

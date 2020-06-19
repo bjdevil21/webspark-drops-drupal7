@@ -1,0 +1,34 @@
+<?php
+/**
+ * @file
+ * Drupal needs this blank file.
+ */
+function webspark_megamenu_eoss_init() {
+$js = '(function ($, Drupal) {
+  Drupal.behaviors.webspark_megamenu_eoss = {
+    attach: function() {
+      var firstNavItem = $(".tb-megamenu-nav>li:first-child>a");
+      try {
+        if(firstNavItem.text().trim() == "Home"){
+          var a = "<i class=\"fa fa-home icon-white\"><span style=\"display:none\">Home</span></i>";
+          $(".tb-megamenu-nav>li:first-child>a").empty().append(a);
+        } 
+      } catch (e){
+        
+      }
+    }
+  }
+})(jQuery, Drupal);';
+drupal_add_js($js, array('type' => 'inline'));
+drupal_add_css(drupal_get_path('module', 'webspark_megamenu_eoss') . '/css/webspark_megamenu_eoss.css', array('weight' => 99, 'group' => CSS_DEFAULT));
+}
+
+/**
+*  
+**/
+function webspark_megamenu_eoss_form_alter(&$form, &$form_state, &$form_id) {
+  if ($form_id == "menu_edit_item") {
+    //dsm($form);
+    //$form['link_path']['#default_value'] = $GLOBALS['base_url'].'/'.variable_get('site_frontpage', 'node');
+  }
+}

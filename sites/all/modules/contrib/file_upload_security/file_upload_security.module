@@ -1,0 +1,605 @@
+<?php
+/**
+ * @file
+ * Helper module to advise and resolve security issues in file uploads.
+ */
+
+define('FILE_UPLOAD_SECURITY_WARN', 'warn');
+define('FILE_UPLOAD_SECURITY_PROTECT_NO_WARN', 'protect-no-warn');
+define('FILE_UPLOAD_SECURITY_PROTECT', 'protect');
+define('FILE_UPLOAD_SECURITY_PSA', 'https://www.drupal.org/psa-2016-003');
+
+/**
+ * Implements hook_menu().
+ */
+function file_upload_security_menu() {
+  return array(
+    'admin/config/media/file_upload_security' => array(
+      'title' => 'File Upload Security settings',
+      'description' => 'Configuration for the File Upload Security module.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('file_upload_security_admin_form'),
+      'access arguments' => array('administer file upload security'),
+      'file' => 'includes/file_upload_security.admin.inc',
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function file_upload_security_permission() {
+  return array(
+    'administer file upload security' => array(
+      'title' => t('Administer File Upload Security'),
+      'description' => t('Configure the File Upload Security settings.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function file_upload_security_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
+  if (array_key_exists('#field', $form)) {
+    if (array_key_exists('type', $form['#field']) && in_array($form['#field']['type'], file_upload_security_field_types())) {
+      if (array_key_exists('#instance', $form)) {
+        if (array_key_exists('bundle', $form['#instance'])) {
+          $bundle = ($form['#instance']['bundle']) ? $form['#instance']['bundle'] : NULL;
+          $type = ($form['#instance']['entity_type']) ? $form['#instance']['entity_type'] : NULL;
+
+          if ($bundle && $type && file_upload_security_is_affected($bundle, $type)) {
+            if (array_key_exists('field', $form) && array_key_exists('settings', $form['field'])) {
+              if (array_key_exists('uri_scheme', $form['field']['settings'])) {
+                file_upload_security_amend_widget_settings($form['field']['settings']['uri_scheme'], $bundle);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function file_upload_security_form_field_ui_field_settings_form_alter(&$form, &$form_state) {
+  if (array_key_exists('field', $form) && array_key_exists('type', $form['field'])) {
+    if (array_key_exists('#value', $form['field']['type']) && in_array($form['field']['type']['#value'], file_upload_security_field_types())) {
+      $bundle = (array_key_exists('#bundle', $form)) ? $form['#bundle'] : NULL;
+      $type = (array_key_exists('#entity_type', $form)) ? $form['#entity_type'] : NULL;
+
+      if (file_upload_security_is_affected($bundle, $type)) {
+        if (array_key_exists('settings', $form['field'])) {
+          if (array_key_exists('uri_scheme', $form['field']['settings'])) {
+            file_upload_security_amend_widget_settings($form['field']['settings']['uri_scheme'], $bundle);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function file_upload_security_form_webform_component_edit_form_alter(&$form, &$form_state) {
+  if (array_key_exists('type', $form) && array_key_exists('#value', $form['type'])) {
+    if (in_array($form['type']['#value'], file_upload_security_field_types())) {
+      if (array_key_exists('extra', $form) && array_key_exists('scheme', $form['extra'])) {
+        file_upload_security_amend_widget_settings($form['extra']['scheme'], 'webform submission');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_webform_component_presave().
+ */
+function file_upload_security_webform_component_presave(&$component) {
+  if (array_key_exists('type', $component) && $component['type'] == 'file') {
+    if (array_key_exists('extra', $component)) {
+      $extra = &$component['extra'];
+
+      if (array_key_exists('private', $extra) && $extra['private'] != TRUE) {
+        if (array_key_exists('scheme', $extra)) {
+          $security_level = variable_get('file_upload_security_level', FILE_UPLOAD_SECURITY_WARN);
+          if ($security_level == FILE_UPLOAD_SECURITY_PROTECT_NO_WARN) {
+            $extra['scheme'] = 'private';
+          }
+          elseif ($security_level == FILE_UPLOAD_SECURITY_PROTECT) {
+            $extra['scheme'] = 'private';
+            file_upload_security_set_message('webform submission');
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function file_upload_security_form_form_builder_field_configure_alter(&$form, &$form_state) {
+  if (array_key_exists('webform_file_scheme', $form)) {
+    file_upload_security_amend_widget_settings($form['webform_file_scheme'], 'webform submission');
+  }
+}
+
+/**
+ * Helper to carry out the file_upload_security action based on settings.
+ *
+ * @param array $element
+ *   The widget form settings element array.
+ * @param string $bundle
+ *   The bundle the field is being edited on.
+ */
+function file_upload_security_amend_widget_settings(&$element, $bundle) {
+  $action = variable_get('file_upload_security_level', FILE_UPLOAD_SECURITY_WARN);
+
+  if (array_key_exists('#options', $element)) {
+    $options = &$element['#options'];
+    $default = &$element['#default_value'];
+
+    if ($action == FILE_UPLOAD_SECURITY_WARN && $default == 'public') {
+      file_upload_security_set_message($bundle, 'warn');
+    }
+    elseif ($action == FILE_UPLOAD_SECURITY_PROTECT_NO_WARN) {
+      unset($options['public']);
+      $default = 'private';
+    }
+    elseif ($action == FILE_UPLOAD_SECURITY_PROTECT) {
+      unset($options['public']);
+      $default = 'private';
+      file_upload_security_set_message($bundle);
+    }
+  }
+}
+
+/**
+ * Helper to discover is a given entity bundle/combination is affected.
+ *
+ * @param string $bundle
+ *   A valid drupal entity bundle.
+ * @param string $entity_type
+ *   A valid Drupal entity type.
+ *
+ * @return bool
+ *   If entity/bundle combination requires securing. Defaults to FALSE.
+ */
+function file_upload_security_is_affected($bundle, $entity_type) {
+  $is_affected = FALSE;
+  $affected_files = file_upload_security_affected_types();
+
+  if ($bundle && $entity_type) {
+    if (array_key_exists($entity_type, $affected_files['entities'])) {
+      if (in_array($bundle, $affected_files['entities'][$entity_type])) {
+        $is_affected = TRUE;
+      }
+    }
+  }
+
+  return $is_affected;
+}
+
+/**
+ * Helper to set a message about protecting the file structure.
+ *
+ * @param string $bundle
+ *   The content type being protected.
+ * @param string $type
+ *   The message to set: protect or warn.
+ */
+function file_upload_security_set_message($bundle, $type = 'protect') {
+  $psa_link = l(t('the Drupal Security Team public service announcement'), FILE_UPLOAD_SECURITY_PSA);
+
+  if ($type == 'protect') {
+    $message = t('The site administrator has restricted file uploads to prevent anonymous users uploading malicious files to public areas. See !url for further details.', array(
+      '@bundle' => $bundle,
+      '!url' => $psa_link,
+    ));
+  }
+  else {
+    $message = t('The @bundle content type can be created by anonymous users. Allowing those users to upload files into the public file storage can be a security risk. See !url for further details.', array(
+      '@bundle' => $bundle,
+      '!url' => $psa_link,
+    ));
+  }
+
+  drupal_set_message($message, 'warning');
+}
+
+/**
+ * Helper to move files in insecure locations to the private file system.
+ */
+function file_upload_security_fix_files() {
+  if (variable_get('file_private_path', NULL)) {
+    $files = array();
+    file_upload_security_fix_fields($files);
+
+    if (module_exists('webform')) {
+      file_upload_security_fix_webforms($files);
+    }
+
+    if ($files) {
+      file_upload_security_move_fixed_files($files);
+    }
+  }
+  else {
+    watchdog('file_upload_security', 'Attempted to fix insecure files without private file system being set.', array(), WATCHDOG_ERROR);
+    drupal_set_message(t('Legacy files cannot be moved without a private file system being configured. Please set up a private file path at !url.', array(
+      '!url' => l(t('the file system admin page'), '/admin/config/media/file-system'),
+    )));
+  }
+}
+
+/**
+ * Avoid use of batches when fixing files via drush.
+ */
+function file_upload_security_fix_files_drush() {
+  $files = array();
+  file_upload_security_fix_fields($files);
+
+  if (module_exists('webform')) {
+    file_upload_security_fix_webforms($files);
+  }
+
+  if ($files) {
+    foreach ($files as $fid) {
+      $context = array();
+      file_upload_security_fix_move_file_batch($fid, $context);
+    }
+  }
+}
+
+/**
+ * Updates field settings to be secure.
+ *
+ * @param array $files
+ *   Passed by reference to collect fids that may require moving on server.
+ */
+function file_upload_security_fix_fields(&$files = array()) {
+  $affected_fields = file_upload_security_affected_types();
+
+  if ($affected_fields['fields']) {
+    foreach ($affected_fields['fields'] as $field => $bundles) {
+      $info = field_info_field($field);
+
+      if ($info && array_key_exists('settings', $info)) {
+        if ($info['settings']['uri_scheme'] != 'private') {
+          $info['settings']['uri_scheme'] = 'private';
+          field_update_field($info);
+          $updated_fields[$field] = $bundles;
+        }
+
+        $field_table = (isset($info['storage']['details']['sql']['FIELD_LOAD_CURRENT'])) ? key($info['storage']['details']['sql']['FIELD_LOAD_CURRENT']) : NULL;
+        $field_column = (isset($info['storage']['details']['sql']['FIELD_LOAD_CURRENT'][$field_table]['fid'])) ? $info['storage']['details']['sql']['FIELD_LOAD_CURRENT'][$field_table]['fid'] : NULL;
+
+        if ($field_table && $field_column) {
+          $query = db_select($field_table, 'f')
+            ->fields('f', array($field_column))
+            ->execute();
+
+          $files = $files + $query->fetchAllKeyed(0, 0);
+        }
+        else {
+          drupal_set_message(t('You are using non-sql storage for the field :field. These files will need to be manually moved and files_managed updated.', array(
+            ':field' => $field,
+          )), 'error');
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Updates webform file component settings to be secure.
+ *
+ * @param array $files
+ *   Passed by reference to collect fids that may require moving on server.
+ */
+function file_upload_security_fix_webforms(&$files = array()) {
+  // Get all file IDs into array for future fixes.
+  $scheme_condition = db_or()
+    ->condition('extra', '%s:6:"scheme";s:6:"public"%', 'LIKE')
+    ->condition('extra', '%s:6:"scheme";%', 'NOT LIKE');
+
+  $query = db_select('webform_component', 'c')
+    ->fields('c', array('cid'))
+    ->condition('type', 'file')
+    ->condition($scheme_condition);
+  $query->leftJoin('webform_submitted_data', 's', 's.cid = c.cid AND s.nid = c.nid');
+  $query->fields('s', array('data'));
+  $files = $files + $query->execute()->fetchAllKeyed(1, 1);
+
+  // Update ALL serial array instances of public files to private.
+  db_update('webform_component')
+    ->expression('extra', 'REPLACE(extra, :public_scheme, :private_scheme)', array(
+      ':public_scheme' => 's:6:"scheme";s:6:"public"',
+      ':private_scheme' => 's:6:"scheme";s:7:"private"',
+    ))
+    ->condition('type', 'file')
+    ->execute();
+
+  // Add multiple webforms per site support
+  // Get all webform nodes.
+  $webform_list = db_select('webform_component', 'wc')
+    ->distinct()
+    ->fields('wc', array('nid'))
+    ->condition('type', 'file')
+    ->condition('extra', '%s:6:"scheme";%', 'NOT LIKE')
+    ->groupBy('wc.nid')
+    ->execute()->fetchCol();
+
+  // Update each webform's components individually.
+  foreach ($webform_list as $key => $nid) {
+    $select = db_select('webform_component', 'c')
+      ->fields('c', array('cid', 'extra'))
+      ->condition('nid', $nid)
+      ->condition('extra', '%s:6:"scheme";%', 'NOT LIKE')
+      ->condition('type', 'file');
+
+    foreach ($select->execute() as $component) {
+      $extra = unserialize($component->extra);
+      $extra['scheme'] = 'private';
+
+      $query = db_update('webform_component')
+        ->condition('nid', $nid)
+        ->condition('cid', $component->cid)
+        ->fields(array(
+          'extra' => serialize($extra),
+        ));
+
+      if ($query->execute()) {
+        drupal_set_message(t('Webform file component :cid for Node :nid has been updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        )), 'status');
+        watchdog('file_upload_security', 'Webform file component :cid for Node :nid has been updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        ), WATCHDOG_NOTICE);
+      }
+      else {
+        drupal_set_message(t('Webform file component :cid for Node :nid could not be updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        )), 'warning');
+        watchdog('file_upload_security', 'Webform file component :cid for Node :nid could not be updated.', array(
+          ':cid' => $component->cid,
+          ':nid' => $nid,
+        ), WATCHDOG_WARNING);
+      }
+    }
+  }
+}
+
+/**
+ * Batch setter to move an array of files into the private system.
+ *
+ * @param array $files
+ *   An array of file ids.
+ */
+function file_upload_security_move_fixed_files($files = array()) {
+  if ($files) {
+    $batch = array(
+      'operations' => array(),
+      'finished' => 'file_upload_security_fix_finished',
+      'title' => t('Move files into secure area'),
+      'init_message' => t('Moving existing files into secure storage.'),
+      'progress_message' => t('Processed @current out of @total'),
+      'error_message' => t('There has been an error moving files'),
+    );
+
+    $iterator = new RecursiveArrayIterator($files);
+
+    while ($iterator->valid()) {
+      $fid = $iterator->current();
+
+      if ($fid) {
+        $batch['operations'][] = array('file_upload_security_fix_move_file_batch', array($fid));
+      }
+
+      $iterator->next();
+    }
+
+    if ($batch['operations']) {
+      batch_set($batch);
+      batch_process('admin/config/media/file_upload_security');
+    }
+  }
+}
+
+/**
+ * Batch operation to move a file into the private area.
+ *
+ * @param int $fid
+ *   A valid Drupal file id.
+ * @param array $context
+ *   A batch context array.
+ */
+function file_upload_security_fix_move_file_batch($fid, &$context) {
+  $context['message'] = t('Moving file !fid', array('!fid' => $fid));
+  $success = FALSE;
+
+  if ($fid && $file = file_load($fid)) {
+    if (isset($file->uri)) {
+      $uri = str_replace('public://', 'private://', $file->uri);
+      $success = file_move($file, $uri);
+
+      if ($success) {
+        $context['results'][] = $fid;
+      }
+    }
+  }
+
+  if (!$success) {
+    $context['results']['error'][] = $fid;
+    watchdog('file_upload_security', 'File :fid does not exist.', array(':fid' => $fid));
+  }
+}
+
+/**
+ * A batch finished operation.
+ *
+ * @param bool $success
+ *   Whether the batch completed without fatal error.
+ * @param array $results
+ *   An array of the batch operation results.
+ * @param array $operations
+ *   An array of any error messages set.
+ */
+function file_upload_security_fix_finished($success, $results, $operations) {
+  if (!$success || array_key_exists('error', $results) && $results['error']) {
+    if (!$operations) {
+      $count = count($results['error']);
+      unset($results['error']);
+      $success_count = count($results);
+
+      if ($success_count) {
+        drupal_set_message(t(':success files were successfully moved. :count files were not moved - please check your logs for errors.', array(
+          ':success' => $success_count,
+          ':count' => $count,
+        )));
+      }
+      drupal_set_message(t(':count files were not moved - please check your logs for errors.', array(
+        ':count' => $count,
+      )));
+    }
+    else {
+      $error_operation = reset($operations);
+      $message = t('An error occurred while processing %error_operation with arguments: @arguments', array(
+        '%error_operation' => $error_operation[0],
+        '@arguments' => print_r($error_operation[1], TRUE),
+      ));
+      drupal_set_message($message, 'error');
+    }
+  }
+  else {
+    $count = count($results);
+
+    drupal_set_message(t(':count files were successfully moved.', array(
+      ':count' => $count,
+    )));
+  }
+}
+
+/**
+ * Helper to return an array of entities user 0 can create.
+ *
+ * @return array
+ *   An array of entity types.
+ */
+function file_upload_security_affected_types() {
+  $anonymous_entities = &drupal_static(__FUNCTION__);
+  if (!isset($anonymous_entities)) {
+    $anonymous_entities = array(
+      'fields' => array(),
+      'entities' => array(),
+    );
+    $file_fields = file_upload_security_affected_fields();
+    if ($file_fields['entities']) {
+      $all_entities = entity_get_info();
+      $affected_entities = array_intersect_key($all_entities, $file_fields['entities']);
+      $account = user_load(0);
+
+      $iterator = new RecursiveArrayIterator($affected_entities);
+
+      while ($iterator->valid()) {
+        $data = $iterator->current();
+        $type = $iterator->key();
+
+        if ($data) {
+          if (array_key_exists('bundles', $data) && $data['bundles']) {
+            foreach ($data['bundles'] as $bundle => $array) {
+              if (in_array($bundle, $file_fields['entities'][$type])) {
+                $bundle_key = $data['entity keys']['bundle'];
+                $entity = ($bundle_key) ? entity_create($type, array($bundle_key => $bundle)) : $bundle;
+                if (entity_access('create', $type, $entity, $account)) {
+                  $anonymous_entities['entities'][$type][] = $bundle;
+
+                  foreach ($file_fields['fields'] as $field => $bundles) {
+                    if (in_array($bundle, $bundles)) {
+                      $field_info = field_info_field($field);
+                      if ($field_info && field_access('create', $field_info, $bundle, $entity, $account)) {
+                        $anonymous_entities['fields'][$field][] = $bundle;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        $iterator->next();
+      }
+    }
+  }
+
+  return $anonymous_entities;
+}
+
+/**
+ * Helper to get all file fields in use on site.
+ *
+ * @return array
+ *   An array of file fields and entities using them by bundle.
+ */
+function file_upload_security_affected_fields() {
+  $file_fields = &drupal_static(__FUNCTION__);
+
+  if (!isset($file_fields)) {
+    $fields = field_info_field_map();
+    $file_fields = array(
+      'fields' => array(),
+      'entities' => array(),
+    );
+
+    if ($fields) {
+      $iterator = new RecursiveArrayIterator($fields);
+
+      while ($iterator->valid()) {
+        $data = $iterator->current();
+        $field = $iterator->key();
+
+        if (array_key_exists('type', $data) && in_array($data['type'], file_upload_security_field_types())) {
+          if (array_key_exists('bundles', $data)) {
+            $bundles = reset($data['bundles']);
+            $entity = key($data['bundles']);
+
+            foreach ($bundles as $bundle) {
+              $file_fields['fields'][$field][] = $bundle;
+            }
+
+            if (array_key_exists($entity, $file_fields['entities'])) {
+              $file_fields['entities'][$entity] = array_merge($file_fields['entities'][$entity], $bundles);
+            }
+            else {
+              $file_fields['entities'][$entity] = $bundles;
+            }
+          }
+
+        }
+
+        $iterator->next();
+      }
+    }
+  }
+
+  return $file_fields;
+}
+
+/**
+ * Helper to return the types of feeds to protect.
+ *
+ * @return array
+ *   An array of field names.
+ */
+function file_upload_security_field_types() {
+  return array(
+    'file',
+    'image',
+  );
+}
