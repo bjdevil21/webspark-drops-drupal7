@@ -19,15 +19,9 @@ function _mega_footer_social_media($name, $class, $title, $mark, $external) {
   $className = 'fa-' . $class;
 
    if (!empty($check)) {
-	   if ($title == 'RSS') {
-			$faprefix = 'fas';
-	   } else {
-		   $faprefix = 'fab';
-	   }
-    $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $title . '"><i class="'.$faprefix.' '
-      . $className . '"></i></a></li>';
+    $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $title . '"><span class="fa '
+      . $className . '"><span class="sr-only">' . $title . '</span></span></a></li>';
   }
-
   return $mark;
 }
 
