@@ -14,14 +14,21 @@
  * @param $mark footer to add to
  * @return string
  */
+
 function _mega_footer_social_media($name, $class, $title, $mark, $external) {
   $check = variable_get('mega_footer_unit_' . $name . '_link', NULL);
   $className = 'fa-' . $class;
 
    if (!empty($check)) {
-    $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $title . '"><span class="fa '
-      . $className . '"><span class="sr-only">' . $title . '</span></span></a></li>';
+	   if ($title == 'RSS') {
+			$faprefix = 'fas';
+	   } else {
+		   $faprefix = 'fab';
+	   }
+    $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $title . '"><i class="'.$faprefix.' '
+      . $className . '"></i></a></li>';
   }
+
   return $mark;
 }
 
