@@ -29,7 +29,6 @@ function mega_footer_block_view($delta = '') {
 
   if ($delta == 'mega_footer') {
     $mega_menu = menu_tree_all_data('menu-mega-footer-menu');
-
     $mega_menu = menu_tree_output($mega_menu);
 
     // INIT Column Width depending on number of columns
@@ -91,8 +90,8 @@ function mega_footer_block_view($delta = '') {
 
       // Social Media icons - Open in new window/tab? setting check
       $external = (theme_get_setting('social_media_exit') == 1) ? 'target="_new" ' : '';
-	  $footer_mark .= "<div id='mega-footer-social-media' class='col-md-7 col-sm-12'>";
-	  $footer_mark .="<nav role='navigation' aria-label='Social media'>";
+      $footer_mark .= "<div id='mega-footer-social-media' class='col-md-7 col-sm-12'>";
+      $footer_mark .= "<nav role='navigation' aria-label='Social media'>";
       $footer_mark .= "<ul class='dgtl-mkting-101'>";
       $footer_mark = _mega_footer_social_media('facebook', 'facebook-square', 'Facebook', $footer_mark, $external);
       $footer_mark = _mega_footer_social_media('twitter', 'twitter-square', 'Twitter', $footer_mark, $external);
@@ -108,10 +107,10 @@ function mega_footer_block_view($delta = '') {
       $footer_mark = _mega_footer_custom_icon_and_link('social_media', '2', $footer_mark, $external);
       $footer_mark = _mega_footer_custom_icon_and_link('social_media', '3', $footer_mark, $external);
       $footer_mark .= "</ul>";
-	  $footer_mark .= "</nav>";
-	  $footer_mark .= "</div>";
+      $footer_mark .= "</nav>";
       $footer_mark .= "</div>";
-	  $footer_mark .= "</div>";//end row
+      $footer_mark .= "</div>";
+  	  $footer_mark .= "</div>";//end row
     }
       $footer_columns = (count(menu_navigation_links('menu-mega-footer-menu', $level = 0)));
 
@@ -122,7 +121,7 @@ function mega_footer_block_view($delta = '') {
 
 	  // Must make into variable column width
 	  //$footer_mark .= "<div class='col-md-2 col-sm-12 space-bot-md megafoot-border'>";
-	  $footer_mark .= "<div class='col-md-".$bootstrap_col_width." col-sm-12 space-bot-md megafoot-border'>";
+	  $footer_mark .= "<div class='col-md-" . $bootstrap_col_width . " col-sm-12 space-bot-md megafoot-border'>";
 
       // Title & Description
       $footer_mark .= "<div class='mega-dept-title'>" .
@@ -169,15 +168,15 @@ function mega_footer_block_view($delta = '') {
 
     $i = 0;
     foreach ($mega_menu as $item) {
-
       if (is_bool($item)) {
         break;
       }
-      $caret = (!empty($item['#below'])) ? "caret" : "";
-      $footer_mark .= "<div class='col-md-" . $bootstrap_col_width . " col-sm-".$bootstrap_col_width." space-bot-md'>
-          <h2 data-toggle='collapse' data-target='#mega_accord" . $i . "' class='big-foot-head collapsed'>" .
+      //$caret = (!empty($item['#below'])) ? "caret" : "";
+      $footer_mark .= "<div class='col-md-" . $bootstrap_col_width . " col-sm-" . $bootstrap_col_width
+        . " space-bot-md'><h2 data-toggle='collapse' data-target='#mega_accord" . $i
+        . "' class='big-foot-head collapsed'>" .
         //$item['#title'] . "<span class='$caret'></span></h2>
-		$item['#title'] . "<span class='fas fa-chevron-up icon-rotates'></span></h2>
+        $item['#title'] . "<span class='fas fa-chevron-up icon-rotates'></span></h2>
           <ul class='big-foot-nav  collapse in' id='mega_accord" . $i . "' style=''>";
 
       foreach ($item['#below'] as $inner) {
@@ -186,7 +185,6 @@ function mega_footer_block_view($delta = '') {
         }
         $footer_mark .= "<li><a href='" . url($inner['#href']) . "'>" . $inner['#title'] . "</a></li>";
       }
-
       $footer_mark .= "</ul></div>";
       $i++;
     }
@@ -208,6 +206,8 @@ function mega_footer_block_view($delta = '') {
 
 /**
  * Implements hook_block_configure().
+ * @param string $delta
+ * @return array $form
  */
 function mega_footer_block_configure($delta = '') {
 
@@ -407,9 +407,11 @@ function mega_footer_block_configure($delta = '') {
 }
 
 /**
- *Implements hook_block_save
+ * Implements hook_block_save()
  *
- **/
+ * @param string $delta
+ * @param array $edit
+ */
 function mega_footer_block_save($delta = '', $edit = array()) {
 
   if ($delta == 'mega_footer') {
@@ -474,7 +476,7 @@ function mega_footer_block_save($delta = '', $edit = array()) {
     variable_set('mega_footer_contribute_button', $edit['mega_footer_contribute_button']);
     variable_set('mega_footer_contribute_link', $edit['mega_footer_contribute_link']);
     // Advanced options
-//  variable_set('mega_footer_hide_logo_address', $edit['mega_footer_hide_logo_address']);
+//    variable_set('mega_footer_hide_logo_address', $edit['mega_footer_hide_logo_address']);
 //    variable_set('mega_footer_show_contact_info', $edit['mega_footer_show_contact_info']);
 //    variable_set('mega_footer_unit_address_one', $edit['mega_footer_unit_address_one']);
 //    variable_set('mega_footer_unit_address_two', $edit['mega_footer_unit_address_two']);
