@@ -13,21 +13,23 @@
  * @param string $title social media title
  * @param string $mark footer to add to
  * @param string $external
+ * @param string $theme - which Web standard to use
  * @return string
  */
 
-function _mega_footer_social_media($name, $class, $title, $mark, $external) {
+function _mega_footer_social_media($name, $class, $title, $mark, $external, $theme) {
   $check = variable_get('mega_footer_unit_' . $name . '_link', NULL);
   $className = 'fa-' . $class;
 
-   if (!empty($check)) {
-	   if ($title == 'RSS') {
-			$faprefix = 'fas';
-	   } else {
-		   $faprefix = 'fab';
-	   }
-    $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $title . '"><i class="'.$faprefix.' '
+  if (!empty($check)) {
+    if ($theme !== '_ws2') {
+      $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $title . '"><span class="fa '
+        . $className . '"><span class="sr-only">' . $title . '</span></span></a></li>';
+      } else {
+      $fa_prefix = ($title == 'RSS') ? 'fas' : 'fab';
+      $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $title . '"><i class="' . $fa_prefix . ' '
       . $className . '"></i></a></li>';
+    }
   }
 
   return $mark;
@@ -59,7 +61,7 @@ function _social_media_form_array($name, $title) {
  * @param string $external
  * @return string
  */
-function _mega_footer_custom_icon_and_link($type, $num, $mark, $external) {
+function _mega_footer_custom_icon_and_link($type, $num, $mark, $external, $theme) {
 
   $check = variable_get('mega_footer_unit_custom_' . $type . '_' . $num . '_link', NULL);
   $name = variable_get('mega_footer_unit_custom_' . $type . '_' . $num . '_name', NULL);
@@ -71,9 +73,11 @@ function _mega_footer_custom_icon_and_link($type, $num, $mark, $external) {
 
     if (!empty($file_url)) {
       if (!empty($check)) {
-        $mark .='<li><a ' . $external . ' href="' . $check . '" title="' . $name . '"><span class="sr-only">' . $name . '</span>
-    <span class="gray"><img class="fa" id ="' . $name . '" alt ="' . $name . '" src="' . $file_url . '" aria-hidden="true"
-    style="top:7px"/></span></a></li>';
+        if ($theme !== '_ws2') {
+          $mark .= '<li><a ' . $external . ' href="' . $check . '" title="' . $name . '"><span class="sr-only">' . $name . '</span>
+            <span class="gray"><img class="fa" id ="' . $name . '" alt ="' . $name . '" src="' . $file_url . '" aria-hidden="true"
+            style="top:7px"/></span></a></li>';
+        }
       }
     }
   }
