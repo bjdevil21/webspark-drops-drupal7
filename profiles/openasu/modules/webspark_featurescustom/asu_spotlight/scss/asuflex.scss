@@ -1,10 +1,24 @@
 /** main width settings */
 
-.section > .container .row-full .pane-bundle-asu-spotlight {
+#page-page .section > .container .row-full .pane-bundle-asu-spotlight {
   .pane-content {
     max-width: 100%;
     padding-left: 0;
     padding-right: 0;
+    ol.flex-control-nav > li:before,
+    ul.flex-direction-nav > li:before {
+      content: inherit;
+    }
+    .flex-viewport > ul.slides {
+      font-weight: inherit;
+      vertical-align: inherit;
+      & > li::before {
+        padding: inherit;
+        margin: inherit;
+        content: none;
+        font-size: inherit;
+      }
+    }
   }
   & > {
     h1.pane-title, h2.pane-title {
@@ -22,13 +36,13 @@
     color: #fff;
     font-size: 1.33em;
     line-height: 1.33em;
-    font-weight: 900;
+    font-weight: 700;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
   }
   h1, h2 {
     color: #fff;
     font-size: 3.75rem;
-    font-weight: 900;
+    font-weight: 700;
     line-height: 1;
     margin: 0;
     padding: 0.625rem 0;

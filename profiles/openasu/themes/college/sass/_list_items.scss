@@ -1,0 +1,102 @@
+/**
+ * List items
+ */
+
+@import "variables";
+
+/* -- BlockQuotes
+-------------------------------------------------------------- */
+// circle cropped LH bullet point image
+blockquote > img:first-of-type {
+  float: left;
+  clip-path: circle($image-round-small/2);
+}
+/**
+ * Testimonials, round images
+ */
+img.img-testimonial-medium {
+  clip-path: circle($image-round-medium/2);
+}
+img.img-testimonial-small {
+  clip-path: circle($image-round-small/2);
+}
+
+/* -- ordered + unordered lists - Turning off temporarily
+-------------------------------------------------------------- */
+#{$ws2-content-styles-container} {
+  // #1 Global list item css (non-WS2.0)
+  ul, ol {
+    li {
+      line-height: 2em;
+      &:before {
+        font-weight: bolder;
+        vertical-align: middle;
+      }
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+    // nested lists
+    & > li > ul,
+    & > li > ol,
+    & > ul,
+    & > ol {
+      padding-left: 2em;
+    }
+  }
+  // WS2.0 Exception: Ordered, HOWTO stepped lists
+  ol.ws2-list-stepped {
+    // #1 Global WS2.0 list item css first
+    padding-left: 0;
+    list-style-type: none;
+    li {
+      &:before {
+        font-weight: bolder;
+        vertical-align: middle;
+      }
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+    // #2 OL-specific CSS from WS2.0
+    & > li {
+      //line-height: 2em;
+      border-bottom: 1px solid $ws2-gray;
+      padding-bottom: 2em;
+      padding-top: 2em;
+      counter-increment: customlist;
+      &:before {
+        // global OL
+        content: counter(customlist) " ";
+        float: left;
+        // stepped list override
+        font-weight: bold;
+        font-size: 1.3125em;
+        width: 5em;
+        clip-path: circle(1rem);
+        text-align: center;
+        margin-left: -1.75em;
+      }
+      &:first-child {
+        counter-reset: customlist;
+      }
+      &:last-child {
+        border-bottom: transparent;
+      }
+    }
+    // Alt styling/color options
+    & > li:before,
+    &.ws2-element-maroon > li:before { // default
+      background-color: $ws2-maroon;
+      color: #fff;
+    }
+    &.ws2-element-gray > li:before {
+      background-color: $text-color;
+      color: #fff;
+    }
+    &.ws2-element-gold > li:before {
+      background-color: $ws2-gold;
+      color: $text-color;
+    }
+  }
+}
