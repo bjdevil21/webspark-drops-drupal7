@@ -1,0 +1,15 @@
+name = Change of Major WS2.0
+description = A subtheme of the Web Standards 2.0 theme (College).
+base theme = college
+core = 7.x
+
+regions[header] = Header
+regions[menu] = Menu
+regions[content] = Content
+regions[prefooter] = Prefooter
+regions[footer] = Footer
+regions[closure] = Closure
+
+settings[toggle_logo] = 0
+
+stylesheets[all][] = css/com_ws2.css

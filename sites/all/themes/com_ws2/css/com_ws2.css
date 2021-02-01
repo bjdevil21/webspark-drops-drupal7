@@ -1,0 +1,46 @@
+/* Change of Major CSS */
+
+.com-speech-bubble-col {
+  font-size: .8em;
+  height: 300px;
+  max-width: 375px;
+  padding: 30px 30px 0px 30px;
+  background-image: url(/sites/default/files/speech_bubble.png);
+  background-repeat: no-repeat;
+}
+
+.com-speech-bubble-text {
+  max-width: 93%;
+}
+
+.com-speech-bubble-text-author {
+  text-align: right;
+  margin-top: -10px;
+}
+
+.com-major-change-col-middle {
+  height: 274.5px;
+}
+
+.com-major-change-col-left img,
+.com-major-change-col-right img {
+  width: 100%;
+}
+
+.com-major-change-lead-text {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.com-major-change-or {
+  font-size: 1.75em;
+  color: #5C6670;
+  text-align: center;
+  transform: translate(0%, 225%);
+  -ms-transform: translate(0%, 225%);
+  -webkit-transform: translate(0%, 225%);
+  -moz-transform: translate(0%, 225%);
+  -o-transform: translate(0%, 225%);
+}
