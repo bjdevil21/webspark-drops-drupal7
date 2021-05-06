@@ -82,7 +82,17 @@ webgrin*
 profiles/openasu/modules/**/behat/bin
 profiles/openasu/modules/**/behat/vendor
 profiles/openasu/modules/**/behat/behat.local.yml
+# Webgrind
+webgrin*
 
 # Panopoly core for testing Panopoly
 ######################
 profiles/panopoly
+
+# Node.js generated files
+######################
+node_modules
+
+# Codekit
+######################
+config.codekit3

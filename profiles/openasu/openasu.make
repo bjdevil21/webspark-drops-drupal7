@@ -6,7 +6,7 @@ api = 2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 projects[drupal][type] = core
-projects[drupal][version] = 7.78
+projects[drupal][version] = 7.80
 
 ; Drupal Core Patches
 
@@ -109,6 +109,8 @@ projects[job_scheduler][subdir] = contrib
 projects[ldap][type] = module
 projects[ldap][subdir] = contrib
 projects[ldap][version] = 2.5
+; WEBSPARK-1926 - LDAP - PHP 7.4 patches
+projects[ldap][patch][1926] = patches/i1926_ldap_php7.4-compliance.patch
 
 projects[references][type] = module
 projects[references][subdir] = contrib
